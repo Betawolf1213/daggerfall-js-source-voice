@@ -219,7 +219,7 @@ export function errandRefusal(r, now) {
   if (!r?.sworn) return t('rvn.sworn.gone', 'It is no longer sworn to you.');
   if (stateOf(r) === 'errand') return t('rvn.errand.no.abroad', 'It is already abroad.');
   if (stateOf(r) === 'resting' && now < restUntil(r, now)) return t('rvn.errand.no.resting', 'Still recovering.');
-  if (revenantsAbroad().length >= ERRAND.MAX) return t('rvn.errand.no.most', '{n} of your sworn are abroad already - the most at once.', { n: ERRAND.MAX });
+  if (revenantsAbroad().length >= ERRAND.MAX) return t('rvn.errand.no.most', '{n} of your sworn are abroad already, the most allowed at once.', { n: ERRAND.MAX });
   return leaveRefusal(r);   // COMPANION-DROP: never from my side inside the open zone
 }
 /** SENT ON AN ERRAND to `place` (an ERRAND_PLACES key) for `venture`: it leaves (through its portal, if it stood at the

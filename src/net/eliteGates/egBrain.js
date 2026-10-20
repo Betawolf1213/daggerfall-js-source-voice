@@ -1647,13 +1647,16 @@ function trial(B, spec, now, inHall, rng, out) {
     if (v === 'gauntlet') {
       for (const g of F.gauntlet) {
         if (g.done) continue;
+        // GAUNTLET-SLAIN (Field-Bugs-2026-10-19d): a Caster slain is a Caster silenced - its pillar was held open for the plate
+        // alone, which no screen marks, and a company that killed every Caster stood in a hall whose door would not give
+        if (g.i && !egBodyById(F, g.i)) { g.done = 1; out.push({ k: 'esay', w: 'silenced' }); continue; }
         const pl = g.p.plate, on = pl && here.concat(inHall).some((b) => dist(b.x, b.z, pl[0], pl[1]) <= EG_TOUCH_M);
         if (on) { g.stood = g.stood ? g.stood : now; if (now - g.stood >= EG_SILENCE_MS) { g.done = 1; const c = egBodyById(F, g.i); if (c) egGone(F, [c], EG_GONE.crumbled, '', now, out); out.push({ k: 'esay', w: 'silenced' }); } } else g.stood = 0;
       }
       F.pg.left = F.gauntlet.filter((g) => !g.done).length;
       // FIELD BUGS 2026-10-19e GAUNTLET-PLATES (section 8.3): and plate by plate, in `spots.pillar`'s order, whether its Caster is
-      // silenced (1) - the screen marks the plates still to hold and dims a held one (scenes/eliteGates/egFight.js gauntletPlates).
-      // A slain Caster is not silenced: only its plate held EG_SILENCE_MS counts, so its plate still asks (the owner's call, open)
+      // silenced (1) - by its plate held or its death (GAUNTLET-SLAIN, above) - so the screen marks the plates still to hold
+      // and dims a silenced one (scenes/eliteGates/egFight.js gauntletPlates).
       F.pg.silenced = F.gauntlet.map((g) => g.done);
       if (!F.pg.left) { door(B, spec, now, out); return; }
     } else if (v === 'winch') {

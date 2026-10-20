@@ -68,10 +68,12 @@ function frameOf(spec, E, now, at) {
   const plan = fight.plan();
   return fight.shapes().map((s) => ({ kind: s.kind, x: s.origin[0], z: s.origin[1], r: s.r, y: s.y, color: [...s.color], alpha: s.alpha, drawn: plan.draws.some((d) => d.sh === s) }));
 }
-const atPlate = (shapes, p) => shapes.filter((s) => s.kind === TELEGRAPH_KIND.disc && Math.hypot(s.x - p.plate[0], s.z - p.plate[1]) < 1e-6).map(({ r, y, color, alpha, drawn }) => ({ r, y, color, alpha, drawn }));
+// the plate's own marks: gold discs on it (a Caster crumbled by its held plate - GAUNTLET-SLAIN's egGone - leaves its body's
+// pooled disc there, undrawn and grey, which is no plate's mark)
+const atPlate = (shapes, p) => shapes.filter((s) => s.kind === TELEGRAPH_KIND.disc && Math.hypot(s.x - p.plate[0], s.z - p.plate[1]) < 1e-6 && s.color.slice(0, 3).every((v, i) => v === GOLD[i])).map(({ r, y, color, alpha, drawn }) => ({ r, y, color, alpha, drawn }));
 const mark = (alpha) => ({ r: EG_TOUCH_M, y: 2, color: GOLD, alpha, drawn: true });
 
-test('GAUNTLET-PLATES (FIELD BUGS 2026-10-19e): A GAUNTLET\'S PLATES ARE MARKED, AND A HELD ONE SAYS SO - in the Gauntlets the law lays, woken for a company of one and of three, the room says each plate\'s word from the wake (`silenced`, plate by plate in `spots.pillar`\'s order, through the wire); through the trial each plate in play stands gold on its pillar\'s top, EG_TOUCH_M about, drawn - and no pillar the company was not given; every Caster slain by real blows, nothing is silenced, the line still counts every plate and every plate still stands bright; a plate held EG_SILENCE_MS dims (the rune\'s unlit 0.35) while the rest stay bright, the line counting down; the last held, the door opens and no plate is marked; arriving, none (mutants: the plates never drawn; drawn on no surface of their own; at the walkway\'s floor; short of the room\'s reach; a held plate still bright; a slain Caster\'s plate dimmed; the word left out at the wake or the step; every laid pillar drawn though the word says the company\'s; drawn past the trial; drawn before it)', () => {
+test('GAUNTLET-PLATES (FIELD BUGS 2026-10-19e): A GAUNTLET\'S PLATES ARE MARKED, AND A HELD ONE SAYS SO - in the Gauntlets the law lays, woken for a company of one and of three, the room says each plate\'s word from the wake (`silenced`, plate by plate in `spots.pillar`\'s order, through the wire); through the trial each plate in play stands gold on its pillar\'s top, EG_TOUCH_M about, drawn - and no pillar the company was not given; a plate held EG_SILENCE_MS dims (the rune\'s unlit 0.35) while the rest stay bright, the line counting the Casters down and naming both ways; a Caster slain by real blows is silenced on the relay\'s next beat (GAUNTLET-SLAIN) and its plate dims too; the last held, the door opens and no plate is marked; arriving, none (mutants: the plates never drawn; drawn on no surface of their own; at the walkway\'s floor; short of the room\'s reach; a held plate still bright; the word left out at the wake or the step; every laid pillar drawn though the word says the company\'s; drawn past the trial; drawn before it)', () => {
   for (const [{ seed, h, spec }, size] of gauntlets(2).map((g, j) => [g, j === 0 ? 3 : 1])) {
     const R = woken(seed, h, spec, size), pillars = spec.spots.pillar, k = R.B.F.gauntlet.length, at = `seed ${seed} hall ${h}, a company of ${size}`;
     assert.equal(k, Math.min(pillars.length, 2 + Math.ceil(size / 2)), `${at}: the director's count`);
@@ -85,31 +87,35 @@ test('GAUNTLET-PLATES (FIELD BUGS 2026-10-19e): A GAUNTLET\'S PLATES ARE MARKED,
     };
     bright(E, 'the wake');
     assert.deepEqual(pillars.flatMap((p) => atPlate(frameOf(spec, { ...E, sg: 'arrive' }, R.now(), pillars[0]), p)), [], `${at}: arriving, before the trial, no plate marked`);
-    // every Caster slain by real blows from beside it: none is silenced - the rule stands - and every plate still asks
-    for (const g of R.B.F.gauntlet) {
-      for (let n = 0; n < 400 && egBodyById(R.B.F, g.i); n++) {
-        const c = egBodyById(R.B.F, g.i);
-        R.hit(g.i, [c.x + 1.2, c.z, c.y], HIT_KINDS.Melee);
-        if (egBodyById(R.B.F, g.i)) R.hit(g.i, [spec.walk.x, c.z, 0], HIT_KINDS.Spell);
-        R.run([[spec.walk.x, c.z, 0]]);
-      }
-      assert.equal(egBodyById(R.B.F, g.i), null, `${at}: Caster ${g.i} slain`);
-    }
-    for (let n = 0; n < 8; n++) R.run([[spec.walk.x, pillars[0].z - 4, 0]]);
-    E = R.screen();
-    assert.deepEqual([R.B.sg, E.fight.pg.left, E.fight.pg.silenced], ['trial', k, Array(k).fill(0)], `${at}: every Caster slain, none silenced`);
-    assert.equal(egProgressText(spec, E.fight.pg), `Plates left: ${k} - stand on each for 3 s`, `${at}: the line counts the plates`);
-    bright(E, 'every Caster slain');
-    // plate 0 held: it dims, the rest stay bright
+    const line = (n) => `Casters left: ${n}. Hold a plate 3 s or slay its caster`;
+    assert.equal(egProgressText(spec, E.fight.pg), line(k), `${at}: the line counts the Casters, and names both ways`);
+    // plate 0 held, its Caster standing: it dims, the rest stay bright
     const g0 = R.B.F.gauntlet[0];
     for (let n = 0; n <= EG_SILENCE_MS / 250 + 1 && !g0.done; n++) R.run([[g0.p.plate[0], g0.p.plate[1], 2]]);
     E = R.screen();
     assert.deepEqual([E.fight.pg.left, E.fight.pg.silenced], [k - 1, [1, ...Array(k - 1).fill(0)]], `${at}: plate 0 held, its word says so`);
-    assert.equal(egProgressText(spec, E.fight.pg), `Plates left: ${k - 1} - stand on each for 3 s`);
-    const shapes = frameOf(spec, E, R.now(), pillars[0]);
+    assert.equal(egProgressText(spec, E.fight.pg), line(k - 1));
+    let shapes = frameOf(spec, E, R.now(), pillars[0]);
     pillars.forEach((p, j) => assert.deepEqual(atPlate(shapes, p), j === 0 ? [mark(0.35)] : j < k ? [mark(0.85)] : [], `${at}: plate ${j} after plate 0 was held`));
+    // Caster 1 slain by real blows from beside it: GAUNTLET-SLAIN silences its pillar on the relay's next beat, and its plate dims
+    const g1 = R.B.F.gauntlet[1];
+    for (let n = 0; n < 400 && egBodyById(R.B.F, g1.i); n++) {
+      const c = egBodyById(R.B.F, g1.i);
+      R.hit(g1.i, [c.x + 1.2, c.z, c.y], HIT_KINDS.Melee);
+      if (egBodyById(R.B.F, g1.i)) R.hit(g1.i, [spec.walk.x, c.z, 0], HIT_KINDS.Spell);
+      R.run([[spec.walk.x, c.z, 0]]);
+    }
+    assert.equal(egBodyById(R.B.F, g1.i), null, `${at}: Caster ${g1.i} slain`);
+    for (let n = 0; n < 8; n++) R.run([[spec.walk.x, pillars[0].z - 4, 0]]);
+    E = R.screen();
+    assert.deepEqual([R.B.sg, E.fight.pg.left, E.fight.pg.silenced], k > 2 ? ['trial', k - 2, [1, 1, ...Array(k - 2).fill(0)]] : ['closing', 0, [1, 1]], `${at}: Caster 1 slain, its plate's word silenced`);
+    if (k > 2) {
+      assert.equal(egProgressText(spec, E.fight.pg), line(k - 2));
+      shapes = frameOf(spec, E, R.now(), pillars[0]);
+      pillars.forEach((p, j) => assert.deepEqual(atPlate(shapes, p), j < 2 ? [mark(0.35)] : j < k ? [mark(0.85)] : [], `${at}: plate ${j} after Caster 1 was slain`));
+    }
     // the rest held: the door
-    for (const g of R.B.F.gauntlet.slice(1)) for (let n = 0; n <= EG_SILENCE_MS / 250 + 1 && R.B.sg === 'trial' && !g.done; n++) R.run([[g.p.plate[0], g.p.plate[1], 2]]);
+    for (const g of R.B.F.gauntlet.slice(2)) for (let n = 0; n <= EG_SILENCE_MS / 250 + 1 && R.B.sg === 'trial' && !g.done; n++) R.run([[g.p.plate[0], g.p.plate[1], 2]]);
     assert.equal(R.B.sg, 'closing', `${at}: every plate held, the door opens`);
     E = R.screen();
     assert.deepEqual(pillars.flatMap((p) => atPlate(frameOf(spec, E, R.now(), pillars[0]), p)), [], `${at}: the closing, no plate marked`);
@@ -141,17 +147,17 @@ test('GAUNTLET-PLATES - THE PLATE\'S OWN HEIGHT (egPlateY): from spec law 10 eac
 });
 
 test('GAUNTLET-PLATES - THE WORDS: the screen\'s Gauntlet objective names its plates in place of the law\'s *Silence the casters.* - which every spec keeps as laid, a hall\'s bytes (section 22\'s law pin) - and the line counts the plates with their seconds; both trackers and the arrival card say them in the player\'s language, the catalog\'s (mutants: the old words on the screen; the screen left on the law\'s; a tracker, the chip or the card left on the spec\'s English; the line\'s seconds not the room\'s)', () => {
-  const [{ seed, h, spec }] = gauntlets(1), NAMED = "Stand on each caster's plate to silence it.";
+  const [{ seed, h, spec }] = gauntlets(1), NAMED = "Silence each caster: stand on its plate, or slay it.";
   assert.deepEqual([EG_OBJECTIVES.gauntlet, spec.objective], ['Silence the casters.', 'Silence the casters.'], 'the law\'s word and the hall\'s bytes, as laid');
   assert.equal(egObjectiveText(spec), NAMED, 'the screen names the plates');
-  assert.equal(egProgressText(spec, { obj: 'gauntlet', left: 3, silenced: [0, 0, 0] }), 'Plates left: 3 - stand on each for 3 s');
+  assert.equal(egProgressText(spec, { obj: 'gauntlet', left: 3, silenced: [0, 0, 0] }), 'Casters left: 3. Hold a plate 3 s or slay its caster');
   assert.equal(EG_SILENCE_MS, 3000);
   const R = woken(seed, h, spec, 1), E = R.screen(), was = tm.currentLocale();
   try {
     tm.setLocale(tm.PSEUDO_LOCALE);
     const said = egObjectiveText(spec);
     assert.ok(said !== NAMED && said !== spec.objective, 'the objective drawn in the player\'s language');
-    assert.notEqual(egProgressText(spec, E.fight.pg), 'Plates left: 3 - stand on each for 3 s', 'and the line');
+    assert.notEqual(egProgressText(spec, E.fight.pg), 'Casters left: 3. Hold a plate 3 s or slay its caster', 'and the line');
     assert.equal(egHudModel(E, 'acct-0', R.now(), { inSpire: true }).line, said, 'the tracker\'s line');
     assert.equal(egSpireHudModel(E, 'acct-0', R.now()).objective, said, 'the Spire HUD\'s objective');
     assert.equal(egArrivalCard(E).sub, said, 'the arrival card');

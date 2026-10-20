@@ -2068,6 +2068,7 @@ ${badgeCss()}
   gap: 4px 26px; margin-bottom: 8px; }
 .px-skill { margin: 0 0 8px; }
 .px-skill .px-meter { height: 6px; border-width: 2px; }
+.px-skilltick { margin: 3px 0 0; color: #9c937d; font-size: 12px; letter-spacing: 0.04em; }   /* SKILL-TICK: the uses toward the next point, under the bar */
 .px-skill .px-mtop { margin-bottom: 3px; }
 .px-skill .px-mtop .v { font-size: 16px; }
 .px-disclose { width: auto; margin: 10px auto 0; }
@@ -2602,6 +2603,17 @@ ${SUPPORT_MARKS_CSS}
   background: rgba(192,138,62,0.12); }
 .card button.skintile:focus-visible { outline: 2px solid var(--brass); outline-offset: 1px; }
 .card .skinart { height: 72px; width: auto; image-rendering: pixelated; pointer-events: none; }
+/* LAYERED-GEAR (the owner: "a proper toggle in the account profile for
+   players to either equip skins or use this integration"): Look, two
+   presses side by side over the panels - the chosen one in brass. */
+.card .skinmode { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 10px 0 0; flex-wrap: wrap; }
+.card .skinmode .fieldlabel { margin: 0; }
+.card .skinmodeset { display: flex; gap: 6px; }
+.card button.skinmodebtn { font: inherit; font-size: 13px; color: var(--dim); min-height: 36px; padding: 6px 12px;
+  background: rgba(0,0,0,0.25); border: 1px solid var(--iron); border-radius: 2px; cursor: pointer; }
+.card button.skinmodebtn:hover { color: var(--bone); border-color: var(--dim); }
+.card button.skinmodebtn.on { color: var(--bone); border-color: var(--brass); background: rgba(192,138,62,0.12); }
+.card button.skinmodebtn:focus-visible { outline: 2px solid var(--brass); outline-offset: 1px; }
 .px-winfoot { display: flex; justify-content: center; padding: 6px 0 18px; }
 .px-winclose {
   font: inherit; font-size: 16px; letter-spacing: 0.14em; text-indent: 0.14em;
@@ -4681,6 +4693,17 @@ ${paceControlsCss('tview')}
   flex: 1 1 auto; min-height: 0; }   /* PX22: the dock's scroll viewport - min-height 0 is what makes overflow clip */
 /* LOOT-BULK: Stash all sits on the bottom edge of the item list, centred, and does not scroll away with the tiles. */
 .pack-shell .stashfoot { flex: 0 0 auto; display: flex; justify-content: center; padding: 2px 10px 8px; }
+/* BATCH-SALVAGE: the choosing's foot on the list's bottom edge - the count and its shards, the sweeps, the press - a
+   chosen tile ticked and ringed, one that will not break dimmed. */
+.pack-shell .salvagefoot { flex: 0 0 auto; display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  justify-content: center; padding: 4px 10px 8px; }
+.pack-shell .salvagefoot .salvagecount { color: #d8cfae; font-size: 13px; margin-right: 6px;
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.7); }
+.pack-shell .itemrow.salvpick { border-color: var(--brass); outline: 2px solid rgba(192,138,62,0.5); outline-offset: 2px; }
+.pack-shell .itemrow.salvno { opacity: 0.45; }
+.pack-shell .itemrow .salv-mark { position: absolute; right: 2px; top: 1px; z-index: 3; color: rgb(243,239,44); font-size: 12px;   /* AUDIT BATCH C7: over the Plus face's sigil rune (z-index 2) */
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.85); }
+.inv-salvage-many .salvagenames { color: #9c937d; font-size: 13px; }
 /* The dock's rows are the reference's TILE GRID: square panels, the
    monogram carrying the item, the count in the corner, the name in
    the title and the plaque. The tiles live directly in .packcol -

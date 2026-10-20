@@ -100,7 +100,7 @@ export function egProgressText(spec, pg) {
   if (pg.obj === 'wellspring') return pg.anchors > 0 ? `Anchors standing: ${pg.anchors}` : 'The Wellspring is open to blows';
   if (pg.obj === 'holdfast') return `Hold ${ms(75_000 - (pg.hold ?? 0))} - the relic ${pg.relic ?? 100}%`;
   if (pg.obj === 'winch') return `The winch ${Math.round(((pg.winch ?? 0) / 60_000) * 100)}%`;
-  if (pg.obj === 'gauntlet') return t('eg.progress.gauntlet', 'Plates left: {n} - stand on each for {s} s', { n: pg.left ?? 0, s: EG_SILENCE_MS / 1000 });   // FIELD BUGS 2026-10-19e GAUNTLET-PLATES: the plates named ("Casters left" read as a body count - a slain Caster's plate still asks)
+  if (pg.obj === 'gauntlet') return t('eg.progress.gauntlet', 'Casters left: {n}. Hold a plate {s} s or slay its caster', { n: pg.left ?? 0, s: EG_SILENCE_MS / 1000 });   // FIELD BUGS 2026-10-19e GAUNTLET-PLATES: the two ways a Caster is silenced named - its plate held, or its death (GAUNTLET-SLAIN)
   if (pg.obj === 'engine') return `Hold the engine ${ms(45_000 - (pg.hold ?? 0))}`;
   if (pg.obj === 'orrery' && Array.isArray(pg.st)) return `Stones true: ${pg.lit ?? 0} of 6 - fray ${pg.f ?? 0}`;
   if (pg.obj === 'quiet') return `The door opens in ${ms(pg.quiet ?? 0)}`;
@@ -110,7 +110,7 @@ export function egProgressText(spec, pg) {
  *  chip and arrival card) - the Gauntlet's naming its plates, in the player's language, in place of the law's "Silence the
  *  casters." (net/eliteGates/egLaw.js EG_OBJECTIVES - a hall's bytes, kept as laid: section 22's law pin); every other hall's
  *  the law's words as they stand. */
-export const egObjectiveText = (spec) => (spec?.variant === 'gauntlet' ? t('eg.objective.gauntlet', "Stand on each caster's plate to silence it.") : egObjectiveOf(spec));
+export const egObjectiveText = (spec) => (spec?.variant === 'gauntlet' ? t('eg.objective.gauntlet', "Silence each caster: stand on its plate, or slay it.") : egObjectiveOf(spec));
 /** A stage's words, by the hall's kind where it matters. */
 function stageLines(E, spec, now) {
   const left = E.su > 0 ? E.su - now : 0;
@@ -490,7 +490,7 @@ export function drawEgPanel(model, { hidden = false, doc = globalThis.document, 
   }
   // AUDIT EG V (c, L7-9): the recap closes by a tap - its own button - and a screen in hand reads no key's words (L7-20)
   if (recap) { const row = doc.createElement('div'); row.className = 'eg-cards eg-ask'; const b = doc.createElement('button'); b.className = 'eg-close'; b.textContent = t('eg.recap.close', 'Close'); b.addEventListener?.('click', () => onClose()); row.append(b); panel.append(row); }
-  const noteText = recap ? (touch ? '' : 'Press Enter to close.') : touch ? t('eg.panel.noteTouch', 'Tap a card or a choice.') : 'Y: the Ready vote - R: a respite - 1-6: a card or a choice; /breach pick and /breach vote work in chat.';
+  const noteText = recap ? (touch ? '' : 'Press Enter to close.') : touch ? t('eg.panel.noteTouch', 'Tap a card or a choice.') : 'Y: the Ready vote. R: a respite. 1-6: a card or a choice. /breach pick and /breach vote work in chat.';
   if (noteText) { const note = doc.createElement('div'); note.className = 'eg-note'; note.textContent = noteText; panel.append(note); }
   (doc.body ?? doc.documentElement)?.append(panel);
 }

@@ -150,19 +150,9 @@
     "why": "the word never moves - a held plate never dims"
   },
   {
-    "name": "GAUNTLET-PLATES-a-slain-caster-silenced",
-    "file": "src/net/eliteGates/egBrain.js",
-    "old": "      F.pg.silenced = F.gauntlet.map((g) => g.done);",
-    "new": "      F.pg.silenced = F.gauntlet.map((g) => (egBodyById(F, g.i) ? g.done : 1));",
-    "tests": [
-      "test/scenes/eliteGates/fb1019e_gauntletplates.test.js"
-    ],
-    "why": "the word says a slain Caster's plate is done while the room still asks for it (the rule stands: only a held plate silences)"
-  },
-  {
     "name": "GAUNTLET-PLATES-old-line",
     "file": "src/ui/eliteGates/egHud.js",
-    "old": "t('eg.progress.gauntlet', 'Plates left: {n} - stand on each for {s} s', { n: pg.left ?? 0, s: EG_SILENCE_MS / 1000 })",
+    "old": "t('eg.progress.gauntlet', 'Casters left: {n}. Hold a plate {s} s or slay its caster', { n: pg.left ?? 0, s: EG_SILENCE_MS / 1000 })",
     "new": "`Casters left: ${pg.left ?? 0}`",
     "tests": [
       "test/scenes/eliteGates/fb1019e_gauntletplates.test.js"
@@ -182,7 +172,7 @@
   {
     "name": "GAUNTLET-PLATES-objective-unrouted",
     "file": "src/ui/eliteGates/egHud.js",
-    "old": "export const egObjectiveText = (spec) => (spec?.variant === 'gauntlet' ? t('eg.objective.gauntlet', \"Stand on each caster's plate to silence it.\") : egObjectiveOf(spec));",
+    "old": "export const egObjectiveText = (spec) => (spec?.variant === 'gauntlet' ? t('eg.objective.gauntlet', \"Silence each caster: stand on its plate, or slay it.\") : egObjectiveOf(spec));",
     "new": "export const egObjectiveText = (spec) => egObjectiveOf(spec);",
     "tests": [
       "test/scenes/eliteGates/fb1019e_gauntletplates.test.js"
@@ -222,7 +212,7 @@
   {
     "name": "GAUNTLET-PLATES-screen-old-words",
     "file": "src/ui/eliteGates/egHud.js",
-    "old": "t('eg.objective.gauntlet', \"Stand on each caster's plate to silence it.\")",
+    "old": "t('eg.objective.gauntlet', \"Silence each caster: stand on its plate, or slay it.\")",
     "new": "t('eg.objective.gauntlet', 'Silence the casters.')",
     "tests": [
       "test/scenes/eliteGates/fb1019e_gauntletplates.test.js"
@@ -233,7 +223,7 @@
     "name": "GAUNTLET-PLATES-law-word-moved",
     "file": "src/net/eliteGates/egLaw.js",
     "old": "gauntlet: 'Silence the casters.',",
-    "new": "gauntlet: \"Stand on each caster's plate to silence it.\",",
+    "new": "gauntlet: \"Silence each caster: stand on its plate, or slay it.\",",
     "tests": [
       "test/scenes/eliteGates/fb1019e_gauntletplates.test.js"
     ],

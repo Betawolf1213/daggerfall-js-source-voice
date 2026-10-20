@@ -306,6 +306,15 @@ node tools/realmReview.mjs repair <realm character id> <ticket> <faction id> <0x
 Pinned by `test/net/fb1014_summonrepair.test.js` over the real Worker and the playing tab's own session and join;
 `tools/mutants/fb1014_summonrepair.json` (16, dead).
 
+PURSE-BACK (2026-10-19, `01-Overview/bugs/Field-Bugs-2026-10-18b.md`; the owner, of a purse TRADE-WRAP left below
+nothing: "Build a workflow") runs `realm-rollback` from the Actions tab: `.github/workflows/realm-rollback.yml` and
+`tools/realmRollback.mjs` call `reviewAct` itself - its developer gate asked with the run's actor, its guards, its
+statement and its staff finding - over the service's D1 and R2 bindings answered by wrangler with the repository's
+Cloudflare token (`tools/lib/wranglerBindings.mjs`), a dry run being the act with its writes held. It asks the rollback
+only for a character whose purse went below nothing and whose clean save is older than that finding: a purse set at
+nothing since can make a later save clean, and the save from before the sale is then gone (`clean-after`). Pinned by
+`test/tooling/realm_rollback.test.js`; `tools/mutants/purseback.json` (19, dead).
+
 PURSE-MEND (FIELD BUGS 2026-10-19e, a player's private report: a purse of -8,000,000 and a carry weight of -19,995 kg
 after a sale at 0.0.235) added a third. TRADE-WRAP (FIELD BUGS 2026-10-18b) stopped the counter paying below nothing,
 and left a record it had already paid that way to "a staff repair" - which `realm-repair`, a faction's flag and a refund,

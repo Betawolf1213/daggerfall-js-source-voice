@@ -25,7 +25,7 @@ here", with what would prove each.
 | 5 | Disintegrate deals nothing to the breach bosses, the Abyss's Remnant or the arena's rival | The relay's bodies are local stand-ins of 1e9 health; a Disintegrate claims all of it, and every wire refuses the claim | STAND-IN-WHOLE |
 | 6 | Continuous Damage lands only its first hit on a breach boss | The stand-in forgets every lasting effect; Soul Trap alone was carried (WBX7) | BOSS-DOT (the owner's call) |
 | 7 | A Legendary bow's power shows nothing | Chain Lightning's arc hurt its foe silently; Cast When Strikes is DFU's spell on the target, with no missile | CHAIN-SEEN; an element's colour and a strike's visual are requests (below) |
-| 8 | The Gauntlet ("Silence the casters") stuck at three though every caster was silenced and killed | A caster is silenced by standing on its plate; nothing marked the plates or named them (WINCH-PLATES fixed the Winch, not this) | GAUNTLET-PLATES |
+| 8 | The Gauntlet ("Silence the casters") stuck at three though every caster was silenced and killed | A caster was silenced by standing on its plate alone; nothing marked the plates or named them (WINCH-PLATES fixed the Winch, not this) | GAUNTLET-PLATES; and main's GAUNTLET-SLAIN (`Field-Bugs-2026-10-19d.md`) made a slain caster silenced |
 | 9 | The town map's Find me goes to the town's lower right, wherever the player stands | Find me knew the world map only: the town map got the world map's middle pixel as the player | FINDME-TOWN |
 | 10 | Pathfinding out of a walled town traps the player in a corner | A journey from inside the start pixel's town had no leg out by a gate: it aimed through the wall | TOWN-EXIT |
 | 11 | Stuck in a lift; /unstuck on its cooldown | A mover re-placed every frame carries only a body standing on it, and only as far as the world lets it - a rider meeting a lip is left inside the lift | MOVER-BODY; the cooldown is PVPUNSTUCK's (below) |
@@ -589,7 +589,7 @@ burn) land as silently - a follow-up, flagged. Not a DFU member (LOOT5's powers 
 `src/net/eliteGates/egBrain.js` (the Gauntlet's wake and its arm of trialStep), `src/scenes/eliteGates/egFight.js`
 (`gauntletPlates`, `egPlateY`), `src/ui/eliteGates/egHud.js` (`egObjectiveText`, `egProgressText`),
 `src/ui/eliteGates/egSpireHud.js`, `src/net/eliteGates/egLaw.js` (`EG_OBJECTIVES`'s note), and the Elite Gates arc's
-sections 8.3 and 27.3 (`11-Multiplayer/Elite-Gates.md`). Relay world224.
+sections 8.3 and 27.3 (`11-Multiplayer/Elite-Gates.md`). Relay world226.
 
 FOUND, on the code and on the real director (`egBreachNew`, `egStep`, `egBlow`; seed 1, hall 66, solo, laws 9 and 10). A
 Gauntlet Rampart's trial is won only by standing `EG_SILENCE_MS` (3 s) on each Caster's plate (section 8.3). The relay
@@ -618,10 +618,10 @@ THE FIX.
   laws 8 and 9, and the walkway's floor before them. A plate whose word says silenced dims to the unlit rune's 0.35
   (`egFight.js:"sh.alpha = said?.[j] ? 0.35 : 0.85;"`), so a company sees which plates are still to hold. A pillar the
   company was not given is not marked (the hall lays six, and a company of n is given `2 + ceil(n/2)`). A screen facing a
-  relay before world224 gets no `silenced`, so it draws every plate the hall lays while `left` is above nought
+  relay before world226 gets no `silenced`, so it draws every plate the hall lays while `left` is above nought
   (`egFight.js:"    if (!said && !(F.pg.left > 0)) return;"`).
-- THE WORDS NAME THE PLATES. The objective is *Stand on each caster's plate to silence it.* and the line is *Plates left:
-  3 - stand on each for 3 s*, its seconds `EG_SILENCE_MS`'s. Both are said in the player's language through the catalog
+- THE WORDS NAME BOTH WAYS. The objective is *Silence each caster: stand on its plate, or slay it.* and the line is
+  *Casters left: 3. Hold a plate 3 s or slay its caster*, its seconds `EG_SILENCE_MS`'s. Both are said in the player's language through the catalog
   (`eg.objective.gauntlet`, `eg.progress.gauntlet`). The objective goes through `egHud.js:"export const egObjectiveText = (spec) =>"`,
   which the tracker's line, the Spire HUD's chip and the arrival card all read. It is the first objective said in the
   player's language; the rest stay the law's English. The English catalog was regenerated (`tools/l10nExtract.mjs`), the
@@ -634,30 +634,30 @@ THE FIX.
   `egaudit5_f`), and `egfrag_client` failed with them. Shipped that way, every Gauntlet would have disagreed with its room
   across the deploy's skew, and its halls would have been asked of the room. The word went back, and `EG_OBJECTIVES`'s
   note says why. The new words belong to the screen.
-- THE RULE STANDS. A slain Caster is not silenced: its plate still asks, and it stays bright.
+- A SLAIN CASTER IS SILENCED. At the merge of main, GAUNTLET-SLAIN (`01-Overview/bugs/Field-Bugs-2026-10-19d.md`, a
+  report from the Discord) had made a Caster slain its pillar silenced - the question this record had left open. Its `done`
+  is the plate's word, so a slain Caster's plate dims on the relay's next beat as a held one does, and the words name both.
 
-THE RELAY. `egBrain.js` and `egLaw.js` ride the relay's bundle, so this is world224 (`/health` served world223 when it was
-written). The 42 version pins moved (PIN MOVED: world224), disc7's list grew by one, and soc1's S38-version-not-bumped was
+THE RELAY. `egBrain.js` and `egLaw.js` ride the relay's bundle, so this is world226 (world224 on its branch, renumbered past
+main's world224 - LAYERED-GEAR and VOICE2 - and world225 - GAUNTLET-SLAIN - at the merge). The 42 version pins moved (PIN
+MOVED: world226), disc7's list grew by one, and soc1's S38-version-not-bumped was
 re-aimed by content. Either end may deploy first. An older client passes `silenced` through `egProgress` and reads
-nothing from it; it draws no plate, as before. A newer client facing world223 marks every plate the hall lays while a
-Caster is left.
+nothing from it; it draws no plate, as before. A newer client facing world225 or older marks every plate the hall lays
+while a Caster is left.
 
 Left: at laws 8 and 9 the plate stands on its sloped stair, and its flat mark crosses the slope at its middle, half under
 the stair. No such breach can be live: a breach lives three hours, and every breach opened since world219 lays law 10.
 
-OPEN, the owner's: should a slain Caster count? Today only a plate held for 3 s silences one, and a slain Caster's plate
-still asks. That is section 8.3's rule, kept here. Counting a kill would make the Gauntlet the kill trial the other
-Ramparts already are. Keeping the rule keeps the plates as the trial, the Shade's variant without a march, and now they
-are marked and named.
-
 - **Pinned**: `test/scenes/eliteGates/fb1019e_gauntletplates.test.js` (4). The first runs the real director for a
-  company of three and a company of one, through the wire, folded: the plates marked, every Caster slain by `egBlow` with
-  every plate still bright, a held plate dimmed, the door, and no mark before or after the trial. The second is an older
+  company of three and a company of one, through the wire, folded: the plates marked, a held plate dimmed, a Caster slain
+  by `egBlow` silenced on the next beat and its plate dimmed too (GAUNTLET-SLAIN's law), the door, and no mark before or
+  after the trial - a crumbled Caster's undrawn body disc no plate's mark. The second is an older
   relay. The third is `egPlateY` at laws 10, 9 and 7. The fourth is the words: the law's word and the hall's bytes as
   laid, the screen's naming the plates, and the catalog's in both trackers, the chip and the arrival card. PIN MOVED: the
-  42 relay-version pins (world224), `test/systems/disc7.test.js`'s list, and `test/systems/l10n4_hardcoded.test.js`'s
-  count for `egHud.js`. `tools/mutants/fb1019e_gauntletplates.json` (24, all dead). Re-aimed by content: `soc1.json`'s
-  S38-version-not-bumped onto `export const RELAY_VERSION = 'world224';` (run alone: dead).
+  42 relay-version pins (world226), `test/systems/disc7.test.js`'s list, and `test/systems/l10n4_hardcoded.test.js`'s
+  count for `egHud.js`. `tools/mutants/fb1019e_gauntletplates.json` (23, all dead - its record of a slain Caster's plate dimmed retired at the merge,
+  GAUNTLET-SLAIN's law now and `fb1019d_gauntletslain.json`'s to hold). Re-aimed by content: `soc1.json`'s
+  S38-version-not-bumped onto `export const RELAY_VERSION = 'world226';` (run alone: dead).
 
 ## FINDME-TOWN: the town map's Find me finds the player
 
@@ -1464,8 +1464,6 @@ next load; an heir is offered their own whole build); the rest are staff's, from
 
 - **The estate's bank and wagon** (ESTATE-WIDER, Legacy-Arc 5 - "the owner's call"): an heir takes a quarter of the gold
   the dead carried; their bank's balance does not pass.
-- **A slain Gauntlet caster counting as silenced** - the trial's rule stands (a plate silences, a kill does not); the
-  plates are marked now (GAUNTLET-PLATES).
 - **A piece made after SIDE-ONCE told from one made before** - the account service judges a piece by the same law,
   which counts a side effect by its effect (an old piece's copies stand), and keeps no record of when a piece's rows
   were laid; telling the two apart takes a record the service keeps (SIDE-ONCE).
