@@ -34108,9 +34108,9 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     };
     frameBodies();   // MW-D24: the player's own body, in third person only - and the others', and the 3D horses (COATS3D); PERF-V8: its try a closure's own
     mwViewDrawWagon(renderer, null, yardCull);   // EOTB-IL: the cart, when the transport is the cart; PERF-WAGON: by the street's view test
-    riteHost?.draw(renderer, null, mwv.eye);
-    starfall?.draw(renderer);   // STAR4: the craters and their stones   // WB12d: the faithful's circle and their tents - AUDIT WB12d (G6): its sigil from near the eye alone
+    riteHost?.draw(renderer, null, mwv.eye);   // WB12d: the faithful's circle and their tents - AUDIT WB12d (G6): its sigil from near the eye alone
     sigilBroker?.draw(renderer);   // BROKER-CAGE: the Sigil Broker's cage beside it, and its door
+    starfall?.draw(renderer);   // STAR4: the craters and their stones
     gatePool?.draw(renderer);   // WB2: the Oblivion Gate's stone
     camps.draw(renderer, null, yardCull);   // SURV3: the tents, the cart's own pass; PERF-WAGON: by the street's view test
     hcc.draw(renderer, null, tvf ? { selfGrow: tvf.grow, grow: peerGrow } : undefined, yardCull);   // PERF-TEAMS: each wagon culled as the town's own models are; HCC: the trailing / parked / following wagon and its cargo, mine and the peers' (the horses ride the flats' pass); WAGON-HITCH x OW-BIG: a cart's wagon grown with its rider under the Overworld

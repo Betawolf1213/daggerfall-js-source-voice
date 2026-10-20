@@ -26,6 +26,12 @@
    "why": "the serpent's sighting, rising, storm and sounding as relay ms"
   },
   {
+   "file": "src/systems/starfall/starfallNight.js",
+   "has": "export const nightDayOfYear = (n) => dayOfYearFromMinutes(Math.floor(skyClassicMinutes(",
+   "clock": "sky",
+   "why": "the Starfall's Witches' Night - a star night whose dusk lands on the sky calendar's Witches Festival, the Heart-Star's (STAR1)"
+  },
+  {
    "file": "src/net/nodeLaw.js",
    "has": "Math.floor(skyClassicMinutes(day",
    "clock": "sky",
