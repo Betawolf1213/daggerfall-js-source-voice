@@ -846,7 +846,7 @@ export function survivalInfoTokens(item) {
   else if (isWeirKey(item)) out.push({ text: EG_TEXT.keyLine, center: true });   // AUDIT EG V (c, L8-6): the Weir Key's line (section 5), its name and weight above it
   else if (isSoulCake(item)) for (const text of SOUL_CAKE_TEXT.cake()) out.push({ text, center: true });   // WITCH1
   else if (isHearthOffering(item)) for (const text of SOUL_CAKE_TEXT.offering()) out.push({ text, center: true });   // WITCH1
-  else if (isStarglass(item)) for (const text of STARGLASS_TEXT.lines()) out.push({ text, center: true });   // AUDIT STAR I2
+  else if (isStarglass(item)) for (const text of STARGLASS_TEXT.glass()) out.push({ text, center: true });   // AUDIT STAR I2
   else if (isWalletItem(item)) for (const text of WALLET_CARD_LINES) out.push({ text, center: true });   // WALLET1
   else if (isIliacCard(item)) for (const text of iliacCardLines(item)) out.push({ text, center: true });   // CARDS8
   else if (isCardBinder(item)) for (const text of BINDER_CARD_LINES) out.push({ text, center: true });   // CARDS8

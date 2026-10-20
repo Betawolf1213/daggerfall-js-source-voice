@@ -29,7 +29,7 @@ registerStarglassArt(addVendorTextures);   // the import IS the registration
 /** Its card's lines: what it is and what it is for - read when the card is shown (the Soul Cake's shape, systems/festival/
  *  soulCake.js SOUL_CAKE_TEXT). AUDIT STAR I2: its card said its name and its weight, and nothing more. */
 export const STARGLASS_TEXT = Object.freeze({
-  lines: () => [t('starfall.item.glass.what', 'Pale glass from a fallen star, still holding some of its light.'), t('starfall.item.glass.use', 'Any merchant pays well for it.')],
+  glass: () => [t('starfall.item.glass.what', 'Pale glass from a fallen star, still holding some of its light.'), t('starfall.item.glass.use', 'Any merchant pays well for it.')],
 });
 /** Whether a record is Starfall Glass - its template and its group, the one spelling every rule reads. */
 export const isStarglass = (/** @type {any} */ item) => item?.templateIndex === STARGLASS_TEMPLATE && item?.group === 'UselessItems2';

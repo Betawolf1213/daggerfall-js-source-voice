@@ -188,8 +188,8 @@ test('AUDIT STAR I1/I2: THE STAR\'S GLASS IS STARFALL GLASS - no custom row shar
   assert.equal(templateByIndex(576)?.name, 'Starfall Glass');
   assert.equal(templateByIndex(1340)?.name, 'Starglass', 'the sea\'s good keeps its name');
   const g = starglass(2);
-  assert.deepEqual(survivalInfoTokens(g).map((r) => r.text), ['Starfall Glass', survivalInfoTokens(g)[1].text, ...STARGLASS_TEXT.lines()]);
-  assert.deepEqual(STARGLASS_TEXT.lines(), ['Pale glass from a fallen star, still holding some of its light.', 'Any merchant pays well for it.']);
-  assert.deepEqual(itemInfoRows(g, () => null).map((r) => r.text).slice(2), STARGLASS_TEXT.lines(), 'the classic info box');
-  assert.deepEqual(itemLine(g).survival, STARGLASS_TEXT.lines(), 'and the enhanced card');
+  assert.deepEqual(survivalInfoTokens(g).map((r) => r.text), ['Starfall Glass', survivalInfoTokens(g)[1].text, ...STARGLASS_TEXT.glass()]);
+  assert.deepEqual(STARGLASS_TEXT.glass(), ['Pale glass from a fallen star, still holding some of its light.', 'Any merchant pays well for it.']);
+  assert.deepEqual(itemInfoRows(g, () => null).map((r) => r.text).slice(2), STARGLASS_TEXT.glass(), 'the classic info box');
+  assert.deepEqual(itemLine(g).survival, STARGLASS_TEXT.glass(), 'and the enhanced card');
 });
