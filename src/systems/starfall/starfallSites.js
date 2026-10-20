@@ -14,6 +14,7 @@ import { starRoll, starTimes, starSpotLocal, STAR_PER_NIGHT } from '../../net/st
 import { gameDayAt } from '../../net/gate/gateLaw.js';
 import { REGION_NAMES } from '../../formats/mapsFile.js';
 import { starCovenOf } from './starfallCovens.js';
+import { starSiteId } from '../../world/worldOfDaggerfall/wodShared.js';
 
 const W = 1000;
 /** How far apart a night's stars stand, and how far from the gate's site, map pixels (Chebyshev) - about four km. */
@@ -70,5 +71,5 @@ export function findStarSites(n, scan, { gateSiteOf = () => null } = {}) {
   return out;
 }
 
-/** A star's site key on the camp's law (world/worldOfDaggerfall/wodShared.js): `px,py:star.<night>.<k>`. */
-export const starSiteKey = (s) => `${s.px},${s.py}:star.${s.n}.${s.k}`;
+/** A star's site key on the camp's law (world/worldOfDaggerfall/wodShared.js starSiteId): `px,py:star.<night>.<k>`. */
+export const starSiteKey = (s) => starSiteId(s.px, s.py, s.n, s.k);

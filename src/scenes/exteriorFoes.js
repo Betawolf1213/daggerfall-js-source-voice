@@ -106,6 +106,7 @@ import { revenantMayYield, beginYield, yieldStep, slipEvent, kneelPose, beginExe
 import { setBatchDissolve } from '../systems/dissolve.js';   // DISSOLVE: burnt away, or gathered through a portal
 import { createPortalSet } from './portalFx.js';   // COMPANION-PORTAL
 import { QUARRY_BLOW } from '../systems/livingWorld/quarry.js';
+import { STAR_CIRCLE_SHARE } from '../net/starfall/starfallLaw.js';   // STAR5: a master's circle's ward
 import { createHostNpcBodies, npcBodiesOn } from '../characters/npcBodies.js';   // MWNPC5c: the pool's foes in their Morrowind bodies
 import { isBodyFoe, foeActor, foeFx, foeWireLook, applyWireLook } from '../characters/foeBodies.js';   // WATCH-PROTECTS: a townsperson's one blow
 import { elitesAllowed, promoteEliteFoe, rollOverworldElite, grantEliteLoot, eliteLoot, eliteGlow, setBatchEliteGlow, eliteSize, isEliteCorpse, markEliteCorpseBatch, ELITE_FOE_SIZE } from '../systems/eliteFoes.js';   // ELITE FOES: 5% of the wilds' foes   // HITFLASH1
@@ -988,7 +989,11 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     // runs BEFORE DecreaseHealth (WeaponManager.cs:576-596, :627), and
     // HandleAttackFromSource runs after it unconditionally (:630), so
     // a fully absorbed blow still knocks back and still turns the foe.
-    const healthDamage = bypassShield ? damage : damageShieldPool(f.entity, damage);
+    // STAR5 (bible/11-Multiplayer/Starfall.md section 4): A MASTER'S CIRCLE WARDS IT - while any of its circle stands
+    // (`circleWard`, scenes/starfall/starfallHost.js) it takes STAR_CIRCLE_SHARE of every blow, its owner's and a peer's
+    // through it alike; a kill is no blow (PSCALE1 DOORS-1)
+    const warded = !_whole && damage > 0 && f.circleWard?.() ? Math.max(1, Math.round(damage * STAR_CIRCLE_SHARE)) : damage;
+    const healthDamage = bypassShield ? warded : damageShieldPool(f.entity, warded);
     // AUDIT PSCALE1 (Mac: "Whoever fights it"): every player's blow names a fighter - mine, and a peer's through
     // applyHit - here where the owner hears them all
     if (fromPlayer) noteFighter(f, peer ? peerId : PARTY_ME, _now());
@@ -1806,7 +1811,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
           if (blowConnects(f.ai, meleeHitConnects(f.ai._dist, f.ai.inSight, withinYaw(f.ai.yaw, fdx, fdz, MELEE_HIT_YAW_DEG)))) {
             applyDamageToNonPlayer(f, _foeTarget, {
               weapon: fwpn, direction: ffwd, rolls,
-              calculateAttackDamage: _foeTarget.civilian ? QUARRY_BLOW : calculateAttackDamage,   // WATCH-PROTECTS: a townsperson falls to one landed blow, as DFU's civilian does to the player's
+              calculateAttackDamage: _foeTarget.civilian || _foeTarget.starWard ? QUARRY_BLOW : calculateAttackDamage,   // WATCH-PROTECTS: a townsperson falls to one landed blow, as DFU's civilian does to the player's; STAR5: a blow on a fallen star is one blow, its light's (scenes/starfall/starfallHost.js)
               // the TARGET's own pool owns its death chain: an
               // encounter foe routes to damageFoe, a watchman to the
               // guard pool's door (the host wires that through the
