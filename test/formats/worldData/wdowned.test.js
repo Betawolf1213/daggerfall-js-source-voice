@@ -63,16 +63,58 @@ test('WD-OWNED a town file rebuilds the author\'s file with no copy of its base 
   const { pack, want } = townPack();
   const maps = mapsOf();
   const p = openWorldDataPack(pack, { blocks: fakeBlocks(tinyRmb()) });
-  const parse = JSON.parse;
-  let roundTrips = 0;
-  JSON.parse = function (...a) { roundTrips++; return parse.apply(this, a); };
+  // a copy of the base - the round trip or WD-COPY's walk - reads every object of it; laid on as it is made, none is read
+  const parse = JSON.parse, keys = Object.keys;
+  let copied = 0;
+  JSON.parse = function (...a) { copied++; return parse.apply(this, a); };
+  Object.keys = function (...a) { copied++; return keys.apply(this, a); };
   let a;
-  try { a = p.rebuild('location-17-4.json', maps); } finally { JSON.parse = parse; }
+  try { a = p.rebuild('location-17-4.json', maps); } finally { JSON.parse = parse; Object.keys = keys; }
   assert.equal(canonicalJson(a), canonicalJson(want), 'the author\'s file');
-  assert.equal(roundTrips, 0, 'no JSON round trip: the town\'s base is laid on, and every value laid is a plain one');
+  assert.equal(copied, 0, 'the town\'s base laid on as it was made: nothing of it copied, and every value laid a plain one');
   const b = p.rebuild('location-17-4.json', maps);
   assert.notEqual(a, b, 'each rebuild its own object');
   assert.equal(maps.reads, 2, 'each off its own read of the town');
   a.Exterior.ExteriorData.BlockNames[0] = 'CHANGED.RMB';
   assert.equal(canonicalJson(b), canonicalJson(want), 'one rebuild\'s tree shares nothing with another\'s');
+});
+
+test('WD-OWNED (WD-COPY) a base laid on a copy is copied by a walk that writes what the JSON round trip writes - numbers it cannot write null and -0 as 0, an undefined left out of an object and null in an array, a toJSON, a non-plain object, a `__proto__` key and integer keys in their order - and throws where it throws (mutants: -0 kept; NaN kept; an undefined kept in an array; a non-plain object walked; a `__proto__` key walked; no depth bound)', () => {
+  const viaJson = (v) => JSON.parse(JSON.stringify(v));
+  const odd = [
+    { a: 1, b: [1, undefined, () => 1, Symbol('s'), NaN, -0, Infinity, null, 'x'], c: undefined, d: () => 0, e: { f: -0, g: [[], {}] } },
+    [new Date(0), new Map([[1, 2]]), new Uint8Array([1, 2]), Object.assign(Object.create(null), { z: 1, 2: 'two', 1: 'one' })],
+    JSON.parse('{"__proto__": {"x": 1}, "y": 2}'),
+    Object.assign([1, 2], { toJSON: () => 'arr' }),
+    { 10: 'a', 2: 'b', z: 1, y: 2, '-1': 3 },
+    Object.defineProperty({ a: 1 }, 'g', { enumerable: true, get: () => [undefined] }),
+    { s: '\ud800 lone', u: ' ' },
+    [1, , 3],   // eslint-disable-line no-sparse-arrays
+    { boxed: [new Number(5), new String('ab'), new Boolean(false)] },   // eslint-disable-line no-new-wrappers
+  ];
+  const keysDeep = (v) => (v !== null && typeof v === 'object' ? [Object.keys(v), ...Object.values(v).map(keysDeep)] : null);
+  for (const x of odd) {
+    const want = viaJson(x), got = patchJson(x, []);
+    assert.deepStrictEqual(got, want, JSON.stringify(want));
+    assert.deepEqual(keysDeep(got), keysDeep(want), 'every key in the round trip\'s order');
+  }
+  const cyc = { a: 1 };
+  cyc.self = cyc;
+  assert.throws(() => patchJson(cyc, []), TypeError, 'a cycle throws as the round trip does');
+  assert.throws(() => patchJson({ n: 1n }, []), TypeError, 'a bigint too');
+});
+
+test('WD-OWNED (WD-COPY) a plain tree is copied without the round trip - the walk, never JSON.stringify - and the copy shares nothing with it (mutant: the round trip for every tree)', () => {
+  const tree = locationToDfuJson(tinyTown());
+  const stringify = JSON.stringify;
+  let n = 0;
+  JSON.stringify = function (...a) { n++; return stringify.apply(this, a); };
+  let copy;
+  try { copy = patchJson(tree, [['s', ['Name'], 'Elsewhere']]); } finally { JSON.stringify = stringify; }
+  assert.equal(n, 0);
+  assert.equal(copy.Name, 'Elsewhere');
+  assert.equal(tree.Name, 'Tinyford', 'the base untouched');
+  copy.Exterior.ExteriorData.BlockNames[0] = 'X';
+  copy.Exterior.Buildings[0].Sector = 99;
+  assert.equal(canonicalJson(tree), canonicalJson(locationToDfuJson(tinyTown())), 'nothing of the base reached through the copy');
 });
