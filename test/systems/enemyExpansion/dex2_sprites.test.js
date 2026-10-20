@@ -139,6 +139,58 @@ test('DEX2 SetupDemoEnemy\'s renderer for every mobile: the ghost shader by a Sp
   assert.ok(ghostShaded({ archive: 273 }), 'and the classic ghosts\' archives stand as they did');
 });
 
+// AUDIT DEX B4: the ghost shader by a Spectral row is TWO sites of the billboard pass, not one predicate - the opaque
+// phase leaves a ghost-shaded batch to the blended one, and the blended phase sets uSpectral by it. Either reverted to
+// the archive (`isSpectralArchive(b.archive)`) survived every pin: the predicate's own test cannot see the loop.
+/** The billboard pass over a stub context (test/scenes/mac4_billboardkey.test.js's), recording each draw: the picture
+ *  bound, whether blending was on, and the uSpectral the program held. */
+async function billboardPass() {
+  const { Renderer } = await import('../../../src/render/renderer.js');
+  const U_SPECTRAL = { u: 'uSpectral' };
+  const draws = [];
+  let bound = null, blend = false, spectral = null;
+  const gl = new Proxy({}, {
+    get: (_, k) => {
+      if (typeof k !== 'string') return undefined;
+      if (k === 'bindTexture') return (target, tex) => { if (tex?.name) bound = tex.name; };
+      if (k === 'enable') return (cap) => { if (cap === 'BLEND') blend = true; };
+      if (k === 'disable') return (cap) => { if (cap === 'BLEND') blend = false; };
+      if (k === 'uniform1i') return (loc, v) => { if (loc === U_SPECTRAL) spectral = v; };
+      if (k === 'drawElements') return () => { draws.push({ tex: bound, blend, spectral }); };
+      if (k === k.toUpperCase()) return k;
+      return () => 0;
+    },
+  });
+  const r = Object.create(Renderer.prototype);
+  r.gl = gl;
+  r.textures = new Map(); r.emissionTextures = new Map();
+  r.stats = { draws: 0, programBinds: 0, vaoBinds: 0, texBinds: 0 };
+  r._pointLights = []; r._proj = new Float32Array(16); r._view = new Float32Array(16);
+  r._camPos = new Float32Array(3); r._indirect = new Float32Array(4); r._indirectColor = new Float32Array(3);
+  r._fogColor = new Float32Array(3); r._fogMode = 0; r._fogDensity = 0; r._fogRange = new Float32Array(2);
+  r._clockLit = false; r._bbFog = {}; r.bbProgram = {}; r.bbUSpectral = U_SPECTRAL;
+  return { r, draws };
+}
+
+test('DEX2 THE BILLBOARD PASS DRAWS A SPECTRAL ROW\'S MOBILE AS ITS GHOST (AUDIT DEX B4): a mod\'s wraith on an archive of its own is left out of the opaque phase and drawn once, blended, with uSpectral on; a General row\'s foe beside it drawn once, opaque, plain - by the pass itself (mutants: either site by the archive alone)', async (t) => {
+  const { setupFoeLook } = await import('../../../src/characters/enemy/foeLook.js');
+  const { installEnemyExpansion, _resetEnemyExpansion } = await import('../../../src/systems/enemyExpansion/dexInstall.js');
+  const { clearCustomEnemies } = await import('../../../src/characters/enemy/customEnemies.js');
+  const { _resetMintRowEditors } = await import('../../../src/characters/enemy/enemyEntity.js');
+  const { _resetFoeGhosts } = await import('../../../src/characters/enemy/foeLook.js');
+  t.after(() => { _resetFoeGhosts(); _resetEnemyExpansion(); clearCustomEnemies(); _resetMintRowEditors(); clearVendorTextures(); _resetDexSprites(); unregisterBillboardXml('daggerfall-enemy-expansion'); });
+  installEnemyExpansion({ on: true, log: () => {} });
+  const { r, draws } = await billboardPass();
+  r.textures.set('1622_0#0', { name: 'wraith' }); r.textures.set('1614_0#0', { name: 'hound' });
+  const at = (archive) => ({ archive, record: '0#0', size: { w: 1, h: 1 }, origin: [0, 0, -3], vao: {}, indexCount: 6 });
+  const wraith = setupFoeLook(at(1622), 273), hound = setupFoeLook(at(1614), 264);   // the Gloom Wraith (Spectral), the Hell Hound (General)
+  assert.deepEqual([wraith.ghost, hound.ghost], [true, undefined], 'the producer\'s shapes');
+  r.drawBillboards([wraith, hound], [1, 0, 0], [0, 1, 0]);
+  assert.deepEqual(draws.filter((d) => d.tex === 'wraith'), [{ tex: 'wraith', blend: true, spectral: 1 }], 'the wraith: once, blended, as the ghost');
+  assert.deepEqual(draws.filter((d) => d.tex === 'hound'), [{ tex: 'hound', blend: false, spectral: 0 }], 'the hound: once, opaque, plain');
+  assert.equal(draws.length, 2);
+});
+
 test('DEX2 the hosts wear the look where they make the batch, and the shadow pass casts no ghost (by source)', () => {
   for (const [f, n] of [['src/scenes/dungeonContext.js', 2], ['src/scenes/exteriorFoes.js', 1]]) {
     assert.equal(rd(f).match(/const batch = setupFoeLook\(renderer\.createBillboardBatch\(archive, 0, \{ w: 1, h: 1 \}, \[\[0, 0, 0\]\]\), (?:e\.)?mobileType\);/g)?.length, n, `${f}: its mobile arms`);

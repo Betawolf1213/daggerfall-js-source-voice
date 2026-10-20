@@ -78,5 +78,25 @@
   "tests": [
    "test/systems/enemyExpansion/dex2_sprites.test.js"
   ]
+ },
+ {
+  "name": "DEX2-the-opaque-phase-skips-by-archive",
+  "file": "src/render/renderer.js",
+  "old": "      if (ghostShaded(b) || b.conceal) continue;",
+  "new": "      if (isSpectralArchive(b.archive) || b.conceal) continue;",
+  "why": "AUDIT DEX B4: a mod's spectral mobile, on an archive of its own, drawn in the opaque phase as well as the blended",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ },
+ {
+  "name": "DEX2-the-blended-uniform-by-archive",
+  "file": "src/render/renderer.js",
+  "old": "        gl.uniform1i(this.bbUSpectral, ghostShaded(b) ? 1 : 0);",
+  "new": "        gl.uniform1i(this.bbUSpectral, isSpectralArchive(b.archive) ? 1 : 0);",
+  "why": "AUDIT DEX B4: a mod's spectral mobile blended without the ghost shader (uSpectral off)",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
  }
 ]
