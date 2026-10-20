@@ -12,12 +12,12 @@
   {
     "name": "FB1020D-news-opener-always",
     "file": "src/net/eliteGates/egBrain.js",
-    "old": "o: E.length === 1 ? E[0][1].name ?? '' : B.o ?? ''",
+    "old": "o: opener || !E.length ? B.o ?? '' : E[0][1].name ?? ''",
     "new": "o: B.o ?? ''",
     "tests": [
       "test/net/eliteGates/fb1020d_loneherald.test.js"
     ],
-    "why": "the opener named for a company of one it is not in"
+    "why": "the opener named for a company it is not in (alone or not)"
   },
   {
     "name": "FB1020D-news-living-counted",
@@ -148,5 +148,75 @@
       "test/net/eliteGates/fb1020d_loneherald.test.js"
     ],
     "why": "a seal's post never says alone"
+  },
+  {
+    "name": "FB1020D-news-lone-only",
+    "file": "src/net/eliteGates/egBrain.js",
+    "old": "o: opener || !E.length ? B.o",
+    "new": "o: E.length !== 1 ? B.o",
+    "tests": [
+      "test/net/eliteGates/fb1020d_loneherald.test.js"
+    ],
+    "why": "AUDIT FB1020d L1-1: an opener who never stepped in leading a company of two or more"
+  },
+  {
+    "name": "FB1020D-news-home-not-counted",
+    "file": "src/net/eliteGates/egBrain.js",
+    "old": "const E = entrants(B), opener",
+    "new": "const E = entrants(B).filter(([, m]) => !m.home), opener",
+    "tests": [
+      "test/net/eliteGates/fb1020d_loneherald.test.js"
+    ],
+    "why": "AUDIT FB1020d L2-2: a member gone home not counted"
+  },
+  {
+    "name": "FB1020D-news-forsaken-not-counted",
+    "file": "src/net/eliteGates/egBrain.js",
+    "old": "const E = entrants(B), opener",
+    "new": "const E = entrants(B).filter(([, m]) => !m.forsaken), opener",
+    "tests": [
+      "test/net/eliteGates/fb1020d_loneherald.test.js"
+    ],
+    "why": "AUDIT FB1020d L2-2: a forsaken member not counted"
+  },
+  {
+    "name": "FB1020D-hud-called-after-wake",
+    "file": "src/ui/eliteGates/egHud.js",
+    "old": "const co = E.wk > 0 ? E.co.filter((c) => c[5] === 1) : E.co;",
+    "new": "const co = E.co;",
+    "tests": [
+      "test/net/eliteGates/fb1020d_loneherald.test.js"
+    ],
+    "why": "AUDIT FB1020d L1-3: the tracker counting the called company once the door is shut"
+  },
+  {
+    "name": "FB1020D-hud-entrants-before-wake",
+    "file": "src/ui/eliteGates/egHud.js",
+    "old": "const co = E.wk > 0 ? E.co.filter((c) => c[5] === 1) : E.co;",
+    "new": "const co = E.co.filter((c) => c[5] === 1);",
+    "tests": [
+      "test/net/eliteGates/fb1020d_loneherald.test.js"
+    ],
+    "why": "AUDIT FB1020d L1-3: the gather forgetting the called who may yet come"
+  },
+  {
+    "name": "FB1020D-hud-rows-called",
+    "file": "src/ui/eliteGates/egHud.js",
+    "old": "egCompanyRows({ ...E, co })",
+    "new": "egCompanyRows(E)",
+    "tests": [
+      "test/net/eliteGates/fb1020d_loneherald.test.js"
+    ],
+    "why": "AUDIT FB1020d L1-3: a row for a member who never came"
+  },
+  {
+    "name": "FB1020D-letter-says-company",
+    "file": "server-account/src/egHonours.js",
+    "old": "'You were the first ever to take Redoubt 10",
+    "new": "'Your company was the first ever to take Redoubt 10",
+    "tests": [
+      "test/net/eliteGates/egz_recap.test.js"
+    ],
+    "why": "AUDIT FB1020d L1-4: First of the Spire's letter calling one a company"
   }
 ]

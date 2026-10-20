@@ -489,9 +489,9 @@ function heraldOwe(B, now, ev) {
 /** The company's entrants, in its order: `[sub, m]`. */
 const entrants = (B) => B.co.map((c) => [c.sub, B.mem[c.sub]]).filter(([, m]) => m?.in);
 /** FIELD BUGS 2026-10-20d LONE-HERALD: the company a Redoubt's news names - its entrants (`n`, the Descent's count, section 20)
- *  and the name its post leads with (`o`): the opener's for a company, the one member's for a company of one, who need not be
- *  the opener (an opener who never stepped in - AUDIT EG IV lane3 #11). */
-const heraldCompany = (B) => { const E = entrants(B); return { n: E.length, o: E.length === 1 ? E[0][1].name ?? '' : B.o ?? '' }; };
+ *  and the name its post leads with (`o`): the opener's where the opener entered, else the first entrant's - an opener who never
+ *  stepped in (AUDIT EG IV lane3 #11) is not of the company that went, alone or not (AUDIT FB1020d L1-1). */
+const heraldCompany = (B) => { const E = entrants(B), opener = E.some(([sub]) => sub === B.s); return { n: E.length, o: opener || !E.length ? B.o ?? '' : E[0][1].name ?? '' }; };
 
 /**
  * A MEMBER FALLS (section 16.5): a death, or EG_ABSENT_TRIAL_MS gone in a trial. Their Reliquaries are lost; they become a

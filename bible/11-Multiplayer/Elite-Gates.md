@@ -3018,18 +3018,28 @@ heralds, it posts to the gate's webhook and falls back to the gate's role, pingi
 
 An opening is never heralded: a company's breach is its own.
 
-**LONE-HERALD (FIELD BUGS 2026-10-20d, `01-Overview/bugs/Field-Bugs-2026-10-20d.md`): a company of one is posted as
-one.** A player took Redoubt 20 alone and read the channel's *<name>'s company took Redoubt 20* as the Spire counting
-them a company. A Redoubt's news carried no size, so the post gave one member the words it gives eight. The news now
-says the company's entrants (`n` - the Descent's count, "Who counts" above: every member admitted, earning or not) and,
-for a company of one, its member's name in the opener's place, since an opener who never stepped in is not the one who
-went (`net/eliteGates/egBrain.js` `heraldCompany`). The hub's read keeps the size (`validEgHeraldTell`, 0 when a room
-before this relay did not say it), its reckoning hands it on, and three posts word a company of one alone: the tenth
-Redoubt's (*Mara took Redoubt 20 of the Battlespire (Hall 100) alone in 40:00.*), First of the Spire's (*Mara is the
-first ever to take Redoubt 10 of the Battlespire (Hall 50), alone, in 1:17:40.*, no list of one name) and a seal's
-(*Mara is the first through, alone.*). Two or more, and news with no size, keep *<opener>'s company*. Unchanged: a
-company of one is still a company to the law (section 14, THE ERRAND FLOOR), and the boards rank it as they did - a
-breach begun past Hall 1 is on the Depths, never the Descent's Alone. Relay `world235`.
+**LONE-HERALD (FIELD BUGS 2026-10-20d, `01-Overview/bugs/Field-Bugs-2026-10-20d.md`; audited, AUDIT FB1020d): a company
+of one is posted as one.** A player says they took Redoubt 20 alone and that the Spire counted it a company. The channel's
+post for every tenth Redoubt was *<opener>'s company took Redoubt N*: a Redoubt's news carried no size, so one member got
+the words eight do. The news now says the company's entrants (`n` - the Descent's count, "Who counts" above: every member
+admitted, earning or not). It leads with an entrant's name, the opener's where the opener entered and else the first who
+did, since an opener who never stepped in is not of the company that went (`net/eliteGates/egBrain.js` `heraldCompany`;
+AUDIT FB1020d L1-1 for two or more). The hub's read keeps the size (`validEgHeraldTell`, 0 when a room before this relay
+did not say it) and its reckoning hands it on. Three posts word a company of one alone:
+- the tenth Redoubt's: *Mara took Redoubt 20 of the Battlespire (Hall 100) alone in 40:00, from Redoubt 10.*
+- First of the Spire's: *Mara is the first ever to take Redoubt 10 of the Battlespire (Hall 50), alone, in 1:17:40.*,
+  with no list of one name;
+- a seal's: *Mara is the first through, alone.*
+
+Two or more, and news with no size, keep *<first entrant>'s company*. The tracker counts the same company (AUDIT FB1020d
+L1-3, `ui/eliteGates/egHud.js` `egHudModel`): the whole called company until the first wake, then its entrants alone,
+the gather's rule (`egGatherOf`), so a called member who never came is no row and no *of N*. First of the Spire's letter
+says *You were the first ever...* (L1-4). Unchanged:
+- a company of one is still a company to the law (section 13.2, THE ERRAND FLOOR; section 6.1);
+- the boards rank as they did - a breach begun past Hall 1 is on the Depths, never the Descent's Alone, and a companion
+  who came and went still makes a company of two.
+
+Relay `world235`.
 
 **EG-E2 record (2026-10-12): the feats, the Annals, the honours and the boards.** The account's half of section 19's
 honours and this section's boards, in `server-account/src/egHonours.js` (claim-time logic apart from `claimEg`, one seam
@@ -6229,7 +6239,8 @@ recap's board line, the first-time lines once an account, and First of the Spire
   - an account `EG_FIRST_HANDLES` names is written its letter at its next balance's read, once (0093's one-a-send
     index);
   - the words are fixed, the developers', with no item: *Your company was the first ever to take Redoubt 10 of the
-    Battlespire. The Spire remembers.* The title and Firstlight are the account's by the list;
+    Battlespire. The Spire remembers.* (*You were the first ever...* since AUDIT FB1020d L1-4: the first company came
+    alone, `01-Overview/bugs/Field-Bugs-2026-10-20d.md`). The title and Firstlight are the account's by the list;
   - `post.js`, `net/postLaw.js` and the Accounts arc's SERVER-POST record now say so.
 
 **Where it departs from this page, said plainly.**
