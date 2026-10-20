@@ -263,7 +263,8 @@ export const HIT_KINDS = Object.freeze({ Melee: 0, Shaft: 1, Spell: 2 });
 /** The health fractions he changes phase at, and how long he stands shielded when he does. */
 export const PHASE_AT = Object.freeze([0.66, 0.33]);
 export const SHIELD_MS = 3000;
-/** Phase three's wind-ups, shortened by a fifth. */
+/** Phase three's wind-ups, shortened by a fifth (AUDIT WB14 PLAY-5: never the Chains' - a run from his far side at the
+ *  ring, with a reaction's 400 ms, came short of their hold in phase three; and never Dagon's or the bound's). */
 export const PHASE3_WINDUP = 0.8;
 /** WBX5 (2026-09-26, Mac: "The boss phases need to be more defined and more detailed mechanics"): EACH PHASE HAS A NAME
  *  AND A SHAPE. The Warden fights with his blade and his weight alone (Cleave, Ground Slam, Charge); the Burning Court is
@@ -355,7 +356,7 @@ export const ATTACKS = Object.freeze({
   // within its reach of a branded one, and the branded take `selfPct` and `selfBase` - the branded run clear of the rest
   brand: Object.freeze({ id: 12, key: 'brand', get name() { return t('gate.attack.brand', 'Brand of Dagon'); }, windup: 5000, active: 200, recover: 900, shape: 'brand', r: 5, max: 3, pct: 0.40, base: 10, selfPct: 0.15, selfBase: 4, el: 'fire', aim: 'players', phase: 2, range: 40, w: 1, minGap: 0, cd: 28_000, nMin: 2 }),
   // SHARED TORMENT: a gold ring under one fighter, following them - its blow shared among everyone inside it as it lands
-  torment: Object.freeze({ id: 13, key: 'torment', get name() { return t('gate.attack.torment', 'Shared Torment'); }, windup: 5000, active: 200, recover: 900, shape: 'torment', r: 4, pct: 0.80, base: 20, el: 'fire', aim: 'players', phase: 2, range: 40, w: 1, minGap: 0, cd: 28_000, nMin: 2 }),
+  torment: Object.freeze({ id: 13, key: 'torment', get name() { return t('gate.attack.torment', 'Shared Torment'); }, windup: 5000, active: 200, recover: 900, shape: 'torment', r: 4, pct: 0.80, base: 20, el: 'fire', aim: 'players', phase: 2, range: 40, w: 1, minGap: 0, cd: 28_000, nMin: 3 }),   // AUDIT WB14 (PLAY-3): three to share it - between two it was half a fighter's health each, unanswerable, and a duo died most
   // THE SCYTHING WHEEL: `n` blades from his feet, `len` long and `width` wide, turning about him `spin` radians a second over
   // its whole span (`active`), striking whoever a blade passes over - once
   wheel: Object.freeze({ id: 14, key: 'wheel', get name() { return t('gate.attack.wheel', 'Scything Wheel'); }, windup: 2200, active: 6000, recover: 900, shape: 'wheel', n: 2, width: 3.5, len: 16, spin: 0.36, pct: 0.40, base: 12, el: null, aim: 'self', phase: 3, range: 40, w: 1, minGap: 0, cd: 30_000 }),
@@ -411,11 +412,15 @@ export const CROSS_WARD_MAX_MS = 45_000;
 // two pools (each a fraction of his whole, so a share in or out moves them with him); a half whose pool is spent KNEELS
 // (its stun - no step, no blow, no blow taken) SUNDER_PAIR_MS, and rises with SUNDER_RISE of its pool unless the other is
 // brought down first - then they REJOIN at the first court's heart and he stands whole at SUNDER_LAST for his last phase.
+// AUDIT WB14 (PLAY-1): it rises LEVEL WITH THE OTHER - SUNDER_RISE of its pool at most, the other half's at least
+// (SUNDER_RISE_MIN of a pool under it): risen with more than the other side could deal in the window, a court whose sides
+// struck out of step knelt and rose for ever (at even rates, offsets of 24-28 s never rejoined).
 // A standing half with nobody before it SUNDER_LONE_MS mends SUNDER_MEND of its pool a second (the split layout alone).
 export const SUNDER_SPLIT_MIN = 4;
 export const SUNDER_LAST = 0.26;
 export const SUNDER_PAIR_MS = 20_000;
 export const SUNDER_RISE = 0.3;
+export const SUNDER_RISE_MIN = 0.05;
 export const SUNDER_LONE_MS = 10_000;
 export const SUNDER_MEND = 0.01;
 /** The halves by number (the `hit` word's `b`, and every word of a half's): the Blade, the Flame. */
@@ -611,6 +616,7 @@ const hisCourt = (f) => COURTS[Math.max(0, Math.min(COURTS.length - 1, f.court |
  *   none, a night without one
  */
 export function newFight(day, now, wrathAt, boss, md = null, pt = null, ti = null) {
+  const night = validGatePortents(pt) ? [...validGatePortents(pt)] : null;   // AUDIT WB14 (LAW-9): the portents as kept are the ones the fight is built on
   return {
     v: 1, day, boss, startedAt: now, wrathAt, phase: 1, shieldUntil: 0, hp: 0, max: 0,
     /** WB8b: the Warden's marks this fight is fought under (net/gate/gateLaw.js gateModsOf - the relay's draw at the fight's
@@ -618,7 +624,7 @@ export function newFight(day, now, wrathAt, boss, md = null, pt = null, ti = nul
     md: validGateMods(md) ?? null,
     /** WB14b: the night's portents (net/gate/gateLaw.js gatePortentsOf - the relay's draw at the fight's birth), or null for
      *  none - its floor plan (nightPlan) and its waves, halves and captive; said in every state */
-    pt: validGatePortents(pt) ? [...validGatePortents(pt)] : null,
+    pt: night,
     /** AUDIT PRE-MERGE 0929 W1-1: the feedings a Soul-Hungry Warden has had this fight (at most GATE_FEEDS_MAX) - a
      *  fight checkpointed before it counts from none */
     feeds: 0,
@@ -635,12 +641,12 @@ export function newFight(day, now, wrathAt, boss, md = null, pt = null, ti = nul
     lg: null,
     /** WB14c: the Vanguard on a night that holds it (newVanguard), null on any other; and when his opening began - the
      *  fight's birth, or the first fighter in his court after the Vanguard broke (null until then) */
-    vg: hasPortent(pt, 'vanguard') ? newVanguard() : null,
-    openAt: hasPortent(pt, 'vanguard') ? null : now,
+    vg: hasPortent(night, 'vanguard') ? newVanguard() : null,
+    openAt: hasPortent(night, 'vanguard') ? null : now,
     /** WB14e: how long after his wake the Tithe-Imp rises (null, none tonight), and its record once it has (`tt`) */
     ti: Number.isSafeInteger(ti) && ti >= 0 ? ti : null, tt: null,
     /** WB14f: the Captive on a night that holds him (newCaptive), null on any other */
-    cp: hasPortent(pt, 'captive') ? newCaptive() : null,
+    cp: hasPortent(night, 'captive') ? newCaptive() : null,
     /** WBX5: a phase's turn still to come - PHASE_TURN's entries after the one in flight - and the next of them, begun
      *  when the breath after the last is over */
     queue: [], pending: null,
@@ -685,7 +691,7 @@ export function joinFight(f, sub, name, lv, now, admits, present = null) {
   if (f.fell || f.wrath || !admits) return false;
   if (Object.keys(f.players).length >= GATE_FIGHTERS_MAX && !freeSeat(f, present)) return false;
   const level = clampLv(lv);
-  const share = BOSS_TTK_S * dpsRef(level) * profileOf(f).hpX;   // WB8b: Colossal - each share a quarter more
+  const share = BOSS_TTK_S * dpsRef(level) * profileOf(f).hpX * (f.vg ? VG_SHARE_X : 1);   // WB8b: Colossal - each share a quarter more; AUDIT WB14 (PLAY-4): a Vanguard night's less its Vanguard's
   const frac = standsAt(f);
   // AUDIT WB A8: a newcomer to a fight already bled comes with an EMPTY bucket - its share joins the health at the
   // fraction he stands at, and a full bucket on top of it let a string of late joiners each spend BUCKET_DEPTH_X
@@ -747,6 +753,7 @@ export function applyHit(f, sub, d, r, pose, now, seq = null, o = {}) {
   const p = f.players[sub];
   if (!p || f.fell || f.wrath || !Number.isFinite(d) || !(d > 0)) return 0;
   if (now >= f.wrathAt) return 0;   // AUDIT WBX R6: midnight is the Wrath's, whether or not a beat has said so yet
+  if (!(f.max > 0)) return 0;   // AUDIT WB14 (LAW-3): every share out - nothing to strike (a half's pool is a share of a whole of none)
   // WB14d: SUNDERED, a blow names the half it lands on (the `hit` word's `b` - the Blade's unless the Flame's), and each is
   // its own body: its ward, its court, its size, its pool; a half kneeling takes nothing
   const half = f.sd ? (o?.b === HALF.flame ? HALF.flame : HALF.blade) : null;
@@ -768,7 +775,7 @@ export function applyHit(f, sub, d, r, pose, now, seq = null, o = {}) {
   const ref = dpsRef(p.lv);
   p.bucket = Math.min(BUCKET_DEPTH_X * ref, p.bucket + (Math.max(0, now - p.bucketAt) / 1000) * BUCKET_RATE_X * ref);
   p.bucketAt = now;
-  const want = d * P.hitX * (now < (f.stunUntil ?? 0) ? STUN_HIT_X : 1);   // WB9c: a stunned Warden takes it heavier
+  const want = d * P.hitX * (!H && now < (f.stunUntil ?? 0) ? STUN_HIT_X : 1);   // WB9c: a stunned Warden takes it heavier - AUDIT WB14 (LAW-1): whole (a kneeling Blade's stun is his alone: the Flame takes no more for it)
   const got = Math.max(0, Math.min(want, HIT_CAP_X * ref, p.bucket, f.hp, H ? H.h * f.max : Infinity));   // WB14d: never past the half's pool
   p.bucket -= got;
   p.clipped += want - got;   // the caps' clipping - what his ward took off is his, not a cap's
@@ -776,7 +783,7 @@ export function applyHit(f, sub, d, r, pose, now, seq = null, o = {}) {
   if (got > 0) { B.threat[sub] = (B.threat[sub] ?? 0) + got; p.hits = (p.hits ?? 0) + 1; p.best = Math.max(p.best ?? 0, got); }   // GATE-UX: the chart's blows and best; WB14d: each half's threat its own
   f.hp -= got;
   if (H) { H.h -= got / f.max; if (H.h <= 1e-9) kneel(f, half, now); }   // WB14d: the half's pool, and its kneel as it is spent
-  if (f.hp <= 1e-6 && f.max > 0) {
+  if (f.hp <= 1e-6 && f.max > 0 && !f.sd) {   // AUDIT WB14 (LAW-3): sundered he never falls - his last phase is the Rejoining's
     settleAt(f, now);   // AUDIT WBX F3: where he fell, not where his last beat left him
     f.hp = 0;
     f.fell = { at: now, top: topDealers(f, 3), n: Object.keys(f.players).length, dm: damageChart(f) };   // GATE-UX: and every fighter's part, ranked
@@ -898,7 +905,7 @@ export const earnedBy = (f, sub) => (f.players[sub]?.dealt >= RECEIPT_SHARE * (f
 export const receiptPortents = (f) => portentBits((f?.pt ?? []).filter((id) => id !== 'captive' || f.cp?.f > 0));
 
 /** The attack's wind-up in this phase (WB9c: Dagon's are never shortened; WB9b: nor the bound - its flight is fixed). */
-export const windupOf = (atk, phase) => (phase >= 3 && atk.id !== ATTACKS.wrath.id && atk.id !== ATTACKS.reckon.id && atk.id !== ATTACKS.cross.id ? Math.round(atk.windup * PHASE3_WINDUP) : atk.windup);
+export const windupOf = (atk, phase) => (phase >= 3 && atk.id !== ATTACKS.wrath.id && atk.id !== ATTACKS.reckon.id && atk.id !== ATTACKS.cross.id && atk.id !== ATTACKS.chains.id ? Math.round(atk.windup * PHASE3_WINDUP) : atk.windup);
 
 /** Pick who he goes at: THREAT_PICK of the time (WB8b: his profile's - the Grudge-Bearer's is more) the living player
  *  with the most threat, else a random living one. */
@@ -925,9 +932,11 @@ export const REPEAT_WALK_MS = 6000;
  *  times running the last was used): nothing, and he walks at his target. WB14a: an attack with a cooldown (`cd`) is
  *  open only with the fight's own word (`ctx`: `now`, when each was last used - `used`, by key - his wake, `woke`, and
  *  `n`, the living challengers in his court) - its cooldown passed since its last use (the first since his wake: he
- *  never opens on one), and `nMin` of them at least. */
+ *  never opens on one), and `nMin` of them at least. AUDIT WB14 (LAW-6): `kit`, sundered, the half's own keys. */
 export function attacksFor(phase, gap, near, lastA = -1, P = BASE_PROFILE, run = 1, ctx = null) {
   const out = CHOSEN.filter((a) => P.atk[a.key].phase <= phase && gap <= a.range && (a.minGap <= 0 || gap >= a.minGap) && !(a === ATTACKS.slam && near < 1)   // a body inside his (a negative gap) is still in reach
+    && (!ctx?.kit || ctx.kit.includes(a.key))   // AUDIT WB14 (LAW-6): a half's own kit (`kit`), before the run's law below
+    && !(a === ATTACKS.chains && gap + P.bossR >= CHAIN_HOLD_M)   // AUDIT WB14 (LAW-10): never at one the chain could not hold (Colossal's body is larger)
     && (!/** @type {GateAttack} */ (a).cd || cooled(a, ctx)));
   const fresh = out.filter((a) => a.id !== lastA);
   return fresh.length ? fresh : run >= REPEAT_MAX ? [] : out;
@@ -953,6 +962,7 @@ export function stepBrain(f, now, bodies, rng) {
   const out = [];
   const dt = Math.min(STEP_MAX_MS, Math.max(0, now - f.lastTickAt));
   f.lastTickAt = now;
+  payTithe(f, now, rng, out);   // AUDIT WB14 (LAW-5): a tithe owed is paid before anything - the kill and the Wrath included
   if (f.fell || f.wrath) return out;
   const P = profileOf(f);   // WB8b: the numbers his marks move
   // a fight checkpointed before WB9 wakes in the first court with nothing crossed, nothing grown
@@ -1153,7 +1163,7 @@ function bodyBeat(f, now, here, bodies, rng, out, P) {
       const gap = dist(target.x, target.z, f.pos[0], f.pos[1]) - P.bossR;
       const near = here.filter((b) => dist(b.x, b.z, f.pos[0], f.pos[1]) <= P.atk.slam.r).length;   // WB8b: Colossal's slam reaches further
       if (now - (f.freeAt ?? 0) >= REPEAT_WALK_MS) f.runA = 0;   // WB13f: a walk-in that long breaks the run
-      const can = inKit(f, attacksFor(f.phase, gap, near, f.lastA, P, f.runA, { now, used: f.used, n: here.length, woke: Number.isFinite(openedAt(f)) ? openedAt(f) + OPENING_MS : -Infinity }));   // WB14d: a half's from its kit; WB13f: never thrice running - he walks in; WB14a: the new six by their cooldowns
+      const can = attacksFor(f.phase, gap, near, f.lastA, P, f.runA, { now, used: f.used, n: here.length, woke: Number.isFinite(openedAt(f)) ? openedAt(f) + OPENING_MS : -Infinity, kit: kitOf(f) });   // WB14d: a half's from its kit (AUDIT WB14 LAW-6: before the run's law, so a half repeats as he does); WB13f: never thrice running - he walks in; WB14a: the new six by their cooldowns
       if (can.length) { f.move = null; begin(f, chooseAttack(can, rng), now, target, here, rng, out); }
       else walkToward(f, target, now, out);
     } else if (f.move) {
@@ -1254,7 +1264,7 @@ function begin(f, atk, now, target, bodies, rng, out, point = null, echo = false
   } else if (atk === ATTACKS.unmake) tg = [[C[0], C[1]]];   // WB14a: its wedges about his court's heart
   if (marked) tg = marked.map((b) => [b.x, b.z]);
   const pk = marked && marked.length && marked.every((b) => typeof b.id === 'string' && b.id) ? marked.map((b) => b.id) : null;
-  if (/** @type {GateAttack} */ (atk).cd) (f.used ??= {})[atk.key] = now;   // WB14a: its cooldown from this word
+  if (/** @type {GateAttack} */ (atk).cd && !echo) (f.used ??= {})[atk.key] = now;   // WB14a: its cooldown from this word (AUDIT WB14 LAW-11: the first cast's - an echo is the same Unmaking)
   f.atk = { i: ++f.seq, a: atk.id, at, x: f.pos[0], z: f.pos[1], yw: f.yaw, tg, until: at + atk.active + atk.recover, ...(pk ? { pk } : {}), ...(target ? { who: target.sub } : {}), ...(echo ? { echo: true } : {}), ...(Number.isInteger(to) ? { to } : {}) };
   out.push({ k: 'atk', ...atkFrame(f.atk) });
   if (atk === ATTACKS.reckon) growCrystals(f, now, bodies, rng, out);   // WB9c: the crystals rise as he calls it
@@ -1370,7 +1380,7 @@ export const HOST_KINDS = Object.freeze([
   // WB14e (bible/11-Multiplayer/Breach-Portents.md section 9): 6 the TITHE-IMP - an Imp at 1.3 of its size, burning gold,
   // carrying the coven's tithe to its master: it runs from the nearest challenger, strikes nobody, and dives into the fire
   // TITHE_LIFE_MS after it rose; caught, its tithe is theirs who struck it. Any night, one in five, unannounced
-  Object.freeze({ id: 6, key: 'tithe', r: 0.65, h: 1.95, speed: 6.2 }),
+  Object.freeze({ id: 6, key: 'tithe', r: 0.65, h: 1.95, speed: 6.8 }),   // AUDIT WB14 (PLAY-6): a chase - at 6.2 a lone chaser caught it in 5 s of its 22
   // WB14f (section 7): 7 the GAOLER - WB11's Ward-Bearer's body and Pulse under another name, in the Captive's Pen: the
   // knight's chain held while one stands, and a Pulse at whoever comes near (a Captive night is never a Legion-Lord's)
   Object.freeze({ id: 7, key: 'gaoler', r: 0.6, h: 2.2, speed: 0 }),
@@ -1421,8 +1431,9 @@ export const bearerCountFor = (n) => Math.max(2, Math.min(4, 2 + Math.floor(Math
 export const HARRIERS_MAX = 6;
 export const SAPPERS_MAX = 6;
 /** The most of his host standing at once. The kinds never stand together - each is its phase's or its new court's, and
- *  every one crumbles at a phase's turn - so it is the most of one kind (net/wire.js GATE_HOST_MAX bounds every list on
- *  the wire - pinned over it). */
+ *  every one crumbles at a phase's turn (the Captive's gaolers excepted: the Pen is no court of his) - so it is the most of
+ *  one kind (net/wire.js GATE_HOST_MAX bounds every list on the wire - pinned over it, with room for a Tithe-Imp beside
+ *  the gaolers or the Legion-Lord's host). */
 /** WB14c: the most of the Vanguard standing at once (its waves and the Markynaz's Imps). */
 export const VG_STANDING_MAX = 12;
 export const HOST_STANDING_MAX = Math.max(HARRIERS_MAX, SAPPERS_MAX, bearerCountFor(Infinity), VG_STANDING_MAX);   // WB14c: the Vanguard's twelve
@@ -1543,7 +1554,7 @@ function raiseHost(f, k, spots, m, now, out) {
   const H = f.lg, a = [];
   for (const [x, z] of spots) {
     const i = ++H.n;
-    H.ads.push({ i, k, h: m, m, x, z, mv: null, atk: null, tg: null, tgAt: 0, up: now + HOST_RISE_MS[k], next: k === HOST.bearer ? now + BEARER_PULSE_FIRST_MS + a.length * BEARER_PULSE_STAGGER_MS : now });
+    H.ads.push({ i, k, h: m, m, x, z, mv: null, atk: null, tg: null, tgAt: 0, up: now + HOST_RISE_MS[k], next: k === HOST.bearer || k === HOST.gaoler ? now + BEARER_PULSE_FIRST_MS + a.length * BEARER_PULSE_STAGGER_MS : now });   // AUDIT WB14 (FIX-1): a gaoler's first Pulse the Ward-Bearer's, staggered as theirs
     a.push([i, x, z]);
   }
   if (!a.length) return;
@@ -1696,6 +1707,11 @@ export const VG_STAGES = Object.freeze([
   Object.freeze({ floor: FLOOR.bridgehead, walk: WALKWAY.muster, waves: Object.freeze([vgWave([HOST.harrier], 7), vgWave([HOST.harrier, HOST.brute], 9), vgWave([HOST.brute, HOST.caster], 10)]) }),
   Object.freeze({ floor: FLOOR.muster, walk: WALKWAY.warden, waves: Object.freeze([vgWave([HOST.caster, HOST.harrier], 10), vgWave([HOST.brute, HOST.caster, HOST.harrier], 11), vgWave([HOST.harrier], 14, true)]) }),
 ]);
+/** AUDIT WB14 (PLAY-4): ON A VANGUARD NIGHT HIS HEALTH IS LESS ITS VANGUARD'S - the waves' team seconds (61) off his
+ *  BOSS_TTK_S (240), each share that much smaller: the Vanguard's two and a half minutes left a lone fighter at half the
+ *  reference short of his midnight on two nights in six, and a Dire Breach on three. */
+export const VG_TEAM_S = VG_STAGES.reduce((s, S) => s + S.waves.reduce((q, W) => q + W.s, 0), 0);
+export const VG_SHARE_X = (BOSS_TTK_S - VG_TEAM_S) / BOSS_TTK_S;
 /** HIS PATIENCE: a Vanguard still standing VG_PATIENCE_MS after its first wave, he throws a Meteor of Oblivion from his
  *  court onto a living fighter on the platforms every VG_PATIENCE_EVERY_MS - a clock that keeps a stalled court moving. */
 export const VG_PATIENCE_MS = 240_000;
@@ -1715,7 +1731,7 @@ export const VG_WORD = Object.freeze({ wave: 0, clear: 1, lord: 2, broken: 3, pa
 /** A Vanguard night's record: its stage (0 the Bridgehead, 1 the Muster, VG_STAGES.length broken), the waves risen in it,
  *  when the next is due, when the last rose and how many, when the first of all rose, his next patience, the Markynaz's
  *  number and his next call, and whether his opening has begun. */
-export const newVanguard = () => ({ s: 0, w: 0, due: 0, rose: 0, last: 0, first: 0, pat: 0, lord: 0, call: 0, opened: false });
+export const newVanguard = () => ({ s: 0, w: 0, due: 0, rose: 0, last: 0, first: 0, pat: 0, said: false, lord: 0, call: 0, opened: false });   // AUDIT WB14 (RECORD-9): `said`, his patience's word
 /** When his opening began (null while his Vanguard holds - a fight checkpointed before WB14c: its birth). */
 export const openedAt = (f) => (f?.vg && !f.vg.opened ? null : f?.openAt ?? f?.startedAt ?? null);
 /** Does a Vanguard still hold him? */
@@ -1786,13 +1802,20 @@ function stepVanguard(f, now, bodies, rng, out, P) {
   if (!V || V.opened || f.fell || f.wrath) return false;
   const H = (f.lg ??= newHost());
   for (const a of H.ads) if (a.mv) { const [x, z] = hostAt(a, now); a.x = x; a.z = z; }
-  if (f.atk && now >= f.atk.until) { f.atk = null; f.nextAt = now + BREATH_MS; }   // his patience's meteor spent
+  if (f.atk && now >= f.atk.until) {   // his patience's meteor spent
+    const was = f.atk;
+    f.atk = null; f.nextAt = now + BREATH_MS;
+    // AUDIT WB14 (LAW-7): ECHOING's law here too - it falls again a breath on, on the one it fell for where they stand now
+    // on the platforms, else where the first fell (bodyBeat's echo; an echo has none of its own)
+    if (P.echo && !was.echo && ATTACK_BY_ID[was.a] === ATTACKS.meteor) f.pending = { a: 'meteor', echo: true, who: was.who ?? null, point: was.tg?.[0] ?? null };
+  }
   const living = bodies.filter((b) => !b.dead && f.players[b.sub]);
   if (V.s >= VG_STAGES.length) {
     if (!living.some((b) => inCourt(b.x, b.z, FLOOR.first, POSE_SLACK))) return true;
     // broken, and a challenger before him: his opening begins - his wake OPENING_MS from now, said at once
     V.opened = true;
     f.openAt = now; f.nextAt = now + OPENING_MS; f.lastStateAt = -Infinity;
+    if (f.pending?.echo) f.pending = null;   // AUDIT WB14 (LAW-7): an echo of his patience is the platforms', never his court's
     out.push({ k: 'vgw', e: VG_WORD.open, s: V.s, w: 0, at: now });
     return false;
   }
@@ -1831,12 +1854,18 @@ function stepVanguard(f, now, bodies, rng, out, P) {
     }
   }
   // his patience: a meteor from his court on a fighter out on the platforms
+  const out1 = V.first ? living.filter((b) => VG_STAGES.some((g) => inCourt(b.x, b.z, g.floor, POSE_SLACK))) : [];
+  if (f.pending?.echo && !f.atk && now >= f.nextAt) {   // AUDIT WB14 (LAW-7): its echo
+    const e = f.pending, who = out1.find((b) => b.sub === e.who) ?? null, at = who ? [who.x, who.z] : e.point;
+    f.pending = null;
+    if (at) begin(f, ATTACKS.meteor, now, null, out1, rng, out, at, true);
+  }
   if (V.first && now >= V.pat && !f.atk) {
-    const out1 = living.filter((b) => VG_STAGES.some((g) => inCourt(b.x, b.z, g.floor, POSE_SLACK)));
     if (out1.length) {
-      if (V.pat === V.first + VG_PATIENCE_MS) out.push({ k: 'vgw', e: VG_WORD.patience, s: V.s, w: V.w, at: now });
+      if (!V.said) { V.said = true; out.push({ k: 'vgw', e: VG_WORD.patience, s: V.s, w: V.w, at: now }); }   // AUDIT WB14 (RECORD-9): said with the first that falls - a beat nobody stood out for kept no word
       const who = out1[Math.floor(rng() * out1.length) % out1.length];
       begin(f, ATTACKS.meteor, now, null, out1, rng, out, [who.x, who.z]);
+      f.atk.who = who.sub;   // (the one its echo falls for)
     }
     V.pat = now + VG_PATIENCE_EVERY_MS;
   }
@@ -1861,7 +1890,7 @@ function stepVanguard(f, now, bodies, rng, out, P) {
  *  rose (or as his phase turns). Its health is TITHE_S of the court's mean reference damage: a few blows. Caught, each
  *  challenger who struck it is handed its tithe - a seed of the relay's own (`tithe`, to that account alone). */
 export const TITHE_LIFE_MS = 22_000;
-export const TITHE_S = 4;
+export const TITHE_S = 10;   // AUDIT WB14 (PLAY-6): ten seconds of a fighter's reference - a solo's chase about 12 s, four chasers' 5
 /** How far ahead of the nearest challenger it runs for, and how near the rim's edge that run counts as cornered (it runs
  *  along the rim then, the way that leaves the chaser farther behind). */
 export const TITHE_FLEE_M = 8;
@@ -1869,35 +1898,43 @@ export const TITHE_CORNER_M = 2;
 /** Its health for the levels of the challengers in his court. Pure. */
 export const titheHpFor = (lvs) => Math.max(HOST_HP_MIN, Math.round(lvs.length ? (TITHE_S * lvs.reduce((s, lv) => s + dpsRef(lv), 0)) / lvs.length : 0));
 
-/** The Tithe-Imp's beat: risen once at its moment, its tithe paid once caught, gone into the fire past its life, and
- *  between, running. */
+/** The Tithe-Imp's beat: risen once at its moment, gone into the fire past its life (or as he leaves its court), and
+ *  between, running. AUDIT WB14 (LAW-2): it rises in the court he stands in - never while he is in the air between two -
+ *  and keeps to it (`ct`): he bounds out of it (a phase's turn, the Sundering's halves going to their courts, the
+ *  Rejoining's) and it dives into the fire, never running over it after him. */
 function stepTithe(f, now, here, rng, out, P) {
   if (!Number.isSafeInteger(f.ti) || f.fell || f.wrath) return;
-  const T = (f.tt ??= {}), C = hisCourt(f);
+  const T = (f.tt ??= {});
   if (!T.at) {
     const woke = openedAt(f);
-    if (!Number.isFinite(woke) || now < woke + OPENING_MS + f.ti || f.phase > 2 || !here.length || f.sd?.rj) return;
-    const away = dist(f.pos[0], f.pos[1], C[0], C[1]) < 1 ? f.yaw + Math.PI : Math.atan2(C[0] - f.pos[0], C[1] - f.pos[1]);
+    if (!Number.isFinite(woke) || now < woke + OPENING_MS + f.ti || f.phase > 2 || !here.length || f.sd?.rj || f.atk?.a === ATTACKS.cross.id) return;
+    const C = hisCourt(f), away = dist(f.pos[0], f.pos[1], C[0], C[1]) < 1 ? f.yaw + Math.PI : Math.atan2(C[0] - f.pos[0], C[1] - f.pos[1]);
     const spots = rimSpots(C, 1, here, rng, away, SAP_SPREAD);
     if (!spots.length) return;   // a rim with no clear spot: asked again a beat on
     const H = (f.lg ??= newHost());
     raiseHost(f, HOST.tithe, spots, titheHpFor(here.map((b) => f.players[b.sub].lv)), now, out);
-    T.at = now; T.i = H.n;
+    T.at = now; T.i = H.n; T.ct = f.court | 0;
     return;
-  }
-  if (T.by && !T.paid) {
-    T.paid = true; T.c = {};
-    for (const sub of T.by) { const c = Math.floor(rng() * 0x100000000) >>> 0; T.c[sub] = c; out.push({ k: 'tithe', to: sub, c, at: now }); }
   }
   const a = f.lg?.ads.find((o) => o.k === HOST.tithe) ?? null;
   if (!a) return;
-  if (now >= T.at + TITHE_LIFE_MS) { hostGone(f, now, out, HOST_GONE.fled, (o) => o === a); return; }
+  const ct = Number.isInteger(T.ct) ? T.ct : f.court | 0, C = COURTS[ct];   // (a fight checkpointed before the audit: his court as it was)
+  if (now >= T.at + TITHE_LIFE_MS || ct !== (f.court | 0)) { hostGone(f, now, out, HOST_GONE.fled, (o) => o === a); return; }
   if (a.mv) { const [x, z] = hostAt(a, now); a.x = x; a.z = z; }
   if (now < (a.up ?? 0)) return;
   const moves = [];
   titheBeat(a, now, here, C, moves);
   if (moves.length) out.push({ k: 'amv', m: moves });
   if (!P.legion) hostHpFrame(f, now, out);   // under the Legion-Lord his host's beat says it with theirs
+}
+/** AUDIT WB14 (LAW-5, WIRE-4): A TITHE OWED PAID - a seed of the relay's dice to each who struck the Imp (`tithe`, to that
+ *  account alone), once. Paid at the catch (applyHostHit, given the dice), else first thing the next beat - before the
+ *  kill's or the Wrath's return, so a catch in the last beat before either is paid all the same. */
+function payTithe(f, now, rng, out) {
+  const T = f.tt;
+  if (!T?.by || T.paid || typeof rng !== 'function') return;
+  T.paid = true; T.c = {};
+  for (const sub of T.by) { const c = Math.floor(rng() * 0x100000000) >>> 0; T.c[sub] = c; out.push({ k: 'tithe', to: sub, c, at: now }); }
 }
 /** It runs from the nearest challenger in his court - straight away, or along the rim when the rim stops it. */
 function titheBeat(a, now, here, C, moves) {
@@ -1917,15 +1954,16 @@ function titheBeat(a, now, here, C, moves) {
 // ── WB14f: THE CAPTIVE (section 7) ────────────────────────────────────────────────────────────────────────────────
 /** WB14f (2026-10-19, Mac: "And whatever else you can cook up"): ON A CAPTIVE NIGHT a knight of the Covenant kneels at the
  *  Pen's heart (who he is - net/gate/gateLaw.js captiveNameOf - is the screens'; the relay knows his gaolers). At his wake the
- *  walkway to the Pen rises (WALKWAY.pen) and his gaolers with it: bearerCountFor(the fight's challengers) of them on a ring
- *  CAPTIVE_RING_R about the Pen's heart, BEARER_TEAM_S of their reference damage shared over them (the Ward-Bearers' law),
- *  each Pulsing at whoever comes near. The last one down, he is free (`cpf`), and the next Dagon's Reckoning to land lands on
+ *  walkway to the Pen rises (WALKWAY.pen), and as the first living challenger stands in the Pen his gaolers rise (AUDIT WB14
+ *  LAW-8: sized then, for the fight's living challengers - at his wake the fight is the first few to come):
+ *  bearerCountFor(them) on a ring CAPTIVE_RING_R about the Pen's heart, BEARER_TEAM_S of their reference damage shared over
+ *  them (the Ward-Bearers' law), each Pulsing at whoever comes near. The last one down, he is free (`cpf`), and the next Dagon's Reckoning to land lands on
  *  the Covenant's ward and on no fighter (`cpw` at its word - or at once, for one still winding up as he goes free): the
  *  relay's judge and every screen spare it, and its crystals still break for the stun. A Reckoning broken before it lands
  *  leaves the ward for the next; it is spent once. Gaolers outlive his phases' turns (their Pen is no court of his). */
 export const CAPTIVE_RING_R = 7;
-/** A night's captive: when his gaolers rose and how many, when he went free, the number of the Reckoning his ward takes
- *  (0 none yet) and when that one landed on it - each 0 until it comes. */
+/** A night's captive: when he was laid in the Pen (his wake - the walkway's moment) and how many gaolers rose, when he went
+ *  free, the number of the Reckoning his ward takes (0 none yet) and when that one landed on it - each 0 until it comes. */
 export const newCaptive = () => ({ at: 0, n: 0, f: 0, w: 0, s: 0 });
 /** Does the Covenant's ward take `atk` - the Reckoning its `w` names? `cp` the fight's or a state's (net/gate/gateLink.js).
  *  Pure. */
@@ -1935,8 +1973,8 @@ export const captiveSpent = (cp, atk, now) => !!cp && (cp.s > 0 || (wardTakes(cp
 /** Those of his host a phase's turn crumbles - all but the Captive's gaolers. */
 const notGaoler = (a) => a.k !== HOST.gaoler;
 
-/** The Captive's beat: his gaolers risen at his wake (and the walkway to the Pen), their Pulses while they stand, his
- *  freeing as the last falls, and his ward spent as the Reckoning it takes lands. */
+/** The Captive's beat: the walkway to the Pen at his wake, his gaolers risen as the first challenger stands in it, their
+ *  Pulses while they stand, his freeing as the last falls, and his ward spent as the Reckoning it takes lands. */
 function stepCaptive(f, now, bodies, rng, out) {
   const K = f.cp;
   if (!K || f.fell || f.wrath) return;
@@ -1945,20 +1983,26 @@ function stepCaptive(f, now, bodies, rng, out) {
     if (!Number.isFinite(woke) || now < woke + OPENING_MS) return;
     f.xa = [...(Array.isArray(f.xa) ? f.xa : [])];
     if (!Number.isFinite(f.xa[WALKWAY.pen])) f.xa[WALKWAY.pen] = now;
-    const fighters = bodies.filter((b) => f.players[b.sub]);
-    const n = bearerCountFor(fighters.length), C = COURTS[FLOOR.pen], a0 = rng() * 2 * Math.PI, spots = [];
+    K.at = now;
+    f.lastStateAt = -Infinity;   // the state says the walkway at once
+    return;
+  }
+  const living = bodies.filter((b) => !b.dead && f.players[b.sub]);
+  if (!K.n) {
+    if (!living.some((b) => inCourt(b.x, b.z, FLOOR.pen, POSE_SLACK))) return;
+    const n = bearerCountFor(living.length), C = COURTS[FLOOR.pen], a0 = rng() * 2 * Math.PI, spots = [];
     for (let k = 0; k < n; k++) { const a = a0 + (k / n) * 2 * Math.PI; spots.push([r2(C[0] + Math.sin(a) * CAPTIVE_RING_R), r2(C[1] + Math.cos(a) * CAPTIVE_RING_R)]); }
     f.lg ??= newHost();
-    raiseHost(f, HOST.gaoler, spots, hostTeamHpFor(BEARER_TEAM_S, fighters.map((b) => f.players[b.sub].lv), n), now, out);
-    K.at = now; K.n = n;
-    f.lastStateAt = -Infinity;   // the state says the walkway at once
+    raiseHost(f, HOST.gaoler, spots, hostTeamHpFor(BEARER_TEAM_S, living.map((b) => f.players[b.sub].lv), n), now, out);
+    K.n = n;
+    f.lastStateAt = -Infinity;
     return;
   }
   if (!K.f) {
     const gaolers = f.lg?.ads.filter((a) => a.k === HOST.gaoler) ?? [];
     if (gaolers.length) {
       for (const a of gaolers) if (a.mv) { const [x, z] = hostAt(a, now); a.x = x; a.z = z; }
-      const near = bodies.filter((b) => !b.dead && f.players[b.sub] && inCourt(b.x, b.z, FLOOR.pen, POSE_SLACK)), blows = [];
+      const near = living.filter((b) => inCourt(b.x, b.z, FLOOR.pen, POSE_SLACK)), blows = [];
       for (const a of gaolers) if (now >= (a.up ?? 0)) bearerBeat(a, now, near, blows);
       if (blows.length) out.push({ k: 'aatk', a: blows });
       hostHpFrame(f, now, out);
@@ -1980,8 +2024,8 @@ function captiveWard(f, now, out) {
 }
 
 // ── WB14d: THE SUNDERING, ITS LAWS (section 5) ─────────────────────────────────────────────────────────────────────
-/** The attacks a body may begin out of `can` - every one while he is whole, its own kit's while sundered (SUNDER_KITS). */
-const inKit = (f, can) => (f.sd ? can.filter((a) => SUNDER_KITS[f.half === HALF.flame ? HALF.flame : HALF.blade].includes(a.key)) : can);
+/** The keys of the attacks a body may begin - every one while he is whole (null), its own kit's while sundered (SUNDER_KITS). */
+const kitOf = (f) => (f.sd ? SUNDER_KITS[f.half === HALF.flame ? HALF.flame : HALF.blade] : null);
 /** The Flame's own body: every field its beat moves (the rest of the fight its view reads through to him). */
 const FLAME_KEYS = Object.freeze(['pos', 'yaw', 'court', 'move', 'atk', 'lastA', 'runA', 'freeAt', 'nextAt', 'target', 'targetAt', 'queue', 'pending', 'waitUntil', 'shieldUntil', 'stunUntil', 'used', 'threat']);
 /** The words of the Flame's beat that name their body (`b`). */
@@ -2039,16 +2083,18 @@ function kneel(f, b, now) {
   H.h = 0; H.kn = now; H.said = false; H.lone = null; H.mend = false;
   if (b) { const V = flameView(f); settleAt(V, now); keepFlame(f, V); } else settleAt(f, now);
   const B = b ? f.sd.fl : f;
-  B.atk = null; B.move = null; B.target = null; B.queue = []; B.pending = null;
+  if (B.atk?.a !== ATTACKS.wrath.id) B.atk = null;   // AUDIT WB14 (LAW-4): the Wrath is the clock's - a Blade kneeling under its wind-up keeps it
+  B.move = null; B.target = null; B.queue = []; B.pending = null;
   B.stunUntil = now + SUNDER_PAIR_MS;
 }
 
-/** THE PAIR LAW BROKEN: a half knelt past SUNDER_PAIR_MS rises with SUNDER_RISE of its pool (`kr`), and the court tries again. */
+/** THE PAIR LAW BROKEN: a half knelt past SUNDER_PAIR_MS rises (`kr`) level with the other - SUNDER_RISE of its pool at
+ *  most, SUNDER_RISE_MIN at least (AUDIT WB14 PLAY-1) - and the court tries again, the two halves now even. */
 function rise(f, b, now, out) {
-  const S = f.sd, H = b ? S.fl : S.bl, B = b ? S.fl : f;
+  const S = f.sd, H = b ? S.fl : S.bl, B = b ? S.fl : f, O = b ? S.bl : S.fl;
   H.kn = 0; H.said = false;
-  H.h = SUNDER_RISE * S.m;
-  f.hp += H.h * f.max;
+  H.h = Math.min(SUNDER_RISE * S.m, Math.max(O.h, SUNDER_RISE_MIN * S.m));
+  credit(f, H.h);
   B.stunUntil = 0;
   B.nextAt = now + BREATH_MS;
   out.push({ k: 'kr', b, h: Math.round(H.h * f.max), at: now });
@@ -2061,12 +2107,21 @@ function rejoin(f, now, out) {
   S.rj = now;
   for (const H of [S.bl, S.fl]) { H.h = 0; H.kn = 0; H.said = false; H.lone = null; H.mend = false; }
   f.hp = f.max * SUNDER_LAST;
+  if (!(f.max > 0)) f.idle = SUNDER_LAST;   // AUDIT WB14 (LAW-3)
   for (const B of [f, S.fl]) { B.stunUntil = 0; B.atk = null; B.move = null; B.target = null; B.shieldUntil = now + CROSS_WARD_MAX_MS; B.nextAt = now + TURN_BREATH_MS; }
   f.pending = { a: 'cross', court: FLOOR.first };
   f.queue = [{ a: 'rejoin' }];
   S.fl.pending = { a: 'cross', court: FLOOR.first, at: [C[0] + SUNDER_SIDE_M, C[1]] };
   S.fl.queue = [];
   out.push({ k: 'rj', at: now });
+  f.lastStateAt = -Infinity;   // AUDIT WB14 (WIRE-3): and the state this beat - each half's ward is in it, never in the word
+}
+
+/** AUDIT WB14 (LAW-3): a half's pool grown by `add` (a fraction of his whole) is his health grown by as much - and with
+ *  every share out of the fight (`max` 0) the fraction he stands at, so the court come back finds his health its pools'. */
+function credit(f, add) {
+  if (f.max > 0) f.hp += add * f.max;
+  else f.idle = (Number.isFinite(f.idle) ? f.idle : 1) + add;
 }
 
 /** WB8b's SOUL-HUNGRY under the Sundering: a feeding heals each standing half by half its share, never past its pool (his
@@ -2078,7 +2133,7 @@ function sunderFed(f, feed) {
     if (H.kn) continue;
     const add = Math.min(Math.max(0, S.m - H.h), feed / 2);
     H.h += add;
-    f.hp += add * f.max;
+    credit(f, add);
   }
 }
 
@@ -2098,14 +2153,14 @@ function stepSunder(f, now, dt, bodies, here, rng, out) {
   if (!S.rj) for (const b of [HALF.blade, HALF.flame]) if ((b ? S.fl : S.bl).kn && now >= (b ? S.fl : S.bl).kn + SUNDER_PAIR_MS) rise(f, b, now, out);
   const hereF = bodies.filter((b) => !b.dead && f.players[b.sub] && inCourt(b.x, b.z, S.fl.court, POSE_SLACK));
   for (const b of [HALF.blade, HALF.flame]) {
-    const H = b ? S.fl : S.bl;
-    if (!S.two || S.rj || H.kn || (b ? hereF : here).length) { H.lone = null; H.mend = false; continue; }
-    H.lone ??= now;
-    H.mend = now - H.lone >= SUNDER_LONE_MS;
+    const H = b ? S.fl : S.bl, was = H.mend;
+    if (!S.two || S.rj || H.kn || (b ? hereF : here).length) { H.lone = null; H.mend = false; }
+    else { H.lone ??= now; H.mend = now - H.lone >= SUNDER_LONE_MS; }
+    if (H.mend !== was) f.lastStateAt = -Infinity;   // AUDIT WB14 (WIRE-5): a half's mending begun or ended is said at once (the state's `lo`)
     if (!H.mend) continue;
     const add = Math.min(Math.max(0, S.m - H.h), (SUNDER_MEND * S.m * dt) / 1000);
     H.h += add;
-    f.hp += add * f.max;
+    credit(f, add);
   }
   const keep = Math.pow(1 - profileOf(f).threatDecay, dt / 1000);
   for (const k of Object.keys(S.fl.threat)) { S.fl.threat[k] *= keep; if (S.fl.threat[k] < 0.5) delete S.fl.threat[k]; }
@@ -2170,9 +2225,9 @@ export function spendPurse(p, d, left, now, bx = 1) {
  * on body `i`: judged by the hand and the purse a blow on him and on a crystal is (his blow rate and the bucket), a melee
  * blow within MELEE_REACH of its body, from the floor and from his court; counted as dealt (a part in the fight) and
  * apart (`hd`, the chart's share), never his threat. Answers the frames to fan: its fall (`adie`, by the striker's name) -
- * the beat says its health.
+ * the beat says its health. WB14e: a Tithe-Imp caught pays its tithe with them, by `rng` (the relay's dice).
  */
-export function applyHostHit(f, sub, i, d, r, pose, now, seq = null) {
+export function applyHostHit(f, sub, i, d, r, pose, now, seq = null, rng = null) {
   const out = [];
   const p = f.players[sub], H = f.lg, a = H && Number.isSafeInteger(i) ? H.ads.find((o) => o.i === i) ?? null : null;
   if (!p || f.fell || f.wrath || !a || !(a.h > 0) || !Number.isFinite(d) || !(d > 0) || now >= f.wrathAt) return out;
@@ -2188,7 +2243,7 @@ export function applyHostHit(f, sub, i, d, r, pose, now, seq = null) {
   if (a.h > 1e-6) return out;
   H.ads = H.ads.filter((o) => o !== a);
   out.push({ k: 'adie', is: [a.i], w: HOST_GONE.slain, n: p.name, at: now });
-  if (a.k === HOST.tithe) f.tt = { ...(f.tt ?? {}), by: [...a.by], caughtAt: now };   // its tithe paid on the next beat (the relay's dice)
+  if (a.k === HOST.tithe) { f.tt = { ...(f.tt ?? {}), by: [...a.by], caughtAt: now }; payTithe(f, now, rng, out); }   // its tithe paid now, by the relay's dice (AUDIT WB14 LAW-5: without them, first thing the next beat)
   return out;
 }
 /** WB11b: his host as the state says it - each one standing `[i, k, h, m, x, z, tx, tz, v, at, la, lx, lz]`: its walk
@@ -2247,7 +2302,7 @@ export function stateOf(f) {
     ct: f.court | 0, xa: xaWire(f.xa),   // WB14b: by walkway - a hole (a walkway not laid) null, none after the last laid
     cx: f.cx ? { i: f.cx.i, m: f.cx.m, c: f.cx.c.map((q) => [q.x, q.z, Math.ceil(q.h)]) } : null,
     su: f.stunUntil > 0 ? f.stunUntil : 0, rk: f.rk > 0 ? f.rk : 0,
-    ...(f.lg ? { lg: hostStateOf(f.lg) } : {}),   // WB11b: his host standing - said only under the Legion-Lord
+    ...(f.lg ? { lg: hostStateOf(f.lg) } : {}),   // WB11b: his host standing - the Legion-Lord's (WB14: and the Vanguard's, the gaolers, a Tithe-Imp)
     ...(Number.isSafeInteger(openedAt(f)) ? { op: openedAt(f) + OPENING_MS } : {}),   // WB13e: the opening's end - his wake, on every screen (WB14c: none while his Vanguard holds)
     ...(f.vg ? { vg: [f.vg.s, f.vg.w] } : {}),   // WB14c: the Vanguard's stage and its waves risen
     ...(f.sd ? { sd: sunderState(f) } : {}),   // WB14d: the halves, while he is sundered

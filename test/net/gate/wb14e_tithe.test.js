@@ -71,7 +71,7 @@ test('WB14e the night\'s draw: one gate in TITHE_ONE_IN carries a Tithe-Imp, its
   for (let d = 0; d < 400; d++) assert.ok(!(gatePortentsOf(d) ?? []).includes('tithe'), 'no portent of it');
 });
 
-test('WB14e the kind: an Imp at 1.3 of its body, under a runner\'s pace, that strikes nobody; risen as an Imp rises; fled its own way of going; four seconds of the court\'s mean reference its health (mutants: a blow of its own; outrunning a runner)', () => {
+test('WB14e the kind: an Imp at 1.3 of its body, under a runner\'s pace, that strikes nobody; risen as an Imp rises; fled its own way of going; ten seconds of the court\'s mean reference its health (AUDIT WB14 PLAY-6: four was a formality - a lone chaser caught it in 5 s of its 22) (mutants: a blow of its own; outrunning a runner)', () => {
   const K = HOST_KINDS[HOST.tithe];
   assert.deepEqual([K.id, K.key], [6, 'tithe']);
   assert.ok(Math.abs(K.r - HOST_KINDS[HOST.harrier].r * 1.3) < 1e-9 && Math.abs(K.h - HOST_KINDS[HOST.harrier].h * 1.3) < 1e-9);
@@ -79,7 +79,8 @@ test('WB14e the kind: an Imp at 1.3 of its body, under a runner\'s pace, that st
   assert.equal(HOST_BLOWS[HOST.tithe], null); assert.equal(hostBlowUnder(HOST.tithe, BASE_PROFILE), null);
   assert.equal(HOST_RISE_MS[HOST.tithe], HOST_RISE_MS[HOST.harrier]);
   assert.equal(HOST_GONE.fled, 3);
-  assert.equal(TITHE_LIFE_MS, 22_000); assert.equal(TITHE_S, 4);
+  assert.equal(TITHE_LIFE_MS, 22_000); assert.equal(TITHE_S, 10);
+  assert.equal(K.speed, 6.8, 'AUDIT WB14 (PLAY-6): a chase - 0.8 m/s under a runner');
   assert.equal(titheHpFor([10, 10, 10]), Math.round(TITHE_S * dpsRef(10)));
   assert.equal(titheHpFor([1]), Math.max(HOST_HP_MIN, Math.round(TITHE_S * dpsRef(1))));
   assert.equal(titheHpFor([]), HOST_HP_MIN);

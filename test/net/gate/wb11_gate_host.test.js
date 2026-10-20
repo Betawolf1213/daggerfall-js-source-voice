@@ -668,7 +668,7 @@ test('WB11 the plumbing, read: the world host sends a blow on one of his host as
   assert.match(g, /const crystals = \[\.\.\.crystalMarksFor\(sp\), \.\.\.hostMarksFor\(sp\)\];/);
   assert.match(g, /if \(mark\?\.host != null\) \{ try \{ return !!castAtHost\?\.\(sp, mark\.host, caster\); \} catch \{ return false; \} \}/);   // PIN MOVED (AUDIT SCHOOLS L2 F4): and the cast's wrapper
   assert.match(r, /const at = a\.pose && !a\.pose\.dd && !bodyOut\(f\.players\[a\.sub\], line\.enforce\) \? this\._courtOf\(a\.pose\) : null;/, 'PIN MOVED (INT11): from where its pose stands, alive - by the pose\'s word and the count\'s');
-  assert.match(r, /else if \(m\.k === 'ahit'\) this\._gateFan\(applyHostHit\(f, a\.sub, m\.i, m\.d, m\.r, at, now, m\.q\)\);/, 'the relay judges it (AUDIT WB11 W3: by its blow\'s sequence)');
+  assert.match(r, /else if \(m\.k === 'ahit'\) await this\._gateFanKept\(f, applyHostHit\(f, a\.sub, m\.i, m\.d, m\.r, at, now, m\.q, rand01\), now\);/, 'the relay judges it (AUDIT WB11 W3: by its blow\'s sequence)');   // PIN MOVED (AUDIT WB14 WIRE-2): by the relay's dice (a Tithe-Imp's tithe paid at its catch), kept before it is said
 });
 
 test('WB11 a whole Legion-Lord fight, stepped: Harriers in the first court, crumbled at the turn; Ward-Bearers as he lands in the second; Sappers there once its turn is done; Ward-Bearers again in the third - every word of the host the wire takes, and never more standing than the wire can name (mutants: a kind out of its phase)', () => {

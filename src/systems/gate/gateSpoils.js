@@ -255,9 +255,16 @@ export function rollSpoils(seed, level, p = 0) {
   if (oath) pieces.push({ item: oath, tier: oath.rarity });
   // WB14g (bible/11-Multiplayer/Breach-Portents.md section 11): WHAT A PORTENT PAYS - one more piece of Magic or better for each
   // portent the receipt says, after every draw before (the Oath's law: every spoils rolled before is what it was for its seed)
-  let portent = 0;
-  for (const bit of SPOILS_PORTENT_BITS) if ((p & bit) !== 0) { pieces.push(graded(spoilsBase(lv, rolls), magicOrBetter(rolls), rolls)); portent++; }
-  return { gold, pieces, sigil: sigilStone(), card, gems, portent };
+  // AUDIT WB14 (PLAY-7): and each such piece through the passes every other piece had - the ladder's last (an Exalted), the
+  // sockets', the weapons' and the technique's - over them alone, after them, so nothing drawn before them moves
+  const more = [];
+  for (const bit of SPOILS_PORTENT_BITS) if ((p & bit) !== 0) more.push(graded(spoilsBase(lv, rolls), magicOrBetter(rolls), rolls));
+  if (more.length) {
+    const items = more.map((q) => q.item);
+    lastPass(items, rolls); socketPass(items, rolls); weaponSocketPass(items, rolls); techniquePass(items, rolls);
+    for (const q of more) { q.tier = q.item.rarity ?? q.tier; pieces.push(q); }
+  }
+  return { gold, pieces, sigil: sigilStone(), card, gems, portent: more.length };
 }
 
 /** WB14g: the portents' bits a receipt's `p` may carry, in the order their pieces are drawn (net/gate/gateMods.js GATE_PORTENTS). */

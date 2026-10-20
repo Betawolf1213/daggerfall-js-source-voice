@@ -56,12 +56,12 @@ const word = (A, over = {}) => ({ i: 7, a: A.id, at: T0, x: 0, z: 0, yw: 0, tg: 
 
 // ═══ THE TABLE ═══════════════════════════════════════════════════════════════════════════════════════════════════════
 
-test('WB14a the arsenal: six attacks more, ids 11 to 16, each a cooldown of its own (none of the eleven before has one) - the Brand and the Torment ask a court of two; the Chains and the Gaze are the struck screen\'s alone (mutants: an id moved; a cooldown dropped; the Gaze counted by the relay)', () => {
+test('WB14a the arsenal: six attacks more, ids 11 to 16, each a cooldown of its own (none of the eleven before has one) - the Brand asks a court of two, the Torment (AUDIT WB14 PLAY-3) three; the Chains and the Gaze are the struck screen\'s alone (mutants: an id moved; a cooldown dropped; the Gaze counted by the relay; the Torment between two)', () => {
   assert.deepEqual(NEW.map((k) => ATTACKS[k].id), [11, 12, 13, 14, 15, 16]);
   assert.deepEqual(ATTACK_BY_ID.map((a) => a.id), [...Array(19).keys()]);   // PIN MOVED (WB14d): and the Sundering and the Rejoining, 17 and 18
   assert.deepEqual(NEW.map((k) => ATTACKS[k].cd), [22_000, 28_000, 28_000, 30_000, 35_000, 45_000]);
   for (const A of ATTACK_BY_ID) if (!NEW.includes(A.key)) assert.equal(A.cd, undefined, `${A.key} keeps none`);
-  assert.deepEqual(NEW.map((k) => ATTACKS[k].nMin ?? 1), [1, 2, 2, 1, 1, 1]);
+  assert.deepEqual(NEW.map((k) => ATTACKS[k].nMin ?? 1), [1, 2, 3, 1, 1, 1]);   // AUDIT WB14 (PLAY-3): the Torment three - between two it was half a fighter's health each
   assert.deepEqual(NEW.filter((k) => screenJudged(ATTACKS[k])), ['chains', 'gaze']);
   assert.deepEqual(NEW.map((k) => ATTACKS[k].phase), [1, 2, 2, 3, 3, 3], 'the Warden\'s blade, the Burning Court\'s fire, Dagon\'s Champion\'s');
   assert.deepEqual([FAVOURED_PHASE.brand, FAVOURED_PHASE.torment], [1, 1], 'Dagon\'s Favoured brings the fire\'s own questions a phase early');
@@ -71,12 +71,15 @@ test('WB14a the arsenal: six attacks more, ids 11 to 16, each a cooldown of its 
   assert.equal(GATE_ATK_ID_MAX, 31);
 });
 
-test('WB14a every new wind-up outruns its shape at the player\'s 7.6 m/s from its worst spot, phase three\'s a fifth shorter - the chain\'s hold from his feet, the brand\'s and the torment\'s rings, half a blade, a lit wedge\'s middle at its rim - and the Gaze alone answered by turning (mutants: a wind-up shortened past escape)', () => {
+test('WB14a every new wind-up outruns its shape at the player\'s 7.6 m/s from its worst spot, phase three\'s a fifth shorter (AUDIT WB14 PLAY-5: never the Chains\') - the chain\'s hold from his feet, the brand\'s and the torment\'s rings, half a blade, a lit wedge\'s middle at its rim - and the Gaze alone answered by turning (mutants: a wind-up shortened past escape; the Chains shortened in phase three)', () => {
   const need = { chains: CHAIN_HOLD_M, brand: ATTACKS.brand.r, torment: ATTACKS.torment.r, wheel: ATTACKS.wheel.width / 2, unmake: COURT_R * Math.sin(Math.PI / ATTACKS.unmake.n) };
   for (const [k, m] of Object.entries(need)) {
-    assert.equal(windupOf(ATTACKS[k], 3), Math.round(ATTACKS[k].windup * PHASE3_WINDUP));
+    assert.equal(windupOf(ATTACKS[k], 3), k === 'chains' ? ATTACKS.chains.windup : Math.round(ATTACKS[k].windup * PHASE3_WINDUP));
     assert.ok((windupOf(ATTACKS[k], 3) / 1000) * RUN >= m, `${k}: ${m.toFixed(1)} m in ${windupOf(ATTACKS[k], 3)} ms`);
   }
+  // AUDIT WB14 (PLAY-5): the Chains begun at a fighter at the rim behind him at the rune ring need 17.45 m - with a
+  // reaction's 400 ms in phase three too
+  assert.ok(((windupOf(ATTACKS.chains, 3) - 400) / 1000) * RUN >= 17.45);
   // the Wheel's tips under a run: a fighter ahead of a blade keeps ahead of it
   assert.ok(ATTACKS.wheel.spin * ATTACKS.wheel.len < RUN, `${(ATTACKS.wheel.spin * ATTACKS.wheel.len).toFixed(2)} m/s at its tips`);
   assert.ok(Math.abs(ATTACKS.wheel.spin * ATTACKS.wheel.active / 1000 - 2.16) < 1e-9, 'each blade sweeps 124 degrees');

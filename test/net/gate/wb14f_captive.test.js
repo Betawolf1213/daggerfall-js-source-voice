@@ -1,6 +1,7 @@
 // WB14f (2026-10-19, Mac: "And whatever else you can cook up", then "This is all yours to take on"): THE CAPTIVE - on a
 // Captive night a knight of the Covenant kneels at the Pen's heart, chained to his gaolers (WB11's Ward-Bearer's body and
-// Pulse under another name). At the Warden's wake the walkway to the Pen rises and the gaolers with it; the last one down,
+// Pulse under another name). At the Warden's wake the walkway to the Pen rises, and the gaolers as the first challenger
+// stands in it (AUDIT WB14 LAW-8: sized for the fight then - at his wake it is the first few to come); the last one down,
 // the knight is free, and the next Dagon's Reckoning to land lands on the Covenant's ward and on no fighter - its crystals
 // still break for the stun, a Reckoning broken leaves the ward for the next, and it is spent once. Beside it, the AUDIT of
 // WB14c this slice found: a blow on one of his host from the floor its body stands on (a Vanguard's platform, the Pen) is
@@ -22,7 +23,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  COURTS, FLOOR, WALKWAY, HOST, HOST_KINDS, HOST_BLOWS, HOST_RISE_MS, HOST_GONE, OPENING_MS, BRAIN_TICK_MS, HIT_KINDS, PHASE_AT, ATTACKS, RECKON_CLOSE_MS,
+  COURTS, COURT_R, FLOOR, WALKWAY, HOST, HOST_KINDS, HOST_BLOWS, HOST_RISE_MS, HOST_GONE, OPENING_MS, BRAIN_TICK_MS, HIT_KINDS, PHASE_AT, ATTACKS, RECKON_CLOSE_MS,
   BEARER_TEAM_S, BEARER_PULSE_FIRST_MS, CAPTIVE_RING_R, bearerCountFor, hostTeamHpFor, newFight, joinFight, stepBrain, stateOf, applyHostHit, applyCrystalHit,
   newCaptive, wardTakes, captiveSpent,
 } from '../../../src/net/gate/gateBrain.js';
@@ -59,8 +60,16 @@ function captiveFight(n = 3, pt = ['captive']) {
   run.words = (k) => run.out.filter((o) => o.k === k);
   return run;
 }
-/** Past his wake and the walkway to the Pen laid whole. */
-const woken = (run) => run.until(T0 + OPENING_MS + 6000);
+/** Past his wake and the walkway to the Pen laid whole - and (AUDIT WB14 LAW-8) one of them in at the Pen's rim a beat,
+ *  his gaolers risen for it, then back where they stood. */
+function woken(run) {
+  run.until(T0 + OPENING_MS + 6000);
+  const k = Object.keys(run.where).at(-1), was = run.where[k];
+  run.where[k] = [PEN[0], PEN[1] + COURT_R - 1];
+  run.step();
+  run.where[k] = was;
+  return run;
+}
 /** Every gaoler cut down from the Pen (each brought to a blow's reach first - the purse is WB11's, pinned there). */
 function freeHim(run) {
   run.where.s0 = [PEN[0], PEN[1] + 1];
@@ -108,29 +117,40 @@ test('WB14f the gaoler: a Ward-Bearer\'s body, Pulse and rising under another na
   assert.deepEqual([L.mobile, L.name, L.plural], [hostLookOf(HOST.bearer, 'rime').mobile, 'Gaoler', 'Gaolers']);
 });
 
-test('WB14f his wake: the walkway to the Pen laid at its moment and his gaolers risen with it - bearerCountFor of the fight on a ring CAPTIVE_RING_R about the Pen\'s heart, BEARER_TEAM_S of their reference shared; said at once in the state; none before it, none on a plain night (mutants: risen at the fight\'s birth; one body sized whole; the walkway never laid)', () => {
+test('WB14f his wake: the walkway to the Pen laid at its moment, said at once in the state; his gaolers risen as the first living challenger stands in the Pen - bearerCountFor of the fight then on a ring CAPTIVE_RING_R about the Pen\'s heart, BEARER_TEAM_S of their reference shared; none before, none on a plain night (mutants: risen at the fight\'s birth; one body sized whole; the walkway never laid; AUDIT WB14 LAW-8: sized at his wake, for the first few to come; risen with nobody in the Pen)', () => {
   const run = captiveFight(3);
   run.until(T0 + OPENING_MS - BRAIN_TICK_MS);
-  assert.equal(run.gaolers().length, 0, 'not before his wake');
+  assert.equal(run.f.cp.at, 0, 'not before his wake');
   assert.ok(!Number.isFinite(run.f.xa[WALKWAY.pen]));
   run.step(3);
-  const g = run.gaolers(), at = run.f.cp.at;
+  const at = run.f.cp.at;
   assert.ok(at >= T0 + OPENING_MS && at < T0 + OPENING_MS + 3 * BRAIN_TICK_MS);
   assert.equal(run.f.xa[WALKWAY.pen], at, 'laid at its moment');
-  assert.equal(g.length, bearerCountFor(3));
+  let st = run.out.filter((o) => o.k === 'st').at(-1);
+  assert.deepEqual(st.cp, [at, 0, 0, 0, 0], 'the state says it at once');
+  assert.ok(st.xa[WALKWAY.pen] === at);
+  run.until(at + 20_000);
+  assert.equal(run.gaolers().length, 0, 'nobody in the Pen: none risen');
+  assert.equal(run.f.cp.f, 0, 'and never free for it');
+  // AUDIT WB14 (LAW-8): nine more come before anyone reaches the Pen - the gaolers are the twelve's
+  for (let i = 3; i < 12; i++) { joinFight(run.f, `s${i}`, `F${i}`, 10, run.t, true); run.where[`s${i}`] = [Math.sin(i) * 8, Math.cos(i) * 8]; }
+  run.where.s0 = [PEN[0], PEN[1] + COURT_R - 1];
+  run.step();
+  const g = run.gaolers();
+  assert.equal(g.length, bearerCountFor(12));
+  assert.equal(bearerCountFor(12), 4);
   assert.equal(run.f.cp.n, g.length);
   for (const a of g) {
     assert.ok(Math.abs(Math.hypot(a.x - PEN[0], a.z - PEN[1]) - CAPTIVE_RING_R) < 0.02, 'on the ring');
-    assert.equal(a.h, hostTeamHpFor(BEARER_TEAM_S, [10, 10, 10], g.length));
+    assert.equal(a.h, hostTeamHpFor(BEARER_TEAM_S, Array(12).fill(10), g.length), 'the twelve\'s reference shared');
   }
   const ad = run.words('ad');
   assert.equal(ad.length, 1); assert.equal(ad[0].w, HOST.gaoler);
-  const st = run.out.filter((o) => o.k === 'st').at(-1);
-  assert.deepEqual(st.cp, [at, g.length, 0, 0, 0], 'the state says it at once');
-  assert.ok(st.xa[WALKWAY.pen] === at);
-  const big = captiveFight(13); woken(big);
-  assert.equal(big.gaolers().length, bearerCountFor(13));
-  assert.equal(bearerCountFor(13), 4);
+  st = run.out.filter((o) => o.k === 'st').at(-1);
+  assert.deepEqual(st.cp, [at, g.length, 0, 0, 0], 'the state says them at once');
+  const small = woken(captiveFight(3));
+  assert.equal(small.gaolers().length, bearerCountFor(3));
+  for (const a of small.gaolers()) assert.equal(a.h, hostTeamHpFor(BEARER_TEAM_S, [10, 10, 10], small.gaolers().length));
   const plain = captiveFight(3, null); woken(plain);
   assert.equal(plain.f.lg, null, 'no gaolers on a plain night');
 });
@@ -139,19 +159,20 @@ test('WB14f the gaolers: their Pulse at whoever comes near in the Pen, never at 
   const run = captiveFight(3);
   woken(run);
   const g = run.gaolers()[0];
-  assert.ok(run.t > run.f.cp.at + HOST_RISE_MS[HOST.gaoler] + BEARER_PULSE_FIRST_MS, 'risen, its first Pulse due');
+  run.step(Math.ceil((HOST_RISE_MS[HOST.gaoler] + BEARER_PULSE_FIRST_MS) / BRAIN_TICK_MS));
+  assert.ok(run.t > g.up + BEARER_PULSE_FIRST_MS, 'risen, its first Pulse due');
   assert.equal(run.words('aatk').length, 0, 'nobody near it yet');
   run.where.s1 = [g.x + 1, g.z];
   run.step(3);
   const pulses = run.words('aatk').flatMap((w) => w.a);
   assert.ok(pulses.some((p) => p[0] === g.i), 'at the one beside it');
   const far = captiveFight(3); woken(far);
-  far.until(far.f.cp.at + HOST_RISE_MS[HOST.gaoler] + BEARER_PULSE_FIRST_MS + 4000);
+  far.until(far.gaolers()[0].up + BEARER_PULSE_FIRST_MS + 4000);
   assert.equal(far.words('aatk').length, 0, 'nobody in the Pen, no Pulse');
   // the relay counts none of it
   const a = run.f.lg.ads.find((o) => o.atk);
   assert.ok(a);
-  const shares = judgeGate(run.f, run.bodies(), a.atk.at + 400);
+  const shares = judgeGate(run.f, run.bodies().filter((b) => b.sub === 's1'), a.atk.at + 400);   // (the one in the Pen - his own blows in his court are his)
   assert.equal(shares.length, 0, 'his element\'s - the struck screen\'s');
   // a phase's turn: the gaolers stand
   const n = run.gaolers().length;

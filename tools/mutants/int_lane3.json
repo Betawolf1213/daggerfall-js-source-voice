@@ -554,8 +554,8 @@
   {
     "name": "INT11-RELAY-CENSUS-RAW",
     "file": "server/src/index.js",
-    "old": "      this._gateFan(GATE_SEAM.step(f, now, this._bodiesBare(census()), rand01));",
-    "new": "      this._gateFan(GATE_SEAM.step(f, now, this._bodiesBare(this._gateBodies(f)), rand01));",
+    "old": "      await this._gateFanKept(f, GATE_SEAM.step(f, now, this._bodiesBare(census()), rand01), now);",
+    "new": "      await this._gateFanKept(f, GATE_SEAM.step(f, now, this._bodiesBare(this._gateBodies(f)), rand01), now);",
     "tests": [
       "test/net/int12_body_relay.test.js"
     ]

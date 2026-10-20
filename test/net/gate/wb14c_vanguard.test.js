@@ -79,7 +79,7 @@ test('WB14c the stages: the Bridgehead then the Muster, each three waves and the
   assert.deepEqual([0, 1, 2, 3, 4, 6, 10, 16, 20, 40].map(vanguardCountFor), [3, 3, 3, 4, 4, 5, 7, 10, 10, 10]);
   assert.deepEqual(VG_KIND_W, [1, 0, 0, 2.5, 1.5, 6]);
   assert.deepEqual([VG_OPEN_MS, VG_WAVE_MAX_MS, VG_WAVE_LEFT, VG_PATIENCE_MS, VG_PATIENCE_EVERY_MS, VG_CALL_MS, VG_CALL_N], [6000, 30_000, 0.25, 240_000, 15_000, 15_000, 2]);
-  assert.deepEqual(newVanguard(), { s: 0, w: 0, due: 0, rose: 0, last: 0, first: 0, pat: 0, lord: 0, call: 0, opened: false });
+  assert.deepEqual(newVanguard(), { s: 0, w: 0, due: 0, rose: 0, last: 0, first: 0, pat: 0, said: false, lord: 0, call: 0, opened: false });   // AUDIT WB14 (RECORD-9): and its patience's word, said once
 });
 
 // ═══ THE FIGHT ═══════════════════════════════════════════════════════════════════════════════════════════════════════
