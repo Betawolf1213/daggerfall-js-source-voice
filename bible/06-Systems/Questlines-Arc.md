@@ -661,7 +661,7 @@ nothing paid - and on the client a line the service pays opens only for a regist
   Doorwarden (the Burning Doors), Covenbane (the Covens' Hoard, at its end), Weirwalker (the Weir Road), Witness of the
   Hour (the Hour) and Satakal's Witness (the Old Coil) - the badge's words (`ui/playerBadge.js` TITLE_TEXT; the vocabulary
   spells the last two `hourwitness` and `satakalwitness` - AUDIT QUESTLINES SERVICE-9, DOC-2: this named them by those
-  keys); the relay knows them from world224 (`src/net/identityToken.js` TITLES). A title paid is the house's
+  keys); the relay knows them from world226 (`src/net/identityToken.js` TITLES; world222 on the branch, renumbered past main's at the merges). A title paid is the house's
   HONOUR-BANNER and a HUD line, as every title grant is (AUDIT QUESTLINES SERVICE-7: it was a HUD line alone). A title
   step's later end answers the line's title HELD (`titleHeld`) where this claim did not lay it, and the runner tells it
   only for a claim an earlier attempt of which went unanswered - offline, a timeout, a 5xx, or an end a load asks again
@@ -676,7 +676,7 @@ nothing paid - and on the client a line the service pays opens only for a regist
   seal does, whatever the service answers (section 4.1).
 - Nothing a classic quest does mints an account currency; a questline's gold and gear are the client's (5.2).
 - Opened by `QUESTLINES_OPEN` (`off` | `dev` | `on`) in `server-account/wrangler.toml` - `on`; shut, the claim is
-  refused `ql-closed` (403), and a body the shared law refuses `ql-body` (400). Deploy: the relay (world224) first, then
+  refused `ql-closed` (403), and a body the shared law refuses `ql-body` (400). Deploy: the relay (world226) first, then
   the account service (acct159, migration 0133), then the site.
 
 ## 6. The window: one place (AS BUILT)

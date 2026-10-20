@@ -195,7 +195,7 @@ guest's answer (LINES-1, SERVICE-1, ACTS-1) or to an outage (SERVICE-2), so its 
 | DOC-28 | NIT | = REWARD-15 | FIXED with REWARD-15 |
 | DOC-29 | NIT | "Three actions" left in three places | FIXED: five |
 | DOC-30 | NIT | The pull request: "13 named pieces" (22 over 13 endings), "133 new strings" (135) | OPEN: pull request #1047's description - the author's |
-| DOC-31 | NIT | Stale notes on re-aimed mutant records (acct157, world222) | FIXED: acct159, world224 |
+| DOC-31 | NIT | Stale notes on re-aimed mutant records (acct157, world222) | FIXED: acct159, world224 - world226 since the merge that renumbered it past GAUNTLET-SLAIN |
 | DOC-32 | NIT | The kit's header: the first patch uncounted, five filed patches hand-edited after it | FIXED: said |
 | DOC-33 | NIT | Record 4: "A line the service pays waits, offline" - every online line does | FIXED in the record |
 | DOC-34 | NIT | A line's `tier` dead data | FIXED: pinned to its sheets' |

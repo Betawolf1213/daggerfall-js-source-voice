@@ -432,7 +432,7 @@ export const RECEIVER_REFUSAL_TEXT = Object.freeze({
   mainQuest: 'cannot be given the main quest.',
   get questline() { return t('quest.share.questline.receiver', 'cannot be given a step of a questline. Each player walks their own.'); },   // AUDIT QUESTLINES REWARD-2; VOICE-QL: still a fragment after "... but you", its aside a second sentence (Voice.md rule 5)
   restore: 'could not rebuild it in your world.',
-  shelved: 'have abandoned it - reclaim it from your journal to take it up again.',   // QUEST-SHELF's audit: a deliberate share is answered
+  shelved: 'have abandoned it. Reclaim it from your journal to take it up again.',   // QUEST-SHELF's audit: a deliberate share is answered
 });
 
 /** SHARE-MEND: the refusals that say the two copies disagree - most often two BUILDS of the game: before SHARE-COPY
@@ -442,8 +442,8 @@ const SKEW_REASONS = new Set(['mismatch', 'unknown', 'restore']);
 /** SHARE-MEND: what such a refusal adds, read off the envelope's `build` (BUILD_TAG at the sender): nothing when it is
  *  mine; when it is another, both should reload; when there is none, theirs predates this build. */
 export function shareSkewText(theirBuild, mine = BUILD_TAG) {
-  if (!theirBuild) return ' Their game is out of date - they should reload the page.';
-  return theirBuild === mine ? '' : ' You are on different versions of the game - both of you should reload the page.';
+  if (!theirBuild) return ' Their game is out of date. They should reload the page.';
+  return theirBuild === mine ? '' : ' You are on different versions of the game. Both of you should reload the page.';
 }
 
 /** SHARE-MEND: whether a refusal is to be SAID. A quest kept in step with the party is re-shared on every change
