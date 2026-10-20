@@ -17,7 +17,7 @@ import { GATE_PASS_PROGRAMS } from '../../src/render/gate/gatePass.js';
 import { telegraphPrograms } from '../../src/render/gate/gateTelegraph.js';
 import { GATE_FX_PROGRAMS } from '../../src/render/gate/gateFx.js';
 import { CRYSTAL_PROGRAMS } from '../../src/render/courtCrystals.js';
-import { NODE_OUTLINE_PROGRAMS } from '../../src/render/nodeOutline.js';
+import { NODE_GLINT_PROGRAMS } from '../../src/render/nodeGlint.js';
 import { GATE_VEIL_PROGRAMS } from '../../src/render/gate/gateVeil.js';
 import { createGateCourt } from '../../src/scenes/gate/gateCourt.js';
 import { createGateVeil } from '../../src/ui/gate/gateVeil.js';
@@ -113,7 +113,7 @@ test('AUDIT SHADER-STALL a warm whose pass the draw built meanwhile stands down 
 });
 
 test('AUDIT SHADER-STALL the passes play meets are started at the boot\'s idle where the driver compiles beside the frames - every one a fight or a gate or a node draws - and nothing is started where it cannot (mutants: started without the extension; a pass left out)', () => {
-  const want = [...GATE_PASS_PROGRAMS, ...telegraphPrograms(false), ...telegraphPrograms(true), ...GATE_FX_PROGRAMS, ...CRYSTAL_PROGRAMS, ...NODE_OUTLINE_PROGRAMS];
+  const want = [...GATE_PASS_PROGRAMS, ...telegraphPrograms(false), ...telegraphPrograms(true), ...GATE_FX_PROGRAMS, ...CRYSTAL_PROGRAMS, ...NODE_GLINT_PROGRAMS];
   assert.deepEqual(playPrograms(), want);
   const on = fakeGl();
   assert.equal(startPlayPrograms(on.gl), true);

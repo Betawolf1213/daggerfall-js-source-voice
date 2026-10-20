@@ -9,7 +9,7 @@
 // loading screen's, a wait after it a frame the player saw freeze.
 //
 // `passes` builds the passes a scene here never stands (a gate's fire, the court's telegraph and blows, the veil, the
-// nodes' outline) each in a context of its own, as a host builds it: at once (`new`), and - where the tree has it - by
+// nodes' glint) each in a context of its own, as a host builds it: at once (`new`), and - where the tree has it - by
 // SHADER-STALL's door (glProgram.js startPrograms: the compile started, the build made when the driver says it is done).
 //
 // The browser is the probes' SwiftShader, with ANGLE's parallel compile on (`enableParallelCompileAndLink`, what ANGLE
@@ -124,14 +124,14 @@ const PASSES = `async (started) => {
   };
   const gp = await import('/src/render/gate/gatePass.js'), gm = await import('/src/world/gate/gateModel.js');
   const gt = await import('/src/render/gate/gateTelegraph.js'), gf = await import('/src/render/gate/gateFx.js');
-  const gv = await import('/src/render/gate/gateVeil.js'), no = await import('/src/render/nodeOutline.js');
+  const gv = await import('/src/render/gate/gateVeil.js'), no = await import('/src/render/nodeGlint.js');
   const profile = gm.gateArchProfile(gm.buildGateModel());
   await build('gate fire', () => gp.GATE_PASS_PROGRAMS, (gl) => new gp.GatePassRenderer(gl, profile));
   await build('gate telegraph', () => gt.telegraphPrograms(false), (gl) => new gt.GateTelegraphRenderer(gl));
   await build('spire telegraph', () => gt.telegraphPrograms(true), (gl) => new gt.GateTelegraphRenderer(gl, { spire: true }));
   await build('gate blows', () => gf.GATE_FX_PROGRAMS, (gl) => new gf.GateFxRenderer(gl));
   await build('gate veil', () => gv.GATE_VEIL_PROGRAMS, (gl) => new gv.GateVeilRenderer(gl));
-  await build('node outline', () => no.NODE_OUTLINE_PROGRAMS, (gl) => new no.NodeOutlineRenderer(gl));
+  await build('node glint', () => no.NODE_GLINT_PROGRAMS, (gl) => new no.NodeGlintRenderer(gl));
   return out;
 }`;
 

@@ -11,7 +11,7 @@
 // THE BUILD THAT WAITS. PERF-COMPILE1's one sync point is still a wait: the LINK_STATUS read holds the page's thread
 // until the GPU process has compiled and linked the program - and everything queued ahead of it - and a driver's
 // compiler (D3D11's above all) takes seconds over a pass's shaders. A pass built in play froze the game for its
-// compile: a gate's fire the first frame one stands, the nodes' outline the first node ringed, the sea's programs at
+// compile: a gate's fire the first frame one stands, the nodes' glint the first node lit, the sea's programs at
 // idle (9.7 s of one task in the real game's boot here, bible/07-Rendering/Performance-Priority.md SHADER-STALL).
 // KHR_parallel_shader_compile - every Chromium on a GPU has it, ANGLE compiling on threads of its own - lets the page
 // ASK whether a program is done without waiting (COMPLETION_STATUS_KHR). `startPrograms` starts a pass's programs and

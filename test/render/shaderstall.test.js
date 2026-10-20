@@ -2,7 +2,7 @@
 // initialization: 5.65-second stall"): A PASS BUILT IN PLAY NEVER WAITS ON ITS COMPILE. render/glProgram.js starts a
 // pass's programs and asks the driver whether they are done without waiting (KHR_parallel_shader_compile); the build that
 // follows takes each started program, so its one read waits on nothing. The world's gate fire, the courts' passes, the
-// nodes' outline and the sea's warm are built through it (bible/07-Rendering/Performance-Priority.md SHADER-STALL).
+// nodes' glint (the outline's before NODE-GLINT) and the sea's warm are built through it (bible/07-Rendering/Performance-Priority.md SHADER-STALL).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -13,7 +13,7 @@ import { GateTelegraphRenderer, telegraphPrograms } from '../../src/render/gate/
 import { GateFxRenderer, GATE_FX_PROGRAMS } from '../../src/render/gate/gateFx.js';
 import { GateVeilRenderer, GATE_VEIL_PROGRAMS } from '../../src/render/gate/gateVeil.js';
 import { CourtCrystalRenderer, CRYSTAL_PROGRAMS } from '../../src/render/courtCrystals.js';
-import { NodeOutlineRenderer, NODE_OUTLINE_PROGRAMS, createNodeOutlinePass } from '../../src/render/nodeOutline.js';
+import { NodeGlintRenderer, NODE_GLINT_PROGRAMS, createNodeGlintPass } from '../../src/render/nodeGlint.js';   // NODE-GLINT (main, 2026-10-20) moved the nodes' outline to their glint: the same two-program pass
 import { ComeSailAwayRenderer, CSA_PART_PROGRAMS, CSA_WAVE_PROGRAMS } from '../../src/render/comeSailAwayRender.js';
 import { SpellImpactPass, SPELL_IMPACT_PROGRAMS } from '../../src/render/spellImpactFx.js';
 import { buildGateModel, gateArchProfile } from '../../src/world/gate/gateModel.js';
@@ -144,7 +144,7 @@ test('SHADER-STALL every pass built through the door compiles nothing its list d
     ['his blows', GATE_FX_PROGRAMS, (gl) => new GateFxRenderer(gl)],
     ['the crystals', CRYSTAL_PROGRAMS, (gl) => new CourtCrystalRenderer(gl)],
     ['the veil', GATE_VEIL_PROGRAMS, (gl) => new GateVeilRenderer(gl)],
-    ['the nodes\' outline', NODE_OUTLINE_PROGRAMS, (gl) => new NodeOutlineRenderer(gl)],
+    ['the nodes\' glint', NODE_GLINT_PROGRAMS, (gl) => new NodeGlintRenderer(gl)],
     ['the sea\'s particles', CSA_PART_PROGRAMS, (gl) => new ComeSailAwayRenderer({ gl })._ensurePart()],
     ['the sea\'s waves', CSA_WAVE_PROGRAMS, (gl) => new ComeSailAwayRenderer({ gl })._ensureWave()],
     ['the spells\' impacts', SPELL_IMPACT_PROGRAMS, (gl) => new SpellImpactPass(gl)],
@@ -210,16 +210,16 @@ test('SHADER-STALL the veil: its warm (the first frame a gate stands, at idle) m
   veil.destroy();
 });
 
-test('SHADER-STALL the nodes\' outline: the first node ringed starts its programs, and the build waits at idle only once they are done (mutants: the idle build asked while they compile)', () => {
+test('SHADER-STALL the nodes\' glint (the outline before NODE-GLINT): the first node lit starts its programs, and the build waits at idle only once they are done (mutants: the idle build asked while they compile)', () => {
   const renderer = { gl: {}, _camPos: new Float32Array([0, 1.6, 0]), markForeignPass: () => {} };
   const idled = [];
   let done = false, started = 0, builds = 0;
-  const pass = createNodeOutlinePass(renderer, { glow: { draw: () => 0 }, now: () => 1, build: () => { builds++; return /** @type {any} */ ({ draw: () => 0, dispose() {} }); },
+  const pass = createNodeGlintPass(renderer, { glow: { draw: () => 0 }, now: () => 1, build: () => { builds++; return /** @type {any} */ ({ draw: () => 0, dispose() {} }); },
     start: () => { started++; return () => done; }, idle: (fn) => idled.push(fn), reduced: () => false });
   const herb = { key: 'herb:1', profession: 'herbalism', at: [0, 0, -5], w: 2, h: 1, pictures: [{ batch: {}, first: 0, count: 1 }] };
   pass.draw([herb]);
   pass.draw([herb]);
-  assert.equal(started, 1, 'started once, at the first node ringed');
+  assert.equal(started, 1, 'started once, at the first node lit');
   assert.equal(idled.length, 0, 'no build asked while they compile');
   done = true;
   pass.draw([herb]);

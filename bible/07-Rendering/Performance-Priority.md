@@ -1384,7 +1384,7 @@ game for its compile:
 - the gate court's telegraph, built with the court (online: the boot), and its portal, his blows and the crystals
   (and the Elite Gates' telegraphs and crystals) at their first frame, mid-fight;
 - the veil, built whole at idle the first frame a gate stands;
-- the nodes' outline at idle, the first node ringed;
+- the nodes' outline at idle, the first node ringed (the nodes' glint since NODE-GLINT, the first node lit);
 - PERF-COMPILE1's idle warms: the sea's four programs and the spells' impact pass;
 - the snow's terrain program, the moment its masks land.
 
@@ -1399,7 +1399,7 @@ program for the same sources instead of compiling its own, so a pass's construct
 made. `compiledPass` is the host's door: the pass built the first time it is wanted AND its programs are done.
 `warmPrograms` takes named steps (`{ start, run }`): it runs a step once its programs are done, asking again at each
 idle. Each pass lists its programs beside its constructor (GATE_PASS_PROGRAMS, telegraphPrograms, GATE_FX_PROGRAMS,
-GATE_VEIL_PROGRAMS, CRYSTAL_PROGRAMS, NODE_OUTLINE_PROGRAMS, CSA_PART/WAVE_PROGRAMS, SPELL_IMPACT_PROGRAMS), and the
+GATE_VEIL_PROGRAMS, CRYSTAL_PROGRAMS, NODE_GLINT_PROGRAMS - NODE_OUTLINE_PROGRAMS until main's NODE-GLINT moved the nodes' outline to `render/nodeGlint.js`, 2026-10-20, the same two-program pass and the same door - CSA_PART/WAVE_PROGRAMS, SPELL_IMPACT_PROGRAMS), and the
 constructor builds from that list, so the list can't drift from what the constructor compiles. Each of the builds above
 goes through the door; the veil's warm makes its context and starts its program, and the step's build takes it. A pass
 waiting on its compile draws nothing for those frames: the gate's fire, a blow's sparks, the snow's surface stand a
@@ -1443,7 +1443,7 @@ doors against the code before them, over a fake context with and without the ext
   for a compile**: `compiledPass`'s `get(true)` builds it the frame it is needed whatever the driver says (the wait every
   build had before the slice), and the fights ask so - the Spire's telegraph when a shape is to be drawn and its crystals,
   the court's telegraph in a fight, his blows' sparks, its crystals and the way in and home. And none of them should
-  have to wait: `render/playPrograms.js` STARTS them - with a gate's fire and the nodes' outline, and the snow's surface -
+  have to wait: `render/playPrograms.js` STARTS them - with a gate's fire and the nodes' glint, and the snow's surface -
   at the renderer's idle warm, where the driver compiles beside the frames, minutes before a player meets them; where it
   cannot, nothing is started early (a compile queued on its thread holds the frames after it) and each is built the
   first time it is asked for, as before the slice. So the later appearances the lane listed (a gate's fire, the court's

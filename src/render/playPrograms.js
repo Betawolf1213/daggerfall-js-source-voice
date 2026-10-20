@@ -18,11 +18,11 @@ import { GATE_PASS_PROGRAMS } from './gate/gatePass.js';
 import { telegraphPrograms } from './gate/gateTelegraph.js';
 import { GATE_FX_PROGRAMS } from './gate/gateFx.js';
 import { CRYSTAL_PROGRAMS } from './courtCrystals.js';
-import { NODE_OUTLINE_PROGRAMS } from './nodeOutline.js';
+import { NODE_GLINT_PROGRAMS } from './nodeGlint.js';
 
 /** The programs started early: a gate's fire (the world's gates, the Elite arches, the court's way in and way home),
- *  the court's and the Spire's telegraphs, his blows' sparks, the crystals, the nodes' outline. */
-export const playPrograms = () => [...GATE_PASS_PROGRAMS, ...telegraphPrograms(false), ...telegraphPrograms(true), ...GATE_FX_PROGRAMS, ...CRYSTAL_PROGRAMS, ...NODE_OUTLINE_PROGRAMS];
+ *  the court's and the Spire's telegraphs, his blows' sparks, the crystals, the nodes' glint (NODE-GLINT's, the outline's before it). */
+export const playPrograms = () => [...GATE_PASS_PROGRAMS, ...telegraphPrograms(false), ...telegraphPrograms(true), ...GATE_FX_PROGRAMS, ...CRYSTAL_PROGRAMS, ...NODE_GLINT_PROGRAMS];
 
 /** Start them on `gl` where its driver compiles beside the frames; answers whether it did. */
 export function startPlayPrograms(gl) {
