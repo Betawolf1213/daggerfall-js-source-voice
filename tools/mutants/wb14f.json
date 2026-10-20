@@ -297,5 +297,46 @@
     "tests": [
       "test/net/gate/wb14f_captive.test.js"
     ]
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-captive-gaolers-a-fixed-two",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "    const n = bearerCountFor(living.length), C = COURTS[FLOOR.pen]",
+    "new": "    const n = 2, C = COURTS[FLOOR.pen]",
+    "tests": [
+      "test/net/gate/wb14f_captive.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-captive-ward-to-a-chained-knight",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "if (!K || !K.f || K.s || K.w || f.atk?.a !== ATTACKS.reckon.id) return;",
+    "new": "if (!K || K.s || K.w || f.atk?.a !== ATTACKS.reckon.id) return;",
+    "tests": [
+      "test/net/gate/wb14f_captive.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-captive-gaoler-struck-from-anywhere",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "  if (!inCourt(pose.x, pose.z, nearestCourt(ax, az), POSE_SLACK)) return out;",
+    "new": "  void 0;",
+    "tests": [
+      "test/net/gate/wb14f_captive.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-captive-ward-spent-twice",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "if (!K.s && wardTakes(K, f.atk) && now >= f.atk.at) { K.s = f.atk.at; f.lastStateAt = -Infinity; }",
+    "new": "if (wardTakes(K, f.atk) && now >= f.atk.at) { K.s = f.atk.at; f.lastStateAt = -Infinity; }",
+    "tests": [
+      "test/net/gate/wb14f_captive.test.js",
+      "test/net/gate/audit_wb14.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
   }
 ]

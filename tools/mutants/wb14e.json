@@ -330,5 +330,25 @@
     "tests": [
       "test/net/gate/wb14e_tithe.test.js"
     ]
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-tithe-health-a-court-s",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "export const titheHpFor = (lvs) => Math.max(HOST_HP_MIN, Math.round(lvs.length ? (TITHE_S * lvs.reduce((s, lv) => s + dpsRef(lv), 0)) / lvs.length : 0));",
+    "new": "export const titheHpFor = (lvs) => Math.max(HOST_HP_MIN, Math.round(lvs.length ? (TITHE_S * lvs.reduce((s, lv) => s + dpsRef(lv), 0)) : 0));",
+    "tests": [
+      "test/net/gate/wb14e_tithe.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-tithe-a-blow-of-its-own",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "  null,   // WB14e: the Tithe-Imp strikes nobody",
+    "new": "  Object.freeze({ kind: 6, key: 'bite', name: 'Bite', windup: 900, active: 200, recover: 900, r: 2, pct: 0.12, base: 4, el: null }),",
+    "tests": [
+      "test/net/gate/wb14e_tithe.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
   }
 ]

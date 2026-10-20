@@ -4,8 +4,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { riseLine, wrathLine, marksLine } from '../../../src/net/gate/gateLaw.js';
-import { GATE_ASPECTS, GATE_TRIALS } from '../../../src/net/gate/gateMods.js';
+import { riseLine, wrathLine, marksLine, portentsLine } from '../../../src/net/gate/gateLaw.js';
+import { GATE_ASPECTS, GATE_TRIALS, GATE_PORTENTS, gateDireLine } from '../../../src/net/gate/gateMods.js';
 import { MARK_TIPS, MARKS_CARD_TEXT, marksCardModel } from '../../../src/ui/gate/gateMarksView.js';
 import { COURT_STRIKE_TEXT, COURT_RECKON_TEXT, COURT_MARKS_TEXT, courtPhaseOrder, courtPhaseCard, COURT_WRATH_TEXT, SUNDER_CARD, COURT_TITHE_TEXT } from '../../../src/scenes/gate/gateCourt.js';
 import { VANGUARD_TEXT } from '../../../src/scenes/gate/gateVanguard.js';   // WB14: the arc's own tables
@@ -55,8 +55,11 @@ function lines() {
   for (const [k, v] of Object.entries(ARSENAL_TEXT)) add(`arsenal.${k}`, v('Ann'));
   for (const [k, v] of Object.entries(SUNDER_TEXT)) add(`sunder.${k}`, v('Ruhn\'s Blade'));
   for (const [k, v] of Object.entries(SUNDER_CARD)) add(`sunderCard.${k}`, v());
-  add('tithe.mine', COURT_TITHE_TEXT.mine(600, 'a Ruby')); add('host.titheCaught', COURT_HOST_TEXT.titheCaught('Ann'));
+  add('tithe.mine', COURT_TITHE_TEXT.mine(600, 'Ruby'));   // AUDIT WB14 (TEXT-1): the gem's bare name, as the court passes it add('host.titheCaught', COURT_HOST_TEXT.titheCaught('Ann'));
   for (const [k, v] of Object.entries(CAPTIVE_TEXT)) add(`captive.${k}`, k === 'felled' ? v('Ann', 2) : v('Sir Evrard'));   // WB14f: the Captive's moments
+  // AUDIT WB14 (TEXT-10): the portents' own words - each one's name, line and tip, the Dire Breach's, and the chat's line
+  for (const p of GATE_PORTENTS) { add(`portent:${p.id}.name`, p.name); add(`portent:${p.id}.line`, p.line); add(`portent:${p.id}.tip`, p.tip); }
+  add('portent.dire', gateDireLine()); add('portents.line', portentsLine(['vanguard', 'sunder']));
   for (const [k, v] of Object.entries(COURT_TEXT)) add(`court.${k}`, v);
   add('gate.opensIn', GATE_TEXT.opensIn('3:12')); add('gate.collapsesIn', GATE_TEXT.collapsesIn('6:12'));
   for (const [k, v] of Object.entries(GATE_NO_TEXT)) add(`no:${k}`, v);
@@ -90,6 +93,8 @@ test('WB13b THE STYLE, a law over every table: no "X, not Y"; no dash aside in a
   for (const t of GATE_TRIALS) assert.ok(t.text.length > 10 && !t.text.endsWith('.') && !t.text.includes(';'), t.id);
   // the tips: one order each, short
   for (const [k, v] of Object.entries(MARK_TIPS)) assert.ok(v.length <= 60 && v.endsWith('.'), `${k}: ${v.length}`);
+  // AUDIT WB14 (TEXT-10): and the portents' tips by the same law - one order, short
+  for (const p of GATE_PORTENTS) assert.ok(p.tip.length <= 60 && p.tip.endsWith('.') && !p.tip.includes(';'), `${p.id}: ${p.tip.length}`);
 });
 
 test('WB13b the chat names the marks - the card and the bar say what each does; Discord says the same sentence (mutants: the marks\' effects back in the chat; the herald\'s own sentence)', () => {

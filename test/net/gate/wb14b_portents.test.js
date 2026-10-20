@@ -20,7 +20,7 @@ import { readFileSync } from 'node:fs';
 import { GATE_PORTENTS, GATE_DIRE, gateDireLine, GATE_TRIALS, CAPTIVE_NAMES, validGatePortents, portentOf, portentBits, hasPortent, gatePortentsWords } from '../../../src/net/gate/gateMods.js';
 import { gatePortentsOf, gateModsOf, gateBossOf, gateTimes, marksLine, marksCarryPortent, portentsLine, gateTitheOf, captiveNameOf, PORTENT_BAG, isGateDay, TITHE_AFTER_MS, TITHE_SPREAD_MS, TITHE_ONE_IN } from '../../../src/net/gate/gateLaw.js';
 import {
-  COURTS, COURTS_HIS, COURT_R, COURT_CENTRE, FLOOR, WALKWAY, WALKS, WALK_ENDS, WALK_HALF_W, WALK_LEAD_MS, WALK_FORM_MS, POSE_SLACK,
+  COURTS, COURTS_HIS, COURT_R, COURT_CENTRE, FLOOR, WALKWAY, WALKS, WALK_ENDS, WALK_HALF_W, WALK_LEAD_MS, WALK_FORM_MS,
   nightPlan, PLAN_PLAIN, planOf, liveFloors, onFloor, clampToFloor, walkwayOf, finalCourt, newFight, joinFight, applyHeal, stateOf, xaWire,
 } from '../../../src/net/gate/gateBrain.js';
 import { validGateOut, GATE_COURT_BOUND, GATE_WALKS_MAX, GATE_FLOORS_MAX } from '../../../src/net/wire.js';
@@ -265,7 +265,8 @@ test('WB14b the night\'s court on the screen: its plan by its day (the relay\'s 
   assert.ok(a.clamp(courtToDungeon(0, 0, 0), 0.4), 'the first court is fire until the Vanguard is broken');
   a.day = pd;
   assert.equal(a.clamp(courtToDungeon(0, 0, 0), 0.4), null, 'a plain night\'s');
-  assert.ok(cd >= 0);
+  a.day = cd;
+  assert.ok(a.clamp(courtToDungeon(...[COURTS[FLOOR.pen][0], 0, COURTS[FLOOR.pen][1]]), 0.4), 'the Pen is fire until its walkway is laid');   // AUDIT WB14 (RECORD nit): `cd` read, not a filler
 });
 
 test('WB14b the telegraph over the night\'s floors: a shape over the whole arena (the Wrath, the Reckoning) is drawn over the plan\'s floors alone - a portent\'s platform has no ground on another night; a plain call draws WB9b\'s three (mutants: the whole arena over every floor of the table)', () => {
@@ -288,7 +289,6 @@ test('WB14b the Deadlands keep clear of every floor of every night: no island wi
   for (let k = COURTS_HIS; k < COURTS.length; k++) assert.ok(floorGap(...at(k)) < 0, `floor ${k} counted`);
   const r = WALKS[WALKWAY.rift];
   assert.ok(floorGap(r.ax + r.ux * r.len / 2, r.az + r.uz * r.len / 2) < 0, 'the Rift Way counted');
-  assert.ok(POSE_SLACK > 0);
 });
 
 // ═══ THE WORDS ═══════════════════════════════════════════════════════════════════════════════════════════════════════

@@ -553,5 +553,117 @@
     "tests": [
       "test/net/gate/wb14d_sundering.test.js"
     ]
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-pair-law-window-zero",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "&& now >= (b ? S.fl : S.bl).kn + SUNDER_PAIR_MS) rise(f, b, now, out);",
+    "new": "&& now >= (b ? S.fl : S.bl).kn + 1000) rise(f, b, now, out);",
+    "tests": [
+      "test/net/gate/wb14d_sundering.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-mend-ten-times",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "(SUNDER_MEND * S.m * dt) / 1000);",
+    "new": "(SUNDER_MEND * S.m * dt) / 100);",
+    "tests": [
+      "test/net/gate/wb14d_sundering.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-mend-lone-half",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "H.mend = now - H.lone >= SUNDER_LONE_MS;",
+    "new": "H.mend = now - H.lone >= SUNDER_LONE_MS / 2;",
+    "tests": [
+      "test/net/gate/wb14d_sundering.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-blade-signature-nova",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "{ wait: 'arrive' }, { a: 'slam' }];",
+    "new": "{ wait: 'arrive' }, { a: 'nova' }];",
+    "tests": [
+      "test/net/gate/wb14d_sundering.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-feeding-whole-to-each",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "const add = Math.min(Math.max(0, S.m - H.h), feed / 2);",
+    "new": "const add = Math.min(Math.max(0, S.m - H.h), feed);",
+    "tests": [
+      "test/net/gate/wb14d_sundering.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-flame-shares-his-cooldowns",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "'shieldUntil', 'stunUntil', 'used', 'threat']);",
+    "new": "'shieldUntil', 'stunUntil', 'threat']);",
+    "tests": [
+      "test/net/gate/wb14d_sundering.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it).",
+    "equivalent": true,
+    "why": "the two kits share no attack with a cooldown (the Chains the Blade's, the Brand the Flame's), so a `used` read through to his is never one the Flame stamps or reads; the key stands so a kit that ever shares one keeps its own"
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-kneel-without-stun",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "  B.stunUntil = now + SUNDER_PAIR_MS;\n}",
+    "new": "  B.stunUntil = now;\n}",
+    "tests": [
+      "test/net/gate/wb14d_sundering.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-the-flame-drawn-as-him",
+    "file": "src/world/gate/gateBoss.js",
+    "old": "mobile: FLAME_LOOKS[aspectId] ?? FLAME_LOOKS.burning, scale: BOSS_LOOKS.ruhn.scale",
+    "new": "mobile: BOSS_LOOKS.ruhn.mobile, scale: BOSS_LOOKS.ruhn.scale",
+    "tests": [
+      "test/net/gate/wb14d_sundering.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-a-view-made-every-frame",
+    "file": "src/scenes/gate/gateFlame.js",
+    "old": "  let v = _views.get(s);",
+    "new": "  let v = null;",
+    "tests": [
+      "test/net/gate/wb14d_sundering.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-the-two-discs-elemental",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "shape: 'disc', r: 8, pct: 0.45, base: 12, el: null,",
+    "new": "shape: 'disc', r: 8, pct: 0.45, base: 12, el: 'fire',",
+    "tests": [
+      "test/net/gate/wb14d_sundering.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-the-rejoining-anywhere",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "  f.pending = { a: 'cross', court: FLOOR.first };\n  f.queue = [{ a: 'rejoin' }];",
+    "new": "  f.pending = { a: 'cross', court: FLOOR.second };\n  f.queue = [{ a: 'rejoin' }];",
+    "tests": [
+      "test/net/gate/wb14d_sundering.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
   }
 ]

@@ -134,15 +134,15 @@ const portentRow = (id, bit, name, line, tip) => /** @type {Readonly<GatePortent
  *  @type {ReadonlyArray<Readonly<GatePortent>>} */
 export const GATE_PORTENTS = Object.freeze([
   portentRow('vanguard', 1, () => t('gate.portent.vanguard.name', 'The Vanguard'), () => t('gate.portent.vanguard.line', 'His vanguard holds the approach.'),
-    () => t('gate.portent.vanguard.tip', 'Break the waves on both platforms; the way to him opens behind them.')),
+    () => t('gate.portent.vanguard.tip', 'Clear both platforms to open the way to him.')),
   portentRow('sunder', 2, () => t('gate.portent.sunder.name', 'The Sundering'), () => t('gate.portent.sunder.line', 'He tears in two at the second phase.'),
-    () => t('gate.portent.sunder.tip', 'Split up; bring both halves down within 20 seconds of each other.')),
-  portentRow('captive', 4, () => t('gate.portent.captive.name', 'The Captive'), () => t('gate.portent.captive.line', 'A knight of the Covenant lies chained in his pen.'),
-    () => t('gate.portent.captive.tip', 'Cut down the gaolers to free the knight; his ward takes a Reckoning.')),
+    () => t('gate.portent.sunder.tip', 'Bring both halves down within 20 seconds of each other.')),
+  portentRow('captive', 4, () => t('gate.portent.captive.name', 'The Captive'), () => t('gate.portent.captive.line', 'A knight of the Covenant lies chained in the Pen.'),
+    () => t('gate.portent.captive.tip', 'Free the knight to ward off one Reckoning.')),
 ]);
 /** THE DIRE BREACH - no row of its own: the Vanguard and the Sundering on one night, said before their two lines. */
 export const GATE_DIRE = Object.freeze(['vanguard', 'sunder']);
-export const gateDireLine = () => t('gate.portent.dire.line', 'Dagon\'s Breach runs deep tonight.');
+export const gateDireLine = () => t('gate.portent.dire.line', 'Dagon\'s Breach runs deep.');   // AUDIT WB14 (TEXT-13): "tonight" once - the marks' line says it
 /** The portents a night may hold together: one, or the Dire Breach's two. */
 export const GATE_PORTENTS_MAX = 2;
 const PORTENT_BY_ID = new Map(GATE_PORTENTS.map((p) => [p.id, p]));

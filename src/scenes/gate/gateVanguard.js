@@ -14,7 +14,7 @@ export const VANGUARD_TEXT = Object.freeze({
   rises: () => t('gate.vanguard.rises', 'His vanguard rises from the fire!'),
   clear: () => t('gate.vanguard.clear', 'The Bridgehead is clear.'),
   lord: () => t('gate.vanguard.lord', 'The Markynaz rises.'),
-  broken: () => t('gate.vanguard.broken', 'The Markynaz falls. The way to the Warden opens.'),
+  broken: () => t('gate.vanguard.broken', 'The Vanguard is broken. The way to the Warden opens.'),
   patience: (boss) => t('gate.vanguard.patience', '{boss} tires of waiting.', { boss }),
 });
 

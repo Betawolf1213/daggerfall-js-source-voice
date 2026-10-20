@@ -3,8 +3,10 @@
 > Design page, written 2026-10-19 before the arc's first slice. The gate it builds on is `World-Bosses.md` (Dagon's
 > Breach - the Burning Court, Valkynaz Ruhn, his marks, his host, his Reckoning); this page names only what it adds and
 > what it moves. Where the page and a shipped slice disagree, the slice's own record (section 12) is what runs. A path
-> that exists today is written from the repository root (`src/net/gate/gateBrain.js`); a path this arc will create is
-> written without `src/` (`net/gate/gatePortents.js`).
+> under `src/` is written without it (`net/gate/gateBrain.js`), as `World-Bosses.md` writes them; the relay's and the
+> account service's from the repository root (`server/src/index.js`). AUDIT WB14 (2026-10-20,
+> `01-Overview/audits/Audit-Breach-Portents.md`): six cold lanes read the arc whole; what they changed is written into
+> each section below, marked `AUDIT WB14` with the finding's id.
 
 ## What Mac asked for
 
@@ -39,11 +41,13 @@ this like your baby. Take your time and be thorough"*. Every decision below is t
    minutes after (`World-Bosses.md` section 19) on every screen, the herald and the omen alike. The Vanguard is sized to
    about two and a half minutes of a court fighting at half its reference damage, the Warden's own fight is unchanged
    in length, and no night is made later - a later Wrath for one kind of night would be one more thing a player has to
-   remember, and the slack is there.
+   remember, and the slack is there. AUDIT WB14 (PLAY-4): and his health on a Vanguard night is less its Vanguard's (the
+   waves' 61 team seconds off his 240 - section 4), so the night costs no more of the clock than a plain one.
 4. **The Sundering forgives.** A half brought down KNEELS, and the other has twenty seconds to follow it (the Elite
    Breach's Twin Lords' law, `Elite-Gates.md` 13.3, at its own court-of-one window `EG_TWIN_ONE_MS` - the Twins' fifteen
-   is for a company of eight that chose this). A half left kneeling past it rises with three tenths of its share, not
-   half. *"Not super hard"*: the fight asks a court to split; it does not punish one that splits badly once.
+   is for a company of eight that chose this). A half left kneeling past it rises - AUDIT WB14 (PLAY-1) - level with the
+   other, three tenths of its share at most. *"Not super hard"*: the fight asks a court to split; it does not punish one
+   that splits badly once.
 5. **One blow is answered by turning: the Burning Gaze.** Every blow the gate has is escaped by moving (`World-Bosses.md`
    section 5, "Its attacks - every one telegraphed"). The Gaze is the arc's one departure, named here: it lands on whoever
    is LOOKING at him as it lands, so it is answered by turning the camera away - a different skill, readable at once
@@ -62,6 +66,8 @@ What the gate promises every player, and this arc keeps:
   reaching its far edge at the landing, its line in the danger edge (`TELEGRAPH_EDGE`); the pins hold the shader's own
   reading (`telegraphField`) to the strike's law (`net/gate/gateStrike.js`) point for point.
 - **Every wind-up outruns its shape from its middle at a run (7.6 m/s), in phase three too** - but the Gaze (answer 5).
+  AUDIT WB14 (PLAY-5): the Chains keep their wind-up in phase three (`windupOf`), so a fighter at the rim behind him at
+  the rune ring outruns their hold with a reaction's 400 ms too.
   NOTHING GETS FASTER (Mac, WBX: *"I dont think making mechanics faster is the play"*): no existing wind-up, pace or
   cadence moves.
 - **The relay runs the fight, the struck screen judges its own feet** (co-op's law, `World-Bosses.md` section 5). What the
@@ -80,12 +86,14 @@ What the gate promises every player, and this arc keeps:
 
 | id | name | line (the omen's, the card's) | tip (the card's) |
 |---|---|---|---|
-| `vanguard` | The Vanguard | His vanguard holds the approach. | Break the waves on both platforms; the way to him opens behind them. |
-| `sunder` | The Sundering | He tears in two at the second phase. | Split up; bring both halves down within 20 seconds of each other. |
-| `captive` | The Captive | A knight of the Covenant lies chained in his pen. | Cut down the gaolers to free the knight; his ward takes a Reckoning. |
+| `vanguard` | The Vanguard | His vanguard holds the approach. | Clear both platforms to open the way to him. |
+| `sunder` | The Sundering | He tears in two at the second phase. | Bring both halves down within 20 seconds of each other. |
+| `captive` | The Captive | A knight of the Covenant lies chained in the Pen. | Free the knight to ward off one Reckoning. |
 
-The Dire Breach is no table row: it is the Vanguard and the Sundering together, said as *"Dagon's Breach runs deep
-tonight."* before the two lines.
+The Dire Breach is no table row: it is the Vanguard and the Sundering together, said as *"Dagon's Breach runs deep."*
+before the two lines. AUDIT WB14 (TEXT-2, -3, -5, -10, -12, -13): each tip one order of 60 characters at most, held to the
+marks' tips' law and WB13b's scan (the knight's ward no longer "his" - half the Covenant's knights are Dames; "Split up"
+was false under four; the Dire line's "tonight" said once, by the marks' line before it).
 
 **The bag** (`net/gate/gateLaw.js gatePortentsOf(day)`): the gates that are not a Legion-Lord night are counted from the
 epoch (`gateIndex`, the cycle of marks known for every gate - `gateModsOf`; `carriersBefore` the count before each place
@@ -144,11 +152,13 @@ of walkway 4 meet the first court's rim beside the broken bridge and never over 
 from the first court's north-west to the third's south-east and passes the second court 16 m clear of its rim and 7 m
 of its spires' feet. Every one is out of the great tower's window (`world/deadlandsLand.js TOWER_WINDOW` about
 `render/deadlands.js SIGIL_TOWER`'s bearing). All inside the wire's GATE_COURT_BOUND (160 m: the Bridgehead's arrival
-stands 152 m out).
+stands 149.3 m out, its way in 152.7 m).
 
 **What is built.** The court's model, its collider and its braziers are the night's plan's (`buildCourtModel(pt)`,
 `courtFloorTris(pt)`, `courtLights(pt)` - a plain night's are WB9b's byte for byte); the Vanguard's platforms keep no rune
-ring (that ring is the Warden's, and he never stands there) and fewer spires. The Deadlands' islands keep clear of
+ring (that ring is the Warden's, and he never stands there), and their spires and braziers keep clear of their walkways'
+openings as his courts' do - AUDIT WB14 (SCREEN-11): and of the night's arrival (`courtOpenings`: the bridge's clearing
+at its root, so no brazier stands behind the Bridgehead's way in). The Deadlands' islands keep clear of
 every floor of every plan (`floorGap`), so the land is one land whatever the night; its hanging shards stay about the
 three courts.
 
@@ -164,22 +174,32 @@ holds. The names are read through the text core (L10N4).
 | id | attack | phase | the ground | wind-up | lands for | what to do |
 |---|---|---|---|---|---|---|
 | 11 | **Chains of the Warden** | 1+ | a burning chain from him to one fighter within 14 m of his body, following them | 3.0 s | the chained, 15% + 4, reeled to his feet - then a Ground Slam | run: past CHAIN_HOLD_M (16 m) from him as it lands and the chain breaks |
-| 12 | **Brand of Dagon** | 2+ | a 5 m ring under 1-3 fighters (brandCountFor: one for two or fewer, two to five, three from six), following each | 5.0 s | everyone else within 5 m of a branded one, 40% + 10 of his element; the branded, 15% + 4 | the branded run clear of everyone; everyone keeps clear of them |
+| 12 | **Dagon's Brand** | 2+ | a 5 m ring under 1-3 fighters (brandCountFor: one for two or fewer, two to five, three from six), following each | 5.0 s | everyone else within 5 m of a branded one, 40% + 10 of his element; the branded, 15% + 4 | the branded run clear of everyone; everyone keeps clear of them |
 | 13 | **Shared Torment** | 2+ | a gold 4 m ring under one fighter, following them | 5.0 s | 80% + 20 of his element, SHARED among everyone inside: one takes it all, four take a quarter each | stand together on the marked one |
 | 14 | **Scything Wheel** | 3 | two blades from his feet, 16 m long and 3.5 m wide, turning about him 0.36 rad a second for 6 s | 2.2 s | 40% + 12 of his weight, once, to whoever a blade passes over | keep ahead of the blades, or past their reach |
 | 15 | **The Burning Gaze** | 3 | none - the screen's rim pulses white | 3.0 s | whoever's view holds him (within 50 degrees of the camera's heading, 60 m): 35% + 10, blinded 2 s | look away from him |
 | 16 | **The Unmaking** | 3 | every other one of the court's eight wedges about its heart; then the other half | 3.0 s each | 45% + 12 of his weight | step into a dark wedge; then back |
-| 17 | **The Sundering** | his turn (section 5) | an 8 m disc about him | 2.6 s | 30% + 8 | step out of it |
-| 18 | **The Rejoining** | his turn (section 5) | a 9 m disc at the first court's heart, where the halves fall back together | 3.2 s | 45% + 12 | keep off the heart |
+| 17 | **The Sundering** | his turn (section 5) | an 8 m disc about him | 2.6 s | 45% + 12 | step out of it |
+| 18 | **The Rejoining** | his turn (section 5) | a 9 m disc at the first court's heart, where the halves fall back together | 3.2 s | 50% + 14 | keep off the heart |
+
+AUDIT WB14 (RECORD-4, PLAY-8): the last two rows' shares are as built (they said 30% + 8 and 45% + 12, never the code's),
+pinned now; and the Brand is *Dagon's Brand* everywhere it is said (TEXT-7 - its orders, the bar, every language).
 
 | attack | cooldown | needs | weight | the relay counts it |
 |---|---|---|---|---|
 | Chains | 22 s | a fighter within 14 m of his body | 1 | no - a pull (`relay: false`) |
 | Brand | 28 s | 2 in his court | 1 | no - his element |
-| Torment | 28 s | 2 in his court | 1 | no - his element, and a count it does not hold |
+| Torment | 28 s | 3 in his court (AUDIT WB14 PLAY-3) | 1 | no - his element, and a count it does not hold |
 | Wheel | 30 s | - | 1 | yes - down its turn, as the charge down its lane |
 | Gaze | 35 s | - | 1 | no - a camera (`relay: false`) |
 | Unmaking | 45 s | - | 1 | yes - its lit wedges |
+
+AUDIT WB14 (PLAY-3): the Torment asks three. Shared between two it was 43% of a fighter's health each at level 30 (48% at
+10), unanswerable, and a pair died more than any court of another size - 1.6 deaths a fighter in a fight against 0.5 for
+four (the PLAY lane's bots, dodging); at three a duo's deaths fell to 0.4 and no other size moved. AUDIT WB14 (LAW-10):
+the Chains are never begun at a fighter past their hold from his centre (Colossal's larger body reached 16.25 m with a
+range measured past it); (LAW-11) the Unmaking's cooldown counts from its first cast, its echo the same Unmaking; (LAW-6)
+a half's kit is its choice before the run's law, so a half repeats an attack as he does.
 
 **The phases now.** The Warden - blade and weight: the Cleave, the Slam, the Charge and the Chains. The Burning Court -
 fire and reach: the Leap, Hellfire, the Meteor, the Nova, and the Brand and the Torment, which are the fire's own
@@ -210,18 +230,25 @@ saving throw answers them.
 lit through their whole turn; a blade's verdict is the charge's (`wheelStrikes` - it strikes as it passes, between the
 frame before and this one; a slow frame still sweeps what it missed) and the relay counts it the same way. Which way it
 turns is the attack's own number's (`i` odd, sunwise): nothing more on the wire. The blades sweep 124 degrees each; at
-their tips (16 m) they move 5.8 m/s, under a run.
+their tips (16 m) they move 5.8 m/s, under a run. AUDIT WB14 (SCREEN-6): a blade strikes the capsule it is drawn as -
+its side to its length, its round tip past it (`wheelSlack`; the side's slack reached 0.68 m past the drawn tip), and no
+body disc at his feet past the blades' roots (Colossal's was struck and never drawn); (SCREEN-7) the callout on my feet
+stands the whole of its turn - a spot a blade sweeps within WHEEL_PERIL_MS - not its wind-up alone; (SCREEN-2) a court I
+step into is judged from my first frame in it, never the sweep of a blade that passed where I stand before I stood there.
 
 **The Unmaking** is new ground - a telegraph kind of its own (TELEGRAPH_KIND.wedges, the shader's and `telegraphField`'s
 one reading, held point for point to the strike's `inWedges`): EIGHT wedges about his court's heart (`tg[0]`, wherever he
 stands), alternate wedges lit, then - his recovery and a breath later - the other four (its `echo`: a second cast turned
 one wedge, the Spokes' own trick, and never a third). From the middle of a wedge at the rim the dark wedge beside it is
-9.2 m: 1.2 s at a run, under its wind-up's 2.4 s in phase three.
+9.2 m: 1.2 s at a run, under its wind-up's 2.4 s in phase three. AUDIT WB14 (SCREEN-13): its fill meets the floor's rim
+as it is seen (the Nova's and the Spokes' law), not its reach a metre past it.
 
 **The Gaze** has no ground. While it winds up every fighter's rim pulses white and the order stands under the crosshair
 (*Look away!*, its arrow the way to turn while they face him); as it lands, a screen whose camera holds him within
 GAZE_HALF_DEG of its heading and GAZE_RANGE_M of him is struck and washed white for GAZE_BLIND_MS (the ground view's
-blinding). The arc's one blow a step does not answer (answer 5).
+blinding). The arc's one blow a step does not answer (answer 5). AUDIT WB14 (SCREEN-5): a watcher (COURT-WATCH) is never
+blinded and never told to look away; (SCREEN-14) the white washes the screen through the HUD's hide - it is the eye's,
+not the HUD's; (SCREEN-9) the arsenal knows an attack by its number and its moment (AUDIT WB B4's law), as the court does.
 
 ## 4. The Vanguard (WB14c)
 
@@ -248,12 +275,17 @@ for somebody. Each rising is the host's own word (`ad`), and every stage of it a
 | | 3 | **the Markynaz**, and Imps | 14 |
 
 Sixty-one team seconds in all: about two minutes of a court striking at half its reference, and two crossings.
+AUDIT WB14 (PLAY-4): and they come off his health on the night (`VG_TEAM_S`, `VG_SHARE_X` - each share (240 - 61) / 240
+of a plain night's): the Vanguard took a lone fighter at half the reference 188 s, and with his health whole two such
+nights in six ran out of the clock before he fell (three Dire Breaches in six); with it every one fell, the last at 1,025 s
+of the 1,200.
 
 **The platform cleared.** The last body of the Bridgehead's last wave down, walkway 3 rises to the Muster (WB9b's slabs,
 its law of the laid floor) - *"The Bridgehead is clear."* - the `vgw` word carrying the walkway and its moment, so every
 screen lays it at once (the state follows in the same beat); the Muster's waves begin VG_OPEN_MS after a fighter stands
-on it. The Markynaz down, his Imps crumble and walkway 4 rises to the Warden - *"The Markynaz falls. The way to the Warden
-opens."* The Warden's opening (OPENING_MS) begins as the first fighter stands in his court (`vgw` open; `openAt`, the
+on it. The Markynaz down, his Imps crumble; the Muster empty - a Brute of its second wave may outlive him - walkway 4 rises
+to the Warden: *"The Vanguard is broken. The way to the Warden opens."* (AUDIT WB14 TEXT-4: it said "The Markynaz falls"
+at the last Brute's death). The Warden's opening (OPENING_MS) begins as the first fighter stands in his court (`vgw` open; `openAt`, the
 state's `op` said at once): his wake, his fight and the new arsenal's cooldowns all count from it, as on any night from
 the fight's birth.
 
@@ -268,8 +300,8 @@ the fight's birth.
 
 Departures from the sketch, named: the Bolt leaves no burning ground (a host blow's disc is judged by `hostVerdict`, and
 the pools are his own landings' - `landingPools`; a Caster's ground would be a second law of the ground for one kind),
-and the Markynaz stands at a Daedra Lord's own size (his host's bodies are drawn at their mobiles' sizes; a scaled one
-would be the first). Blows on the Vanguard are taken from the platform its body stands on (`applyHostHit` reads the
+and the Markynaz stands at a Daedra Lord's own size (his host's bodies are drawn at their mobiles' sizes - the Tithe-Imp
+alone is scaled, to be seen). Blows on the Vanguard are taken from the platform its body stands on (`applyHostHit` reads the
 floor under the body, not his court), the relay counts its Smash and Rend as it counts every plain blow, never the Bolt
 (his element's), and the gate's frame bucket rises to GATE_HZ_MAX 28 so two swings a second through all twelve and him
 still pass.
@@ -279,16 +311,22 @@ A Dremora rank: a markynaz serves a valkynaz (*Oblivion*'s Kyn ranks, the Warden
 **His patience** (VG_PATIENCE_MS, 4 minutes after the first wave): a Vanguard still standing then, he throws a Meteor of
 Oblivion from his court onto a living fighter on the platforms every 15 s - his own Meteor, its wind-up, its ground,
 laid on the platform it is called at (`begin` keeps a point Meteor to the floor of its point): a clock that keeps a
-stalled court moving, never a wipe. *"Valkynaz Ruhn tires of waiting."* - said once.
+stalled court moving, never a wipe. *"Valkynaz Ruhn tires of waiting."* - said once, with the first that falls (AUDIT WB14
+RECORD-9: it was said only at its first moment, and lost if nobody stood out on the platforms then). AUDIT WB14 (LAW-7):
+under Echoing each falls twice, as every meteor of his does - its echo a breath on, on the one it fell for where they
+stand on the platforms, else where the first fell.
 
 **Late, and cast out.** A fighter who steps in later arrives on the Bridgehead too, the walkways laid behind the court
-standing: a run of about 17 s to the Warden. A death is cast out as on any night.
+standing: a run of about 18 s (136 m) to the Warden. A death is cast out as on any night.
 
 **Never in a Legion-Lord night** (section 1). The Vanguard's host and his run on the same bodies' law
 (`stepHost`'s - each a point, a health, a walk said once, a disc wound up), in a beat of their own (`stepVanguard`), in
 the fight's one host (`f.lg`): every screen draws, hears and judges them as his host (`scenes/gate/gateHost.js` - its
 waves never said as his host's, `waveLine`), the bar says the Vanguard's platform and wave in his host's line
-(*The Vanguard - Bridgehead, wave 2 of 3*), and its stages' lines are `scenes/gate/gateVanguard.js`'s.
+(*The Vanguard - Bridgehead, wave 2 of 3*; *The Vanguard - Bridgehead* before its first wave has risen - AUDIT WB14 TEXT-15),
+and its stages' lines are `scenes/gate/gateVanguard.js`'s. AUDIT WB14 (SCREEN-3): the host's ground draws its blows
+nearest my feet first - HOST_SHAPES_MAX of the twelve winding up, so the one that lands on me is always drawn; (RECORD-3)
+at most VG_STANDING_MAX stand, pinned over sixteen fighters on the Bridgehead with every state read whole by the wire.
 
 **AUDIT, found in WB14f.** As WB14c shipped, the court offered the Vanguard's bodies to my blows on its platforms but sent
 none of those blows: `scenes/gate/gateCourt.js hostHit` still asked WB11's question, whether I stood in the court *he*
@@ -320,8 +358,12 @@ Nova and the Brand. Each chooses, aims at and waits for the challengers in its o
 The Blade stands 0.85 of his size, the Flame 0.75 and burns in his aspect's ember.
 
 **The pair law.** A half whose pool is spent KNEELS: no step, no blow, no blow taken, its bar *Kneels - 20s*. The other
-brought down within SUNDER_PAIR_MS (20 s) and they rejoin; past it, the kneeling half rises with SUNDER_RISE (30%) of its
-pool - *"Ruhn's Blade rises."* - and the court tries again. Either half's kneel is said to the whole court, and the bar
+brought down within SUNDER_PAIR_MS (20 s) and they rejoin; past it, the kneeling half rises - *"Ruhn's Blade rises."* - and
+the court tries again. AUDIT WB14 (PLAY-1): it rises LEVEL WITH THE OTHER - SUNDER_RISE (30%) of its pool at most, the
+other's pool at least SUNDER_RISE_MIN (5%) - so two sides out of step even out. Risen with 30% whatever the other held,
+a court whose sides struck out of step knelt and rose for ever (at even rates, one side 24-28 s late never rejoined once
+the Blade's kneel stopped lending the Flame its stun - LAW-1); level, every offset from 0 to 80 s rejoins with two risings
+at most - within 190 s at the reference, 286 s at half. Either half's kneel is said to the whole court, and the bar
 says the other's seconds.
 
 **A half alone mends.** A half with no living challenger in its court for SUNDER_LONE_MS (10 s) - a court that went all
@@ -332,6 +374,14 @@ together layout.
 3.2 s), and he stands there WHOLE at SUNDER_LAST: Dagon's Champion, the last phase, fought in the first court - its
 signature (the Spokes, then the four between), its arsenal, and Dagon's Reckoning armed there. The court runs back over
 the walkways it came by.
+
+**AUDIT WB14.** (LAW-1, PLAY-2) A kneeling Blade's stun is his own: a blow on the Flame is never the heavier for it
+(STUN_HIT_X is the Reckoning's, his whole's). (LAW-3) With every share out of the fight (nobody seen ABSENT_RETIRE_MS -
+a watcher's socket keeps the beat), the halves' mending is kept in what he stands at, no blow lands where there is no
+whole to strike (a half's pool went NaN, and the fight with it), and he never falls sundered. (LAW-4) A Blade kneeling in
+the Wrath's wind-up keeps the Wrath - the clock's, never his to drop. (WIRE-3, WIRE-5) The Rejoining and a half's mending
+begun or ended are said with the state in their beat, each half's ward in it (a screen that heard every word drew both
+halves unwarded for up to 4.5 s).
 
 **Under his marks.** Colossal's size and health, Unyielding's ward and Vengeful's weight are each half's as they were
 his. Soul-Hungry's feeding heals both standing halves by half its share each (never past their pools). Grudge-Bearer's
@@ -385,7 +435,8 @@ own name - Sir Evrard, Dame Lysandre, ... - `net/gate/gateMods.js CAPTIVE_NAMES`
 wakes, walkway 5 rises to the Pen - *"Sir Evrard of the Covenant lies chained in the Pen. Free him!"*
 
 **The gaolers** are WB11's Ward-Bearers' body and Pulse under another name (kind 7 - a Ward-Bearer is the Legion-Lord's,
-and never on this night): `bearerCountFor` of the fight's challengers on a ring about the Pen's heart, BEARER_TEAM_S of
+and never on this night): `bearerCountFor` of the fight's challengers (AUDIT WB14 LAW-8: as the first of them stands in
+the Pen) on a ring about the Pen's heart, BEARER_TEAM_S of
 their reference damage shared, each a chain to the knight (WB11c's tether, drawn in Dagon's crimson). The last one down,
 the knight is free - *"Sir Evrard is free! The Covenant's ward stands over the court."*
 
@@ -398,9 +449,14 @@ Lore: section 19 of `World-Bosses.md` - *the Covenant fights every one*. Its kni
 
 **As built (WB14f).** A Captive night's fight carries its captive from its birth (`net/gate/gateBrain.js newCaptive`,
 newFight's `cp`: when his gaolers rose and how many, when he went free, the Reckoning his ward takes, when it landed on it -
-each 0 until it comes). At his wake (`stepCaptive`) walkway 5 is laid to the Pen and **the gaolers** rise with it - host
-kind 7, a Ward-Bearer's body, Pulse and rising (HOST_KINDS, HOST_BLOWS, HOST_RISE_MS), `bearerCountFor` of the fight's
-challengers on a ring CAPTIVE_RING_R (7 m) about the Pen's heart, BEARER_TEAM_S of their reference damage shared over them.
+each 0 until it comes). At his wake (`stepCaptive`) walkway 5 is laid to the Pen (`cp`'s `at`, the knight shown chained),
+and as the first living challenger stands in the Pen **the gaolers** rise - host kind 7, a Ward-Bearer's body, Pulse and
+rising (HOST_KINDS, HOST_BLOWS, HOST_RISE_MS), `bearerCountFor` of the fight's living challengers then on a ring
+CAPTIVE_RING_R (7 m) about the Pen's heart, BEARER_TEAM_S of their reference damage shared over them (`cp`'s `n`).
+AUDIT WB14 (LAW-8): they rose at his wake, sized for whoever had come by then - eight seconds after the first `in`, the
+first few: twelve who came later fought two gaolers of 140 where they were owed four of 840, and an empty wake raised two
+of 20. (FIX-1, found fixing it) A gaoler's first Pulse is a Ward-Bearer's, BEARER_PULSE_FIRST_MS after its rising and
+staggered, where it had Pulsed as it rose.
 Each Pulses at whoever comes near in the Pen (`bearerBeat`; his element's, so the struck screen's alone), and a blow on one
 is taken from the Pen alone (the floor its body stands on, `applyHostHit`). They outlive his phases' turns (`notGaoler`:
 the Pen is no court of his) and crumble only with the Wrath. The beat after the last is cut down he is free (`cpf`), and
@@ -429,22 +485,30 @@ Reckoning!"*, *"Dagon's Reckoning breaks on the Covenant's ward. Sir Evrard goes
   Dagon's Reckoning to land"; one broken never landed.
 - Freed while a Reckoning still winds up, the ward takes that one: it is the next to land.
 - The gaolers ring the knight at 7 m, not the Ward-Bearers' 9: their chains reach him across the Pen, not across its rim.
+- AUDIT WB14 (LAW-8): the gaolers rise as the first challenger stands in the Pen, not with the walkway at his wake.
+
+AUDIT WB14 (SCREEN-4, SCREEN-10): leaving the court hands nothing of his on (his batch, his gold light and his chains were
+handed to the host's pass every frame after, the batch destroyed); his chains are their slots, refilled each frame. The
+portents' card names him *the knight* (TEXT-2), and his Pen is *the Pen* in every line (TEXT-3).
 
 ## 8. The Dire Breach (WB14b)
 
-The Vanguard and the Sundering on one night, said *"Dagon's Breach runs deep tonight."* Nothing else changes: each is
+The Vanguard and the Sundering on one night, said *"Dagon's Breach runs deep."* Nothing else changes: each is
 fought as its own section says, the Vanguard first. Its receipt says both (section 11).
 
 ## 9. The Tithe-Imp (WB14e) - any night, unannounced
 
 One night in five (`gateRoll(day, 21)`), somewhere between 50 s and 150 s after his wake, while he is in his first or
 second phase, **a Tithe-Imp** - an Imp at 1.3 times its size, burning gold, carrying the coven's tithe to its master -
-rises at his court's rim farthest from him and runs. It flees the nearest challenger at TITHE_SPEED (6.2 m/s, under a
-run), strikes nobody, and dives into the fire TITHE_LIFE_MS (22 s) after it rose. Its health is four seconds of the
-court's mean reference damage: a few blows.
+rises at his court's rim farthest from him and runs. It flees the nearest challenger at 6.8 m/s (HOST_KINDS' - under a
+run), strikes nobody, and dives into the fire TITHE_LIFE_MS (22 s) after it rose. Its health is TITHE_S - ten seconds - of
+the court's mean reference damage. AUDIT WB14 (PLAY-6): at 6.2 m/s and four seconds it was a formality - a lone chaser
+caught it 5 s into its 22, four in 3 s; now a lone fighter's chase is about 12 s, four chasers' 5, and every one of the
+lane's chases still caught it.
 
 Caught, every challenger who landed a blow on it is handed **the tithe** - gold and a gem off a seed of the relay's own
-(`{k: 'tithe', c}`), spilling where it fell, theirs alone: *"Ann catches the Tithe-Imp! Its tithe spills."*; escaped,
+(`{k: 'tithe', c}`), theirs alone: *"Ann catches the Tithe-Imp! Its tithe goes to all who struck it."* (AUDIT WB14
+TEXT-11: nothing spills - it goes into their packs); escaped,
 *"The Tithe-Imp escapes into the fire."* It is not in the omen: the one surprise of the arc, and it costs nobody
 anything.
 
@@ -453,21 +517,32 @@ anything.
 his. It rises (`stepTithe`, `net/gate/gateBrain.js`) the beat after its moment that finds a challenger before him in his
 first or second phase - never in his last, never to an empty court - at his court's rim about the bearing away from him.
 It runs (`titheBeat`) TITHE_FLEE_M straight from the nearest challenger, along the rim when the rim stops it. It dives into
-the fire (`adie`'s `w` 3, HOST_GONE.fled) TITHE_LIFE_MS after it rose, or as his phase turns (before his host crumbles);
-the Wrath crumbles it with the rest. Caught, every challenger whose blow landed on it (`applyHostHit` keeps them - a blow
-that lands for nothing makes no part of it) is handed its tithe on the next beat: `{k: 'tithe', c, at}`, a seed of the
-relay's dice each, to that fighter's sockets alone (the frame's `to`, `server/src/index.js _gateFan`), once. It is never
+the fire (`adie`'s `w` 3, HOST_GONE.fled) TITHE_LIFE_MS after it rose, or as he leaves the court it rose in (`tt`'s `ct`:
+his phase's turn, the Sundering's halves bounding to their courts, the Rejoining's bound - AUDIT WB14 LAW-2/RECORD-1: it
+ran after him over the open fire, struck from no floor); it never rises while he is in the air between two courts; the
+Wrath crumbles it with the rest. Caught, every challenger whose blow landed on it (`applyHostHit` keeps them - a blow
+that lands for nothing makes no part of it) is handed its tithe AT THE CATCH (AUDIT WB14 LAW-5/WIRE-4: `applyHostHit` given
+the relay's dice - `payTithe`; a catch in the last beat before the kill or the Wrath was never paid, the beat that would
+have paid it never coming): `{k: 'tithe', c, at}`, a seed of the relay's dice each, to that fighter's sockets alone (the
+frame's `to`, `server/src/index.js _gateFan`), once - the fight KEPT BEFORE IT IS SAID (AUDIT WB14 WIRE-2,
+`_gateFanKept`: AUDIT WB A10's law for the receipts; said first, an eviction before the next checkpoint woke an Imp
+standing again, and caught again it paid a fresh seed). A catch the dice did not see (a fight without them) is paid first
+thing the next beat, before the kill's or the Wrath's return. It is never
 said again at a later `in`: a tithe is a surprise, and nothing on any ledger counts it.
 
 On the screen the tithe goes straight into the pack through the spoils' own door (`scenes/world.js takeGateSpoil`, on the
 court's existing line): gold at TITHE_GOLD_PER_LEVEL (60) a level, a fifth either way, and one gem of the classic eight
 (ItemBuilder's own CreateRandomGem) - `systems/gate/gateSpoils.js titheList`, the seed's own - with a gold burst where it
-fell and *"You take its tithe of 594 gold and a Ruby."* It is drawn as an Imp at TITHE_SCALE (1.3) burning gold (a light of
+fell and *"You take its tithe of 594 gold and a Ruby."* (AUDIT WB14 TEXT-1: the gem with its article, the gold formatted -
+it said *"594 gold and Ruby"*). It is drawn as an Imp at TITHE_SCALE (1.3) burning gold (a light of
 its own), named the Tithe-Imp; its rising, its catching and its escape are said (`scenes/gate/gateHost.js COURT_HOST_TEXT`).
 
 **Departure from the sketch, named:** the tithe is not spilled on the court's floor. The spoils' pool keeps one spew at a
 time and one record a day (`scenes/spoilsPool.js`), so a tithe thrown there would take the place of the kill's own spoils;
 a burst of its gold where it fell stands for the spill.
+
+AUDIT WB14 (SCREEN-1): sundered, a Tithe-Imp risen in the Blade's court is offered to my blows there beside his Flame (the
+court offered the Flame alone, and the tithe was lost).
 
 ## 10. The wire, and what the relay judges (WB14a-f)
 
@@ -475,6 +550,16 @@ GATE_BRAIN_V and GATE_BRAIN_MIN go to 6: a game that knows none of this would st
 half it cannot name and walk onto a platform the floor law refuses - it is refused at its `in` and told to reload
 (GATE-RELOAD's words). The bump redeploys the relay and drops every connected player once, so the arc ships as one relay
 version.
+
+AUDIT WB14 (WIRE-1, SCREEN-8): A SCREEN BUILDS A NIGHT'S COURT BY ITS DAY (`world/gate/gateArena.js planOfDay` - the
+model, the collider, the arrival, the motor's floor), so a fight fought plain on a portent night stranded it: a relay from
+before the arc admits a new client (its GATE_BRAIN_MIN is 5) and fights the night plain - the screen arrives on the
+Vanguard's Bridgehead, a floor that relay never lays a walkway from, held there till midnight - and a new relay waking a
+fight it checkpointed before the deploy fights it plain the same way. Both closed: the gate's door refuses a portent night
+on a relay older than GATE_PORTENTS_RELAY_MIN (`net/wire.js relaySupportsPortents`, the session's `portentsOk`,
+`scenes/world.js gateRefusal` - *"not yet"*; a plain night is fought as ever), pinned to the relay version that says WB14b;
+and the relay lets go unfallen a fight from before the portents it wakes on a portent night (`server/src/index.js
+_gateFightOf` - one with no `pt` at all), so the next `in` begins the night's own. A fallen one keeps its receipts.
 
 | word | way | what |
 |---|---|---|
@@ -488,7 +573,7 @@ version.
 | `kn` / `kr` / `rj` | room -> all | a half knelt; a half rose; the halves rejoined |
 | the state's `vg` | room -> one, all | the Vanguard's stage: the platform, the wave, done |
 | `vgw` | room -> all | a Vanguard stage begun: a wave risen, a platform cleared, the Markynaz risen, the Vanguard broken |
-| the state's `cp` | room -> one, all | the Captive: freed, and the ward spent |
+| the state's `cp` | room -> one, all | the Captive: laid in the Pen, his gaolers risen, freed, the Reckoning his ward takes, spent |
 | `cpf` / `cpw` | room -> all | the knight freed; his ward taking a Reckoning |
 | `tithe` | room -> one account's sockets | its tithe's seed |
 | `ad` ... `adie` | room -> all | WB11b's host words, carrying the new kinds; `adie`'s `w` gains 3, FLED (the Tithe-Imp) |
@@ -496,7 +581,8 @@ version.
 **What the relay counts** (INT11, `net/bossRef.js judgeGate`): the Wheel down its sweep, the Unmaking's wedges, the
 Sundering's and the Rejoining's discs, every new kind's plain blow - his weight's. Never: the Chain (a pull the relay does
 not hold), the Brand and the Torment (his element's, and a count the relay does not hold), the Gaze (a camera), and the
-Covenant's ward spares the Reckoning it takes.
+Covenant's ward spares the Reckoning it takes. AUDIT WB14 (SCREEN-6): the Wheel is judged as it is drawn, on both ends -
+the strike law is one (`wheelStrikes`).
 
 ## 11. What it pays (WB14g)
 
@@ -519,6 +605,13 @@ order (the Vanguard's, the Sundering's, the Captive's), after the Dragonfire Oat
 Oath's is (AUDIT WORLD-REWARDS A1's law), so every other picture of a portent receipt is the plain receipt's. The account
 service (`server-account/src/eg.js egGateWeir`) rolls the Weir Key at EG_KEY_ODDS_PORTENT (a quarter, the rite's) for a
 receipt with `p`; ACCOUNT_VERSION acct159.
+
+AUDIT WB14 (PLAY-7): a portent's pieces go through every pass the others had - the ladder's last (an Exalted), the
+sockets', the weapons' and the technique's - over them alone, after them (they had none: 0% socketed against 13.4%, no
+Legendary ever Exalted); nothing drawn before them moves. (WIRE-6) The wealth budget's fill for a signed win grows by
+SPOILS_GRANT_PIECE (10,000) for each portent its receipt pays (`server-account/src/budget.js portentPieces`, the claim
+carrying its portents to the fill and never in its answer) - acct159, before it shipped. The tithe stays off it, named:
+its gold (60 a level) and its one gem sit inside the grant's room past the mean and an hour's rate.
 
 ## 12. The slices and their records
 
@@ -640,6 +733,12 @@ equivalent - the guards that keep the relay from counting a marked blow should o
 first push and fixed: the client's fold of an atk word dropped its `pk` (`net/gate/gateLink.js`), so a marked screen
 never knew it was marked - pinned through the fold (WB14a-the-fold-forgets-the-marked).
 
+**AUDIT WB14 (2026-10-20) - the arc read whole.** `01-Overview/audits/Audit-Breach-Portents.md`: six cold lanes (LAW, PLAY,
+WIRE, SCREEN, TEXT, RECORD) over the frozen head 5c3a69498; every finding verified, then fixed or named (the sections above,
+marked `AUDIT WB14`). Pins: `test/net/gate/audit_wb14.test.js` (21) and `audit_wb14_screen.test.js` (12), and the older
+ones it moved (each a PIN MOVED note); mutants: `tools/mutants/audit_wb14.json`, the RECORD lane's records of what the
+slices' titles claimed (`AUDIT-WB14-RECORD-6-*` in wb14a-f's lists), and the records the fixes moved, re-aimed by content.
+
 ## 13. What it does not do, said so
 
 - No portent offline - there is no gate offline.
@@ -647,3 +746,6 @@ never knew it was marked - pinned through the fold (WB14a-the-fold-forgets-the-m
 - The halves never merge early, and a Wrath overtakes them as it overtakes him whole.
 - The Gaze is the one blow a step does not answer; nothing else departs from the escape law.
 - No new art from outside the tree: every body is Daggerfall's own, every floor the court's own stone.
+- The marks' words (WB8b's aspects and trials, the herald's and the chat's marks line, the old attacks' names - *Dagon's
+  Reckoning* among them) are English in every language, as they were; the portents and every line of this arc beside them
+  are the player's (AUDIT WB14 TEXT-9 - a slice of their own).

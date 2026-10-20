@@ -75,7 +75,7 @@ export const courtPhaseOrder = (n) => (n === 2 ? t('gate.phase.follow2', 'Follow
  *  (read through the text core - L10N4). */
 /** WB14e: what a Tithe-Imp's tithe paid me (read through the text core - L10N4). */
 export const COURT_TITHE_TEXT = Object.freeze({
-  mine: (gold, gem) => t('gate.tithe.mine', 'You take its tithe of {gold} gold and {gem}.', { gold, gem }),
+  mine: (gold, gem) => t('gate.tithe.mine', 'You take its tithe of {gold, number} gold and {gem, select, Amber {an Amber} Emerald {an Emerald} other {a {gem}}}.', { gold, gem }),   // AUDIT WB14 (TEXT-1): the gem with its article - the classic eight's names (Emerald and Amber the vowels)
 });
 export const SUNDER_CARD = Object.freeze({
   main: () => t('gate.card.sunder', 'The Sundering'),
@@ -374,8 +374,11 @@ export function createGateCourt({
    *  gold at his freeing and his going in its bursts */
   const captive = createGateCaptive({ renderer, getTexture, uploadRecordFrame, cam, say, burst: (p, at0) => addBurst(p, at0, FX_KINDS.spoils, WARD_COLOR) });
   /** WB14a: my feet in the court's frame, or null; a marked blow's order on them as the ground view's peril. */
-  const mineXZ = () => { const f = feet(); return f ? [f[0] - COURT_CENTRE[0], f[2] - COURT_CENTRE[2]] : null; };
-  const arsenalPeril = (s, t, P, fp, y) => orderPeril(arsenal.order(s, t, P, [fp[0] - COURT_CENTRE[0], fp[2] - COURT_CENTRE[2]], y), y);
+  // AUDIT WB14 (SCREEN-10): my feet in the court's frame, one pair refilled (AUDIT WB D10's law) - read at once by each
+  // caller, kept by none (a marked ring's place is copied into its shape)
+  const _mine = [0, 0];
+  const mineXZ = () => { const f = feet(); if (!f) return null; _mine[0] = f[0] - COURT_CENTRE[0]; _mine[1] = f[2] - COURT_CENTRE[2]; return _mine; };
+  const arsenalPeril = (s, t, P, y) => orderPeril(arsenal.order(s, t, P, mineXZ(), y), y);
   const healLive = (s) => !!s && s.day !== null && !s.fell && s.wrath == null;
   /** What my mates healed in me, out as the wire's `heal`: whole points (the fractions kept for the next), each caster once. */
   function sendOwed(t) {
@@ -626,7 +629,7 @@ export function createGateCourt({
     }
     // the Wrath's own word, when it overtook its attack's landing on this screen: it lands all the same
     if (s.wrath != null && !wrathLanded) { wrathLanded = true; if (standing) land({ a: ATTACKS.wrath.id }, P); }
-    arsenal.judge(s, t, P, f ? [f[0] - COURT_CENTRE[0], f[2] - COURT_CENTRE[2]] : null, yaw(), standing);   // WB14a: the marked blows and the Gaze
+    arsenal.judge(s, t, P, f ? mineXZ() : null, yaw(), standing);   // WB14a: the marked blows and the Gaze
   }
 
   function cue(s, t, P) {
@@ -1063,7 +1066,7 @@ export function createGateCourt({
       drawGateDamageChart(chartAt !== null ? damageChartModel(s.fell, { boss: bossOf(s).name, me: me(), since: chartAt, now: t }) : null, { hidden: hudHidden() || veiled() });
       // WB9d: his ground under me and his element on me, felt - the screen's rim in its colour, the warning while I stand in
       // it; WB13a: and a blow still to come on my feet, over all of it, with the way out
-      const order = alive ? arsenalPeril(s, t, P, fp, yaw()) ?? orderPeril(flame.order(s, t, [fp[0] - COURT_CENTRE[0], fp[2] - COURT_CENTRE[2]], yaw()), yaw()) : null;   // WB14a: a marked blow's order, over the ground's; WB14d: and the Flame's Brand
+      const order = alive ? arsenalPeril(s, t, P, yaw()) ?? orderPeril(flame.order(s, t, mineXZ(), yaw()), yaw()) : null;   // WB14a: a marked blow's order, over the ground's; WB14d: and the Flame's Brand
       drawGateGround(groundViewModel({ inside: inFire, ground: groundName, color: groundColor, biteAt, biteColor, now: t, peril: order ?? onMe, blindAt: arsenal.blindAt() }), { hidden: hudHidden() });
       if (healOwed.size && t - healSentAt >= HEAL_SEND_MS) sendOwed(t);   // GATE-HEAL: what my mates healed in me, out
       // INT15: MY BODY, in my own word, while I stand alive in a fight that lives (net/bossBody.js bodySayer's pace)

@@ -270,5 +270,98 @@
     "tests": [
       "test/net/gate/wb14c_vanguard.test.js"
     ]
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-vanguard-never-holds-him",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "if (stepVanguard(f, now, bodies, rng, out, P)) return heldBeat(f, now, out);",
+    "new": "stepVanguard(f, now, bodies, rng, out, P);",
+    "tests": [
+      "test/net/gate/wb14c_vanguard.test.js",
+      "test/net/gate/audit_wb14.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-vanguard-wave-count-off",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "export const vanguardCountFor = (n) => Math.max(3, Math.min(10, 2 + Math.ceil(Math.max(0, n) / 2)));",
+    "new": "export const vanguardCountFor = (n) => Math.max(3, Math.min(10, 2 + Math.ceil(Math.max(0, n) / 3)));",
+    "tests": [
+      "test/net/gate/wb14c_vanguard.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-vanguard-walkways-swapped",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "Object.freeze({ floor: FLOOR.bridgehead, walk: WALKWAY.muster,",
+    "new": "Object.freeze({ floor: FLOOR.bridgehead, walk: WALKWAY.warden,",
+    "tests": [
+      "test/net/gate/wb14c_vanguard.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-vanguard-a-kind-faster-than-a-run",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "Object.freeze({ id: 3, key: 'brute', r: 0.8, h: 2.4, speed: 2.8 }),",
+    "new": "Object.freeze({ id: 3, key: 'brute', r: 0.8, h: 2.4, speed: 8 }),",
+    "tests": [
+      "test/net/gate/wb14c_vanguard.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-vanguard-the-bolt-counted",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "Object.freeze({ kind: 4, key: 'bolt', get name() { return t('gate.host.bolt', 'Bolt'); }, windup: 1600, active: 200, recover: 400, r: 3, pct: 0.22, base: 7, el: 'aspect' }),",
+    "new": "Object.freeze({ kind: 4, key: 'bolt', get name() { return t('gate.host.bolt', 'Bolt'); }, windup: 1600, active: 200, recover: 400, r: 3, pct: 0.22, base: 7, el: null }),",
+    "tests": [
+      "test/net/gate/wb14c_vanguard.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-vanguard-caster-first-bolt-at-once",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "  for (const a of H.ads) if (a.k === HOST.caster && a.next === now) a.next = now + 1500;",
+    "new": "  void 0;",
+    "tests": [
+      "test/net/gate/wb14c_vanguard.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it).",
+    "equivalent": true,
+    "why": "a Caster rises for HOST_RISE_MS[caster] (1.5 s) and no host body strikes while it rises - its first Bolt waits that long whatever its `next` says; the line stands so a quicker rising never Bolts at once"
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-vanguard-patience-from-the-birth",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "if (!V.first) { V.first = now; V.pat = now + VG_PATIENCE_MS; }",
+    "new": "if (!V.first) { V.first = now; V.pat = f.startedAt + VG_PATIENCE_MS; }",
+    "tests": [
+      "test/net/gate/wb14c_vanguard.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-vanguard-markynaz-lord-word-unsaid",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "if (W.lord) out.push({ k: 'vgw', e: VG_WORD.lord, s: V.s, w: V.w, at: now });",
+    "new": "void 0;",
+    "tests": [
+      "test/net/gate/wb14c_vanguard.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-vanguard-broken-with-him-standing",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "  } else if (!H.ads.length) {\n    // the platform cleared",
+    "new": "  } else if (!H.ads.some((a) => a.k !== HOST.markynaz)) {\n    // the platform cleared",
+    "tests": [
+      "test/net/gate/wb14c_vanguard.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
   }
 ]

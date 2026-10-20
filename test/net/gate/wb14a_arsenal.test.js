@@ -1,5 +1,5 @@
 // WB14a (2026-10-19, Mac: "More diabolical boss movesets", then "This is all yours to take on"): THE WARDEN'S NEW
-// ARSENAL - six attacks more he chooses, each with a cooldown of its own: Chains of the Warden, Brand of Dagon, Shared
+// ARSENAL - six attacks more he chooses, each with a cooldown of its own: Chains of the Warden, Dagon's Brand, Shared
 // Torment, the Scything Wheel, the Burning Gaze and the Unmaking.
 //
 //   the brain            net/gate/gateBrain.js ATTACKS 11-16, attacksFor's `ctx`, begin's marked (`pk`), the Chains' hold

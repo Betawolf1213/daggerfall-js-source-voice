@@ -19,7 +19,7 @@ import {
   COURTS, HOST, HOST_KINDS, HOST_BLOWS, HOST_RISE_MS, HOST_GONE, HOST_RIM_R, HOST_HP_MIN, OPENING_MS, BRAIN_TICK_MS, HIT_KINDS, PHASE_AT,
   TITHE_LIFE_MS, TITHE_S, TITHE_FLEE_M, titheHpFor, dpsRef, newFight, joinFight, stepBrain, stateOf, applyHostHit, hostBlowUnder, BASE_PROFILE,
 } from '../../../src/net/gate/gateBrain.js';
-import { gateTitheOf, TITHE_ONE_IN, TITHE_AFTER_MS, TITHE_SPREAD_MS, gatePortentsOf, isGateDay } from '../../../src/net/gate/gateLaw.js';
+import { gateTitheOf, TITHE_ONE_IN, TITHE_AFTER_MS, TITHE_SPREAD_MS, gatePortentsOf, portentsLine, isGateDay } from '../../../src/net/gate/gateLaw.js';
 import { validGateOut, GATE_HOST_KINDS, GATE_HOST_GONE } from '../../../src/net/wire.js';
 import { foldGate, GATE_STATE_EMPTY } from '../../../src/net/gate/gateLink.js';
 import { titheList, TITHE_GOLD_PER_LEVEL } from '../../../src/systems/gate/gateSpoils.js';
@@ -68,7 +68,7 @@ test('WB14e the night\'s draw: one gate in TITHE_ONE_IN carries a Tithe-Imp, its
   assert.ok(Math.abs(n / nights - 1 / TITHE_ONE_IN) < 0.02, `${n} of ${nights}`);
   const omen = read('src/net/gate/gateHerald.js') + read('src/net/gate/gateMods.js');
   assert.ok(!/tithe/i.test(omen), 'never said before it comes');
-  for (let d = 0; d < 400; d++) assert.ok(!(gatePortentsOf(d) ?? []).includes('tithe'), 'no portent of it');
+  for (let d = 0; d < 400; d++) assert.ok(!/tithe/i.test(portentsLine(gatePortentsOf(d)) ?? ''), 'no portent of it - never in the omen');   // AUDIT WB14 (RECORD nit): the omen's words, not a list that never holds it
 });
 
 test('WB14e the kind: an Imp at 1.3 of its body, under a runner\'s pace, that strikes nobody; risen as an Imp rises; fled its own way of going; ten seconds of the court\'s mean reference its health (AUDIT WB14 PLAY-6: four was a formality - a lone chaser caught it in 5 s of its 22) (mutants: a blow of its own; outrunning a runner)', () => {
@@ -259,7 +259,8 @@ test('WB14e the court: my tithe into my pack once (the spoils\' own door), its g
 
 test('WB14e its words, its look and the bar: its bolt said as it rises, its catching by name, its escape; an Imp\'s sprite at TITHE_SCALE named the Tithe-Imp; sinking into the fire as it flees; never counted his host (mutants: no line at its rising; an escape said as a catch; counted on the bar)', () => {
   assert.equal(waveLine({}, HOST.tithe, 'Ruhn', 'Tithe-Imps'), COURT_HOST_TEXT.tithe());
-  assert.equal(COURT_HOST_TEXT.titheCaught('Ann'), 'Ann catches the Tithe-Imp! Its tithe spills.');
+  assert.equal(COURT_HOST_TEXT.titheCaught('Ann'), 'Ann catches the Tithe-Imp! Its tithe goes to all who struck it.');   // PIN MOVED (AUDIT WB14 TEXT-11): nothing spills - it goes into their packs
+  assert.deepEqual([COURT_TITHE_TEXT.mine(594, 'Ruby'), COURT_TITHE_TEXT.mine(1200, 'Emerald'), COURT_TITHE_TEXT.mine(600, 'Amber')], ['You take its tithe of 594 gold and a Ruby.', 'You take its tithe of 1,200 gold and an Emerald.', 'You take its tithe of 600 gold and an Amber.'], 'AUDIT WB14 (TEXT-1): the gem with its article');
   assert.equal(COURT_HOST_TEXT.titheEscaped(), 'The Tithe-Imp escapes into the fire.');
   assert.match(read('src/scenes/gate/gateHost.js'), /else if \(g\.k === HOST\.tithe && !s\.fell && s\.wrath == null\) say\(g\.w === 0 \? COURT_HOST_TEXT\.titheCaught\(g\.n\) : COURT_HOST_TEXT\.titheEscaped\(\)\);/);
   const L = hostLookOf(HOST.tithe, 'rime');

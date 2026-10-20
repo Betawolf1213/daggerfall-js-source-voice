@@ -2659,9 +2659,11 @@ splitting and players having to split and navigate to beat both sides and then m
 (chance based encounter modifer)"*, then *"This is all yours to take on."* The record is
 `11-Multiplayer/Breach-Portents.md`: a third kind of mark beside his aspect and his trials (section 8 here, and section
 17's Legion-Lord, which carries none), the night's floor plan that grows this page's three courts (section 14, WB9b)
-into a graph of six floors and six walkways, the Warden's new arsenal, and the slices WB14a-g. Every law on this page
-holds on a plain night as it did - a portent adds to the court; it never changes the gate's clock, its marks or its
-claim.
+into a graph of six floors and six walkways, the Warden's new arsenal, and the slices WB14a-g. A portent adds to the court;
+it never changes the gate's clock, its marks or its claim. Two of the arc's changes are every night's, named (AUDIT WB14
+RECORD-12, `01-Overview/audits/Audit-Breach-Portents.md`): the Warden's new arsenal is his on every night (Breach-Portents
+section 3), its Burning Gaze the one blow answered by turning, not by a step (section 5's escape law, Breach-Portents
+answer 5); and the Tithe-Imp may run on any night, the Legion-Lord's too (Breach-Portents section 9).
 
 ## Shipped
 

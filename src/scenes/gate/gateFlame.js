@@ -91,7 +91,8 @@ export function createGateFlame({
     arsenal?.reset?.();
   }
   /** My feet in the court's frame, or null. */
-  const mine = () => { const f = feet(); return f ? [f[0] - COURT_CENTRE[0], f[2] - COURT_CENTRE[2]] : null; };
+  const _mine = [0, 0];   // AUDIT WB14 (SCREEN-10): one pair refilled, read at once by each caller
+  const mine = () => { const f = feet(); if (!f) return null; _mine[0] = f[0] - COURT_CENTRE[0]; _mine[1] = f[2] - COURT_CENTRE[2]; return _mine; };
   /** Do my feet stand in the Flame's court (the relay takes a blow on it from nowhere else)? */
   const inItsCourt = (F, now) => { const m = mine(); if (!m) return false; const [x, z] = bossPlace(F, now); return inCourt(m[0], m[1], nearestCourt(x, z), POSE_SLACK); };
 

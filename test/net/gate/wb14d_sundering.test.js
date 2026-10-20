@@ -23,7 +23,7 @@ import {
   MELEE_REACH, RECKON_FIRST_MS,
 } from '../../../src/net/gate/gateBrain.js';
 import { judgeGate } from '../../../src/net/bossRef.js';
-import { validGateIn, validGateOut, RELAY_VERSION } from '../../../src/net/wire.js';
+import { validGateIn, validGateOut } from '../../../src/net/wire.js';
 import { foldGate, GATE_STATE_EMPTY, bossAt } from '../../../src/net/gate/gateLink.js';
 import { flameOf, createGateFlame, FLAME_I, SUNDER_TEXT } from '../../../src/scenes/gate/gateFlame.js';
 import { courtPhaseCard, SUNDER_CARD, createGateCourt } from '../../../src/scenes/gate/gateCourt.js';
@@ -334,7 +334,6 @@ test('WB14d the wire: a hit names its half (`b` 1 kept, 0 dropped, anything else
   assert.ok(validGateOut(st)?.sd);
   for (const bad of [{ h: [st.sd.m + 1, 0] }, { kn: [0] }, { two: 2 }, { lo: [0, 3] }, { fl: { ...st.sd.fl, ct: 9 } }]) assert.equal(validGateOut({ ...st, sd: { ...st.sd, ...bad } }), null, JSON.stringify(bad));
   assert.match(read('server/src/index.js'), /GATE_SEAM\.hit\(f, a\.sub, m\.d, m\.r, at, now, m\.q, m\.b === 1 \? \{ b: 1 \} : undefined\);/);
-  assert.match(RELAY_VERSION, /^world\d+$/);
 });
 
 // ═══ THE SCREEN ═══════════════════════════════════════════════════════════════════════════════════════════════════

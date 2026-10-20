@@ -15,10 +15,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  COURTS, FLOOR, WALKWAY, HOST, HOST_KINDS, HOST_BLOWS, HOST_RISE_MS, HOST_STANDING_MAX, HOST_GONE, POSE_SLACK, OPENING_MS, BRAIN_TICK_MS, HIT_KINDS,
+  COURTS, FLOOR, WALKWAY, HOST, HOST_KINDS, HOST_BLOWS, HOST_RISE_MS, HOST_STANDING_MAX, HOST_GONE, OPENING_MS, BRAIN_TICK_MS, HIT_KINDS,
   VG_OPEN_MS, VG_WAVE_MAX_MS, VG_WAVE_LEFT, VG_STANDING_MAX, VG_STAGES, VG_KIND_W, VG_PATIENCE_MS, VG_PATIENCE_EVERY_MS, VG_CALL_MS, VG_CALL_N,
   VG_CASTER_KEEP, VG_CASTER_REACH, VG_WORD, vanguardCountFor, newVanguard, openedAt, vanguardHolds, newFight, joinFight, stepBrain, stateOf,
-  applyHostHit, dpsRef, hostBlowUnder, BASE_PROFILE, ATTACKS, ATTACK_BY_ID, walkFormed, nightPlan, liveFloors,
+  applyHostHit, dpsRef, hostBlowUnder, BASE_PROFILE, ATTACKS, nightPlan, liveFloors,
 } from '../../../src/net/gate/gateBrain.js';
 import { judgeGate } from '../../../src/net/bossRef.js';
 import { validGateOut, GATE_HOST_KINDS, GATE_HOST_MAX, GATE_HZ_MAX, GATE_VG_WORDS } from '../../../src/net/wire.js';
@@ -27,7 +27,7 @@ import { vanguardLine, vanguardOut, VANGUARD_TEXT } from '../../../src/scenes/ga
 import { waveLine, COURT_HOST_TEXT, hostShapes } from '../../../src/scenes/gate/gateHost.js';
 import { bossBarModel } from '../../../src/ui/gate/gateBossBar.js';
 import { hostLookOf, hostPulseColor, HOST_BITE_COLOR } from '../../../src/world/gate/gateBoss.js';
-import { gatePortentsOf } from '../../../src/net/gate/gateLaw.js';
+import { gatePortentsOf, gateModsOf } from '../../../src/net/gate/gateLaw.js';
 
 const read = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
 const T0 = 1_000_000, WRATH = T0 + 3_600_000, RUN = 7.6;
@@ -298,7 +298,7 @@ test('WB14c on my screen: the Vanguard\'s words - its first wave, each clearing,
   assert.equal(vanguardLine({ e: VG_WORD.wave, s: 1, w: 1 }), null);
   assert.equal(vanguardLine({ e: VG_WORD.clear, s: 0 }), 'The Bridgehead is clear.');
   assert.equal(vanguardLine({ e: VG_WORD.lord, s: 1 }), 'The Markynaz rises.');
-  assert.equal(vanguardLine({ e: VG_WORD.broken, s: 1 }), 'The Markynaz falls. The way to the Warden opens.');
+  assert.equal(vanguardLine({ e: VG_WORD.broken, s: 1 }), 'The Vanguard is broken. The way to the Warden opens.');   // PIN MOVED (AUDIT WB14 TEXT-4): said as the Muster empties - a Brute may outlive the Markynaz
   assert.equal(vanguardLine({ e: VG_WORD.patience }, 'Valkynaz Ruhn'), 'Valkynaz Ruhn tires of waiting.');
   assert.equal(vanguardLine({ e: VG_WORD.open }), null);
   assert.ok(vanguardOut({ vg: [1, 2] }) && !vanguardOut({ vg: [2, 0] }) && !vanguardOut({ vg: null }));
@@ -326,6 +326,5 @@ test('WB14c never on a plain night: its stages, its waves and its words are a Va
   const r = beats(f, T0, T0 + 30_000, [body('s0', BH), body('s1', C0, 0, 6)]);
   assert.equal(r.out.filter((o) => o.k === 'vgw' || o.k === 'ad').length, 0);
   assert.equal(stateOf(f).vg, undefined);
-  for (let d = 0; d < 400; d++) { const pt = gatePortentsOf(d); if (pt?.includes('vanguard')) assert.ok(!pt.includes('legion')); }
-  assert.ok(ATTACK_BY_ID.length >= 17 && typeof walkFormed === 'function' && POSE_SLACK > 0);
+  for (let d = 0; d < 400; d++) { const pt = gatePortentsOf(d); if (pt?.includes('vanguard')) assert.ok(!(gateModsOf(d) ?? []).includes('legion'), `day ${d}`); }   // AUDIT WB14 (RECORD nit): the night's marks - a portent list never holds 'legion'
 });

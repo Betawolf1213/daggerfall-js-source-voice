@@ -464,3 +464,36 @@ test('AUDIT WB14 PLAY-7 a portent\'s pieces go through every pass the others had
   }
   assert.ok(socketed / n > 0.06, `${socketed} of ${n} socketed`);
 });
+
+test('AUDIT WB14 RECORD-6 two claims a test\'s title made and nothing held: while the Vanguard holds he waits - a body that stands in his court before the way to him is laid draws no blow of his; and the ward spent is said once, never a state a beat after (mutants: the Vanguard never holding him; the ward spent again each beat)', () => {
+  const run = fight(3, ['vanguard']), { f } = run;
+  run.all(FLOOR.bridgehead);
+  run.step(40);
+  run.put('s0', FLOOR.first, 3, 0);   // a pose in his court, no walkway to it
+  run.out.length = 0;
+  run.step(120);
+  assert.ok(!f.vg.opened);
+  assert.equal(kinds(run.out, 'atk').filter((o) => o.a !== ATTACKS.meteor.id).length, 0, 'no blow of his');
+  assert.equal(kinds(run.out, 'mv').length, 0, 'nor a step');
+  // the ward spent: one state for it
+  const c = fight(3, ['captive']);
+  c.until(T0 + OPENING_MS + 6000);
+  const PEN = COURTS[FLOOR.pen];
+  c.where.s2 = [PEN[0], PEN[1] + COURT_R - 1];
+  c.step();
+  for (const a of c.f.lg.ads.filter((o) => o.k === HOST.gaoler)) { const P = c.f.players.s2; P.bucket = 1e9; P.rate = 4; c.out.push(...applyHostHit(c.f, 's2', a.i, a.h + 1, HIT_KINDS.Spell, { x: PEN[0], z: PEN[1] + COURT_R - 1 }, c.t, null, c.rng)); c.t += 300; }
+  c.step();
+  assert.ok(c.f.cp.f > 0, 'free');
+  const C = COURTS[FLOOR.third];
+  Object.assign(c.f, { phase: 3, court: FLOOR.third, pos: [C[0], C[1]], queue: [], pending: null, atk: null, move: null, shieldUntil: 0, rk: c.t, nextAt: c.t });
+  c.f.xa = [T0, T0, ...c.f.xa.slice(2)];
+  for (const k of Object.keys(c.where)) c.where[k] = [C[0] + 4, C[1] + Number(k.slice(1)) * 2];
+  for (let i = 0; i < 400 && c.f.atk?.a !== ATTACKS.reckon.id; i++) c.step();
+  const A = c.f.atk;
+  assert.equal(c.f.cp.w, A.i);
+  c.until(A.at + BRAIN_TICK_MS);
+  assert.equal(c.f.cp.s, A.at);
+  const n0 = c.out.length;
+  c.step(8);
+  assert.ok(kinds(c.out.slice(n0), 'st').length <= 1, 'said once');
+});

@@ -346,5 +346,47 @@
     "tests": [
       "test/net/gate/wb14a_arsenal.test.js"
     ]
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-brand-self-at-the-burst-s-share",
+    "file": "src/scenes/gate/gateArsenal.js",
+    "old": "if (b.self) land(atk, P, { ...so, pct: ATTACKS.brand.selfPct * P.dmgX, base: ATTACKS.brand.selfBase * P.dmgX });",
+    "new": "if (b.self) land(atk, P, so);",
+    "tests": [
+      "test/net/gate/wb14a_arsenal.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-chain-slam-queued-at-the-end",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "if (ATTACK_BY_ID[was.a] === ATTACKS.chains && was.held) f.queue.unshift({ a: 'slam' });",
+    "new": "if (ATTACK_BY_ID[was.a] === ATTACKS.chains && was.held) f.queue.push({ a: 'slam' });",
+    "tests": [
+      "test/net/gate/wb14a_arsenal.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it).",
+    "equivalent": true,
+    "why": "he chooses only with his turn's queue drained (no pending, the queue's last entry already shifted into it), so the Slam put first or last stands alone in an empty queue"
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-chains-a-wind-up-past-escape",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "windup: 3000, active: 150, recover: 1000, shape: 'tether'",
+    "new": "windup: 1800, active: 150, recover: 1000, shape: 'tether'",
+    "tests": [
+      "test/net/gate/wb14a_arsenal.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-6-unmake-phase-two",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "shape: 'wedges', n: 8, r: COURT_R + 1, pct: 0.45, base: 12, el: null, aim: 'point', phase: 3,",
+    "new": "shape: 'wedges', n: 8, r: COURT_R + 1, pct: 0.45, base: 12, el: null, aim: 'point', phase: 2,",
+    "tests": [
+      "test/net/gate/wb14a_arsenal.test.js"
+    ],
+    "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
   }
 ]

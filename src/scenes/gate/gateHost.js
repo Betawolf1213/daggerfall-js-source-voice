@@ -40,8 +40,8 @@ export const COURT_HOST_TEXT = Object.freeze({
   felled: (who, left) => (left > 0 ? `${who || 'A challenger'} cuts down a Ward-Bearer. ${left} ${left === 1 ? 'stands' : 'stand'}.` : 'The last Ward-Bearer falls. His ward is failing!'),
   crumbled: 'The Ward-Bearers crumble. His ward is failing!',
   // WB14e: the Tithe-Imp - its bolt from the fire, its catching (by name), its escape
-  tithe: () => t('gate.host.titheRises', 'A Tithe-Imp bolts from the fire with his tithe. Catch it!'),
-  titheCaught: (who) => t('gate.host.titheCaught', '{who} catches the Tithe-Imp! Its tithe spills.', { who: who || t('gate.host.someone', 'A challenger') }),
+  tithe: () => t('gate.host.titheRises', 'A Tithe-Imp bolts from the fire with its tithe. Catch it!'),
+  titheCaught: (who) => t('gate.host.titheCaught', '{who} catches the Tithe-Imp! Its tithe goes to all who struck it.', { who: who || t('gate.host.someone', 'A challenger') }),
   titheEscaped: () => t('gate.host.titheEscaped', 'The Tithe-Imp escapes into the fire.'),
 });
 /** A rising, a blow, a fall or a word heard later than this after it happened is neither said nor sounded (the court's
