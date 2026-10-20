@@ -460,7 +460,7 @@ test('ENH-NOTICE2: the service flow - plain text steps ride the panel in place, 
 });
 
 test('ENH-NOTICE2: THE ROSTER - the nine windows drawn on both skins that raise their own click-anywhere box, and (ENH-NOTICE3) the model, the three DOM windows and the wait page - no more and no fewer', () => {
-  // PIN MOVED, SPELLSHOP-SAID (FIELD BUGS 2026-10-19e): the spellbook is the ninth - ENH-NOTICE2 counted it among the
+  // PIN MOVED, SPELLSHOP-SAID (FIELD BUGS 2026-10-19f): the spellbook is the ninth - ENH-NOTICE2 counted it among the
   // windows the enhanced skin replaces with a DOM twin, and SHOP-PLUS brought it back, in buy mode, inside the port
   const ROSTER = ['potionMakerWindow', 'itemMakerWindow', 'spellMakerWindow', 'bankWindow', 'restWindow', 'covenWindow', 'guildServiceWindow', 'guildServiceWindows', 'spellbookWindow'];
   const AT = { itemMakerWindow: 'item/', spellMakerWindow: 'spell/' };   // TIDY2: the two in feature folders

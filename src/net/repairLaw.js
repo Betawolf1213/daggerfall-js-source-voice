@@ -13,7 +13,7 @@
 // a summoning's price is paid as deductGold pays it - in letters when the coins do not cover it - and 100,000 gold in
 // coin is 250 kg in the pack. A letter weighs nothing and spends as gold.
 //
-// PURSE-MEND (FIELD BUGS 2026-10-19e; a player's private report - a purse read -8,000,000 after a sale of a lot worth
+// PURSE-MEND (FIELD BUGS 2026-10-19f; a player's private report - a purse read -8,000,000 after a sale of a lot worth
 // over 18 million, the carry weight -19,995 kg): A PURSE A WRAPPED SALE LEFT BELOW NOTHING, MENDED. TRADE-WRAP (FIELD BUGS
 // 2026-10-18b) stopped CalculateTradePrice wrapping int32, so no sale pays below nothing again - but a record it already
 // paid that way carries the purse as it is, the judge holds its trade on it (server-account/src/judge.js, the `gold`

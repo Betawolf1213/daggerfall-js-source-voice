@@ -27,7 +27,7 @@ import { createEgFight, egNoFooting } from '../../../src/scenes/eliteGates/egFig
 import { egHallCentre } from '../../../src/world/eliteGates/egHall.js';
 import { HIT_KINDS } from '../../../src/net/gate/gateBrain.js';
 import { calculateAttackDamage, setPlayerAttackHook } from '../../../src/combat/formulas.js';
-import { createStandInSpell } from '../../../src/scenes/gate/standInSpell.js';   // FIELD BUGS 2026-10-19e STAND-IN-WHOLE: the spell doors, one
+import { createStandInSpell } from '../../../src/scenes/gate/standInSpell.js';   // FIELD BUGS 2026-10-19f STAND-IN-WHOLE: the spell doors, one
 import { bossStandIn, crystalStandIn, hostStandIn, bossLookOf } from '../../../src/world/gate/gateBoss.js';
 import { buildCustomSpell } from '../../../src/systems/spell/spellMaker.js';
 import { playerEntity } from '../../../src/characters/playerEntity.js';
@@ -335,7 +335,7 @@ test('TURNED-BLOW AN OBJECT TURNED IS NEVER SENT (AUDIT FB1018f lane L3\'s survi
 
 test('TURNED-BLOW THE TURNED BLOW SAYS ITS WORD AT EVERY DOOR (AUDIT FB1018f L3-2, L3-7; scenes/dungeonContext.js by its text - buildDungeonContext does not run in Node): a spell on a body of the court\'s or the Spire\'s pops its number by the stand-in it met, so a turned one says "No footing" or "Warded" (ui/hitNumbers.js numberFor), never the claim; a shaft a ward or the ground turns says its word beside the ring, as a swing\'s formula does on the same stand-in - one of his host\'s and the Warden\'s (mutants: each spell door\'s number blind to its body; each turned shaft silent)', () => {
   const dc = rd('src/scenes/dungeonContext.js');
-  // PIN MOVED (FIELD BUGS 2026-10-19e STAND-IN-WHOLE, HOST-SPLIT): the three spell doors are one door now
+  // PIN MOVED (FIELD BUGS 2026-10-19f STAND-IN-WHOLE, HOST-SPLIT): the three spell doors are one door now
   // (scenes/gate/standInSpell.js), driven here on the real stand-ins - each number by the body it met, turned or not
   const heard = [], was = playerEntity.level;
   const bolt = buildCustomSpell({ slots: [{ type: 4, subType: 0, settings: { magnitudeBaseLow: 10, magnitudeBaseHigh: 10, magnitudeLevelBase: 0, magnitudeLevelHigh: 0, magnitudePerLevel: 1 } }], rangeType: 1, element: 4, name: 'Bolt' });

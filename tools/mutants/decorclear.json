@@ -5,7 +5,7 @@
     "old": "late()?.add(decorKeyOf(piece.id), m.cpu.positions, m.cpu.indices, entry.matrix, { body });",
     "new": "late()?.add(decorKeyOf(piece.id), m.cpu.positions, m.cpu.indices, entry.matrix, { body: null });",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    if (body) late()?.settle(body);\n",
     "new": "",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -23,10 +23,10 @@
     "old": "    late()?.remove(decorKeyOf(entry.piece.id));",
     "new": "    collider?.()?.removeBucket?.(decorKeyOf(entry.piece.id));",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ],
     "equivalent": true,
-    "why": "ROCK-CLEAR: the port's Collider forgets a removed bucket's withheld parts itself (removeBucket asks the gate's forget - pinned by test/world/worldOfDaggerfall/fb1019e_rockclear.test.js and tools/mutants/rockclear.json RC-the-hook-gone), so the gate's own forgetting answers the same for every collider the game builds; it stands for a collider with no hook (a bench's, a test's)"
+    "why": "ROCK-CLEAR: the port's Collider forgets a removed bucket's withheld parts itself (removeBucket asks the gate's forget - pinned by test/world/worldOfDaggerfall/fb1019f_rockclear.test.js and tools/mutants/rockclear.json RC-the-hook-gone), so the gate's own forgetting answers the same for every collider the game builds; it stands for a collider with no hook (a bench's, a test's)"
   },
   {
     "name": "DC-the-recentre-stands-it",
@@ -34,7 +34,7 @@
     "old": "      if (e.cpu) late()?.replace(decorKeyOf(e.piece.id), e.cpu.positions, e.cpu.indices, e.matrix);",
     "new": "      if (e.cpu) { const c = collider?.(); c?.removeBucket?.(decorKeyOf(e.piece.id)); c?.addMesh?.(decorKeyOf(e.piece.id), e.cpu.positions, e.cpu.indices, e.matrix); }",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -43,7 +43,7 @@
     "old": "lateSolidsOf(collider)?.add(baseBucketOf(key), p.cpu.positions, p.cpu.indices, p.matrix);",
     "new": "lateSolidsOf(collider)?.add(baseBucketOf(key), p.cpu.positions, p.cpu.indices, p.matrix, null);",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -52,10 +52,10 @@
     "old": "lateSolidsOf(collider)?.remove(baseBucketOf(key)); }",
     "new": "collider?.removeBucket?.(baseBucketOf(key)); }",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ],
     "equivalent": true,
-    "why": "ROCK-CLEAR: the port's Collider forgets a removed bucket's withheld parts itself (removeBucket asks the gate's forget - pinned by test/world/worldOfDaggerfall/fb1019e_rockclear.test.js and tools/mutants/rockclear.json RC-the-hook-gone), so the gate's own forgetting answers the same for every collider the game builds; it stands for a collider with no hook (a bench's, a test's)"
+    "why": "ROCK-CLEAR: the port's Collider forgets a removed bucket's withheld parts itself (removeBucket asks the gate's forget - pinned by test/world/worldOfDaggerfall/fb1019f_rockclear.test.js and tools/mutants/rockclear.json RC-the-hook-gone), so the gate's own forgetting answers the same for every collider the game builds; it stands for a collider with no hook (a bench's, a test's)"
   },
   {
     "name": "DC-the-skin-past-the-radius",
@@ -63,7 +63,7 @@
     "old": "probe.capsuleContact(body.pos, height, -SKIN, null, HIT)",
     "new": "probe.capsuleContact(body.pos, height, SKIN, null, HIT)",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -72,7 +72,7 @@
     "old": "probe.capsuleContact(body.pos, height, -SKIN, null, HIT)",
     "new": "probe.capsuleContact(body.pos, height, 0, null, HIT)",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -81,7 +81,7 @@
     "old": " || heldInSolid(probe, body.pos, height);",
     "new": ";",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -90,7 +90,7 @@
     "old": "  if (!b || !boxMeetsBody([...b.min, ...b.max], body.pos, height)) return false;\n",
     "new": "",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -99,7 +99,7 @@
     "old": "  return b[0] <= feet[0] + CAPSULE_RADIUS && b[3] >= feet[0] - CAPSULE_RADIUS",
     "new": "  return b[0] >= feet[0] + CAPSULE_RADIUS && b[3] >= feet[0] - CAPSULE_RADIUS",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -110,7 +110,7 @@
     "equivalent": true,
     "why": "the gate's box first only spares the probe's build - the law (lateSolidCloses) asks the same box of the probe's own bounds, never wider than the box the gate asks (its triangles' own box, turned), so every answer is the same; it is there for the cost of a town's two thousand yard pieces, which no pin measures",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -119,7 +119,7 @@
     "old": "  const height = body.height ?? CAPSULE_HEIGHT;",
     "new": "  const height = CAPSULE_HEIGHT;",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -128,7 +128,7 @@
     "old": "feet[1] + height - CAPSULE_RADIUS",
     "new": "feet[1] + CAPSULE_HEIGHT - CAPSULE_RADIUS",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js",
+      "test/scenes/decor/fb1019f_decorclear.test.js",
       "test/player/unstuckout.test.js"
     ]
   },
@@ -138,7 +138,7 @@
     "old": "  if (!collider || typeof collider !== 'object') return null;\n",
     "new": "",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -147,7 +147,7 @@
     "old": "    GATES.set(collider, gate);\n",
     "new": "",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -156,7 +156,7 @@
     "old": "      if (typeof body === 'function' || body?.pos) guarded = body;\n",
     "new": "",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -165,7 +165,7 @@
     "old": "    add(key, positions, indices, matrix, { body = guarded, translation = null } = {}) {",
     "new": "    add(key, positions, indices, matrix, { body = null, translation = null } = {}) {",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -174,7 +174,7 @@
     "old": "      if (was) held.set(key, [h]); else stand(key, h);",
     "new": "      stand(key, h);",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -183,7 +183,7 @@
     "old": "      if (!(now && closes(h, now))) { stand(key, h); return true; }",
     "new": "      { stand(key, h); return true; }",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -192,7 +192,7 @@
     "old": "      if (!held.size || !now) return 0;",
     "new": "      if (!held.size) return 0;",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -201,7 +201,7 @@
     "old": "        const left = parts.filter((h) => closes(h, now));",
     "new": "        const left = [];",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -210,7 +210,7 @@
     "old": "        if (left.length) held.set(key, left); else held.delete(key);",
     "new": "        if (left.length) held.set(key, left);",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -219,10 +219,10 @@
     "old": "    remove(key) {\n      held.delete(key);\n",
     "new": "    remove(key) {\n",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ],
     "equivalent": true,
-    "why": "ROCK-CLEAR: the port's Collider forgets a removed bucket's withheld parts itself (removeBucket asks the gate's forget - pinned by test/world/worldOfDaggerfall/fb1019e_rockclear.test.js and tools/mutants/rockclear.json RC-the-hook-gone), so the gate's own forgetting answers the same for every collider the game builds; it stands for a collider with no hook (a bench's, a test's)"
+    "why": "ROCK-CLEAR: the port's Collider forgets a removed bucket's withheld parts itself (removeBucket asks the gate's forget - pinned by test/world/worldOfDaggerfall/fb1019f_rockclear.test.js and tools/mutants/rockclear.json RC-the-hook-gone), so the gate's own forgetting answers the same for every collider the game builds; it stands for a collider with no hook (a bench's, a test's)"
   },
   {
     "name": "DC-the-probe-where-the-model-is-made",
@@ -230,7 +230,7 @@
     "old": "h.probe.addMesh(PROBE, h.positions, h.indices, h.matrix, h.translation);",
     "new": "h.probe.addMesh(PROBE, h.positions, h.indices, [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], h.translation);",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "    body: player,   // DECOR-CLEAR: a piece landing round the body - or the room's own put back - is solid once it is clear (player/lateSolid.js)\n",
     "new": "",
     "tests": [
-      "test/scenes/decor/fb1019e_decorclear.test.js"
+      "test/scenes/decor/fb1019f_decorclear.test.js"
     ]
   }
 ]

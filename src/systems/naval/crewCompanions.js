@@ -18,7 +18,7 @@
 //  - COMPANION-KIT (2026-10-01, Mac: "act as storage"): HIS PACK - the things the player hands him (`pack`, the live
 //    list the storage window takes from and stows into), saved with the party through the host's item codec; sent back
 //    aboard, knocked out or fallen, he gives it up (`takePack`) and the host stows it in her hold.
-//  - COMPANION-DROP (FIELD BUGS 2026-10-19e; the owner, 2026-10-19: "Bag drops; no send-off in zone"): IN THE OPEN ZONE
+//  - COMPANION-DROP (FIELD BUGS 2026-10-19f; the owner, 2026-10-19: "Bag drops; no send-off in zone"): IN THE OPEN ZONE
 //    HE STAYS AT MY SIDE. A death there drops his pack with mine (systems/wild/wildDropLaw.js wildPacks - he is ashore, so he
 //    is where I fall), so he is never sent back aboard from inside it (`heldAtSide` - the zone's teleport refusal, said of
 //    him), and a pack he gives up there - knocked out, fallen from her roster - stays with me, in my pack, never her hold

@@ -30,7 +30,7 @@ export const NORMAL_POWER_CONCEALMENTS = Object.freeze(['chameleonNormal', 'invi
  * is also why the port has no separate IsMagicallyConcealedNormalPower
  * member: it would be a ported function with no caller.
  *
- * HELD-CONCEAL (FIELD BUGS 2026-10-19e, a player's private report: a
+ * HELD-CONCEAL (FIELD BUGS 2026-10-19f, a player's private report: a
  * worn item's Invisibility stopped working until it was taken off and
  * put on again). EndIncumbentEffect<T> (:759-766) ENDS the effect -
  * `RoundsRemaining = 0; End()` - and removes nothing. A spell's bundle

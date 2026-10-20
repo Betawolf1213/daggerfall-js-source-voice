@@ -521,7 +521,7 @@ test('TV2 host wiring: the click is a ray from the VIEW\'s eye through this fram
   assert.match(w, /if \(duelEnemyNear\(\) \|\| areEnemiesNearby\(exteriorFoePool\(\)\) \|\| navalHostileNear\(\)\) \{ tvSay\(TRAVEL_VIEW_TEXT\.enemies\); return false; \}/);   // PIN MOVED (TIME-DILATION: nor a hostile ship's reach)
   // AUDIT OW3 J8: the pins name what stands - the peaks' law and the road's join - so reverting either reddens here
   assert.match(w, /planRoute\(from, summary\.pixel, \{ roads: net\?\.roads \?\? null, tracks: net\?\.tracks \?\? null, \.\.\.tvRouteGround\(\), sea: tvSeaAsk\(means, 'land'\) \}\);   \/\/ OW-MOUNTAINS/, 'Hazelnut\'s bytes, whichever source raised them - never across the peaks (AUDIT OW4 J3: the ground read once), and the boat to cross the water in (OWS2)');
-  // PIN MOVED (TOWN-EXIT, test/systems/travel/fb1019e_townexit.test.js): no journey where the town's gates are shut
+  // PIN MOVED (TOWN-EXIT, test/systems/travel/fb1019f_townexit.test.js): no journey where the town's gates are shut
   assert.match(w, /const legs = tvJoinedLegs\(from, plan, roads\);\n\s*if \(!legs\) return false;[^\n]*\n\s*const ok = travelOptions\.beginTravelAlongRoute\(\{ legs, summary, name: summary\.name \}, tvCautious\(\), \{ quiet: tvQuiet \}\);/, 'OW-ROADSIDE: the road joined first');
   // AUDIT DEEP T2-3/X-7: the player's own cautious choice (the map's last toggles), and quiet only while the view is up
   assert.match(w, /const tvCautious = \(\) => !!travelMapPopUpState\(\)\.speedCautious;\n\s*const tvQuiet = \(\) => !!travelView\?\.active;/);
@@ -619,7 +619,7 @@ test('OW-ROADSIDE (Mac: routes "appear traveling alongside" the road): the join 
   const ap = r.to.state.autopilot;
   assert.deepEqual(ap.destinationWorldRect, rectOf(join.x - P_SIZE / 2, join.z - P_SIZE / 2, P_SIZE, P_SIZE), 'the join first');
   assert.deepEqual(r.to.route.legs[0].at, join, 'kept on the leg');
-  // PIN MOVED (TOWN-EXIT, test/systems/travel/fb1019e_townexit.test.js): the join is systems/travel/townExit.js journeyLegs' -
+  // PIN MOVED (TOWN-EXIT, test/systems/travel/fb1019f_townexit.test.js): the join is systems/travel/townExit.js journeyLegs' -
   // world.js's tvJoinedLegs moved out whole - and is pinned by what it makes, not by its text
   const px = [{ x: 500, y: 250 }, { x: 501, y: 250 }, { x: 502, y: 250 }];
   const me = { x: o.x + 16384 + 3000, z: o.z + 9000 };

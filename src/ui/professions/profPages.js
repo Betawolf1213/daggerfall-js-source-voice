@@ -2804,7 +2804,7 @@ export const ENCHANT_FULL_LINE = (room) => t('prof.page.enchant.full', 'Your Sto
 /** DISENCHANT-SAID: a piece whose points make no Essence - listed, greyed, and why (alchemyLaw ESSENCE_POINTS). */
 export const ENCHANT_UNDER_LINE = (points) => t('prof.page.enchant.under', '{points, number} points: under one Arcane Essence ({per, number} points make one)', { points, per: ESSENCE_POINTS });
 /**
- * DISENCHANT-SAID (FIELD BUGS 2026-10-19e; the owner, 2026-10-19: "List them greyed with the reason"): THE PIECES THE
+ * DISENCHANT-SAID (FIELD BUGS 2026-10-19f; the owner, 2026-10-19: "List them greyed with the reason"): THE PIECES THE
  * ENCHANTING STATION LISTS, made here and wired by the host (scenes/world.js `disenchantable`), never in it. A player's
  * private report: crafted greaves and pauldrons could not be disenchanted, and the station never said why. PROF12 (9.3,
  * 37) gives a piece its DFU template's enchantment points, one Essence a hundred - Greaves 50, either Pauldron 40, so

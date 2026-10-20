@@ -174,7 +174,7 @@
   {
     "name": "GILDED2-the-struck-one-spared",
     "file": "src/systems/loot/lootPowers.js",
-    "old": "  if (!(amount > 0)) return;\n  again(target, amount, word);   // FIELD BUGS 2026-10-19e CHAIN-SEEN: its number tagged with its name, as Many Endings' is\n",
+    "old": "  if (!(amount > 0)) return;\n  again(target, amount, word);   // FIELD BUGS 2026-10-19f CHAIN-SEEN: its number tagged with its name, as Many Endings' is\n",
     "new": "  if (!(amount > 0)) return;\n",
     "tests": [
       "test/systems/gilded2_world.test.js"

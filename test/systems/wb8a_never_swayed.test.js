@@ -76,7 +76,7 @@ test('WB8a: the doors, by source - the flag\'s door skips him; a sway stops at h
   assert.match(hm, /if \(r\.pacify && foe\.ai && !foe\.entity\?\.pacifyImmune\) foe\.ai\.isHostile = false;/);
   assert.match(hm, /function bossMarksFor\(sp\) \{\n\s*if \(!bossMark \|\| !castAtBoss \|\| !sp \|\| !\(duelSpellOf\(sp\) \|\| \(sp\.effects \?\? \[\]\)\.some\(\(e\) => e && isSoulTrapEffect\(e\)\) \|\| spellSways\(sp\)\)\) return \[\];/);
   assert.match(hm, /boss: !!duelSpellOf\(sp\) \|\| \(sp\.effects \?\? \[\]\)\.some\(\(e\) => e && isSoulTrapEffect\(e\)\) \|\| spellSways\(sp\) \}\);/);
-  // PIN MOVED (FIELD BUGS 2026-10-19e STAND-IN-WHOLE, HOST-SPLIT): his spell door left the dungeon context for
+  // PIN MOVED (FIELD BUGS 2026-10-19f STAND-IN-WHOLE, HOST-SPLIT): his spell door left the dungeon context for
   // scenes/gate/standInSpell.js, which the context wires with its mid-screen line
   assert.match(read('src/scenes/dungeonContext.js'), /createStandInSpell\(\{\n\s*player: playerEntity, say: \(line\) => hudText\.add\(line\),/);
   const dc = read('src/scenes/gate/standInSpell.js');

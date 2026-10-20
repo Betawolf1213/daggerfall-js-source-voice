@@ -502,7 +502,7 @@ test('WBX7 the soul trap on him: kept on the relay\'s clock for its rounds (a tr
 test('WBX7 the seams: a soul trap meets him (hostMagic), the dungeon context lays it through applySpell and hands its chance and rounds to the court (onBossTrap, through the mode machine), the host rolls it with the port\'s own attemptSoulTrap and says its words', () => {
   const hm = read('src/scenes/hostMagic.js');
   assert.match(hm, /!\(duelSpellOf\(sp\) \|\| \(sp\.effects \?\? \[\]\)\.some\(\(e\) => e && isSoulTrapEffect\(e\)\) \|\| spellSways\(sp\)\)/);   // WB8a: and a sway, which meets him to be refused
-  // PIN MOVED (FIELD BUGS 2026-10-19e STAND-IN-WHOLE, HOST-SPLIT): his spell door left the dungeon context for
+  // PIN MOVED (FIELD BUGS 2026-10-19f STAND-IN-WHOLE, HOST-SPLIT): his spell door left the dungeon context for
   // scenes/gate/standInSpell.js; the context hands it the court's door for the trap
   assert.match(read('src/scenes/dungeonContext.js'), /onTrap: \(trap\) => !!opts\.onBossTrap\?\.\(trap\),/);
   const dc = read('src/scenes/gate/standInSpell.js');

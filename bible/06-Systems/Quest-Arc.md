@@ -6768,7 +6768,7 @@ touches a quest whose own state says its foe is dead.
 
 `test/scenes/quest/questreset1.test.js` (6); `tools/mutants/questreset1.json` (18), all dead.
 
-## QUESTOR-SAID - a questor with your quest open says so (FIELD BUGS 2026-10-19e)
+## QUESTOR-SAID - a questor with your quest open says so (FIELD BUGS 2026-10-19f)
 
 Players' private reports: a guild - the Fighters Guild, the Knights of the Dragon - refused a new quest with "That
 service is not available yet." while one of its quests was still open. GQL1 above had named this path and left it: an
@@ -6798,7 +6798,7 @@ sentence, which says the service is unbuilt.
   had just replaced - they hand the window back now, as the book and the repair list do. The host: three logical lines
   fewer.
 
-`test/systems/quest/fb1019e_questorsaid.test.js` (5) - through the real bridge on the guide world, the questor bound by
+`test/systems/quest/fb1019f_questorsaid.test.js` (5) - through the real bridge on the guide world, the questor bound by
 the machine at the accept: the guild's close and its box through the real ServiceFlowWindow, and the door open again once
 the quest is done; the unnamed quest; the coven's door the same and the social door's bare close; the words in French and
 every whole language's `{quest}`; what still reaches the sentence. PIN MOVED: `test/systems/quest/covenwindow.test.js`

@@ -452,7 +452,7 @@ function ensureMirror(player) {
     r.took = s?.took ? s.took.slice() : [];   // RVN8 (Feud-Arc.md 19): what it took is inventory too - the save's copy wins (the mirror never brings back a piece the save holds)
     // LETTERS-HOME (FIELD BUGS 2026-10-18b): a letter of credit one took before revenantMayTake refused it is mine again -
     // living, fallen with a body that never carried it, or kept by a deserter. The save's copy, so never one its pack holds.
-    // STEED-KEPT (FIELD BUGS 2026-10-19e; the owner, 2026-10-19: "Exclude, and return taken ones"): and EVERY piece it may
+    // STEED-KEPT (FIELD BUGS 2026-10-19f; the owner, 2026-10-19: "Exclude, and return taken ones"): and EVERY piece it may
     // no longer take - a horse, a cart, a deed, a ship's deed or parts, the spellbook - into my pack, where the game keeps
     // owned transport (DFU's Items.Contains(Transportation, Horse)), each said once the world can say it
     const home = r.took.filter((it) => !revenantMayTake(it));
@@ -936,7 +936,7 @@ export function forgetLastSlew() { _lastSlew = null; }
  *  Wallet's row): what it takes leaves the pack for its record, one that escapes keeps it, and a character is given its
  *  wallet once. LETTERS-HOME (FIELD BUGS 2026-10-18b): nor a LETTER OF CREDIT - a letter is gold (its `value` is the
  *  gold it stands for), and "gold" was the coin alone, so a 500,000-gold letter was the pack's most valuable piece and
- *  the likeliest drawn. STEED-KEPT (FIELD BUGS 2026-10-19e; the owner, 2026-10-19: "Exclude, and return taken ones"):
+ *  the likeliest drawn. STEED-KEPT (FIELD BUGS 2026-10-19f; the owner, 2026-10-19: "Exclude, and return taken ones"):
  *  nor what never changes hands, as the open zone's death reads it (wildDropLaw.js wildCanLose) - A VEHICLE (the zone's
  *  own groups, WILD_NEVER_GROUPS: a horse, a cart), A DEED (those groups' Deeds, and the decor's kept-back list,
  *  decorLaw.js DECOR_OWN_KEPT_BACK - a house's or a ship's deed as Daggerfall files them, and the spellbook with them:
@@ -951,7 +951,7 @@ export const revenantMayTake = (item) => !!item && typeof item === 'object' && N
 /** AUDIT FEUD: a piece it took, named after "your", "my" or "lovely" - the name the pack shows, its own article gone
  *  (a legendary's "The Glenmoril Bow": "your Glenmoril Bow", never "your The ..."). */
 export const takenName = (item) => String(itemLongName(item) ?? '').replace(/^the\s+/i, '');
-/** STEED-KEPT (FIELD BUGS 2026-10-19e): a piece it took and may no longer keep, home in my pack at the load - the
+/** STEED-KEPT (FIELD BUGS 2026-10-19f): a piece it took and may no longer keep, home in my pack at the load - the
  *  words (ensureMirror says each once, through the text core). */
 export const tookHomeLine = (r, item) => t('rvn.took.home', '{name} could not keep your {item} - it is yours again.', { name: r?.name ?? '', item: takenName(item) });
 /** RVN8 (19): the piece it takes - drawn on its id and its kill count from my equipped weapon and my pack's five most

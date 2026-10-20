@@ -1,5 +1,5 @@
 // @ts-check
-// FIELD BUGS 2026-10-19e STAND-IN-WHOLE (a player's private report: a Disintegrate on an online breach's boss popped a
+// FIELD BUGS 2026-10-19f STAND-IN-WHOLE (a player's private report: a Disintegrate on an online breach's boss popped a
 // huge number, and his bar never moved): A HARMFUL SPELL OF MINE ON A BODY THE RELAY RUNS - the court's Warden, his
 // crystals and his host (WB4b, WB9c, WB11c); in the Shattered Hour the Brass Remnant, its Echoes and its Hearts (SD8c);
 // every lord, add and struck object of an Elite Breach's hall (EG-PLAY, through the host seam); my opponent on a relay's
@@ -17,7 +17,7 @@
 // what the foe could lose - AUDIT SCHOOLS L1 M6). It said the claim whole, and a Disintegrate's claim is its target's whole
 // (STAND_IN_WHOLE; 1e9 until this fix, which no wire carried): a number rose that nothing landed.
 //
-// FIELD BUGS 2026-10-19e BOSS-DOT (the owner, 2026-10-19: "Carry DoTs"): ITS LASTING HARM IS CARRIED. The stand-in forgot
+// FIELD BUGS 2026-10-19f BOSS-DOT (the owner, 2026-10-19: "Carry DoTs"): ITS LASTING HARM IS CARRIED. The stand-in forgot
 // every lasting family the moment the count was done, so a Continuous Damage spell landed its cast's round alone (a level-20
 // Burn: 16 of its 400; the other 24 rounds gone) - WB4b's comment, never a decision; WBX7 carried the Soul Trap alone. A
 // relay body's Continuous Damage on its health (carriedOnStandIn) is lifted off the stand-in before the wipe and kept a body

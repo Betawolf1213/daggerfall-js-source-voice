@@ -34,7 +34,7 @@ test('WB4b his stand-in: his own mobile\'s entity, every metal biting where a Da
   assert.equal(e.minMetalToHit, 0, 'every metal bites');
   assert.equal(e.armor, BOSS_ARMOR); assert.deepEqual(e.armorValues, new Array(7).fill(BOSS_ARMOR));
   assert.ok(ENEMY_BASICS[31].armorValue * 5 < 0, 'the Daedra Lord\'s own armour is a wall');
-  // PIN MOVED (FIELD BUGS 2026-10-19e STAND-IN-WHOLE): his whole is the count the wire carries (STAND_IN_WHOLE - 1e9 was
+  // PIN MOVED (FIELD BUGS 2026-10-19f STAND-IN-WHOLE): his whole is the count the wire carries (STAND_IN_WHOLE - 1e9 was
   // past every wire's ceiling, and a Disintegrate's claim of it was refused whole); nothing local empties it still
   assert.deepEqual([e.health, e.maxHealth, e.relayHealth], [STAND_IN_WHOLE, STAND_IN_WHOLE, true], 'nothing local empties him - the relay holds his health');
   assert.notEqual(bossStandIn(look, 'x'), e, 'one a fight, made fresh');
@@ -126,13 +126,13 @@ test('WB4b the seams, by source: the dungeon context meets him as a foe-shaped b
   assert.match(dc, /landOnBoss\(boss, damage, HIT_KINDS\.Melee\);/);
   // PIN MOVED (AUDIT FB1018f L3-7): a shaft his ward turns says its word ("Warded") beside the ward's ring
   assert.match(dc, /if \(boss && missileHitsCapsule\(m\.pos, boss\.ai\.feet, boss\.ai\.height, boss\.ai\.radius\)\) \{\n\s*if \(boss\.warded\) \{ wardTurns\(boss\); reportPlayerAttack\(\{ hit: true, damage: 0, target: boss\.entity \}\); \}[^\n]*\n\s*else playerArrowHitFoe\(m, boss, \{[^\n]*dealDamage: \(t, d\) => landOnBoss\(boss, d, HIT_KINDS\.Shaft\) \}\);/, 'a shaft meets his whole body');
-  // PIN MOVED (FIELD BUGS 2026-10-19e STAND-IN-WHOLE, HOST-SPLIT): his spell door left the context for scenes/gate/standInSpell.js
+  // PIN MOVED (FIELD BUGS 2026-10-19f STAND-IN-WHOLE, HOST-SPLIT): his spell door left the context for scenes/gate/standInSpell.js
   // (one door for him, his crystals, his host and my opponent), wired with his body and his door
   assert.match(dc, /createStandInSpell\(\{[^]*?boss: gateBossBody,[^]*?landOnBoss, landOnCrystal, landOnHost, landOnRival, nextArenaQ,/);
   const sis = read('src/scenes/gate/standInSpell.js');
-  assert.match(sis, /try \{\n\s*r = applySpell\(harm, level, entity, counting\(got\), rolls, \{ entity: caster \}\);\n\s*kept = \(entity\.activeEffects \?\? \[\]\)\.filter\(carriedOnStandIn\);\n\s*\} finally \{ entity\.activeEffects = \[\]; \}/);   // PIN MOVED (AUDIT SCHOOLS L2 F4): its answer kept, for the paths' riders; PIN MOVED (FIELD BUGS 2026-10-19e BOSS-DOT): and his lasting harm lifted off before the wipe
-  assert.match(sis, /if \(!harm\) return laid \|\| sways;\n\s*return onBody\(sp, boss, harm, caster, host\.landOnBoss, 'b'\);/);   // PIN MOVED (FIELD BUGS 2026-10-19e BOSS-DOT): his rounds' key
-  assert.match(sis, /const went = land\(body, dealt, HIT_KINDS\.Spell\);/);   // PIN MOVED (FIELD BUGS 2026-10-19e BOSS-DOT)
+  assert.match(sis, /try \{\n\s*r = applySpell\(harm, level, entity, counting\(got\), rolls, \{ entity: caster \}\);\n\s*kept = \(entity\.activeEffects \?\? \[\]\)\.filter\(carriedOnStandIn\);\n\s*\} finally \{ entity\.activeEffects = \[\]; \}/);   // PIN MOVED (AUDIT SCHOOLS L2 F4): its answer kept, for the paths' riders; PIN MOVED (FIELD BUGS 2026-10-19f BOSS-DOT): and his lasting harm lifted off before the wipe
+  assert.match(sis, /if \(!harm\) return laid \|\| sways;\n\s*return onBody\(sp, boss, harm, caster, host\.landOnBoss, 'b'\);/);   // PIN MOVED (FIELD BUGS 2026-10-19f BOSS-DOT): his rounds' key
+  assert.match(sis, /const went = land\(body, dealt, HIT_KINDS\.Spell\);/);   // PIN MOVED (FIELD BUGS 2026-10-19f BOSS-DOT)
   assert.match(dc, /castAtBoss: opts\.gateBoss \? \(sp, caster\) => spellOnBoss\(sp, caster\) : null,/);   // PIN MOVED (AUDIT SCHOOLS L2 F4): and the cast's wrapper
   // PIN MOVED (FIELD BUGS 2026-10-12g OPEN-HAND): a follow-up the blow owes him rides its one claim, taken first
   assert.match(dc, /function landOnBoss\(boss, damage, r\) \{\n\s*damage \+= takeOwed\(boss\.entity\);[^\n]*\n\s*if \(boss\.warded\) \{ wardTurns\(boss\); return false; \}\n\s*return sdRemnant \? sdRemnant\.hit\(\{ d: damage, r \}\) : !!opts\.onBossHit\?\.\(\{ d: damage, r \}\);/);   // PIN MOVED (SD8c): the Remnant's in the Hour

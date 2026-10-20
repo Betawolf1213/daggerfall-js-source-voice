@@ -39,7 +39,7 @@
 // unstabled). A seizure honours none (its carrier holds neither the record nor the mask), and a tab that says nothing
 // (one from before the word) drops the cart as ever. Asked again, a fall answers its first take, whatever is said.
 //
-// COMPANION-DROP (FIELD BUGS 2026-10-19e; the owner, 2026-10-19: "Bag drops; no send-off in zone"): A COMPANION AT THE
+// COMPANION-DROP (FIELD BUGS 2026-10-19f; the owner, 2026-10-19: "Bag drops; no send-off in zone"): A COMPANION AT THE
 // FALLEN'S SIDE DROPS HIS PACK WITH THEIRS. No word is asked: the record says who is at the side - its sea's crew
 // ashore and its feud's sworn walking with it, the zone's one (src/systems/wild/wildDropLaw.js wildPacksOf) - and the law
 // takes their packs and kits as it takes the cart, its answer's `took` naming each piece's pack and `gold.packs` each

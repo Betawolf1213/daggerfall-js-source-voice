@@ -858,7 +858,7 @@ export class QuestMachine {
 
   /** The scan IsLastNPCClickedAnActiveQuestor makes (:918-941), answering what it found: `{ quest, person }` - the open
    *  quest whose questor Person the last click was, the first in the machine's order - or null. QUESTOR-SAID (FIELD
-   *  BUGS 2026-10-19e): one scan, two readers - the DFU member above, and the offer flow's close, which names the quest
+   *  BUGS 2026-10-19f): one scan, two readers - the DFU member above, and the offer flow's close, which names the quest
    *  (offerFlow.js questorBusy). It stamps nothing. */
   lastNPCClickedQuestorOf() {
     const clicked = this.getLastNPCClicked();

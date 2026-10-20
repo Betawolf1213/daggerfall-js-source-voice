@@ -181,7 +181,7 @@ Either death, at the first dead frame, while the room is still the player's (`wi
   drives. A seizure honours no word - its carrier holds neither the record nor the mask - and a tab from before the word
   says none: both take the cart as before. A fall asked again answers its first take whatever is said, so the fallen's
   own ask, made first, is what its killer's seizure is answered too. Its limit is section 22's.
-- COMPANION-DROP (FIELD BUGS 2026-10-19e, a player's private report; THE OWNER'S DECISION, 2026-10-19, asked whether
+- COMPANION-DROP (FIELD BUGS 2026-10-19f, a player's private report; THE OWNER'S DECISION, 2026-10-19, asked whether
   a companion's bag drops in the zone and whether one may be sent off from inside it: "Bag drops; no send-off in
   zone"): A COMPANION AT THE FALLEN'S SIDE DROPS WHAT HE CARRIES WITH THEIRS. The law read the pack and the cart and
   never a companion, so a companion's pack (COMPANION-KIT, `03-World/Naval-Combat.md`) and a sworn revenant's pack and
@@ -883,4 +883,4 @@ only while the wagon is with them; through the real drop law, the real Horse Car
 own mask and the real account service): `test/systems/fb1015_cartaway.test.js`, `tools/mutants/fb1015_cartaway.json` (20, all
 dead). COMPANION-DROP (the owner, 2026-10-19 - a companion at the side drops what he carries, none sent off from inside the
 zone; through the real drop law, the real naval host's party, the real feud's sworn and the real account service):
-`test/systems/fb1019e_companiondrop.test.js`, `tools/mutants/fb1019e_companiondrop.json`.
+`test/systems/fb1019f_companiondrop.test.js`, `tools/mutants/fb1019f_companiondrop.json`.

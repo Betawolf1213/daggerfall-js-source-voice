@@ -289,7 +289,7 @@ export function noticeFrame(owner, rows, { hint = undefined } = {}) {
 }
 
 /**
- * SPELLSHOP-SAID (FIELD BUGS 2026-10-19e): IS THIS OWNER'S PANEL UP? The
+ * SPELLSHOP-SAID (FIELD BUGS 2026-10-19f): IS THIS OWNER'S PANEL UP? The
  * enhanced port's dismiss asks it (ui/enhanced/enhancedPort.js): the
  * click-anywhere box a ported window holds takes the first click while
  * the panel the player reads stands - whatever field the window keeps

@@ -305,7 +305,7 @@ export const EG_HALL_NAMES = Object.freeze({
 });
 /** What each hall asks (section 27.3's objective chip), by variant where it has one, else by kind. Each spec carries its
  *  hall's (`objective`), so these words are a hall's bytes (section 22's law pin - egSpecDigest, every law's halls hashed
- *  whole) and stay as laid. FIELD BUGS 2026-10-19e GAUNTLET-PLATES: the screen no longer shows the Gauntlet's - "Silence the
+ *  whole) and stay as laid. FIELD BUGS 2026-10-19f GAUNTLET-PLATES: the screen no longer shows the Gauntlet's - "Silence the
  *  casters." sent a company to kill them, and a slain Caster is not silenced (net/eliteGates/egBrain.js trialStep); it says
  *  ui/eliteGates/egHud.js egObjectiveText's, the plates named, in the player's language. */
 export const EG_OBJECTIVES = Object.freeze({

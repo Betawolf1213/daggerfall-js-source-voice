@@ -1508,9 +1508,9 @@
     "new": ", essence: essenceOf(points, disenchanter) };",
     "tests": [
       "test/systems/prof12_client.test.js",
-      "test/systems/fb1019e_disenchantsaid.test.js"
+      "test/systems/fb1019f_disenchantsaid.test.js"
     ],
-    "note": "Re-aimed by content (FIELD BUGS 2026-10-19e DISENCHANT-SAID): the station's list left world.js for profPages.js disenchantableOf."
+    "note": "Re-aimed by content (FIELD BUGS 2026-10-19f DISENCHANT-SAID): the station's list left world.js for profPages.js disenchantableOf."
   },
   {
     "name": "PROF12-A1-spend-no-clamp",

@@ -83,7 +83,7 @@ export const retinue = () => swornRevenants().slice().sort((a, b) => b.rank - a.
 export const revenantsWithYou = () => swornRevenants().filter((r) => stateOf(r) === 'with');
 /** The sworn sent away, or resting after a fall. */
 export const revenantsAway = () => swornRevenants().filter((r) => stateOf(r) !== 'with');
-/** COMPANION-DROP (FIELD BUGS 2026-10-19e; the owner, 2026-10-19: "Bag drops; no send-off in zone"): THE SWORN AT THE
+/** COMPANION-DROP (FIELD BUGS 2026-10-19f; the owner, 2026-10-19: "Bag drops; no send-off in zone"): THE SWORN AT THE
  *  PLAYER'S SIDE - every one walking with them, and in the open zone the ones it stands (wildDropLaw.js wildSwornAtSide:
  *  the first WILD_REVENANTS_MAX - the rest wait outside it). A death in the zone drops their packs and kits with mine
  *  (wildDropLaw.js wildPacks), so none of them leaves my side there (leaveRefusal). */
@@ -196,7 +196,7 @@ function handBack(items) {
   _player.items ??= [];
   for (const it of items) { if (isGoldPieces(it)) addGoldPieces(_player, it.stackCount ?? 1); else addItem(_player.items, it); }
 }
-/** COMPANION-DROP (FIELD BUGS 2026-10-19e; the owner, 2026-10-19: "Bag drops; no send-off in zone"): THE ONE AT MY SIDE
+/** COMPANION-DROP (FIELD BUGS 2026-10-19f; the owner, 2026-10-19: "Bag drops; no send-off in zone"): THE ONE AT MY SIDE
  *  CARRIED OFF INSIDE THE OPEN ZONE (knocked out - the party's knock) hands me its pack and its kit before it goes, said:
  *  a death there drops them with mine, and carried off with it they would rest outside the zone's reach. The crew's hand
  *  does the same through his host (crewCompanions.js packStaysAshore). Answers how many items. */

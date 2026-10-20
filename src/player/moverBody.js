@@ -1,4 +1,4 @@
-// MOVER-BODY (FIELD BUGS 2026-10-19e, two players' private reports: stuck in a dungeon's lift; out of the map under a
+// MOVER-BODY (FIELD BUGS 2026-10-19f, two players' private reports: stuck in a dungeon's lift; out of the map under a
 // floor that lowered onto them while they swam): A MOVER NEVER CLOSES ON THE BODY.
 //
 // A dungeon's movers (world/actionSystem.js, DaggerfallAction's Move tween) stand their collider bucket again at every

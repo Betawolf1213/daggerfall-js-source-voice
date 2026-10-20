@@ -1701,7 +1701,7 @@ export class HeldMapWindow {
       && !this.teleportationTravel && !this._it && !this._to?.isTravelActive && this._top !== 'resume';
   }
   /** FINDME: glide to me and blink a red cross over me for three seconds.
-   *  FINDME-TOWN (FIELD BUGS 2026-10-19e): ON THE SHEET THAT IS UP. Each sheet finds me in its own space - `findMe`, the
+   *  FINDME-TOWN (FIELD BUGS 2026-10-19f): ON THE SHEET THAT IS UP. Each sheet finds me in its own space - `findMe`, the
    *  view on me (the bay's my pixel, the town's my caret on its streets, the dungeon's its own Me) - and `me` is where
    *  the cross goes (`_paint`). It knew the bay alone: on a town map it aimed at the bay's middle pixel, read as a spot
    *  on the streets, and every press of it landed on the town's right-hand edge. A sheet with no player on it finds

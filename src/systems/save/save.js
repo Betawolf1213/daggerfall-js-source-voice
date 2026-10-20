@@ -870,7 +870,7 @@ export function restorePlayer(entity, snap, spellsByIndex = null) {
   // ITEM-WALK: and every other list the save holds (savedItemLists), by the one runner (repairItemLists)
   const repairLists = savedItemLists(snap, entity);   // BAG1: and the bag's
   repairItemLists(repairLists);
-  // FIELD BUGS 2026-10-19e KEY-FACE: A WEIR KEY'S FACE IS THE PACK'S ALONE (systems/eliteGates/weirKey.js foldStrayWeirKeys) -
+  // FIELD BUGS 2026-10-19f KEY-FACE: A WEIR KEY'S FACE IS THE PACK'S ALONE (systems/eliteGates/weirKey.js foldStrayWeirKeys) -
   // one in any other list the save holds (the wagon, a storage piece, a ship's hold, a companion's pack, a body) or set
   // out in a room (`decorOwn`) was stowed before its row was pack-only, or thrown on a body and never taken up: folded
   // away here, in the same place and for the same hosts as the repairs above. The pack keeps its own; the account's

@@ -5,7 +5,7 @@
     "old": "    if (noticeFrame(this, NOTES.includes(this.top) ? this._boxRows() : null)) {\n",
     "new": "    if (noticeFrame(this, null)) {\n",
     "tests": [
-      "test/ui/fb1019e_spellshopsaid.test.js"
+      "test/ui/fb1019f_spellshopsaid.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "const NOTES = Object.freeze(['noSpellbook', 'notEnoughGold', 'note']);\n",
     "new": "const NOTES = Object.freeze(['notEnoughGold', 'note']);\n",
     "tests": [
-      "test/ui/fb1019e_spellshopsaid.test.js"
+      "test/ui/fb1019f_spellshopsaid.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "const NOTES = Object.freeze(['noSpellbook', 'notEnoughGold', 'note']);\n",
     "new": "const NOTES = Object.freeze(['noSpellbook', 'note']);\n",
     "tests": [
-      "test/ui/fb1019e_spellshopsaid.test.js"
+      "test/ui/fb1019f_spellshopsaid.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "const NOTES = Object.freeze(['noSpellbook', 'notEnoughGold', 'note']);\n",
     "new": "const NOTES = Object.freeze(['noSpellbook', 'notEnoughGold']);\n",
     "tests": [
-      "test/ui/fb1019e_spellshopsaid.test.js"
+      "test/ui/fb1019f_spellshopsaid.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "const NOTES = Object.freeze(['noSpellbook', 'notEnoughGold', 'note']);\n",
     "new": "const NOTES = Object.freeze(['noSpellbook', 'notEnoughGold', 'note', 'trade']);\n",
     "tests": [
-      "test/ui/fb1019e_spellshopsaid.test.js"
+      "test/ui/fb1019f_spellshopsaid.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "const ASKS = Object.freeze(['delete', 'sort', 'trade']);\n",
     "new": "const ASKS = Object.freeze(['delete', 'sort']);\n",
     "tests": [
-      "test/ui/fb1019e_spellshopsaid.test.js",
+      "test/ui/fb1019f_spellshopsaid.test.js",
       "test/systems/spellbookwindow.test.js"
     ]
   },
@@ -60,7 +60,7 @@
     "old": "      this._box = layoutMessageBox(font, this._boxRows(), ASKS.includes(this.top) ? [MB_BUTTONS.Yes, MB_BUTTONS.No] : []);\n",
     "new": "      this._box = layoutMessageBox(font, this._boxRows(), []);\n",
     "tests": [
-      "test/ui/fb1019e_spellshopsaid.test.js"
+      "test/ui/fb1019f_spellshopsaid.test.js"
     ]
   },
   {
@@ -69,7 +69,7 @@
     "old": "    if (ASKS.includes(this.top)) {\n",
     "new": "    if (false) {\n",
     "tests": [
-      "test/ui/fb1019e_spellshopsaid.test.js",
+      "test/ui/fb1019f_spellshopsaid.test.js",
       "test/systems/spellbookwindow.test.js"
     ]
   },
@@ -79,7 +79,7 @@
     "old": "    noticeRelease(this);   // SPELLSHOP-SAID: a host drops a closed window and never draws it again\n",
     "new": "",
     "tests": [
-      "test/ui/fb1019e_spellshopsaid.test.js",
+      "test/ui/fb1019f_spellshopsaid.test.js",
       "test/ui/enhancedNotice.test.js"
     ]
   },
@@ -89,7 +89,7 @@
     "old": "      if (noticeShown(win)) { win.click?.(-1, -1); return; }\n",
     "new": "      if (win.box && !win.box.buttons?.length && !win.picker) { win.click?.(-1, -1); return; }\n",
     "tests": [
-      "test/ui/fb1019e_spellshopsaid.test.js"
+      "test/ui/fb1019f_spellshopsaid.test.js"
     ]
   },
   {
@@ -98,7 +98,7 @@
     "old": "export const noticeShown = (owner) => owner?._noticeKey != null && panels.has(owner._noticeKey);\n",
     "new": "export const noticeShown = (owner) => owner?._noticeKey != null;\n",
     "tests": [
-      "test/ui/fb1019e_spellshopsaid.test.js"
+      "test/ui/fb1019f_spellshopsaid.test.js"
     ]
   },
   {
@@ -107,7 +107,7 @@
     "old": "export const noticeShown = (owner) => owner?._noticeKey != null && panels.has(owner._noticeKey);\n",
     "new": "export const noticeShown = (owner) => owner?._noticeKey == null && panels.has(owner._noticeKey);\n",
     "tests": [
-      "test/ui/fb1019e_spellshopsaid.test.js"
+      "test/ui/fb1019f_spellshopsaid.test.js"
     ]
   }
 ]

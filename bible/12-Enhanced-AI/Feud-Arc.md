@@ -824,7 +824,7 @@ deed underground makes that dungeon its lair.
   isLetterOfCredit`), a deserter's or a betrayer's letter comes back with its gold (`splitPack` asks the same law), and a
   letter a record took before is handed home at the mirror's merge (`ensureMirror`, from the save's copy of `took` - the
   pack it came out of is that save's, so never twice).
-  STEED-KEPT (FIELD BUGS 2026-10-19e; THE OWNER'S DECISION, 2026-10-19: "Exclude, and return taken ones"): and never
+  STEED-KEPT (FIELD BUGS 2026-10-19f; THE OWNER'S DECISION, 2026-10-19: "Exclude, and return taken ones"): and never
   what never changes hands, as the open zone's death reads it (`wildDropLaw.js wildCanLose`) - a VEHICLE or a DEED (the
   zone's own groups, `WILD_NEVER_GROUPS`: a horse, every cart; the decor's kept-back list, `DECOR_OWN_KEPT_BACK`: a house's
   or a ship's deed as Daggerfall files them, and the spellbook with them - KEEP-SPELLBOOK's "Your spellbook never leaves
@@ -2328,8 +2328,8 @@ and `dungeonContext.js`.
 - **Not built here** - its next taunt's word on it (RVN12, `{item}`); the page's *Took* (RVN12).
 - Pins `test/systems/rvn8_took.test.js` (6). Mutants `tools/mutants/rvn8.json` (34): 34 dead. Mutant record re-aimed by
   content (1): `revenantaudit`'s A6 (the cap's filter now spares a holder too) - judged again: dead.
-- STEED-KEPT (FIELD BUGS 2026-10-19e, section 19): `test/systems/revenant/fb1019e_steedkept.test.js` (4);
-  `tools/mutants/fb1019e_steedkept.json` (7, all dead); `fb1018b_letters.json`'s LETTERS-HOME-letter-takeable is
+- STEED-KEPT (FIELD BUGS 2026-10-19f, section 19): `test/systems/revenant/fb1019f_steedkept.test.js` (4);
+  `tools/mutants/fb1019f_steedkept.json` (7, all dead); `fb1018b_letters.json`'s LETTERS-HOME-letter-takeable is
   `equivalent` now (the letter refused through a second door, the kept-back list).
 
 ### RVN9 - BUILT 2026-10-04 (the loot-rarity row on; every host's encounter tick)

@@ -1025,7 +1025,7 @@ five degrees in one update is an arrival) can end a LEG early while a
 detour turns hard close to its target at high acceleration; the next leg
 starts from where the body is, which is the mod's own answer.
 
-**Out of a walled town (TOWN-EXIT, FIELD BUGS 2026-10-19e).** A city's wall
+**Out of a walled town (TOWN-EXIT, FIELD BUGS 2026-10-19f).** A city's wall
 is longer than the detour's budget, and the notches its walls make are
 corners the feelers cannot see out of: a planned journey begun on a walled
 town's streets toward a pixel beyond it was stopped, the way ahead blocked,

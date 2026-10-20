@@ -38,7 +38,7 @@
 //     waiting, a disease once its incubation is over and by the name
 //     its own message gives it (diseases.js DISEASE_NAMES), an
 //     infection never (DFU says nothing of one until the dream);
-//     DISEASE-UNWELL (FIELD BUGS 2026-10-19e, the owner: "Unnamed
+//     DISEASE-UNWELL (FIELD BUGS 2026-10-19f, the owner: "Unnamed
 //     'Unwell' tile"): and while a disease incubates, one tile of no
 //     name, "Unwell", on the disease's own spore - where DFU says
 //     nothing, and the rest's and the journey's warnings already said
@@ -266,7 +266,7 @@ export const unwellTileText = () => t('hud.status.unwell', UNWELL_TILE_TEXT);
  * The poisons and diseases the widget shows - the Status box's law (systems/healthStatus.js healthStatusRows): ONE
  * tile for being poisoned, once any poison has left its waiting (the game names none: "You have been poisoned."); a
  * tile a disease whose incubation is over, by its name; nothing for an entry that has ended, a poison still waiting, or
- * an infection (no disease row: `disease` null). DISEASE-UNWELL (FIELD BUGS 2026-10-19e; the owner, 2026-10-19:
+ * an infection (no disease row: `disease` null). DISEASE-UNWELL (FIELD BUGS 2026-10-19f; the owner, 2026-10-19:
  * "Unnamed 'Unwell' tile" - a departure from DFU, which shows nothing until the first symptom day): ONE tile of no name,
  * "Unwell", on the disease tile's own spore, for every disease still incubating (diseases.js diseaseIncubating), where
  * the first of them stands; the Status box says the same unnamed (systems/healthStatus.js). TELL9: and a blow's bleed,

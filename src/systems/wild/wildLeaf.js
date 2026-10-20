@@ -1,5 +1,5 @@
 // @ts-check
-// FIELD BUGS 2026-10-19e: THE OPEN ZONE'S WORDS THAT NEED NO GRAPH - a leaf with no imports, read by the drop's law
+// FIELD BUGS 2026-10-19f: THE OPEN ZONE'S WORDS THAT NEED NO GRAPH - a leaf with no imports, read by the drop's law
 // (wildDropLaw.js, which re-exports them for its readers and the account service), by the companions
 // (systems/revenant/revenantCompanions.js - COMPANION-DROP) and by a revenant's take (systems/revenant/revenant.js -
 // STEED-KEPT). They lived in wildDropLaw.js, and the two fixes' imports of them pulled the drop law's whole graph - the

@@ -198,7 +198,7 @@ test('AUDIT WBX S2 the receipt says the level the fight admitted its account at,
 test('AUDIT WBX F1/F2 no weapon is worn or destroyed on him: the Razor\'s whole-health blow passes his stand-in by, and no Strikes payload bills its weapon for a blow on him - every other foe as DFU has it (mutants: the Razor on the stand-in; the payload\'s bill on him)', () => {
   const razor = SPECIAL_ARTIFACT_HANDLERS.get(ARTIFACTS.MehrunesRazor);
   const item = { currentCondition: 100, maxCondition: 100 };
-  // PIN MOVED (FIELD BUGS 2026-10-19e STAND-IN-WHOLE): his stand-in as its producer mints it - its whole a count the wire
+  // PIN MOVED (FIELD BUGS 2026-10-19f STAND-IN-WHOLE): his stand-in as its producer mints it - its whole a count the wire
   // carries now, not 1e9 - and passed by even on a failed save: no wear pays for its kill on him (F2), so it STAYS
   const him = bossStandIn(bossLookOf('ruhn'), 'Valkynaz Ruhn');
   assert.equal(him.health, STAND_IN_WHOLE);
@@ -271,7 +271,7 @@ test('AUDIT WBX F6/F9 the court: my trap on him is said while it runs (a recast 
   assert.deepEqual(h.c.trapNow(), { chance: 40 });
   h.c.leave(); h.clock.t = 2000; h.c.frame();
   assert.deepEqual(h.c.trapNow(), { chance: 40 }, 'out and back in: still running');
-  // PIN MOVED (FIELD BUGS 2026-10-19e STAND-IN-WHOLE, HOST-SPLIT): his spell door left the context (scenes/gate/standInSpell.js),
+  // PIN MOVED (FIELD BUGS 2026-10-19f STAND-IN-WHOLE, HOST-SPLIT): his spell door left the context (scenes/gate/standInSpell.js),
   // the court's trap handed in by the context's wiring
   assert.match(read('src/scenes/dungeonContext.js'), /trapNow: \(\) => opts\.bossTrapNow\?\.\(\) \?\? null, onTrap: \(trap\) => !!opts\.onBossTrap\?\.\(trap\),/);
   assert.match(read('src/scenes/gate/standInSpell.js'), /const running = host\.trapNow\(\);\n\s*if \(running\) boss\.entity\.activeEffects = \[\{ kind: 'soulTrap', chance: running\.chance, roundsRemaining: 0 \}\];/, 'a recast\'s incumbent');

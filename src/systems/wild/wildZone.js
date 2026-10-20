@@ -494,7 +494,7 @@ export const WILD_TEXT = Object.freeze({
   travelWait: (min) => `The mountain carriages run once every ten minutes - ${min} more minute${min === 1 ? '' : 's'}.`,
   travelPoor: (fee) => `A journey inside the ${WILD_NAME} costs ${fee.toLocaleString('en-US')} gold here.`,
   travelPaid: (fee) => `You pay ${fee.toLocaleString('en-US')} gold for the mountain road.`,
-  // COMPANION-DROP (FIELD BUGS 2026-10-19e; the owner: "Bag drops; no send-off in zone"): a companion at my side drops his
+  // COMPANION-DROP (FIELD BUGS 2026-10-19f; the owner: "Bag drops; no send-off in zone"): a companion at my side drops his
   // pack with mine, so none is sent off from inside the zone (the teleport's own refusal, said of a companion), nothing of
   // mine reaches one waiting outside it, and one carried off knocked out leaves what it carries with me - through the
   // text core (L10N4), read when they are said

@@ -64,7 +64,7 @@ import { FOUND_NOTHING_VALUABLE_TEXT_ID } from '../systems/talk/talk.js';   // G
 import { hideWorldPlaque, destroyWorldPlaque } from '../ui/worldPlaque.js';   // AUDIT-WH H4: the plaque's hide door, for the overlay branch that returns above drawFoes
 import { quickLootWheel, quickLootArm } from '../systems/quickLoot.js';   // QUICK-LOOT B4: the plaque owns the wheel while it lists, and the two keys arm what the next activate means
 import { createMusicDirector, fetchBytes, motorStats, climbingDeps, parkourDeps, doorSpellFor, wireDoorSpells, claimFrame, frameAlive, frameHeld } from './shared.js';
-import { standFromVoid, dungeonVoidText } from '../player/enterExit.js';   // FIELD BUGS 2026-10-19e VOID-DUNGEON: the failsafe and its line
+import { standFromVoid, dungeonVoidText } from '../player/enterExit.js';   // FIELD BUGS 2026-10-19f VOID-DUNGEON: the failsafe and its line
 import { isTextEntryTarget, keyEdges, noteKeyDown, noteKeyUp, beginInputFrame, pressed, released, routeKey, routeKeyUp, held, moveHeld, anyMove, actionsOf, swallowBrowserKey, mouseCode, isSwingButton, swingHeld, keyboardLook, installContextMenuGuard, swingKeyHeld } from '../ui/input.js';
 import { armUnloadGuard } from '../systems/unloadGuard.js';   // MAC-L3: one door in front of every way out of a running game   // AUDIT 39r: the mouse half of the held set
 import { createActivateGate, activateFrame, setClickDelay } from '../systems/activateGate.js';   // A8: PlayerActivate's ActivateCenterObject frame
@@ -881,7 +881,7 @@ export async function bootDungeon(canvas, renderer, params, status) {
     if (!overlayHeld) ctx.actions.update(dt, walkMode ? player : null);   // MOVER-BODY: the movers carry the walking body they meet, or hold (world/actionSystem.js _standMover)
     if (!overlayHeld) ctx.automapTick?.(dt, cam.pos, fwd);   // A1: the 5 Hz reveal probes (paused under overlays, as DFU's coroutine pauses under the open map)
     if (walkMode && !overlayHeld) {
-      // FIELD BUGS 2026-10-19e VOID-DUNGEON: VOID-ENTRY's failsafe underground (player/enterExit.js standFromVoid) - a
+      // FIELD BUGS 2026-10-19f VOID-DUNGEON: VOID-ENTRY's failsafe underground (player/enterExit.js standFromVoid) - a
       // body below everything the dungeon stands on stands again where the dungeon places one, and is told.
       if (standFromVoid(ctx.voidRescue(), player)) ctx.hudSay?.(dungeonVoidText());
       // AUDIT 64 F0/F1: GetOnExteriorWaterMethod (PlayerMotor.cs

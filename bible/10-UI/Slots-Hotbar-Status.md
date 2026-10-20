@@ -452,7 +452,7 @@ Pins moved: `test/systems/ft18_features.test.js` (four tiers), `test/systems/hb_
 `'diamond'`), `test/systems/qs2_tooltip.test.js` (the pack's import), `test/ui/enhanced/qs3_hud.test.js` (the row's
 covered prefs), `test/ui/enhanced/ui3_status.test.js` (the quickslot block's children include the diamond dock). New: `test/ui/enhanced/diamondhb_hotbar.test.js` (6).
 
-## DISEASE-UNWELL - a disease incubating shows an unnamed tile (FIELD BUGS 2026-10-19e)
+## DISEASE-UNWELL - a disease incubating shows an unnamed tile (FIELD BUGS 2026-10-19f)
 
 A player's private report: after catching a disease, the rest's and the journey's warnings said they were diseased, and
 no disease's tile or name appeared until the character had died of it.
@@ -480,6 +480,6 @@ hudStatus.js:"export const unwellTileText", healthStatus.js:"export const UNWELL
 whole language. The classic skin keeps DFU's: no disease icon, named or not; its Status box says unwell as the
 enhanced skin's does. The warnings are unchanged - they were right.
 
-Pinned: `test/ui/fb1019e_unwell.test.js` (5: on the real producer, the character's own clock and the rest's magic
+Pinned: `test/ui/fb1019f_unwell.test.js` (5: on the real producer, the character's own clock and the rest's magic
 rounds); PIN MOVED: `test/ui/enhanced/ui3_status.test.js` (the afflictions' law), `test/systems/bookshelf.test.js`
 (F198's incubating arm). Mutants: `tools/mutants/disease_unwell.json`.

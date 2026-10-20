@@ -86,7 +86,7 @@
     "new": "  return legs;",
     "tests": [
       "test/systems/travel/tv2_click_to_move.test.js",
-      "test/systems/travel/fb1019e_townexit.test.js"
+      "test/systems/travel/fb1019f_townexit.test.js"
     ],
     "note": "The first leg runs beside the road to its bend."
   },

@@ -292,7 +292,7 @@ export function cureDiseaseOffer(entity, guild, membership, {
  *  and `- (>> 2)` is three quarters, both truncating. Offset 0 is the
  *  cheerful one (the player bargained the price below half), 1 the
  *  middle, 2 the grudging one.
- *  PURSE-MEND (FIELD BUGS 2026-10-19e): halved and quartered by
+ *  PURSE-MEND (FIELD BUGS 2026-10-19f): halved and quartered by
  *  division - the shifts' band for every cost an int holds, and the
  *  right one for a trade lot past 2^31 (tradeModes.js
  *  tradeMessageOffset), whose `>> 1` wrapped int32 and named the

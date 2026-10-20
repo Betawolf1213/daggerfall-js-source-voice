@@ -10,7 +10,7 @@
 //     contracted message (record 100 + diseaseType); one still
 //     incubating showed nothing - DFU's own tell-nothing window between
 //     the bite and the first symptom day - and since DISEASE-UNWELL
-//     (FIELD BUGS 2026-10-19e, the owner's departure) says "You feel
+//     (FIELD BUGS 2026-10-19f, the owner's departure) says "You feel
 //     unwell." in its place, once, naming none.
 //   - "You have been poisoned." (record 117) appends when one or
 //     more poisons exist AND at least one has left the Waiting
@@ -59,7 +59,7 @@ export function statusInfoRows(rows, questLike = null) {
 
 export const YOU_ARE_HEALTHY_ID = 18;        // youAreHealthyID (:1632)
 export const YOU_HAVE_BEEN_POISONED_ID = 117;   // youHaveBeenPoisoned (:1633)
-/** DISEASE-UNWELL (FIELD BUGS 2026-10-19e; the owner, 2026-10-19: "Unnamed 'Unwell' tile"): the box's line for a disease
+/** DISEASE-UNWELL (FIELD BUGS 2026-10-19f; the owner, 2026-10-19: "Unnamed 'Unwell' tile"): the box's line for a disease
  *  still incubating - the house's own, naming none. */
 export const UNWELL_LINE_TEXT = 'You feel unwell.';
 

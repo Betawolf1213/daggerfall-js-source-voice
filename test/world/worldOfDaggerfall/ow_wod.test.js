@@ -279,7 +279,7 @@ test('OW-TOWN-RING: a route through a town\'s pixel walks its ring - no leg aime
 
 test('OW-TOWN-RING: the host rings every location on the way (the build\'s own tile rect, from the blocks when the pixel is not built), and Travel Options walks the ring point to point - no ring point skipped on a resume, none taken for a road join', () => {
   const w = hostText('src/scenes/world.js');
-  // PIN MOVED (TOWN-EXIT, test/systems/travel/fb1019e_townexit.test.js): tvJoinedLegs' body is systems/travel/townExit.js
+  // PIN MOVED (TOWN-EXIT, test/systems/travel/fb1019f_townexit.test.js): tvJoinedLegs' body is systems/travel/townExit.js
   // journeyLegs - the host hands it the ring, and it hands routeLegs the ring
   assert.match(w, /const legs = journeyLegs\(from, tvFreePull\(plan, roads\), \{ me: state\.worldCoords\(player\.pos\), ringAt: tvRingAt, exitAt: /);
   assert.match(rd('src/systems/travel/townExit.js'), /const legs = routeLegs\(plan\.pixels, plan\.kinds, \{ ringAt \}\);/);

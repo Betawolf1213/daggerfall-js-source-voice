@@ -49,13 +49,13 @@ export const bossLookOf = (id) => BOSS_LOOKS[id] ?? BOSS_LOOKS.ruhn;
  * FIELD BUGS 2026-10-18f RELAY-SHARE: `share` - its owner's reader of the relay's own word of this body's health (a share,
  * 0..1, or null where none is heard; combat/healthShare.js wordShare builds one): what every "under its health" power
  * reads of it (combat/healthShare.js healthShare). Without one the share is unknown, as before.
- * FIELD BUGS 2026-10-19e STAND-IN-WHOLE: `blowX` - its owner's reader of the factor its relay grows my bucket by (an Elite
+ * FIELD BUGS 2026-10-19f STAND-IN-WHOLE: `blowX` - its owner's reader of the factor its relay grows my bucket by (an Elite
  * Breach's: my Vestiges' declared factor, net/eliteGates/egVestige.js egDeclaredX); none, the gate's own 1. What one blow of
  * mine can land on it reads it (standInBlowCap).
  */
 export const BOSS_ARMOR = 60;
 /**
- * FIELD BUGS 2026-10-19e STAND-IN-WHOLE (a player's private report: Disintegrate on an online breach's boss popped a huge
+ * FIELD BUGS 2026-10-19f STAND-IN-WHOLE (a player's private report: Disintegrate on an online breach's boss popped a huge
  * number, and his bar never moved): THE WHOLE A STAND-IN STANDS AT - a count, not a body. The relay holds every such
  * body's health and nothing here takes from a stand-in (a swing's and a shaft's number is sent, never subtracted; a spell
  * lands on it through counting sinks - scenes/gate/standInSpell.js), so one law alone reads its whole: a Disintegrate
@@ -68,7 +68,7 @@ export const BOSS_ARMOR = 60;
  * galley's reference) and a bout's (arenaBlowCap) - so a Disintegrate counts whole and the relay's own caps clip it, as
  * a duel's stand-in counts at the wire's vital ceiling (combat/duelCombat.js DUEL_STAND_IN); and under the least ceiling
  * nobody clamps (the bout's 10,000), with the rest of a spell's room beside it. Pinned against the real constants and
- * every validator (test/net/gate/fb1019e_standinwhole.test.js).
+ * every validator (test/net/gate/fb1019f_standinwhole.test.js).
  */
 export const STAND_IN_WHOLE = HIT_CAP_X * dpsRef(LV_MAX) * EG_BUCKET_X_MAX;
 /**
@@ -88,10 +88,10 @@ export function bossStandIn(look, name, share = null, blowX = null) {
   e.minMetalToHit = 0;
   e.armor = BOSS_ARMOR;
   e.armorValues = new Array(7).fill(BOSS_ARMOR);
-  e.maxHealth = e.health = STAND_IN_WHOLE;   // FIELD BUGS 2026-10-19e STAND-IN-WHOLE: a count the wire carries, never 1e9
+  e.maxHealth = e.health = STAND_IN_WHOLE;   // FIELD BUGS 2026-10-19f STAND-IN-WHOLE: a count the wire carries, never 1e9
   e.relayHealth = true;   // AUDIT MARTIAL L3 F2: the relay's to know - a share of the whole here is no word (systems/weaponMastery.js), nor is a blow's share of it (combat/blood/bloodDecals.js bloodHit)
   e.relayShare = typeof share === 'function' ? share : null;   // FIELD BUGS 2026-10-18f RELAY-SHARE: the relay's word of it, its owner's reader
-  e.relayBlowX = typeof blowX === 'function' ? blowX : null;   // FIELD BUGS 2026-10-19e STAND-IN-WHOLE: the factor its relay grows my bucket by, its owner's reader
+  e.relayBlowX = typeof blowX === 'function' ? blowX : null;   // FIELD BUGS 2026-10-19f STAND-IN-WHOLE: the factor its relay grows my bucket by, its owner's reader
   e.name = name;
   e.spareGear = true;   // WBX6: a blow on him wears no weapon (combat/formulas.js damageEquipment)
   e.mobileType ??= look.mobile;   // WBX7: a soul trap reads the target's mobile (systems/effects.js) - his is a Daedra Lord's, no humanoid
@@ -111,7 +111,7 @@ export function bossStandIn(look, name, share = null, blowX = null) {
  */
 export const CRYSTAL_ARMOR = 100;
 export const CRYSTAL_NAME = 'Crystal of Oblivion';
-export function crystalStandIn(look, c = null, share = null, blowX = null) {   // FIELD BUGS 2026-10-18f RELAY-SHARE: `share` its own word's reader (bossStandIn); 2026-10-19e STAND-IN-WHOLE: `blowX` its relay's bucket's
+export function crystalStandIn(look, c = null, share = null, blowX = null) {   // FIELD BUGS 2026-10-18f RELAY-SHARE: `share` its own word's reader (bossStandIn); 2026-10-19f STAND-IN-WHOLE: `blowX` its relay's bucket's
   const e = bossStandIn(look, CRYSTAL_NAME, share, blowX);
   e.armor = CRYSTAL_ARMOR;
   e.armorValues = new Array(7).fill(CRYSTAL_ARMOR);
@@ -532,7 +532,7 @@ export function hostLookOf(k, aspectId) {
  *  bites, a knight's plate for armour, a health nothing here can empty - the relay holds its real one, never swayed),
  *  named for the lines a blow says. AUDIT WB11 W1: one a BODY, naming it (`hostI`) - a Cast When Strikes spell on it is
  *  that body's (scenes/hostEnchant.js asks the stand-in it met), where one shared by a look sent it to HIM. */
-export function hostStandIn(look, i = null, share = null, blowX = null) {   // FIELD BUGS 2026-10-18f RELAY-SHARE: `share` its own word's reader (bossStandIn); 2026-10-19e STAND-IN-WHOLE: `blowX` its relay's bucket's
+export function hostStandIn(look, i = null, share = null, blowX = null) {   // FIELD BUGS 2026-10-18f RELAY-SHARE: `share` its own word's reader (bossStandIn); 2026-10-19f STAND-IN-WHOLE: `blowX` its relay's bucket's
   const e = bossStandIn({ mobile: look.mobile }, look.name, share, blowX);
   if (i !== null) e.hostI = i;
   return e;

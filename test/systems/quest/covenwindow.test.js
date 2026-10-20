@@ -161,8 +161,8 @@ test('CW1: offerCovenQuest is the coven GetQuest verbatim - Witches pool, NONMEM
   assert.equal(quest.externalMCP, undefined);
 
   // The active-questor bail closes BEFORE the pool is consulted (:125-129). PIN MOVED, QUESTOR-SAID (FIELD BUGS
-  // 2026-10-19e): the close says why, and names the quest open where the machine can say which
-  // (test/systems/quest/fb1019e_questorsaid.test.js drives the real machine)
+  // 2026-10-19f): the close says why, and names the quest open where the machine can say which
+  // (test/systems/quest/fb1019f_questorsaid.test.js drives the real machine)
   const calls2 = [];
   const open = { questName: 'OPEN', displayName: 'The Open Errand' };
   const flow2 = new QuestOfferFlow(

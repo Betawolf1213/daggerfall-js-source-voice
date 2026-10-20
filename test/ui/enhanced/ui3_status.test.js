@@ -100,7 +100,7 @@ test('UI3 the needs\' glyphs: every need the strip can raise has one - the tempe
 
 // ── THE POISONS AND DISEASES ────────────────────────────────────────
 
-test('UI3 the afflictions: the Status box\'s own law - one tile for being poisoned once a poison has left its waiting (however many, and still while its damage heals), a tile a disease once its incubation is over, by the name its message gives, and nothing for a poison still waiting, one ended, or an infection - the same entities the box itself answers; PIN MOVED (FIELD BUGS 2026-10-19e DISEASE-UNWELL, the owner: "Unnamed \'Unwell\' tile"): a disease still incubating is one unnamed tile, "Unwell", and the box\'s one unwell line, where it showed nothing (mutants: a waiting poison shown; a tile a poison; an incubating disease named; an infection shown; an ended one shown)', () => {
+test('UI3 the afflictions: the Status box\'s own law - one tile for being poisoned once a poison has left its waiting (however many, and still while its damage heals), a tile a disease once its incubation is over, by the name its message gives, and nothing for a poison still waiting, one ended, or an infection - the same entities the box itself answers; PIN MOVED (FIELD BUGS 2026-10-19f DISEASE-UNWELL, the owner: "Unnamed \'Unwell\' tile"): a disease still incubating is one unnamed tile, "Unwell", and the box\'s one unwell line, where it showed nothing (mutants: a waiting poison shown; a tile a poison; an incubating disease named; an infection shown; an ended one shown)', () => {
   assert.deepEqual(afflictionRows(null), []);
   assert.deepEqual(afflictionRows({ activeEffects: [] }), []);
   const poison = (state, extra = {}) => ({ kind: 'poison', poison: POISONS.Arsenic, state, statMods: {}, ...extra });

@@ -196,7 +196,7 @@ import { isEquipped } from '../systems/equip.js';   // DR1: FilterLocalItems' `!
 import { totalGoldAmount } from '../systems/court.js';   // DR1: the trade screen's gold strip - AUDIT 58: PlayerEntity.GetGoldAmount (:1313-1316), coins PLUS letters
 import { isAzurasStarEquipped, registerFoeDoor } from '../systems/artifactEffects.js';   // V3: the Star's kill capture; AUDIT PSCALE1 DOORS-2: Namira's reflection through this pool's door
 import { applySpell, hasActiveEffect, isEntityWaterWalking, entityIsParalyzed, maxFatigue, applyEnemyMotorEffectFlags, concealmentFlags, concealFlagsOfBits, isSoulTrapEffect } from '../systems/effects.js';   // A5: the enemy Levitate arm, the foe-target concealment closure + EntityConcealmentBehaviour's visual
-import { createStandInSpell } from './gate/standInSpell.js';   // FIELD BUGS 2026-10-19e STAND-IN-WHOLE (HOST-SPLIT): my spell on a body the relay runs, its one door (AUDIT SCHOOLS L2 F4's telling with it)
+import { createStandInSpell } from './gate/standInSpell.js';   // FIELD BUGS 2026-10-19f STAND-IN-WHOLE (HOST-SPLIT): my spell on a body the relay runs, its one door (AUDIT SCHOOLS L2 F4's telling with it)
 import { liveStat, killIfAnyLiveStatZero, clampFatigue } from '../systems/statMods.js';   // AUDIT C&C N5: SetFatigue's clamp
 import { breathStep } from '../systems/breath.js';
 import { onMonsterHit, SPIDER_TOUCH_SPELL_INDEX } from '../systems/diseases.js';
@@ -4487,7 +4487,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     }
     playerWeaponHitEntity(playerEntity, boss.entity, { mobileType: boss.mobileType });
   }
-  // FIELD BUGS 2026-10-19e STAND-IN-WHOLE (HOST-SPLIT): MY HARMFUL SPELL ON A BODY THE RELAY RUNS - him, his crystals, his
+  // FIELD BUGS 2026-10-19f STAND-IN-WHOLE (HOST-SPLIT): MY HARMFUL SPELL ON A BODY THE RELAY RUNS - him, his crystals, his
   // host (the Remnant's in the Hour, an Elite Breach's bodies) and my opponent on the sand - by one door, counted on its
   // stand-in, its number what can land (scenes/gate/standInSpell.js); its four copies stood here. The cast engine's seams
   // and the enchant door ask them only once the context is built. BOSS-DOT: its lasting harm carried, a round a frame
@@ -7535,7 +7535,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       if (f.dead) continue;
       runMagicRoundsFor(f.entity, _tick.magicRoundWindow.from, _tick.magicRoundWindow.to, { sinks: foeSinks(f, false) });   // AUDIT 68 S19-round-ticks-player-provenance: as the rest window's
     }
-    standInRound();   // FIELD BUGS 2026-10-19e BOSS-DOT: and the relay's bodies' rounds, on the shared world's (scenes/gate/standInSpell.js)
+    standInRound();   // FIELD BUGS 2026-10-19f BOSS-DOT: and the relay's bodies' rounds, on the shared world's (scenes/gate/standInSpell.js)
     // AUDIT 24 (wave 31): every entity has an EntityEffectManager, so the
     // stat-zero kill is a FOE law too - a drained-to-zero Strength kills
     // the thing you drained. Off the frame's dt, not the minute loop.
@@ -9329,7 +9329,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       if (!m) return null;
       return floorLanding(collider, [m.x, m.y + 1.08, m.z]);
     },
-    /** FIELD BUGS 2026-10-19e VOID-DUNGEON (player/enterExit.js dungeonVoidRescue): VOID-ENTRY's failsafe record for this
+    /** FIELD BUGS 2026-10-19f VOID-DUNGEON (player/enterExit.js dungeonVoidRescue): VOID-ENTRY's failsafe record for this
      *  dungeon, asked by the hosts' frames - where it stands a body that fell below everything it stands on (the start
      *  marker's landing, by the way in, else the enter marker's); none in a realm that casts its own void back. */
     voidRescue: dungeonVoidRescue(collider, () => api.startSpawn({ preferEnterMarker: false }) ?? api.startSpawn(), _sdRealm || _egHall),

@@ -482,7 +482,7 @@ the naval host's boat in play; and the voyage the planner is asked for rides the
 which stays. The pins that read the wiring by source moved with it (`passagehost.test.js`, `passageaudit.test.js`,
 `ows2_crossing.test.js`), the boat in play now held by behaviour, and 21 mutant records re-aimed and dead.
 
-## TOWN-EXIT - tvJoinedLegs out (FIELD BUGS 2026-10-19e)
+## TOWN-EXIT - tvJoinedLegs out (FIELD BUGS 2026-10-19f)
 
 Not a slice of the order: a fix whose function had to change past its wiring. `tvJoinedLegs` - the Overworld's legs,
 OW-TOWN-RING's ring handed to the route and OW-ROADSIDE's join - left `bootWorld` whole for
@@ -492,7 +492,7 @@ town's word, and each of its two journeys a guard. `bootWorld` 36,190 -> 36,184 
 36,219 with DISENCHANT-SAID's eight (`profPages.js disenchantableOf`, `06-Systems/Professions-Arc.md` 37). The pins that read the moved body read the module (`tv2_click_to_move`, `ow_wod`, `fb0929d_toroads`), and the
 records that named its text were re-aimed by content (`ow2.json`, `owwod.json`, `ow3j.json`, `hostsplit.json`).
 
-## STAND-IN-WHOLE - the four spell doors out of buildDungeonContext (FIELD BUGS 2026-10-19e)
+## STAND-IN-WHOLE - the four spell doors out of buildDungeonContext (FIELD BUGS 2026-10-19f)
 
 Not a slice of the order above: a fix (`11-Multiplayer/World-Bosses.md` section 25) whose door stood in `buildDungeonContext`
 four times - `spellOnBoss`, `spellOnCrystal`, `spellOnHost` and `spellOnRival` (and `tellStandIn`, `spellOnStandIn`), each
@@ -517,7 +517,7 @@ number - what can land - belonged in one place, so the doors left as one rather 
 - `buildDungeonContext` 8,450 -> 8,312 logical lines; its ceiling 8,601 -> 8,463 (the 151 of room it had, not the
   standard 400 over the new length, which would have raised it - OUTDOOR-LOOT's precedent).
 
-## BOSS-DOT - the serpent's spell door out of bootWorld (FIELD BUGS 2026-10-19e)
+## BOSS-DOT - the serpent's spell door out of bootWorld (FIELD BUGS 2026-10-19f)
 
 BOSS-DOT (`11-Multiplayer/World-Bosses.md` section 26) carries a spell's lasting harm on every body a relay runs, and the
 sea serpent's door - `serpentSpellOn`, the fifth copy of the stand-in's door, in `bootWorld` - was the one host copy left.

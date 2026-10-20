@@ -273,8 +273,8 @@ finishChargen`, `test/systems/legacychoice.test.js`, `tools/mutants/legacychoice
   which the public room of a dungeon the world lays smaller never is, and another player's instance admits only its
   owner's party: so where the line's remains lie whole and the public room is laid smaller, the death quest's place is
   "a dungeon with your quest", and its door offers the heir an instance of their own - the dungeon whole, Daggerfall's
-  own blocks in every build, which stands them where they fell (HEIR-WHOLE, FIELD BUGS 2026-10-19e,
-  `01-Overview/bugs/Field-Bugs-2026-10-19e.md`; `systems/instancePlaces.js` remainsWholeAt). A death in the public room
+  own blocks in every build, which stands them where they fell (HEIR-WHOLE, FIELD BUGS 2026-10-19f,
+  `01-Overview/bugs/Field-Bugs-2026-10-19f.md`; `systems/instancePlaces.js` remainsWholeAt). A death in the public room
   lies in the public room, laid smaller or whole, as it always did. A death in a building keeps the street's law and
   stands none. "Never in a fight" is the place the heir stands in (LIVE-FIGHT: the street's pools,
   frozen underground, kept it shut on the spot), and a duel or a hostile ship in reach is a fight there too (AUDIT
@@ -706,7 +706,7 @@ world, locked to its own family.
 | AUDIT FB1013d | the three-lane audit of REMAINS-STAND and LIVE-FIGHT (`01-Overview/audits/Audit-FB1013d.md`) - the fallen's dungeon by its row, its pixel, its own key and the size it was built at; the height the death's to ask; a duel and a hostile ship a fight; a claim lapsed at the stand lays its bones at once; a load lets the bodies go and the tick waits out a world moved; the bones put back lie again | built |
 | REVIVE | a death taken back by the operator, and it holds: the `revived` stamp every copy and the realm's write honour; the "Realm revive" run (Time Travel read, guarded writes) - for TheHalfinStream, Mac: "Full revive" (section REVIVE) | built |
 | REZ-BLOODLINE | a friend's Resurrect saves a Bloodline character: online the door writes the death and the realm holds it (its tombstone's hold) while a Resurrect can raise it - the realm's yes takes it back on every copy; the window closes at the reset, its end, a load or the page going (a killed tab: the realm's minute); closed, the body stays down and the caster is told; AUDIT R1-R3 (section REZ-BLOODLINE; `01-Overview/bugs/Field-Bugs-2026-10-16b.md`) | built |
-| HEIR-WHOLE | the remains of a death in an instance reached: they lie in the dungeon whole, and where the world lays its public room smaller the death quest's place is "a dungeon with your quest" - its door offers the heir an instance of their own, one room a death while they lie, which stands them where they fell; public-room remains as they were (section 7; `11-Multiplayer/Instances.md` section 4; `01-Overview/bugs/Field-Bugs-2026-10-19e.md`) | built |
+| HEIR-WHOLE | the remains of a death in an instance reached: they lie in the dungeon whole, and where the world lays its public room smaller the death quest's place is "a dungeon with your quest" - its door offers the heir an instance of their own, one room a death while they lie, which stands them where they fell; public-room remains as they were (section 7; `11-Multiplayer/Instances.md` section 4; `01-Overview/bugs/Field-Bugs-2026-10-19f.md`) | built |
 
 ## WED-GATE - a character who may wed, weds (FIELD BUGS 2026-10-08)
 

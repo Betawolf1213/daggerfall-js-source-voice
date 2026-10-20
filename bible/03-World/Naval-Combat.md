@@ -1479,7 +1479,7 @@ followers; all of this is the port's own, over CREW-COMPANIONS.
   fallen from her roster, the host empties it; and the host stows it (`stowPack`): his boat's hold first (the board's
   `giveItems`), what will not go in into my pack - past its weight if it must, said ("more than you can carry") - his
   gold to my purse. Never thrown away. Realm customs and the account service's first save count his pack as the hold
-  (`net/realm/realmGoldLaw.js stashedItemLists`). **COMPANION-DROP (FIELD BUGS 2026-10-19e; the owner, 2026-10-19:
+  (`net/realm/realmGoldLaw.js stashedItemLists`). **COMPANION-DROP (FIELD BUGS 2026-10-19f; the owner, 2026-10-19:
   "Bag drops; no send-off in zone")**: in the open zone his pack is at stake with mine - a death there drops it as it
   drops my bag and my cart (`11-Multiplayer/Wild-Zone.md` section 4, `wildDropLaw.js:"export function wildPacks"`: he is
   ashore, so he is where I fall). So there he is never sent back aboard (`crewCompanions.js:"export function heldAtSide"`,
@@ -1516,7 +1516,7 @@ followers; all of this is the port's own, over CREW-COMPANIONS.
 
 Pins: `test/systems/companionkit.test.js`; AUDIT WATCH-KIT's `test/systems/auditwatchkit_magic.test.js`, `auditwatchkit_ui.test.js`,
 `auditwatchkit_world.test.js`. `tools/mutants/companionkit.json`: 43 mutants, all dead. COMPANION-DROP:
-`test/systems/fb1019e_companiondrop.test.js`, `tools/mutants/fb1019e_companiondrop.json`.
+`test/systems/fb1019f_companiondrop.test.js`, `tools/mutants/fb1019f_companiondrop.json`.
 
 ## SHIP-WATCH (2026-10-01) - life aboard between fights, and the sea by night - DECLARED
 

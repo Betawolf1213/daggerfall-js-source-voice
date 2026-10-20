@@ -107,7 +107,7 @@ test('F198: the health box decision, arm by arm - over the entries the PRODUCER 
   // an INCUBATING disease (contracted today) showed nothing in DFU - and
   // nothing qualified meant record 18 again (the `if (tokens == null)`
   // tail) while the travel popup's condition (diseaseCount > 0) already
-  // warned. PIN MOVED (FIELD BUGS 2026-10-19e DISEASE-UNWELL, the owner's
+  // warned. PIN MOVED (FIELD BUGS 2026-10-19f DISEASE-UNWELL, the owner's
   // departure, "Unnamed 'Unwell' tile"): the box says the house's unwell
   // line, naming none, in the shape of the host's own rows
   const pc = P();
