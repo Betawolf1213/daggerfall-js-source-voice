@@ -138,5 +138,15 @@
   "tests": [
    "test/systems/enemyExpansion/dex2_sprites.test.js"
   ]
+ },
+ {
+  "name": "DEX2-the-frame-counts-never-stale",
+  "file": "src/systems/textureReplacement.js",
+  "old": "  if (!held || held.gen !== _tierGen) {",
+  "new": "  if (!held) {",
+  "why": "AUDIT DEX B10: an archive's frame counts kept past a registration that moves them",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
  }
 ]

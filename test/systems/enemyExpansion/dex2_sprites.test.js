@@ -77,7 +77,7 @@ test('DEX2 DFU\'s import rules hold of the index: every archive has its 0-0, and
   }
 });
 
-test('DEX2 a stand-in\'s frames are the registry\'s - each record\'s own, as many as DFU imports - where it answered one for all (mutant: one frame)', (t) => {
+test('DEX2 a stand-in\'s frames are the registry\'s - each record\'s own, as many as DFU imports - where it answered one for all, counted again when a registration moves the tiers (mutants: one frame; the counts never stale)', (t) => {
   t.after(() => { clearVendorTextures(); _resetDexSprites(); unregisterBillboardXml('daggerfall-enemy-expansion'); });
   clearVendorTextures();
   installDexSprites({ fetchBytes: async () => new Uint8Array(0) });
@@ -92,6 +92,10 @@ test('DEX2 a stand-in\'s frames are the registry\'s - each record\'s own, as man
   addVendorTextures([0, 1, 3].map((frame) => ({ archive: 9601, record: 0, frame, standIn: true, load: async () => new Uint8Array(0) })));
   assert.equal(vendorFrameCount(9601, 0), 2, 'frames 0 and 1 - frame 3 past the gap is not imported');
   assert.equal(vendorFrameCount(9601, 7), 1, 'a record is at least its frame 0');
+  // AUDIT DEX B10: the counts are kept per archive until a registration moves the tiers - and a registration does
+  addVendorTextures([{ archive: 9601, record: 0, frame: 2, standIn: true, load: async () => new Uint8Array(0) }]);
+  assert.equal(vendorFrameCount(9601, 0), 4, 'the gap filled: frames 0 to 3, counted again');
+  assert.equal(vendorTextureStandIn(9601).getFrameCount(0), 4, 'and the stand-in answers it');
 });
 
 test('DEX2 a stand-in\'s xml scale applies whatever AssetInjection says - its pictures are the port\'s own; a classic sprite\'s waits for the switch, as DFU\'s mobile unit does', (t) => {

@@ -298,8 +298,8 @@ export function createDataPipeline({ renderer, arch, palette, fetch = fetchBytes
     const replacement = !!swapFrame;   // AUDIT RETRO1 A4 (second pass F2): a pack's frame is TryImportTexture's too
     renderer.uploadTexture(archive, key, color32, { replacement });
     // DEX2: A FRAME'S OWN EMISSION MAP - TextureReplacement.GetMobileBillboardMaterial imports a frame's `_Emission`
-    // beside its albedo and lights it white (a mod's glowing enemy: Daggerfall Enemy Expansion's Will-o'-wisp and Fire
-    // Daemon). Only beside an imported frame, as there: a classic frame has no map to import.
+    // beside its albedo and lights it white (a mod's glowing enemy: Daggerfall Enemy Expansion's Will-o'-wisp, 1610, and
+    // Hell Hound, 1614). Only beside an imported frame, as there: a classic frame has no map to import.
     const lit = swapFrame ? decodedTexture(archive, record, frame, 'Emission') : null;
     // F49: the auto-emissive arm follows the FRAME - DFU builds a
     // material per frame, and a torch's every frame is self-lit. The
