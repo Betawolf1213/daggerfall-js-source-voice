@@ -2,6 +2,7 @@
 // The bank's rooms are templates only: no bank deed, balance or ownedShip flag is changed.
 import { SHIP_TYPES } from './banking.js';
 import { WA_SHIP_BLOCKS } from './warmAshesShips.js';
+import { t } from './textManager.js';
 
 // The open Rowboat / Large Boat have no cabin door. The Small Ship uses the small
 // room; the Large Galley and Carrack use the large bank-ship room, as requested.
@@ -16,7 +17,8 @@ export const CABIN_REFUSAL = Object.freeze({
   helm: 'Leave the helm before entering the cabin.',
   aboard: 'Board your ship before entering the cabin.',
   unavailable: 'This ship\'s cabin is unavailable.',
-  enemies: 'You cannot enter the cabin with enemies nearby.',   // FB1020c CABIN-FOES, the house's own shape (portalStone.js, travelView.js)
+  // FB1020c CABIN-FOES, the house's own shape (portalStone.js, travelView.js), in the player's language (L10N4)
+  get enemies() { return t('cabin.refusal.enemies', 'You cannot enter the cabin with enemies nearby.'); },
 });
 
 // Rechecked on press: a picker may have been open while the boat or player moved.

@@ -306,7 +306,7 @@ const HARDCODED = {
   'src/scenes/travelView.js': 39,
   'src/scenes/treeHost.js': 3,
   'src/scenes/windfallHost.js': 5,
-  'src/scenes/world.js': 348,   // FB1020c ONE-SAVE: the kept words moved to the Stores page (BAG_PAGE_WORDS.kept)
+  'src/scenes/world.js': 347,   // FB1020c ONE-SAVE: the kept words moved to the Stores page (BAG_PAGE_WORDS.kept); CABIN-FOES: Transport > Ship's helm refusal read off CABIN_REFUSAL
   'src/scenes/worldModes.js': 83,
   'src/systems/aetheric.js': 115,
   'src/systems/alchemyItems.js': 3,

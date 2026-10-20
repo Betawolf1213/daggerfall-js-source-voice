@@ -689,6 +689,7 @@ body.face.curated,"den utvalgte tabellen angir begge halvdelene - ingenting mål
 body.outfit.second,"et antrekk til - det første ({first}) er det som tegnes"
 body.outfit.unbound,"ingenting av det ble bundet - tegnet uten det"
 body.outfit.unknown,"spillet har ikke dette antrekket"
+cabin.refusal.enemies,"Du kan ikke gå inn i kahytten med fiender i nærheten."
 captain.half.commander,"Kommandøren"
 captain.half.commanderCaps,"KOMMANDØREN"
 captain.half.master,"Skipperen"
