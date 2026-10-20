@@ -92,7 +92,7 @@ const find = (n, cls) => {
 // ── THE VOCABULARY AND ITS FACE ─────────────────────────────────────
 
 test('WIKIMAID vocabulary: the title and the glyph join the closed lists last, the aura joins AURAS last; "WikiMaid" and "Lilac Warren" in words, the glyph named on the account card; the title a gradient - the amethyst into the lilac into a rabbit\'s blush, #9d5cff, #c390ff, #ffb8de - edged in black, its one colour the lilac, apart from every purple; the glyph in the lilac, filled; `V` on the classic face; the warren\'s button in the WikiMaid\'s paint; the wire keeps all three (mutants: the gradient\'s stops, its order, the edge, the one colour, the glyph\'s colour, the mark, the fill, the button\'s paint, the words)', () => {
-  assert.equal(TITLES.at(-6), 'wikimaid', 'the vocabulary\'s newest when it came');   // PIN MOVED (QL12): the questlines' five joined the list last, after the WikiMaid
+  assert.equal(TITLES.at(-7), 'wikimaid', 'the vocabulary\'s newest when it came');   // PIN MOVED (STAR8): the Starwarden joined the list last, after the questlines' five; PIN MOVED (QL12): the questlines' five joined the list last, after the WikiMaid
   assert.equal(GLYPHS.at(-1), 'wikimaid');
   assert.equal(AURAS.at(-1), 'lilacwarren');
   assert.equal(TITLE_TEXT.wikimaid, 'WikiMaid', 'spelled as SylviaBun spelled it: "the WikiMaid title"');
