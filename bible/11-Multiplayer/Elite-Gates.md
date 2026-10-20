@@ -3007,12 +3007,27 @@ heralds, it posts to the gate's webhook and falls back to the gate's role, pingi
 
 - a company taking Redoubt 10, 20, 30...: *<opener>'s company took Redoubt 10 of the Battlespire (Hall 50) in
   1:51:20.* - the time since the breach's first hall woke, so a breach begun deeper says where it began: *... in 20:04,
-  from Redoubt 9.* (the news carries its start, `ew`; First of the Spire's post says it too - AUDIT EG V);
+  from Redoubt 9.* (the news carries its start, `ew`; First of the Spire's post says it too - AUDIT EG V). A company of
+  one is named as one: *Mara took Redoubt 20 of the Battlespire (Hall 100) alone in 40:00, from Redoubt 10.*
+  (LONE-HERALD, below);
 - a new top of the Descent in any bracket;
 - *First of the Spire*, and *the Lone Beacon*;
 - a band's seal lifted: *The way below the Galleries is open.*
 
 An opening is never heralded: a company's breach is its own.
+
+**LONE-HERALD (FIELD BUGS 2026-10-20d, `01-Overview/bugs/Field-Bugs-2026-10-20d.md`): a company of one is posted as
+one.** A player took Redoubt 20 alone and read the channel's *<name>'s company took Redoubt 20* as the Spire counting
+them a company. A Redoubt's news carried no size, so the post gave one member the words it gives eight. The news now
+says the company's entrants (`n` - the Descent's count, "Who counts" above: every member admitted, earning or not) and,
+for a company of one, its member's name in the opener's place, since an opener who never stepped in is not the one who
+went (`net/eliteGates/egBrain.js` `heraldCompany`). The hub's read keeps the size (`validEgHeraldTell`, 0 when a room
+before this relay did not say it), its reckoning hands it on, and three posts word a company of one alone: the tenth
+Redoubt's (*Mara took Redoubt 20 of the Battlespire (Hall 100) alone in 40:00.*), First of the Spire's (*Mara is the
+first ever to take Redoubt 10 of the Battlespire (Hall 50), alone, in 1:17:40.*, no list of one name) and a seal's
+(*Mara is the first through, alone.*). Two or more, and news with no size, keep *<opener>'s company*. Unchanged: a
+company of one is still a company to the law (section 14, THE ERRAND FLOOR), and the boards rank it as they did - a
+breach begun past Hall 1 is on the Depths, never the Descent's Alone. Relay `world235`.
 
 **EG-E2 record (2026-10-12): the feats, the Annals, the honours and the boards.** The account's half of section 19's
 honours and this section's boards, in `server-account/src/egHonours.js` (claim-time logic apart from `claimEg`, one seam

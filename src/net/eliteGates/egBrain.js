@@ -488,6 +488,10 @@ function heraldOwe(B, now, ev) {
 }
 /** The company's entrants, in its order: `[sub, m]`. */
 const entrants = (B) => B.co.map((c) => [c.sub, B.mem[c.sub]]).filter(([, m]) => m?.in);
+/** FIELD BUGS 2026-10-20d LONE-HERALD: the company a Redoubt's news names - its entrants (`n`, the Descent's count, section 20)
+ *  and the name its post leads with (`o`): the opener's for a company, the one member's for a company of one, who need not be
+ *  the opener (an opener who never stepped in - AUDIT EG IV lane3 #11). */
+const heraldCompany = (B) => { const E = entrants(B); return { n: E.length, o: E.length === 1 ? E[0][1].name ?? '' : B.o ?? '' }; };
 
 /**
  * A MEMBER FALLS (section 16.5): a death, or EG_ABSENT_TRIAL_MS gone in a trial. Their Reliquaries are lost; they become a
@@ -1306,8 +1310,9 @@ function redoubt(B, now, rng, out) {
   // EG-E3: THE HERALD'S NEWS - a Valkynaz's Redoubt (the hub says every tenth, the first tenth ever as First of the Spire,
   // and a band passed whose seal a deploy lifted), and a Court felled alone, once a member a breach
   // AUDIT EG V (L8-7): its seconds are from the breach's first wake - Hall 1's only for a breach begun there, so the start (`ew`)
-  // rides with them and the post says it
-  if (valk) heraldOwe(B, now, { k: 'rd', w, h: B.h, t: secs(now - B.wk), ew: B.ew ?? 0, o: B.o ?? '', by: earners.map(([, m]) => m.name ?? '') });
+  // rides with them and the post says it. FIELD BUGS 2026-10-20d LONE-HERALD: and the company's size, so a company of one is
+  // posted as one ("Mara took Redoubt 20 ... alone"), never as "<name>'s company"
+  if (valk) heraldOwe(B, now, { k: 'rd', w, h: B.h, t: secs(now - B.wk), ew: B.ew ?? 0, ...heraldCompany(B), by: earners.map(([, m]) => m.name ?? '') });
   if (lone && !L[0][1].lbSaid) { L[0][1].lbSaid = 1; heraldOwe(B, now, { k: 'lb', n: L[0][1].name ?? '', lk, c: entrants(B).length }); }
   if (valk) B.resp += EG_RESPITE_VALK_MS;
   // AUDIT EG V (L3-3, L8-3; section 16.1 - "an earner, in that circle"): the circle's damage and parts begun again for EVERY
