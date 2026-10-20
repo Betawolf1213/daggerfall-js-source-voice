@@ -420,5 +420,122 @@
     "tests": [
       "test/systems/fb1019f_companiondrop.test.js"
     ]
+  },
+  {
+    "name": "AUDIT-FB1019f-B2-the-refusal-gone",
+    "file": "server-account/src/wild.js",
+    "old": "    if (!packsRead && wildTakesPacks(drop)) return 'not-found';   // a game from before the word: the take refused, nothing moved\n",
+    "new": "",
+    "tests": [
+      "test/systems/fb1019f_companiondrop.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-FB1019f-B2-a-seizure-refused",
+    "file": "server-account/src/wild.js",
+    "old": "  const packsRead = seize || body?.packs === WILD_FALL_PACKS;",
+    "new": "  const packsRead = body?.packs === WILD_FALL_PACKS;",
+    "tests": [
+      "test/systems/fb1019f_companiondrop.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-FB1019f-B2-the-word-never-heard",
+    "file": "server-account/src/wild.js",
+    "old": "seize || body?.packs === WILD_FALL_PACKS;",
+    "new": "seize || body?.packs === 'yes';",
+    "tests": [
+      "test/systems/fb1019f_companiondrop.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-FB1019f-B2-a-packs-coin-unread",
+    "file": "src/systems/wild/wildDropLaw.js",
+    "old": " && f !== 'gold') || !!drop.gold.packs;",
+    "new": " && f !== 'gold');",
+    "tests": [
+      "test/systems/fb1019f_companiondrop.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-FB1019f-B2-the-pile-read-as-a-pack",
+    "file": "src/systems/wild/wildDropLaw.js",
+    "old": "f !== 'cart' && f !== 'gold') || !!drop.gold.packs;",
+    "new": "f !== 'cart') || !!drop.gold.packs;",
+    "tests": [
+      "test/systems/fb1019f_companiondrop.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-FB1019f-B2-the-cart-read-as-a-pack",
+    "file": "src/systems/wild/wildDropLaw.js",
+    "old": "drop.from.some((f) => f !== 'bag' && f !== 'cart' && ",
+    "new": "drop.from.some((f) => f !== 'bag' && ",
+    "tests": [
+      "test/systems/fb1019f_companiondrop.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-FB1019f-B2-the-bag-read-as-a-pack",
+    "file": "src/systems/wild/wildDropLaw.js",
+    "old": "drop.from.some((f) => f !== 'bag' && f !== 'cart'",
+    "new": "drop.from.some((f) => f !== 'cart'",
+    "tests": [
+      "test/systems/fb1019f_companiondrop.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-FB1019f-B2-the-words-without-the-packs",
+    "file": "src/systems/wild/wildDeath.js",
+    "old": "({ ...wildCartWord(on, rec, mask), packs: WILD_FALL_PACKS })",
+    "new": "({ ...wildCartWord(on, rec, mask) })",
+    "tests": [
+      "test/systems/fb1019f_companiondrop.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-FB1019f-B2-the-host-asks-without-the-word",
+    "file": "src/scenes/world.js",
+    "old": "...wildFallWords(hccOn(), hccRuntime.getSaveData(), wildMaskOf(maps)) }),",
+    "new": "...{ cart: 1 } }),",
+    "tests": [
+      "test/systems/fb1019f_companiondrop.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-FB1019f-B3-the-oath-unread",
+    "file": "src/systems/wild/wildLeaf.js",
+    "old": "!!r && !!r.sworn && !r.defeated",
+    "new": "!!r && !r.defeated",
+    "tests": [
+      "test/systems/fb1019f_companiondrop.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-FB1019f-B4-an-empty-hand-over-said",
+    "file": "src/systems/revenant/revenantCompanions.js",
+    "old": "  if (!items.length) return 0;\n",
+    "new": "",
+    "tests": [
+      "test/systems/fb1019f_companiondrop.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-FB1019f-B5-the-risen-word-blind-to-a-packs-coin",
+    "file": "src/systems/wild/wildDeath.js",
+    "old": " || Object.values(gold?.packs ?? {}).some((n) => n > 0);",
+    "new": ";",
+    "tests": [
+      "test/systems/fb1019f_companiondrop.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-FB1019f-B5-the-host-asks-the-old-question",
+    "file": "src/scenes/world.js",
+    "old": "    else if (wildTookAny(out, d.gold)) townTalk.say(",
+    "new": "    else if (out.length || d.gold?.purse || d.gold?.cart) townTalk.say(",
+    "tests": [
+      "test/systems/fb1019f_companiondrop.test.js"
+    ]
   }
 ]

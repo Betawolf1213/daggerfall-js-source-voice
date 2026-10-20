@@ -203,7 +203,19 @@ Either death, at the first dead frame, while the room is still the player's (`wi
   each piece's pack (`from`: `crew:<boat>:<name>`, `sworn:<id>`, `kit:<id>`, `WILD_PACK`) and each pack's coin share
   (`gold.packs`); the fallen's game takes exactly that out of its own live lists (`wildTakeTook`'s `packs` -
   `world.js:"const out = wildTakeTook(playerEntity"`), and a piece whose pack is not there is left, never another
-  list's piece of the same marks. NO SEND-OFF IN THE ZONE: a hand ashore is never sent back aboard from inside it
+  list's piece of the same marks. AND ONLY A GAME THAT SAYS IT READS THE PACKS IS HANDED A TAKE OF THEM (AUDIT FB1019f
+  B2): the fallen's own ask carries `packs` 1 (`wildDropLaw.js:"export const WILD_FALL_PACKS = 1;"`, said beside the
+  wagon's word by `wildDeath.js:"export const wildFallWords = (on, rec, mask) =>"`). A game from before the word read
+  every piece not the cart's as the bag's and no pack's coin, so handed a take of a pack it stripped a piece of the bag
+  bearing his piece's marks - a worn one too - and kept his piece and his coin where the record had dropped them, his
+  coin twice at its next checkpoint. A take of a pack asked without the word is refused in the old build's word
+  (`not-found`, "The game may need updating"), nothing moved
+  (`server-account/src/wild.js:"if (!packsRead && wildTakesPacks(drop)) return 'not-found';"`); a take that touches no
+  pack is that tab's as ever. Never a smaller take: a word that shrank the drop would let any tab keep its companions'
+  packs by leaving it out. A fall at another's hand so refused is taken whole by its killer's seizure past the grace,
+  which honours no word and which no game applies (the fallen plays a record that moved under it); a death to a foe,
+  the fallen's own act, drops nothing until its tab says the word - what a game that never asks keeps already. NO
+  SEND-OFF IN THE ZONE: a hand ashore is never sent back aboard from inside it
   (`crewCompanions.js:"export function heldAtSide"`, the boat's picker), nor the sworn one at the side sent away or on an
   errand (`revenantCompanions.js:"export const leaveRefusal = (r) =>"`; the roster says it, and the slots' hold sends
   another) - said plainly (`WILD_TEXT.companionStays`: "Bran stays at your side
@@ -214,6 +226,13 @@ Either death, at the first dead frame, while the room is still the player's (`wi
   out hands its pack and kit to the player before it goes, said once (`WILD_TEXT.companionLeft`) - so nothing a companion
   carries leaves the zone but at the player's side. A desertion or a betrayal there (RVN11b/c) keeps its split as ever:
   what it keeps is its own, won back only by felling it. ACCOUNT DEPLOY: the law is the Worker's leaf (section 8).
+  Two doors that are no companion's still keep the same shelter, both left open as the owner's call
+  (`01-Overview/bugs/Field-Bugs-2026-10-19f.md` COMPANION-DROP, "Open for the owner"):
+  - CARGO-ANYWHERE's hold door (`src/scenes/holdDoor.js`; the owner, 2026-10-17: "Cargo should be able to be accessed
+    at any time", `03-World/Naval-Refit.md`) opens a ship's hold from anywhere, the zone included: a piece stowed there
+    from inside the zone is outside the drop, as a companion's pack was.
+  - A boat placed on the zone's water keeps her hold through a death there, where CART-AWAY drops a cart parked on the
+    zone's ground.
 - WORN: kept on a death to a foe. At another player's hand, in the open country (a cell room), the killer may take
   ONE worn piece: the fallen's game shows the list (`worn`, under the fall's id), the killer's body window picks
   (`pick`, INT9: to the relay, in the room that refereed the fall, within `WILD_REF.pickMs`, naming what the offer
@@ -385,10 +404,15 @@ CART-AWAY (2026-10-15, section 4) is one field on the account service's `/v1/wil
 none: either way the cart is taken as it was, so the two deploy in either order.
 
 COMPANION-DROP (2026-10-19, section 4) is the Worker's leaf (`src/systems/wild/wildDropLaw.js`, already on
-`account-deploy.yml`'s list) and one field of its answer, `gold.packs` - no relay frame, no migration, no new body field:
-an ACCOUNT DEPLOY, which the merge runs. A tab from before it takes nothing out of its companions' own lists: a piece
-the service took stays in his pack there as the fallen's own copy, written down by its id (INT9's `knownCopySteps`),
-which moves by no route - the site and the service deploy together, on the same merge.
+`account-deploy.yml`'s list), one field of its answer, `gold.packs`, and one of the fallen's ask, `packs` (1: its game
+reads the packs - AUDIT FB1019f B2) - no relay frame, no migration: an ACCOUNT DEPLOY (acct162), which the merge runs.
+A tab from before it - one left open across the deploy, or the desktop app's own bundled game until it updates - says
+no `packs`, and its take read every `took` piece not the cart's as the bag's and no pack's coin: handed a take of a
+companion's pack, it stripped a piece of the bag bearing his piece's marks and kept his piece and his coin where the
+record had dropped them (the coin twice at its next checkpoint). So the service refuses such a tab a take of the packs,
+nothing moved, in the old build's word (`not-found`); a take that touches no pack is taken for it as ever. Its fall at
+another's hand is taken whole by its killer's seizure past the grace; its death to a foe drops nothing until it
+reloads. A service from before it never takes a pack and never reads the word, so the two deploy in either order.
 
 ## 9. The journeys (WILD3, PVPTIERS)
 

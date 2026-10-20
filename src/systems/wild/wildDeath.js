@@ -26,10 +26,26 @@
 // The purse is the death penalty's (systems/deathPenalty.js) and unchanged.
 // ═══════════════════════════════════════════════════════════════════
 import { WILD_ITEMS_MAX } from '../../net/wire.js';
+import { wildCartWord } from './wildCart.js';
+import { WILD_FALL_PACKS } from './wildDropLaw.js';
 
 // THE LAW - INT9: its home is systems/wild/wildDropLaw.js (a leaf the account Worker bundles: the service takes a death's drop
 // off the record), re-exported here
-export { WILD_NEVER_GROUPS, keptOnWildDeath, wildCanLose, takeWildDrop, WILD_GOLD_LOSS, takeWildGold, wornOffer, wildRecord, takeWildDeath, wildPickOf, wildDropCandidates, wildCartRecordOf, wildCartMayBeAway, wildTookOf, wildTakeTook, WILD_REVENANTS_MAX, wildSwornAtSide, WILD_PACK, wildPacks, wildPacksOf } from './wildDropLaw.js';
+export { WILD_NEVER_GROUPS, keptOnWildDeath, wildCanLose, takeWildDrop, WILD_GOLD_LOSS, takeWildGold, wornOffer, wildRecord, takeWildDeath, wildPickOf, wildDropCandidates, wildCartRecordOf, wildCartMayBeAway, wildTookOf, wildTakeTook, WILD_REVENANTS_MAX, wildSwornAtSide, WILD_PACK, wildPacks, wildPacksOf, WILD_FALL_PACKS, wildTakesPacks } from './wildDropLaw.js';
+
+/** THE FALLEN'S OWN WORDS on /v1/wild/fall (world.js wildTakeDrop), beside its receipt or its nonce, its record's `at`, its
+ *  room and its relay's `collect`: CART-AWAY's wagon (wildCart.js wildCartWord - `on` the Horse Cart mod, `rec` its record,
+ *  `mask` the zone's) and COMPANION-DROP's `packs` 1 - this game takes a companion's piece out of his own pack and his
+ *  coin's share out of his coin (wildTakeTook's `packs`, world.js wildDropTaken), so the service may hand it a take of the
+ *  packs (WILD_FALL_PACKS; AUDIT FB1019f B2: a game from before the word, which would misapply one, is refused it).
+ *  @param {boolean} on @param {any} rec @param {any} mask */
+export const wildFallWords = (on, rec, mask) => ({ ...wildCartWord(on, rec, mask), packs: WILD_FALL_PACKS });
+
+/** AUDIT INT9: DID MY DROP TAKE ANYTHING OF MINE - a piece out of a list (`out`, wildTakeTook's answer) or a share of coin:
+ *  the purse's, the cart's, or (COMPANION-DROP, AUDIT FB1019f B5) a pack's at my side (`gold.packs`). A receipt that finds
+ *  me risen says so when it did (world.js wildDropTaken, `WILD_TEXT.dropLate`): a companion's coin alone is my loss too.
+ *  @param {any[]} out @param {{ purse?: number, cart?: number, packs?: Record<string, number> } | null | undefined} gold */
+export const wildTookAny = (out, gold) => out.length > 0 || (gold?.purse ?? 0) > 0 || (gold?.cart ?? 0) > 0 || Object.values(gold?.packs ?? {}).some((n) => n > 0);
 
 /** A list cut into the wire's chunks. */
 export function wildChunks(list, size = WILD_ITEMS_MAX, bytes = Infinity) {

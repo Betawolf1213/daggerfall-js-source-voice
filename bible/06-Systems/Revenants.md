@@ -312,8 +312,8 @@ enhanced plus UI feature."
   `wildDropLaw.js:"export function wildPacks"`). So it is never sent away nor on an errand from my side there
   (`revenantCompanions.js:"export const leaveRefusal = (r) =>"` - the roster says it, and the slots' hold sends
   another), nothing of mine is given as kit to one waiting outside the zone, and knocked out there it hands me its pack
-  and its kit before it goes, said once (`revenantCompanions.js:"function leftWithYou(r)"`): nothing it carries leaves the
-  zone but at my side.
+  and its kit before it goes, said once (`revenantCompanions.js:"function leftWithYou(r)"`; one carrying nothing hands
+  nothing and says nothing - AUDIT FB1019f B4): nothing it carries leaves the zone but at my side.
 
 ## 14. The portals and the dissolve (COMPANION-PORTAL, DISSOLVE)
 

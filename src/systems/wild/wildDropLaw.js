@@ -287,6 +287,19 @@ export function wildPacks(party, revenants) {
  *  @param {any} save @returns {WildPack[]} */
 export const wildPacksOf = (save) => wildPacks(save?.modData?.[NAVAL_VENDOR]?.party?.party, save?.modData?.[REVENANT_VENDOR]?.list);
 
+/** COMPANION-DROP (AUDIT FB1019f B2): THE FALLEN'S WORD THAT ITS GAME READS THE PACKS - `packs` 1 on /v1/wild/fall
+ *  (systems/wild/wildDeath.js wildFallWords): its game takes a pack's piece out of that pack and lowers that pack's coin by
+ *  its share (wildTakeTook's `packs`, `gold.packs`). A game from before COMPANION-DROP says none, and its take read every
+ *  piece not the cart's as the bag's and no pack's coin: handed a take of a companion's pack, it stripped a piece of the
+ *  bag bearing the same marks - a worn one too - and left his piece and his coin where the record no longer had them, his
+ *  coin twice at its next checkpoint. So the account service hands a take of the packs to no fallen's tab that does not
+ *  say this (server-account/src/wild.js, wildTakesPacks). */
+export const WILD_FALL_PACKS = 1;
+/** COMPANION-DROP (AUDIT FB1019f B2): DOES A TAKE - takeWildDeath's answer - TAKE ANYTHING OF A PACK AT THE SIDE: a piece
+ *  out of one (`from` a pack's word), or a share of one's coin (`gold.packs`)?
+ *  @param {{ from: string[], gold: { packs?: Record<string, number> } }} drop @returns {boolean} */
+export const wildTakesPacks = (drop) => drop.from.some((f) => f !== 'bag' && f !== 'cart' && f !== 'gold') || !!drop.gold.packs;
+
 /** INT9 (AUDIT): WHAT THE SERVICE TOOK, as the fallen's game finds it again - a piece's own marks (`g` group, `t`
  *  template, `m` material, `u` its id, `p` its craft's provenance, `n` its stack, `f` where it lay). */
 export const wildTookOf = (/** @type {any[]} */ taken, /** @type {string[]} */ from) => taken.map((it, i) => ({ g: it.group ?? null, t: it.templateIndex ?? null, m: it.material ?? 0, u: typeof it.uid === 'string' ? it.uid : null, p: typeof it.provenance === 'string' ? it.provenance : null, n: Math.max(1, Math.floor(it.stackCount ?? 1)), f: from[i] })).filter((x) => x.f !== 'gold');
