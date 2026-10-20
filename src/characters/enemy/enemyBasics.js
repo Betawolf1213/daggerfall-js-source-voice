@@ -18,6 +18,8 @@
 // EnemyDeath's "%s just died." and the pacification line both do, and
 // neither is a quest. ONE DFU MEMBER, ONE EXPORT: the names live with
 // the rows they name, and quest/foe.js re-exports them.
+import { customCareerTemplate, customEnemyName } from './customEnemies.js';   // DEX1: an id past MobileTypes, by its registered career
+
 export const ENEMY_NAMES = Object.freeze([
   'Rat', 'Imp', 'Spriggan', 'Giant Bat', 'Grizzly Bear',
   'Sabretooth Tiger', 'Spider', 'Orc', 'Centaur', 'Werewolf', 'Nymph',
@@ -38,6 +40,39 @@ export const ENEMY_NAMES = Object.freeze([
 /** EnemyBasics.IsClassEnemyId: the 128 bit. */
 export const isClassEnemyId = (id) => (id & 128) !== 0;
 
+/** A MobileTypes member that is an enemy: 0-42, 128-146 (Enum.IsDefined, None aside). */
+export const isClassicEnemyId = (id) => Number.isInteger(id) && ((id >= 0 && id <= 42) || (id >= 128 && id <= 146));
+
+/** DEX1: SetupDemoEnemy.ApplyEnemySettings's entity type (:160-185) - 0-42 a monster, 128-146 a class, any other id a
+ *  monster or a class by the 128 bit when a mod registered its career (enemy/customEnemies.js), else no enemy at all
+ *  (EntityTypes.None). 'monster' | 'class' | null. */
+export function enemyEntityType(id) {
+  if (!Number.isInteger(id)) return null;
+  if (id >= 0 && id <= 42) return 'monster';
+  if (id >= 128 && id <= 146) return 'class';
+  return customCareerTemplate(id) ? (isClassEnemyId(id) ? 'class' : 'monster') : null;
+}
+
+/** DEX1: EnemyEntity.SetEnemyCareer's careerIndex (:248-296) - a custom enemy's is its id, a class's its id - 128, a
+ *  monster's its id. The index DFU's career switches (OnMonsterHit, GetEnemyGroup, the spell lists) read. */
+export function enemyCareerIndex(id) {
+  if (customCareerTemplate(id)) return id;
+  return enemyEntityType(id) === 'class' ? id - 128 : id;
+}
+
+/** DEX1: a mod's enemies joining the table - BestiaryMod.ParseCustomEnemies' `EnemyBasics.Enemies = enemies.ToArray()`
+ *  (:1343), which every reader of the table then sees. A classic id is refused: a mod that edits a classic row edits the
+ *  row (systems/enemyExpansion/dexInstall.js), it does not replace the table's own. Answers the rows written. */
+export function registerEnemyRows(rows) {
+  let n = 0;
+  for (const [id, row] of rows) {
+    if (!Number.isInteger(id) || isClassicEnemyId(id)) throw new Error(`registerEnemyRows: ${id} is not a mod's enemy id`);
+    ENEMY_BASICS[String(id)] = row;
+    n++;
+  }
+  return n;
+}
+
 /** GetLocalizedEnemyName's English, with the index law in one place. Rows
  *  carry no `name` field - reading one returns undefined, which is how
  *  the pacification line came to say "The enemy" to everybody.
@@ -48,11 +83,20 @@ export const isClassEnemyId = (id) => (id & 128) !== 0;
  *  through that lookup where it is shown; this one never changes with
  *  the language. */
 export function enemyDisplayName(mobileType) {
+  // DEX1: an id past MobileTypes is named as GetLocalizedEnemyName names it (TextManager.cs:443-460): the text
+  // provider's custom name (a mod's), else its registered career's own Name, else none
+  if (!isClassicEnemyId(mobileType)) {
+    const t = customCareerTemplate(mobileType);
+    return t ? (customEnemyName(mobileType) ?? (t.name || null)) : null;
+  }
   const i = mobileType < 128 ? mobileType : 43 + mobileType - 128;
   return ENEMY_NAMES[i] ?? null;
 }
 
-export const ENEMY_BASICS = Object.freeze({
+// DEX1: the table itself is not frozen, as DFU's EnemyBasics.Enemies is not - a mod's enemies join it
+// (registerEnemyRows) and a mod's edits are written over its rows, which every reader then sees (as RR1's
+// enemyAppearance writes over them). Its classic rows are DFU's, generated; only a mod's install writes it.
+export const ENEMY_BASICS = ({
  '0': {
   'maleTexture': 255,
   'femaleTexture': 255,
@@ -3156,3 +3200,11 @@ export const ENEMY_BASICS = Object.freeze({
   'attackSound': 245
  }
 });
+
+/** DEX1: THE TABLE AS DFU SHIPS IT - EnemyBasics.Enemies' own initializer, copied before any mod writes a row (this
+ *  module's evaluation ends before an importer runs) and frozen to the leaf. For the readers a mod's edit must never
+ *  reach: King's Gambit's roster is one for every client and the relay (bible/11-Multiplayer/Kings-Gambit.md, "the
+ *  vanilla rows, never a mod's overlay"), and a client evaluating it after Daggerfall Enemy Expansion's Start wrote its
+ *  classic rows would build another. */
+const deepFreeze = (o) => { for (const v of Object.values(o)) if (v && typeof v === 'object') deepFreeze(v); return Object.freeze(o); };
+export const VANILLA_ENEMY_BASICS = deepFreeze(structuredClone(ENEMY_BASICS));

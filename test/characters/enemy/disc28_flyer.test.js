@@ -22,7 +22,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as acorn from 'acorn';
 import { flyerSpawnFeet, flyerStandFeet, floorUnderHang, feetFromCentre, enemyControllerHeight } from '../../../src/characters/enemy/enemyAnchor.js';
-import { ENEMY_BASICS } from '../../../src/characters/enemy/enemyBasics.js';
+import { ENEMY_BASICS, enemyEntityType, isClassEnemyId } from '../../../src/characters/enemy/enemyBasics.js';
 import { EnemyAI } from '../../../src/characters/enemy/enemyMotor.js';
 import { freeLodgedFeet } from '../../../src/characters/foeSpacing.js';   // FIELD BUGS 2026-10-04d CRATE-FREE: the build's stand (a free name there, the module's own import)
 import { Collider } from '../../../src/player/collider.js';
@@ -75,7 +75,7 @@ function context(collider, idleH) {
   const state = {
     ...ROOM_LOOT_OFF,   // PIN MOVED (PARTY-LOOT): the dungeon's room-loot seams, answering as an offline dungeon's (test/roomLootOff.mjs)
     foeSeed, applyWireLook,   // AUDIT MW-NPC II K3: the records' look seed (roomRecord, applyFoeRecord, the puppets' stands)
-    ENEMY_BASICS, collider, foes, flyerStandFeet, enemyControllerHeight,
+    ENEMY_BASICS, enemyEntityType, isClassEnemyId, collider, foes, flyerStandFeet, enemyControllerHeight,   // DEX1: DFU's entity type and class test, the arms' free names
     freeLodgedFeet,   // FIELD BUGS 2026-10-04d CRATE-FREE: the build's stand, the real one (no flyer here stands in a model)
     MobileUnit: class { static resolveGender(g) { return g === 'female' ? 'female' : 'male'; } },
     idleSpriteHeight: () => idleH,
@@ -83,7 +83,7 @@ function context(collider, idleH) {
     foeDeps: {
       EnemyAI, EnhancedEnemyAI: EnemyAI, EnemyAttack: class {},
       floorLanding: (c, p) => [p[0], p[1] - 0.2, p[2]],
-      loadMonsterCareer: async () => ({}), fetchBytes: async () => null,
+      loadEnemyCareer: async () => ({}), fetchBytes: async () => null,
       makeEnemyEntity: () => ({ items: [], health: 10, maxHealth: 10 }),
       playerEntity: { level: 1, reflexes: 2 }, hasMagickaToCast: () => false,
     },

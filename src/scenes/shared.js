@@ -101,6 +101,7 @@ import '../systems/gate/gateSpoils.js'; import '../systems/portalStone.js'; impo
 import '../systems/sigil/sigilBroker.js';   // SET7: the Broker's record (what this character bought today) registers its save slot in every host, so a save made anywhere carries it
 import { installImmersiveTravel } from '../systems/immersiveTravel.js';   // IT1: Immersive Travel's Init - the drivers' and sailors' factions, their Fast Travel services
 import { installRoleplayRealism } from '../systems/roleplayRealism/rrInstall.js';   // RR1: Roleplay & Realism's InitMod - after Items', as DFU loads them (Items is the one it looks up)   // RRI1: the templates, the patches, the art - the same seam, the same reason   // DW3: its icons, on the replacement door - here and not at worldTick's module scope, where the mod's law sits in an import cycle (a TDZ)
+import { installEnemyExpansion } from '../systems/enemyExpansion/dexInstall.js';   // DEX1: Daggerfall Enemy Expansion's fifty enemies, their careers and the classic edits, once at boot
 import { getBool, getInt } from '../systems/settings/settings.js';   // M-FM: Audio/AlternateMusic, read once for all three hosts; MAC-O4: Controls/WeaponSwingMode, the drag route's own missing term
 import { SongManager, musicEnvironment, holdEnvironment } from '../systems/song/songManager.js';
 import { festivalEnvironment } from './seatFestival.js';   // FESTIVAL-STAGE: a Festival town's streets hear the tavern
@@ -1407,6 +1408,7 @@ export function ensureAudio(fetch = fetchBytes) {
   installDiverseWeaponsIcons();   // DW3: before the archives load, so 233/234's preload carries the mod's icons
   installRoleplayRealismItems();
   installRoleplayRealism();   // RR1: the formula overrides, the guild classes, the hooks - once, in InitMod's order   // RRI1: the fourteen rows and the twenty patches before anything mints, the 280 sprites on the door
+  installEnemyExpansion();   // DEX1: BestiaryMod.Start - after every Init above (RR's enemy appearance among them), as DFU runs a MonoBehaviour's Start
   // AUDIT VE R2: the texture store's ONE registration (dataSource.js registerTextureStore) - the loose pack, Seasons of
   // the Iliac Bay (SIB1), Weapon Widget (WW1), Diverse Weapons (DW1) and every attached .dfmod from its stored index
   // (DFMOD1/DFMOD2), the shipped mods first (VE4), before the first archive loads (the hosts await it), warmed. This

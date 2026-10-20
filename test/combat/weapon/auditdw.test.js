@@ -164,7 +164,7 @@ test('AUDIT-DW: checked and standing - the shipped set, the index, the door orde
   assert.match(door, /if \(!hasDiverseWeaponsSprite\(name\) \|\| typeof fetchFn !== 'function'\) return null;/);
   // the icon install sits at the scene boot, after the survival pair and before the archives load
   // PIN MOVED (AUDIT VE R2): the store's one registration follows the installs - the seam's own copy of it is gone
-  assert.match(rd('src/scenes/shared.js'), /installDiverseWeaponsIcons\(\);[^\n]*\n\s+installRoleplayRealismItems\(\);[^\n]*\n\s+installRoleplayRealism\(\);[^\n]*\n(?:\s+\/\/[^\n]*\n)*\s+const textures = registerTextureStore\(\)/);
+  assert.match(rd('src/scenes/shared.js'), /installDiverseWeaponsIcons\(\);[^\n]*\n\s+installRoleplayRealismItems\(\);[^\n]*\n\s+installRoleplayRealism\(\);[^\n]*\n\s+installEnemyExpansion\(\);[^\n]*\n(?:\s+\/\/[^\n]*\n)*\s+const textures = registerTextureStore\(\)/);   // PIN MOVED (DEX1): Daggerfall Enemy Expansion's Start after the Inits, before the archives load too
   // GetName's dye arm and its one exception, in one home
   assert.match(rd('src/characters/dyes.js'), /if \(!Number\.isFinite\(v\) \|\| v === DYE_COLORS\.Unchanged\) return '';/);
   // the records

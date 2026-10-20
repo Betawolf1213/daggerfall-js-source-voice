@@ -146,8 +146,8 @@
  {
   "name": "MWNPC14-roster-vampire-creature",
   "file": "src/characters/foeBodies.js",
-  "old": "  if (!orc && !vampire && !wolf && !(mobileType >= 128))",
-  "new": "  if (!orc && !wolf && !(mobileType >= 128))",
+  "old": "  if (!orc && !vampire && !wolf && !isClassEnemyId(mobileType))",
+  "new": "  if (!orc && !wolf && !isClassEnemyId(mobileType))",
   "tests": [
    "test/characters/mwnpc14_vampires.test.js"
   ]

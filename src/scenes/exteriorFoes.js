@@ -13,7 +13,7 @@
 // stays false so the C-slice fallback makes them close), and the
 // 13 fixed-list casters do not cast up here yet.
 
-import { ENEMY_BASICS } from '../characters/enemy/enemyBasics.js';
+import { ENEMY_BASICS, enemyEntityType, isClassEnemyId } from '../characters/enemy/enemyBasics.js';
 import { KNIGHT_CITY_WATCH } from '../characters/mobile/mobileTypes.js';   // HALT-ONE: a peer's watchman, silent in the living watch's lane
 import { foeTitle } from '../systems/foeTitle.js';   // FOE-TITLE: what a revenant, a champion or an elite is called
 import { effectiveLevel } from '../systems/mentorMode.js';   // SOFTCAP2: mentor mode - the level the world is built around
@@ -40,12 +40,11 @@ import { calculateCastCost } from '../systems/spellcost.js';   // X3: costs pric
 import { silenceBlocksCast, attemptSoulTrap, SOUL_TRAP_TEXT, fillEmptyTrap, peerSoulTrapOf } from '../systems/mysticism.js';   // X3: the enemy silence gate; X5: the soul trap's kill intercept; STRIKE-SHARED: a peer's trap is its caster's
 import { isAzurasStarEquipped, registerFoeDoor } from '../systems/artifactEffects.js';   // V3: the Star's kill capture; AUDIT PSCALE1 DOORS-2: Namira's reflection through this pool's door
 import { EnemyAttack } from '../characters/enemy/enemyAttack.js';
-import { makeEnemyEntity, loadMonsterCareer, KNIGHT_CITYWATCH_ID, applyProgressionScaling } from '../characters/enemy/enemyEntity.js';
+import { makeEnemyEntity, loadEnemyCareer, KNIGHT_CITYWATCH_ID, applyProgressionScaling } from '../characters/enemy/enemyEntity.js';
 import { combatStanding, foeShare, progressionScaling, wildernessShare, placeVeteran, wildernessThreat } from '../systems/skillSoftcap.js';   // SOFTCAP5: tougher foes in the wilds; BAL3: the wilds' own threat
 import { heroThreatOf } from '../systems/heroThreat.js';   // BAL11: the hero's threat
 import { isNight } from '../world/worldClock.js';   // SOFTCAP5: the wilds' night share   // AUDIT WATCH1 A1: the watch's own puppet allowance
 import { MobileUnit, MOBILE_DAEDRA_SEDUCER, SeducerTransformBehaviour } from '../characters/mobile/mobileUnit.js';   // A5: the Seducer transform pair + its trigger
-import { ClassFile } from '../formats/classFile.js';
 import { spawnEnemyLoot, hasBowAttack, backstabChanceOf, zeroDamageHitSound, enemyMissSound, enemyAttackVoice, enemyPainVoice, playerAttackGrunt, tickEnemySound, playEnemyClip, tryLanguagePacification, applyDamageToNonPlayer, windupDoor, tellCues, takeAimedShot, aimedDirection, aimedArrowMeta, landBlowEffect } from './hostCombat.js';   // C2-slice (combat-9/17); MT-ii: the foe-vs-foe payload; TELL1: the poise door
 import { wildLootAfter } from './hostCombat.js';   // WILD1: the open zone's gold, after the chain
 import { TELL } from '../ai/tells.js';   // TELL1: the breaking blow's shove
@@ -443,10 +442,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
         const a = await grantAsk, t = a && 'gr' in a ? (_net?.grants?.speciesOf(a.gr, a.i, inLocation()) ?? -1) : -1;
         if (t >= 0 && ENEMY_BASICS[t]?.maleTexture) { mobileType = t; basics = ENEMY_BASICS[t]; }
       }
-      const isClass = mobileType >= 128;
-      const career = isClass
-        ? (() => { const cf = new ClassFile(); return fetchBytes(`CLASS${String(mobileType - 128).padStart(2, '0')}.CFG`).then((b) => { cf.load(b); return cf.career; }); })()
-        : loadMonsterCareer(mobileType, fetchBytes);
+      const isClass = enemyEntityType(mobileType) === 'class', career = loadEnemyCareer(mobileType, fetchBytes);   // DEX1: SetupDemoEnemy's type, SetEnemyCareer's one career door (a mod's id too)
       const builtLevel = level ?? effectiveLevel(playerEntity);   // SOFTCAP2: a mentor's foes at the group's level
       // GRANT3: its grant (none inside GRANT_WAIT_MS: it stands as it would have with no law) - the grant's marks in place of
       // the street's rolls, through the same gates: its elite only where an elite may stand, its trait only a capped stand's
@@ -1028,7 +1024,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       // V3: the equipped AZURA'S STAR takes every slain MONSTER's soul
       // (DaggerfallEntityBehaviour.cs:240-247); after the trap, so a
       // trap-filled Star is no longer empty; classes have no soul.
-      if (!peer && f.mobileType < 128 && isAzurasStarEquipped(playerEntity)
+      if (!peer && !isClassEnemyId(f.mobileType) && isAzurasStarEquipped(playerEntity)
         && fillEmptyTrap(playerEntity.items, f.mobileType, { azurasStarOnly: true })) {
         say?.(SOUL_TRAP_TEXT.trapSuccess);
       }
@@ -1077,7 +1073,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     // Infinity times a zero: NaN. That NaN then sat in knockbackSpeed
     // for the life of the foe, and every later `NaN <= threshold`
     // being false meant it could never be knocked again either.
-    const isClass = f.mobileType >= 128;
+    const isClass = enemyEntityType(f.mobileType) === 'class';   // DEX1: EntityTypes.EnemyClass, a mod's class (384+) too
     const mobileWeight = ENEMY_BASICS[f.mobileType]?.weight ?? 0;
     // TELL1 (bible/12-Enhanced-AI/Feud-Arc.md section 3): a foe WINDING UP holds through the blow - no shove, no Hurt -
     // and the blow weighs on its poise meter; past its poise the wind-up breaks and the foe is staggered, the breaking
@@ -1490,7 +1486,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     // death, and a trap that finds no gem cannot refuse the one the player chose
     const trap = attemptSoulTrap(f.entity, f.mobileType, playerEntity.items, Math.random());
     if (trap.alert && trap.alert !== 'trapNoneEmpty') say?.(SOUL_TRAP_TEXT[trap.alert]);
-    if (f.mobileType < 128 && isAzurasStarEquipped(playerEntity) && fillEmptyTrap(playerEntity.items, f.mobileType, { azurasStarOnly: true })) say?.(SOUL_TRAP_TEXT.trapSuccess);
+    if (!isClassEnemyId(f.mobileType) && isAzurasStarEquipped(playerEntity) && fillEmptyTrap(playerEntity.items, f.mobileType, { azurasStarOnly: true })) say?.(SOUL_TRAP_TEXT.trapSuccess);
     reportPlayerKill(f.entity, { kind: 'melee' });   // SET2: a kill of mine
     renownFoeDied(f);
     raiseEnemyDeath(f.entity, { rolls, luck: liveStat(playerEntity, 'luck') });   // UL1: OnEnemyDeath - its handlers' items join its pile
@@ -2689,7 +2685,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       if (qt?.mk && r.d !== 1 && !r.e) liveMarks.push(qt);   // QUEST-PARTY phase 3; AUDIT (pre-merge) F1: a HANDED record (it names an heir) marks nothing - the heir took that very foe, and its own frame carries the mark from here
       if (site && (f || _pupPending.has(key))) stood.add(site);   // AUDIT WOD7: standing or building here
       if (f) {
-        if ((r.t !== undefined && r.t !== f.mobileType) || (r.d === 0 && f.dead) || (r.l !== undefined && f.mobileType >= 128 && r.l !== (f.builtLevel | 0))) removePuppet(f);   // AUDIT WORLD6b-ii B2: a CLASS foe's level is its owner's word (its skills and health are built from it) - a monster's is its species' (makeEnemyEntity), whatever the record says; AUDIT FOES FOE8: against the level it was BUILT at, which a City Watch's constructor re-rolls
+        if ((r.t !== undefined && r.t !== f.mobileType) || (r.d === 0 && f.dead) || (r.l !== undefined && isClassEnemyId(f.mobileType) && r.l !== (f.builtLevel | 0))) removePuppet(f);   // AUDIT WORLD6b-ii B2: a CLASS foe's level is its owner's word (its skills and health are built from it) - a monster's is its species' (makeEnemyEntity), whatever the record says; AUDIT FOES FOE8: against the level it was BUILT at, which a City Watch's constructor re-rolls
         else { if (campTags.has(r.i)) f._pupCamp = campTags.get(r.i); applyPuppetRecord(f, r); f._heirElse = heirElse(r); if (heirIsMe(r)) adopted += adopt(from, f, r.it); if (f.mobileType === KNIGHT_CITYWATCH_ID) alliedWatchPuppet(f, allied.has(r.i)); crewPuppet(f, crew.has(r.i), comp.has(r.i)); f.companionName = compNames.get(r.i) ?? null; continue; }   // OW6: its camp, as the owner last said it
       }
       // AUDIT (the pre-merge audit, D2): a foe of theirs I took, streamed ALIVE by them again (a socket back under the

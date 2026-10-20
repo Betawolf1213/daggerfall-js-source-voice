@@ -40,7 +40,7 @@ import { bloodCentre } from './hitEffects.js';   // AUDIT 62 F19: EnemyAttack.cs
 import { bloodHit } from '../combat/blood/bloodDecals.js';   // BLOOD1b: the blow, in the shape the mark's ladder reads
 import { KNIGHT_CITY_WATCH } from '../characters/mobile/mobileTypes.js';
 import { ATTRACT_RADIUS, ignoreHumanSounds } from '../characters/enemy/enemySounds.js';   // AUDIT 24 (wave 41); TELL2: a person's wind-up is a swing, not a voice
-import { enemyDisplayName, ENEMY_BASICS } from '../characters/enemy/enemyBasics.js';   // AUDIT 24 (wave 42); TELL1: the bark a breaking blow wrings out
+import { enemyDisplayName, ENEMY_BASICS, isClassEnemyId } from '../characters/enemy/enemyBasics.js';   // AUDIT 24 (wave 42); TELL1: the bark a breaking blow wrings out
 import { getLocalizedEnemyName } from '../systems/textManager.js';   // L10N3e: the enemy's name in the player's language
 import { windupHolds, windupStruck, tacticsNow, overreachOpen, poiseTrack, LOCAL_TARGET } from '../ai/tactics.js';   // TELL1: poise and the stagger (bible/12-Enhanced-AI/Feud-Arc.md section 3); TELL2: the cues' clock; TELL4: the punish window
 import { blowK, blowWeight, behind, TELL } from '../ai/tells.js';   // TELL1: a blow's weight on the poise meter; TELL2: the cues' numbers
@@ -740,7 +740,7 @@ export function windupDoor(f, damage, { kind = 'melee', weapon = null, round = f
   // flag, its weakness); without one, K_PEER and never from behind (`from` is no peer's feet here)
   const k = peer ? (wc ? wc.k : blowK({ kind, round, peer }))
     : striker
-      ? blowK({ kind, weapon: striker.entity?.weapon ?? null, claws: !((striker.mobileType ?? 0) >= 128), round, peer })
+      ? blowK({ kind, weapon: striker.entity?.weapon ?? null, claws: !isClassEnemyId(striker.mobileType ?? 0), round, peer })
       : blowK({ kind, weapon, claws, round, peer });
   const back = peer ? !!wc?.back : behind(blow.origin, blow.yaw, from);
   const watchful = f.entity?.revenant?.edge?.watchful === true;   // RVN2: a Watchful revenant's poise takes no back multiplier
@@ -781,7 +781,7 @@ export function windupFeedback(word, f, { audio = null, hitEffects = null, shake
   if (word === 'stagger') {
     hitEffects?.showMissEffect?.('clang', at, { scale: 2.5 });
     audio?.play3d?.(SOUND.Hit2, at, 1, { maxDistance: 16 });
-    if (basics?.barkSound != null && (f.mobileType < 128 || (f.mobileType === KNIGHT_CITY_WATCH && !f.quietVoice))) audio?.play3d?.(basics.barkSound, at, 1, { maxDistance: 16, pitch: 0.7 });   // HALT-ONE: the living watch's stagger is a person's - its one voice is its call (cityGuards.js)
+    if (basics?.barkSound != null && (!isClassEnemyId(f.mobileType) || (f.mobileType === KNIGHT_CITY_WATCH && !f.quietVoice))) audio?.play3d?.(basics.barkSound, at, 1, { maxDistance: 16, pitch: 0.7 });   // HALT-ONE: the living watch's stagger is a person's - its one voice is its call (cityGuards.js)
     shake?.(0.6);
   } else if (word === 'hold' && basics?.parrySounds) {
     audio?.play3d?.(PARRY_1 + Math.floor(rolls() * PARRY_SOUND_COUNT), at, PARRY_VOLUME, { maxDistance: 16 });

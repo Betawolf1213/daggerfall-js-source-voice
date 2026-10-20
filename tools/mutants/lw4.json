@@ -518,7 +518,7 @@
   {
     "name": "LW4-host-foe-level-flat",
     "file": "src/scenes/world.js",
-    "old": "    foeLevel: (type, level) => (type >= 128 ? level : ENEMY_BASICS[type]?.level ?? level),",
+    "old": "    foeLevel: (type, level) => (isClassEnemyId(type) ? level : ENEMY_BASICS[type]?.level ?? level),",
     "new": "    foeLevel: (type, level) => level,",
     "tests": [
       "test/systems/livingWorld/lw4_trouble.test.js"

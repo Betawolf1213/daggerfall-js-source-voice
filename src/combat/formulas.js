@@ -171,7 +171,7 @@ export const calculateStruckBodyPart = (roll01 = Math.random()) => STRUCK_BODY_P
 
 // ---- DFCareer.StructureData attack-modifier bit table ----
 export const ENEMY_GROUPS = Object.freeze({ None: -1, Undead: 0, Daedra: 1, Humanoid: 2, Animals: 3 });
-const GROUP_BITS = Object.freeze([[0x01, 0x10], [0x02, 0x20], [0x04, 0x40], [0x08, 0x80]]);   // [bonus, phobia] per group
+export const GROUP_BITS = Object.freeze([[0x01, 0x10], [0x02, 0x20], [0x04, 0x40], [0x08, 0x80]]);   // [bonus, phobia] per group (DEX1: exported - a mod's career is packed into the same bits)
 /** DFCareer.GetAttackModifier (DFCareer.cs:817-848), verbatim: the two
  *  bits are decoded EXCLUSIVELY, bonus first - `if (HasFlags(0x01))
  *  result = Bonus; else if (HasFlags(0x10)) result = Phobia;`. The

@@ -432,7 +432,7 @@ test('LW4 the road shows its trouble: a beset party in its ring FIGHT_RING_N fac
 test('LW4 the streaming host: the trouble\'s world (the climate at the place, the campers\' themed group at the party\'s level, a class foe at the party\'s, the lives at each member\'s own cycle, the character\'s won and lost); the trip world\'s holders, fates and trouble through books made again at each turn of fate; the town\'s holders, away windows by the holder and news; the foe\'s word on the marks; a beset party\'s mark in the bands\' red (mutants: each seam)', () => {
   const w = rd('src/scenes/world.js');
   assert.match(w, /: rollGroupComposition\(\{ climateIndex, skyMinutes: minute, inLocationRect: false, playerLevel: level, size \}, rolls\)\?\.mobileTypes \?\? null\),/, 'on the land, the campers\' themed group');
-  assert.match(w, /foeLevel: \(type, level\) => \(type >= 128 \? level : ENEMY_BASICS\[type\]\?\.level \?\? level\),/);
+  assert.match(w, /foeLevel: \(type, level\) => \(isClassEnemyId\(type\) \? level : ENEMY_BASICS\[type\]\?\.level \?\? level\),/);
   assert.match(w, /return livingPlaceOf\(place, placeCycle\(place, roster, Math\.floor\(trip\.outT0 \/ 1440\), livingScale\(\)\)\);/, 'each member at their own place\'s cycle (livingTripPlace)');
   assert.match(w, /dies: \(res, trip\) => \{ const pl = livingTripPlace\(res, trip\); return pl\.dies && pl\.hand == null; \},/, 'LW7: one a hand took first the trouble never takes');
   assert.match(w, /diced: \(res, trip\) => livingTripPlace\(res, trip\)\.diced,/, 'AUDIT-B1: the trouble\'s shape the dice\'s own');

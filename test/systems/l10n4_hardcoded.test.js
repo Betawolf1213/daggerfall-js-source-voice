@@ -362,6 +362,7 @@ const HARDCODED = {
   'src/systems/enchanting.js': 7,
   'src/systems/enchantmentCatalogue.js': 65,
   'src/systems/enemyExpansion/dexTableText.js': 5,   // DEX0: the mod's tables as text, verbatim (data, the enemies' names among it - read by its own parser, never shown)
+  'src/systems/enemyExpansion/dexTables.js': 24,   // DEX1: the mod's `[DEX]` Debug.LogError lines, verbatim - console diagnostics through the reading's `log` seam (a test silences it), never shown to a player
   'src/systems/equip.js': 3,
   'src/systems/eventTimers.js': 50,
   'src/systems/faction/factionStanding.js': 3,

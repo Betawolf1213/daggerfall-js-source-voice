@@ -172,7 +172,6 @@ import { initVirtueLeveling, LEVELING_CLASSIC } from '../systems/oblivionLevelin
 import { tickPlayerMinutes, claimMagicRounds, runMagicRoundsFor, playerWeaponHitEntity } from '../systems/worldTick.js';   // AUDIT 18: the player tick every host shares; DISC10-D H1: OnWeaponHitEntity's one dispatcher
 import { mintSharedStamp, hitPoisonOf, hitSpellOf, hitSpellFields, HIT_ARROWS_MAX, wallMsForClassicMinutes, validFoeRecord, validSharedFoe, FOE_HEALTH_MAX, FOES_FRAME_MAX, CELL_FRAME_RECORDS_MAX } from '../net/wire.js';   // AUDIT ONCRASH1 B4a/A3: the stream's door and the memory's, which this host had neither of   // WORLD8: the hour's respawn - DUNGEON-RESPAWN: the dungeon's own pace now (its respawnDue below), the wire's hour not imported (MAC-L1b: nothing shadowed)   // AUDIT WORLD6a B7: the memory's stamp, from the wire's one mint
 import { spendPoolLowest } from '../systems/chargen.js';
-import { ClassFile } from '../formats/classFile.js';
 import { doorSpellFor, consumeDoorSpell } from './shared.js';
 import { dungeonRespawnMs, dungeonRespawnDue } from '../systems/dungeon/dungeonRespawn.js';   // DUNGEON-RESPAWN: 20 minutes, an elite's 40   // PVPFIX: the armed Open spell on a crate's lock
 import { triggerOpen, DOOR_SPELL_TEXT } from '../systems/mysticism.js';
@@ -270,7 +269,7 @@ import { madeLevelOf, madeLevelRule, madeLevelSays } from '../systems/madeLevel.
 import { createEgSpan, egSpanCollider } from './eliteGates/egSpan.js';   // EG-PLAY: its spans' steps, ridden before the motor; AUDIT EG V (L6-10): the collider's doors they use
 import { realmToDungeon } from '../net/superDungeon/sdBrain.js';   // SD5a: the realm's frame
 import { dungeonTier } from '../systems/dungeon/dungeonTier.js';   // SD4a: the location's tier, the one law (TIER1)
-import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemy/enemyBasics.js';
+import { ENEMY_BASICS, enemyDisplayName, enemyEntityType, isClassEnemyId } from '../characters/enemy/enemyBasics.js';
 import { foeTitle } from '../systems/foeTitle.js';   // FOE-TITLE: what a revenant, a champion or an elite is called
 import { revenantFleeStep, revenantFleeHealth, revenantDeed, revenantSlain, revenantSay, revenantFleeEvent, revenantCorneredEvent, revenantEscapeEvent, revenantSlainEvent, revenantUnbrokenEvent, revenantFlinch, revenantSignatureEvent, revenantById, applyRevenant, grantRevenantLoot, revenantForLair, releaseRevenantStand, revenantSpawnOptions, revenantTauntEvent, revenantWakeEvent, revenantToReturn, REVENANT_TAUNT_DISTANCE, revenantStale } from '../systems/revenant/revenant.js';   // RVN7d: a revenant in its lair, its taunt, its band, a rest's return
 import { revenantMayYield, beginYield, yieldStep, slipEvent, kneelPose, beginExecution, executionStep, finishExecution, beginSpare, spareDone, fateDissolve, fateModel, dropFateHeld, revenantWillHolds, beginTearAway, revenantLastStandDue, beginLastStand, roarStep, ownersWholeKill } from '../systems/revenant/revenantFate.js';   // REVENANT-FATE: beaten, it yields - kill it or spare it (the open world's law, one home); RVN-OWNERS-CHOICE: a whole blow closes it only as its owner's
@@ -1231,7 +1230,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // at a name only in THIS block's scope - caught in review, hoisted).
     // AUDIT 68 S04-v-dungeon-dead-rig-deps: the rig's engineRig/raceCharacter imports and the BODY00I0 ramp derive
     // fed foeDeps keys nothing read (class enemies are sprite mobiles since C17), and a failure in them cost the dungeon its class enemies.
-    const [{ EnemyAI, withinYaw, isBackFacing, openDoorsStep }, { EnemyAttack }, { makeEnemyEntity, loadMonsterCareer, applyProgressionScaling }, { EnemyCaster, castEnemySpell: castShared, hasMagickaToCast },
+    const [{ EnemyAI, withinYaw, isBackFacing, openDoorsStep }, { EnemyAttack }, { makeEnemyEntity, loadEnemyCareer, applyProgressionScaling }, { EnemyCaster, castEnemySpell: castShared, hasMagickaToCast },
       { runTargetMachine, boutGate, isPlayerTarget, isLocalPlayerTarget, PLAYER_TARGET, PEER_CAST_TARGET, resetAllyTeamOnPlayerAttack, targetAimPoint, enemyArrowOrigin, enemyTransformPoint, arrowAimDirection, bumpAtkCount, inBout, playerBoutOf }] = await Promise.all([
       import('../characters/enemy/enemyMotor.js'), import('../characters/enemy/enemyAttack.js'),
       import('../characters/enemy/enemyEntity.js'), import('../characters/enemy/enemyCasting.js'),
@@ -1260,7 +1259,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       MELEE_HIT_YAW_DEG: formulas.MELEE_HIT_YAW_DEG,
       withinYaw,
       fetchBytes,
-      floorLanding, EnemyAI, EnhancedEnemyAI, makeNavWorld, EnemyAttack, makeEnemyEntity, applyProgressionScaling, loadMonsterCareer, EnemyCaster, ClassFile, playerEntity,   // floorLanding/playerEntity/ClassFile/fetchBytes/generateItems ride the STATIC imports (audits 06c-06e)
+      floorLanding, EnemyAI, EnhancedEnemyAI, makeNavWorld, EnemyAttack, makeEnemyEntity, applyProgressionScaling, loadEnemyCareer, EnemyCaster, playerEntity,   // floorLanding/playerEntity/fetchBytes/generateItems ride the STATIC imports (audits 06c-06e); DEX1: one career door for both arms
       castEnemySpell: castShared,   // X3: the ONE cast executor (characters/enemy/enemyCasting.js)
       hasMagickaToCast,   // D9: GetDestination's `entity.CurrentMagicka > 0` (the stand-off band reads the caster's SelectedSpell instead)
       // MT-iv: the target machine. Every consumer below the lazy block
@@ -1518,7 +1517,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // sprite mobiles too - the voxel foe rig goes ON ICE with the
     // voxel FP weapon (Mac's classic-visuals direction). The entity
     // build below (career/equipment/poison/archer) is UNCHANGED.
-    if (foeDeps && e.mobileType > 43 && basics.maleTexture) {
+    if (foeDeps && enemyEntityType(e.mobileType) === 'class' && basics.maleTexture) {   // DEX1: SetupDemoEnemy's type - a mod's class (384+) too
      try {
       const D = foeDeps;
       const pos = D.floorLanding(collider, [e.x, e.y + 0.2, e.z]);
@@ -1527,11 +1526,8 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       const t = await getTexture(archive);
       const idleH = idleSpriteHeight(t);   // INCIDENT 2026-09-04: SetupDemoEnemy.cs:104 - the capsule reads the idle sprite
       if (!puppet) freeLodgedFeet(collider, pos, { height: enemyControllerHeight(idleH, basics.behaviour ?? 'General') });   // FIELD BUGS 2026-10-04d CRATE-FREE: a marker or a spot inside a crate's model stands the foe beside it, never in it (characters/foeSpacing.js)
-      // E3a: the real entity - career from CLASS{ID-128}.CFG, level = player level, HP/skills/LiveSpeed verbatim (SetEnemyCareer)
-      const careerIndex = e.mobileType - 128;
-      const cf = new D.ClassFile();
-      cf.load(await D.fetchBytes(`CLASS${String(careerIndex).padStart(2, '0')}.CFG`));
-      const entity = D.makeEnemyEntity(e.mobileType, basics, cf.career, e.level ?? (_superTier ? superFoeLevel(effectiveLevel(D.playerEntity)) : effectiveLevel(D.playerEntity)));   // SOFTCAP1: a mentor's dungeon is built at the group's level; ARENA2: a bout fighter at its tier's; SD4a: a Super dungeon's class foe at its band
+      // E3a: the real entity - career from CLASS{ID-128}.CFG (DEX1: or a mod's), level = player level, HP/skills/LiveSpeed verbatim (SetEnemyCareer)
+      const entity = D.makeEnemyEntity(e.mobileType, basics, await D.loadEnemyCareer(e.mobileType, D.fetchBytes), e.level ?? (_superTier ? superFoeLevel(effectiveLevel(D.playerEntity)) : effectiveLevel(D.playerEntity)));   // SOFTCAP1: a mentor's dungeon is built at the group's level; ARENA2: a bout fighter at its tier's; SD4a: a Super dungeon's class foe at its band
       applyEliteScaling(entity, e); if (puppet) entity.unquiet = false;   // ELITE: double health, double damage; AUDIT UNQUIET: a puppet's mark is its owner's (each client drew its own)
       if (!puppet && e.level == null) applyProgressionScalingTo(entity, basics, { ally: !!e.allied });   // SOFTCAP1: tougher high-tier foes against skills past 100 (a puppet is its owner's build); ARENA2: never a bout fighter (the ladder is a fixed mountain)
       else if (puppet && e.level == null) applyProgressionScalingTo(entity, basics, { puppet: true, ally: !!e.allied });   // AUDIT BAL: a puppet stands at this place too - its blows on me as on its owner (BAL3)
@@ -1601,7 +1597,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // S16 fixed spell lists, S18 OnMonsterHit riders, and corpses -
     // rendered as classic ANIMATED sprite mobiles (MobileUnit: the
     // DFU orientation/anim laws over the real TEXTURE archive).
-    if (foeDeps && e.mobileType <= 42 && basics.maleTexture) {
+    if (foeDeps && enemyEntityType(e.mobileType) === 'monster' && basics.maleTexture) {   // DEX1: a mod's monster (256-290) too
      try {
       const D = foeDeps;
       const archive = e.gender === 'female' ? basics.femaleTexture : basics.maleTexture;
@@ -1623,7 +1619,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       // the anchor's one door (enemyAnchor.js flyerStandFeet), whose floor read is pinned on the real collider
       const pos = behaviour === 'Flying' ? flyerStandFeet(collider, [e.x, e.y, e.z], idleH, feetGiven) : D.floorLanding(collider, [e.x, e.y + 0.2, e.z]); if (!puppet) freeLodgedFeet(collider, pos, { height: enemyControllerHeight(idleH, behaviour), airborne: behaviour === 'Flying' });   // FIELD BUGS 2026-10-04d CRATE-FREE: the class arm's law, for a monster - a flyer freed at its own height
       const yawDeg = ((e.mobileType * 73 + Math.round(e.x + e.z)) % 8) * 45;   // deterministic facing (Ledger A rule)
-      const career = await D.loadMonsterCareer(e.mobileType, D.fetchBytes);
+      const career = await D.loadEnemyCareer(e.mobileType, D.fetchBytes);
       const entity = D.makeEnemyEntity(e.mobileType, basics, career, e.level ?? effectiveLevel(D.playerEntity));   // SOFTCAP1: a mentor's dungeon is built at the group's level; ARENA2: a bout fighter at its tier's
       applyEliteScaling(entity, e); if (puppet) entity.unquiet = false;   // ELITE: double health, double damage; AUDIT UNQUIET: a puppet's mark is its owner's (each client drew its own)
       if (!puppet && e.level == null) applyProgressionScalingTo(entity, basics, { ally: !!e.allied });   // SOFTCAP1: tougher high-tier foes against skills past 100 (a puppet is its owner's build); ARENA2: never a bout fighter
@@ -2160,7 +2156,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         // AUDIT (2026-10-02): ITS SOUL - the kill door's X5 trap and V3 Star, which the yield ran ahead of (the open world's law)
         const trap = attemptSoulTrap(f.entity, f.mobileType, playerEntity.items, Math.random());
         if (trap.alert && trap.alert !== 'trapNoneEmpty' && SOUL_TRAP_TEXT[trap.alert]) hudText.add(SOUL_TRAP_TEXT[trap.alert]);
-        if (f.mobileType < 128 && isAzurasStarEquipped(playerEntity) && fillEmptyTrap(playerEntity.items, f.mobileType, { azurasStarOnly: true })) hudText.add(SOUL_TRAP_TEXT.trapSuccess);
+        if (!isClassEnemyId(f.mobileType) && isAzurasStarEquipped(playerEntity) && fillEmptyTrap(playerEntity.items, f.mobileType, { azurasStarOnly: true })) hudText.add(SOUL_TRAP_TEXT.trapSuccess);
         reportPlayerKill(f.entity, { kind: 'melee' });
         renownFoeDied(f);
         raiseEnemyDeath(f.entity, { luck: liveStat(playerEntity, 'luck') });
@@ -5233,7 +5229,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // the layout's class foes at ITS OWN level, so a joiner's copy of my level-3 knight was a level-30 knight on a
     // level-30 joiner's screen, and paid it 300 Renown XP for the kill that paid me 30. A monster's level is its
     // species', the same everywhere, and rides nothing.
-    if (f.mobileType >= 128 && Number.isInteger(f.entity?.level) && f.entity.level >= 0 && f.entity.level <= FOE_LEVEL_MAX) r.l = f.entity.level;
+    if (isClassEnemyId(f.mobileType) && Number.isInteger(f.entity?.level) && f.entity.level >= 0 && f.entity.level <= FOE_LEVEL_MAX) r.l = f.entity.level;
     if (!f.dead && _sharedFoe(f)) { const n = fightN(f); if (n > 1) r.n = n; }   // AUDIT PSCALE1: how many fight it - every joiner weighs its hits by the host's count
     if (f.dead && typeof f._trapBy === 'string' && performance.now() - (f._killedAt ?? -Infinity) <= KILLED_BY_MS) { r.j = f._trapBy; r.q = f._trapQ | 0; }   // STRIKE-SHARED: whose soul trap was on it as it fell, and its chance - for KILLED_BY_MS, as `v`
     // FLAGGED (bible/12-Enhanced-AI/Feud-Arc.md 10.1, section 32): this stream carries none of the street record's z, nm, yd, ex or sp - FEUD adds its own fields alone (RVN13: so no band follower's rt either)
@@ -5838,7 +5834,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     const p = f._pup ?? (f._pup = { feet: [f.ai.feet[0], f.ai.feet[1], f.ai.feet[2]], yaw: f.ai.yaw, moving: false, hurt: false, hurtUntil: 0, strike: null, a: null, target: null, c: null, cast: null });
     if (typeof r.g === 'string') p.target = r.g;   // WORLD3: whose blow this puppet's is
     if (r.d !== 1) f._fightN = r.n ?? 1;   // AUDIT PSCALE1: the host's count of who fights it (a record without one: one). SIGIL1: a LIVE record's - a body's carries none, and the fight it died in was the last live count (its Renown bonus, its sigils)
-    if (r.l !== undefined && f.mobileType >= 128) f.streamedLevel = r.l;   // AUDIT RENOWN1 GAME-3: the host's class foe's level - what its kill is worth (net/renownTracker.js renownFoeLevel)
+    if (r.l !== undefined && isClassEnemyId(f.mobileType)) f.streamedLevel = r.l;   // AUDIT RENOWN1 GAME-3: the host's class foe's level - what its kill is worth (net/renownTracker.js renownFoeLevel)
     if (r.c != null) { const c = r.c | 0; if (p.c != null && c !== p.c) p.cast = r.s | 0; p.c = c; }   // WORLD3: a cast once per count, never the count a joiner arrived with
     if (Array.isArray(r.f) && r.f.length === 3 && r.f.every(Number.isFinite)) { p.feet[0] = r.f[0]; p.feet[1] = r.f[1]; p.feet[2] = r.f[2]; }
     if (Number.isFinite(r.y)) p.yaw = r.y;
@@ -6957,7 +6953,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       // the trap intercept, so a trap-filled Star is simply no longer
       // empty and this arm no-ops; class enemies (mobileType >= 128)
       // have no soul to take, DFU's EnemyMonster gate.
-      if (!peer && foe.mobileType < 128 && isAzurasStarEquipped(playerEntity)
+      if (!peer && !isClassEnemyId(foe.mobileType) && isAzurasStarEquipped(playerEntity)
         && fillEmptyTrap(playerEntity.items, foe.mobileType, { azurasStarOnly: true })) {
         hudText.add(SOUL_TRAP_TEXT.trapSuccess);
       }
@@ -8838,7 +8834,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     get entity() { return rec.entity; },
     get dead() { return !!rec.dead; },
     get mobileType() { return rec.retypedTo ?? rec.mobileType; },
-    get isClass() { const t = rec.retypedTo ?? rec.mobileType; return t >= 128 && t <= 146; },
+    get isClass() { const t = rec.retypedTo ?? rec.mobileType; return enemyEntityType(t) === 'class'; },
     get loadID() { return rec.src?.loadID ?? 0; },
     get questSpawn() { return !!rec.questBehaviour || !!rec.src?.questSpawn; },   // AUDIT OH-F C3: set before OnEnemySpawn, as DFU's is
     demo: true,   // every enemy the port stands is SetupDemoEnemy's

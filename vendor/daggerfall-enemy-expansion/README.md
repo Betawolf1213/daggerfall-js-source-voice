@@ -112,7 +112,7 @@ places:
   the Necromancer Acolyte (1509, 1511, from 486), the Rogue Druid (1512, from
   490), the Knight, Spellsword and Archer Riders' new sets (1530-1533, from 491
   and 495) and King Lysandus (1609, from 473) - carried byte for byte under
-  `public/art/daggerfall-enemy-expansion-repainted/` on **Port-Doctrine's third
+  `public/art/daggerfall-enemy-expansion-repainted/` on **Port-Doctrine's fourth
   exception** (Mac, 2026-10-19: "Approve 3rd exception", then "Yes, cover all
   of them"). A picture there that IS a record, exactly, is rebuilt instead.
 - **4,786 are the authors' own** - Kamer's renders (out of Arena's, Oblivion's,
@@ -150,3 +150,11 @@ through the texture door these register on, so neither draws the other's.
 
 - **DEX0** (2026-10-19): this record - the vendored files, the art and its
   three places, the registry row, the credit, the mod's switch.
+- **DEX1** (2026-10-19): the enemy registry - the tables read as
+  `BestiaryMod.Start` reads them (`src/systems/enemyExpansion/dexTables.js`),
+  the fifty enemies in the table with their careers and names, the classic
+  edits and the quest foes while the mod is loaded
+  (`src/systems/enemyExpansion/dexInstall.js`), on DFU's custom-enemy doors
+  (`src/characters/enemy/customEnemies.js`, `enemyBasics.js`,
+  `enemyEntity.js` loadEnemyCareer). `bible/04-Characters/Enemy-Expansion.md`
+  section 5.

@@ -44,7 +44,7 @@ The mod in DFU's terms (`BestiaryMod.cs`, cited below by line):
   tables draw was measured against every TEXTURE record (`tools/dexExtract.mjs`). 858 ARE Daggerfall's records - the
   five unused rider sets, TEXTURE.491-495, and the Will-o'-wisp, TEXTURE.379 - and are rebuilt from the player's own
   files, never carried. 714 are Daggerfall's sprites under the authors' paint, and Mac approved them on
-  **Port-Doctrine's third exception** ("Approve 3rd exception", then "Yes, cover all of them" once the measure found
+  **Port-Doctrine's fourth exception** ("Approve 3rd exception" - asked as the third, numbered the fourth past LAYERED-GEAR's at the merge, then "Yes, cover all of them" once the measure found
   four more than the first count). The 1995 demo's four (Bat, Gargoyle, Nymph, Skeleton) are the mod's own art: the
   doctrine names the retail ARENA2 ("Mod art, ship it").
 - **The class skins** (SKIN2): the same measure, run on `vendor/class-skins/`, found most of its sheets to be
@@ -56,8 +56,8 @@ The mod in DFU's terms (`BestiaryMod.cs`, cited below by line):
 
 | Slice | What | State |
 |---|---|---|
-| DEX0 | the record: the vendored files, the art in its three places, the doctrine's third exception, the registry row, the credit, the switch (on), the online decision (the room's, whole: Meaner Monsters' reading) | SHIPPED |
-| DEX1 | the enemy registry: rows past the classic 0-42 and 128-146, the careers, the classic replacements, the names, the quest foes | open |
+| DEX0 | the record: the vendored files, the art in its three places, the doctrine's fourth exception, the registry row, the credit, the switch (on), the online decision (the room's, whole: Meaner Monsters' reading) | SHIPPED |
+| DEX1 | the enemy registry: rows past the classic 0-42 and 128-146, the careers, the classic replacements, the names, the quest foes | SHIPPED (section 5) |
 | DEX2 | the sprites on the texture door: a non-classic archive's real frame counts, the xml scales, the emission maps, glow, no-shadow, the ghost's transparency, the guard's spell records | open |
 | DEX3 | the encounter tables in all four hosts: the dungeon's seeded choice, the water's, the climates' | open |
 | DEX4 | combat: the on-hit effects, spells 500-503 and the spellbook tables, the skeletal rule, groups and languages, forced gender, ranged | open |
@@ -72,3 +72,78 @@ Planned under DEX7 against the rules the port already keeps (`bible/04-Character
 Morrowind has that creature and it moves the same way (a flyer a flyer, a swimmer a swimmer), its CREA id read off
 UESP, never recalled; a person-shaped class (the riders, the necromancers, the witches) is drawn as a person; and
 where Morrowind has no such creature the row says so, and the mod's own sprite stands.
+
+## 5. DEX1 - the enemy registry
+
+What DFU gives a mod to add an enemy, and what `BestiaryMod.Start` does with it, ported as two halves: the doors in the
+port's enemy code that any mod could use, and the mod's reading through them.
+
+**The doors** (DFU's, each at one home - ONE DFU MEMBER, ONE EXPORT):
+
+- `characters/enemy/customEnemies.js` - `DaggerfallEntity.RegisterCustomCareerTemplate` / `GetCustomCareerTemplate`
+  (an id's career, read lazily from the player's files when its base is Daggerfall's) and the text provider's
+  `GetCustomEnemyName` chain. A leaf: the relay's bundle reads it through `enemyBasics.js`.
+- `characters/enemy/enemyBasics.js` - `ENEMY_BASICS` is no longer frozen: DFU's `EnemyBasics.Enemies` is an array a
+  mod replaces (`registerEnemyRows`, BestiaryMod.cs:1343), and a mod's edit of a classic row is written over the row
+  every reader then sees. `isClassicEnemyId` (a MobileTypes member), `enemyEntityType` (SetupDemoEnemy's rule: 0-42
+  a monster, 128-146 a class, any other id a monster or a class by the 128 bit when a career is registered for it,
+  else no enemy) and `enemyCareerIndex` (SetEnemyCareer's: a custom enemy's index is its id). `enemyDisplayName` names
+  a custom id as `GetLocalizedEnemyName` does (TextManager.cs:443-460): the custom name, else the career's own.
+- `characters/enemy/enemyEntity.js` - `loadEnemyCareer`, SetEnemyCareer's one door (a registered custom career first,
+  then MONSTER.BSA's, then CLASS??.CFG's): the dungeon's and the exterior's two arms read it, so a mod's monster and a
+  mod's class are built on DFU's arms. `registerMintRowEditor`: a mod that edits classic rows at Start edits them over
+  the rows Meaner Monsters and the overhaul compose at a foe's mint, since DFU runs every mod's Init (theirs) before a
+  MonoBehaviour's Start (this one's) - the order the dungeon reads.
+- **The class test is DFU's.** The sites across the hosts, the revenants, the elites, the wild, the loot, the quest
+  foe and the effects that wrote `mobileType >= 128` (or `< 128`, or `<= 146`) for "a class". DFU's test is
+  `EnemyBasics.IsClassEnemyId`, the 128 bit, which is why the mod numbers its monsters 256-290 and its classes 384-398;
+  read as `>= 128`, every one of its monsters would have been a person. Each site now asks `isClassEnemyId`,
+  `enemyEntityType` or `enemyCareerIndex`; the two leaves that import nothing (`ai/blowShapes.js`,
+  `systems/revenant/revenantPersonality.js`) write the bit and say so.
+- **The vanilla rows by name** (`enemyBasics.js` VANILLA_ENEMY_BASICS): the table as DFU ships it, copied before any
+  mod writes a row and frozen. King's Gambit's roster reads it (`net/kingsGambit.js`): the port DECIDED its roster is
+  the vanilla rows, one for every client and the relay (`11-Multiplayer/Kings-Gambit.md`), and the mod writes sixteen
+  classic rows' levels and health into the live table - a client reading the gambit's module after the mod's Start would
+  have built a roster the relay refuses.
+- **The relay's bounds** (`net/foeBounds.js` FOE_BOUND_ROWS): the most health and level a classic monster's row can
+  stand at, over six profiles now - vanilla, Meaner Monsters, Meaner Monsters with the overhaul's edit, and the mod's
+  classic lines over each (`dexInstall.js` dexClassicRow, the test's fold). Without it a room with the mod on would have
+  had its Dragonling (146 health, the bound 60) and its Werewolf (level 9, the bound 8) refused as impossible. A row's
+  third number is the level the progression share reads (`foeShare(basics.level)`, the table's row - vanilla or the
+  mod's), so the relay reads no table at all and its bound is the same on every machine.
+- **The wire** (`net/wire.js` FOE_TYPE_MAX, relay world225): a streamed foe's kind was bounded at 255, which refused
+  every record of a mod's foe whole; it is MobileTypes' own u16. A peer has the rows whatever its switch (below).
+
+**The reading** (`systems/enemyExpansion/dexTables.js`, line for line as the C# reads, every column, default, `continue`
+and `[DEX]` message): 43 careers of the mod's own beside DFU's 62, the fifty enemies, the classic edits, the spellbook
+tables kept raw for DEX4, and a quest foe name for each new enemy. `systems/enemyExpansion/dexInstall.js` is Start,
+run once from `scenes/shared.js` right after Roleplay & Realism's install (its enemy appearance is an Init):
+
+- ALWAYS, whatever the switch: the fifty rows join the table, each with its career and its name.
+- WHILE LOADED (the switch latched at the game's load, `modSettings.js` latchModLoaded - DFU loads a mod with the game):
+  the sixteen classic monsters' rows and two classic classes' (the Monk, 140, and the Barbarian, 143) edited, and the new names added to the Foes table
+  (`QuestMachine.FoesTable.AddIntoTable`, only where the table lacks the name - the Nymph is Daggerfall's).
+
+**Departures, named** (Port-Ledger section A, DEX1):
+
+- *The rows are registered whatever the switch.* In DFU a disabled mod registers nothing, so a game saved with a
+  Goblin in it and loaded with the mod off finds no row for it. Here the row stays and nothing of the mod's reaches it
+  (no table rolls it, no quest names it, no hook runs), so the save loads and the world is DFU's. A peer in a room
+  whose switch differs from its own draws the room's foes the same way.
+
+**Flags for the slices after** (not departures from DFU, which has neither system):
+
+- The relay's health bound (`net/foeBounds.js`) does not know a mod's careers, so a mod's own kind (256 and up) is
+  *unverified* there, as every kind it holds no row for is; a class bound by the classic classes' hit points would be
+  wrong for a mod's class with its own. (The mod edits no classic career, so the classic classes' bound stands.)
+- The Enhanced AI's telegraphed blows (TACT4's families, `ai/blowShapes.js`) name no mod's kind: a mod's monster throws
+  none, as an unnamed kind throws none, until a slice gives them families.
+- King's Gambit's roster takes a monster below 128 or one of its ranged classes, by its own rule - with both mods
+  loaded in DFU its roster has none of the mod's either.
+
+Tests: `test/systems/enemyExpansion/dex1_registry.test.js` (the reading column by column, the C#'s slips kept - a new
+class's attack sound written to its bark - the careers' tolerances and attack modifiers read back, Enum.Parse's rules,
+the install's two halves, DFU's mod order over Meaner Monsters, both build arms, the quest foes; with ARENA2, a career
+borrowed from Daggerfall's files is a copy; the vanilla rows untouched by the install), the bounds' six profiles
+(`test/net/foebounds_law.test.js`), the wire's pins (`auditworld6b.test.js`, `oncrash1.test.js`), and the moved source
+pins and mutant records.

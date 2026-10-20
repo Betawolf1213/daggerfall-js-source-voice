@@ -65,6 +65,7 @@
 
 /** PlayerGPS.NearbyObjectFlags (:112-123), verbatim. */
 import { LOCATION_TYPES } from '../formats/mapsFile.js';   // V5: IsPlayerInTown's seven town types
+import { enemyCareerIndex } from '../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (EnemyBasics.IsClassEnemyId) - a mod's monster past 255 is no class
 
 export const NEARBY = Object.freeze({
   None: 0,
@@ -159,7 +160,7 @@ const ENEMY_GROUP_BIT = Object.freeze({
  *  Animal never calmed a Mage and Dispel Undead could not destroy a
  *  Knight. X8's Pacify family reads this rather than re-transcribing
  *  the career switch, so the two cannot drift apart. */
-const careerIndexOf = (mobileType) => (mobileType >= 128 ? mobileType - 128 : mobileType);
+const careerIndexOf = (mobileType) => enemyCareerIndex(mobileType);   // DEX1: SetEnemyCareer's careerIndex - a mod's id its own
 /**
  * V5 - PlayerGPS.IsPlayerInTown (:504-527), verbatim including its
  * two optional gates, because getting them backwards inverts the

@@ -48,6 +48,7 @@ import { serviceBase } from '../net/accountClient.js';
 import { appStorage } from '../systems/appStorage.js';
 import { resolveEncounterTableIndex, chooseRandomEnemy } from '../systems/encounters.js';
 import { ENCOUNTER_TABLES } from '../characters/encounterTables.js';
+import { isClassEnemyId } from '../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (EnemyBasics.IsClassEnemyId) - a mod's monster past 255 is no class
 
 /** The reader's bounds: the verdicts it keeps (owner and grant), the members it has seen stand, the puppets it knows the
  *  grant of. */
@@ -388,7 +389,7 @@ export function createGrantHost({ session, climateAt = null, now = () => Date.no
       const c = climateAt(gr.p[0], gr.p[1]), i = r.gr[1];
       if (r.t !== grantSpecies(gr, i, c, false) && r.t !== grantSpecies(gr, i, c, true)) return 'dice';
     }
-    if (LEVELLED_KINDS.has(gr.k) && r.t >= 128 && gr.l > 0 && Number.isInteger(r.l) && r.l > gr.l + GRANT_LEVEL_SLACK) return 'dice';
+    if (LEVELLED_KINDS.has(gr.k) && isClassEnemyId(r.t) && gr.l > 0 && Number.isInteger(r.l) && r.l > gr.l + GRANT_LEVEL_SLACK) return 'dice';
     if (ROLLED_KINDS.has(gr.k) && climateAt) {
       const set = grantSpeciesOf(climateAt(gr.p[0], gr.p[1]));
       if (set && !set.has(r.t)) return 'dice';

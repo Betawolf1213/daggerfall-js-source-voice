@@ -20,7 +20,7 @@ Hunter is this pack's 1504, pixel for pixel), most of the sheets are
 Daggerfall's own enemy-class sprites (TEXTURE.477-490) at their own size,
 under the artists' paint - 1524, 1525, 1526, 1535, 1536 and 1537 in every
 picture, the rest in part. A render of game data is game data, so the pack
-is carried on Port-Doctrine's **third exception** (Mac, 2026-10-19: "Bring
+is carried on Port-Doctrine's **fourth exception** (Mac, 2026-10-19: "Bring
 under 3rd exception"), which names this directory;
 `test/tooling/doctrine.test.js` marks its row so.
 
