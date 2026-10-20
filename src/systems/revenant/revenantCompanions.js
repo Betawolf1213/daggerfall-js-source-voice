@@ -24,9 +24,10 @@
 //    page (setSwornStars - never abroad), and read where its numbers are: its health and blows (applySwornStrength), its
 //    loyalty's losses and its rests (each site below).
 import { wildHere, WILD_TEXT } from '../wild/wildZone.js';   // PVPDUNGEONS (the owner: "Only 1 revenant allowed to summon in the zone"); COMPANION-DROP: the zone's words
-// PVPDUNGEONS: how many sworn revenants may stand at the player's side in the open zone - COMPANION-DROP: its home the drop's
-// law (a leaf the account service bundles), and which ones (wildSwornAtSide), so the zone stands the ones whose packs drop
-import { WILD_REVENANTS_MAX, wildSwornAtSide } from '../wild/wildDropLaw.js';
+// PVPDUNGEONS: how many sworn revenants may stand at the player's side in the open zone - COMPANION-DROP: and which ones
+// (wildSwornAtSide), so the zone stands the ones whose packs drop; the drop's law reads the same leaf (wildLeaf.js - no
+// imports, so standing a revenant never pulls the drop law's graph, the item law among it, into a client's)
+import { WILD_REVENANTS_MAX, wildSwornAtSide } from '../wild/wildLeaf.js';
 export { WILD_REVENANTS_MAX };
 import { swornRevenants, revenantCompanionUpdate, revenantRecord, setSwornLeftListener, revenantBetrays, revenantPerson, revenantMomentEvent, revenantEvent, revenantSay } from './revenant.js';   // FB1012d ALLY-RACE: its person
 import { registerCompanionCount, companionsWithYou, COMPANION_SLOTS } from '../companionSlots.js';

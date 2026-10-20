@@ -190,7 +190,7 @@ Either death, at the first dead frame, while the room is still the player's (`wi
   SIDE: every crew hand ashore - he walks with the player through every door, so he is where they fall (with the naval
   arc switched off too: his record still says ashore, and he comes back ashore with it, as the mod-off wagon goes where
   its owner goes) - and the sworn walking with them, in the zone the first `WILD_REVENANTS_MAX` the record lists, the one
-  the zone stands (`wildDropLaw.js:"export const wildSwornAtSide = (list) =>"`; the party stands the same one,
+  the zone stands (`wildLeaf.js:"export const wildSwornAtSide = (list) =>"`; the party stands the same one,
   `revenantCompanions.js:"export const swornAtYourSide = () =>"`); the rest wait outside the zone, and one away, resting
   or abroad is away. Each pack at the side is read as the cart is (`wildDropLaw.js:"export function wildPacks"`): its
   pieces join the drop by worth through the same `wildCanLose` - a letter drops (LETTERS-DROP), a bound, quest, wallet
@@ -632,7 +632,7 @@ half health", "everyone in the zone should see the same ... that the big giant i
 - NO REVENANTS (the owner: "No elite or any monster in the zone can be a revenant", then "Only 1 revenant allowed to
   summon in the zone"): a foe of the zone or a Greater Giant is never a revenant's candidate
   (`revenant.js:"if (entity.wildFoe || entity.wildGiant)"`), none returns and no lair stands while I am in the zone,
-  and only `WILD_REVENANTS_MAX` (1, `wildDropLaw.js:"export const WILD_REVENANTS_MAX"` - COMPANION-DROP: its home the
+  and only `WILD_REVENANTS_MAX` (1, `wildLeaf.js:"export const WILD_REVENANTS_MAX"` - COMPANION-DROP: its home the
   drop's law, which drops what that one carries, section 4) sworn revenant walks at my side there - the rest wait
   outside it.
 - NO TELEPORT into, out of or inside the zone (section 9), and no /unstuck outdoors there (section 17).

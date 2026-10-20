@@ -111,7 +111,7 @@
   },
   {
     "name": "COMPANION-DROP-the-sworns-state-unread",
-    "file": "src/systems/wild/wildDropLaw.js",
+    "file": "src/systems/wild/wildLeaf.js",
     "old": " && (r.companion?.state ?? 'with') === 'with').slice(0, WILD_REVENANTS_MAX);",
     "new": ").slice(0, WILD_REVENANTS_MAX);",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "COMPANION-DROP-every-sworn-at-the-side",
-    "file": "src/systems/wild/wildDropLaw.js",
+    "file": "src/systems/wild/wildLeaf.js",
     "old": ".slice(0, WILD_REVENANTS_MAX);",
     "new": ";",
     "tests": [

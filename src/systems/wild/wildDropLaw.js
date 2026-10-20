@@ -28,8 +28,9 @@ import { isWalletItem, walletHolds } from '../walletItem.js';   // KEEP-WALLET
 import { classicPiece, itemWorth } from '../item/itemLaw.js';   // INT9: a classic save's piece stays its character's
 import { HCC_VENDOR, WAGON_MODE } from '../horse/horseCartLaw.js';   // CART-AWAY: the wagon's record, the mod's own words (a leaf the Worker bundles already)
 
-/** The groups no death in the zone ever drops: a vehicle, a deed, a quest's own item. */
-export const WILD_NEVER_GROUPS = Object.freeze(new Set(['Transportation', 'Deeds', 'QuestItems', 'Currency']));
+// The groups no death in the zone ever drops: a leaf of their own (wildLeaf.js), re-exported for the drop's readers.
+import { WILD_NEVER_GROUPS } from './wildLeaf.js';
+export { WILD_NEVER_GROUPS };
 
 /** "except campfires, torches, potions etc" - is this a consumable the fallen keep? */
 export function keptOnWildDeath(item) {
@@ -242,16 +243,10 @@ export function wildCartMayBeAway(rec) {
 // player's own (COMPANION-KIT's pack; RVN-GEAR's kit, given from the pack and taken back to it at will), so the zone's
 // own law reads it as it reads the bag: what never changes hands stays (wildCanLose), the rest drops, his coin halves.
 
-/** PVPDUNGEONS (the owner: "Only 1 revenant allowed to summon in the zone"): how many sworn revenants stand at the
- *  player's side in the open zone - COMPANION-DROP: here, a leaf both ends read (systems/revenant/revenantCompanions.js
- *  stands that many and re-exports it; the account service drops what they carry). */
-export const WILD_REVENANTS_MAX = 1;
-
-/** COMPANION-DROP: THE SWORN AT THE PLAYER'S SIDE IN THE ZONE, out of a revenant list (the feud's records, revenant.js - a
- *  save's `list` or the live one): sworn, not fallen, walking with them (a companion's state, 'with' where none is kept -
- *  revenantCompanions.js stateOf), the first WILD_REVENANTS_MAX in the list's order - the ones the zone stands.
- *  @param {any} list @returns {any[]} */
-export const wildSwornAtSide = (list) => (Array.isArray(list) ? list : []).filter((r) => !!r && !!r.sworn && !r.defeated && !r.gone && (r.companion?.state ?? 'with') === 'with').slice(0, WILD_REVENANTS_MAX);
+// The zone's count of the sworn at the side and which ones they are: the same leaf (wildLeaf.js), so the companions read
+// them without this law's graph; re-exported here for the drop's readers and the account service.
+import { WILD_REVENANTS_MAX, wildSwornAtSide } from './wildLeaf.js';
+export { WILD_REVENANTS_MAX, wildSwornAtSide };
 
 /** COMPANION-DROP: where a companion's piece lay - the take's word for it (`from`, wildTookOf's `f`): a crew hand's
  *  pack (his boat's number and his name - his for life), a sworn one's pack, a sworn one's kit (its record's id). */

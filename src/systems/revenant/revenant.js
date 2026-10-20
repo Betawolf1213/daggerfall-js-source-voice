@@ -78,7 +78,7 @@ import { unequipItem, equipTableOf, EQUIP_SLOTS } from '../equip.js';   // RVN8:
 import { isLocked } from '../item/itemLock.js';   // RVN8: LOCK1's promise - a locked piece stays yours
 import { isBagItem } from '../../net/bagLaw.js';   // RVN8: never the Materials Bag
 import { isPackOnly } from '../item/itemBound.js';   // AUDIT 625 W2: nor a pack-only piece (the Wallet)
-import { WILD_NEVER_GROUPS } from '../wild/wildDropLaw.js';   // STEED-KEPT: nor what never changes hands - a vehicle, a deed
+import { WILD_NEVER_GROUPS } from '../wild/wildLeaf.js';   // STEED-KEPT: nor what never changes hands - a vehicle, a deed (the zone's own leaf - never the drop law's graph)
 import { BOAT_TEMPLATES } from '../../net/realm/realmTradeLaw.js';   // STEED-KEPT: nor a ship's deed or parts
 import { DECOR_OWN_KEPT_BACK } from '../../net/decorLaw.js';   // STEED-KEPT: nor a deed as Daggerfall files one, nor the spellbook
 import { hudTextWhenShown } from '../notify.js';   // STEED-KEPT: a piece home again, said once the world can say it
