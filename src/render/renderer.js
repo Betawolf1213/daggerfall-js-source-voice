@@ -5271,6 +5271,17 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
    *  the billboard shader discards on it - so one GL texture cannot carry
    *  both treatments and the -1 (mesh) and 0 (flat) uploads must key
    *  apart. The '#ui' variant is the same argument for the mip chain. */
+  /** GATE-MIX (2026-10-20, the owner: "the game hitches"): whether the PLAIN picture under (archive, record) - the key
+   *  uploadTexture makes when no option is asked - already stands, a real one and not a stand-in's placeholder; and when
+   *  it does, it is held for the place asking exactly as an uploadTexture hit holds it (PLACE-LRU). A caller asks this
+   *  before decoding a picture uploadTexture would only turn away (scenes/dataPipeline.js uploadRecordFrame: a hit's
+   *  splash decoded its frames again on every hit). */
+  heldTexture(archive, record) {
+    const key = `${archive}_${record}`;
+    if (!this.textures.has(key) || this._placeholders?.has(key)) return false;
+    this._uploadSink?.(false, key);
+    return true;
+  }
   uploadTexture(archive, record, color32, opts = {}) {
     // (see textureParams below - the decision is pure and pinned there)
     // AUDIT 19 F10: the SAMPLING MODE is part of the key. The cache is
