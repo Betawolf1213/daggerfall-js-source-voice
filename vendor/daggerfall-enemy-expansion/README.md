@@ -158,3 +158,7 @@ through the texture door these register on, so neither draws the other's.
   (`src/characters/enemy/customEnemies.js`, `enemyBasics.js`,
   `enemyEntity.js` loadEnemyCareer). `bible/04-Characters/Enemy-Expansion.md`
   section 5.
+- **DEX2** (2026-10-20, in part): the pictures on the texture door as DFU
+  imports them (`src/systems/enemyExpansion/dexSprites.js`) - each record's
+  frames to the first missing (a picture past a gap ships and is never drawn),
+  the xml's scales, the emission maps. Section 6.

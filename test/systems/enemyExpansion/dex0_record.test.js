@@ -175,20 +175,24 @@ test('DEX0 the pictures that ARE Daggerfall\'s records are specs naming the reco
   assert.deepEqual(derived['1610_13-7_Emission'], { from: [379, 0, 7] });
 });
 
-test('DEX0 the generated index counts exactly the frames the three places hold, and says where each archive\'s come from', () => {
+test('DEX0 the generated index counts the frames the three places hold as DFU imports them, and says where each archive\'s come from', () => {
   const derived = Object.keys(JSON.parse(read('derived.json')));
   const names = [...derived, ...[...listingOf('daggerfall-enemy-expansion.files.json').Files, ...listingOf('repainted.files.json').Files].map((f) => f.replace(/\.png$/, ''))];
-  const frames = {}, emissive = {};
+  const held = {}, lit = {};   // archive -> record -> frames
   for (const n of names) {
     const [, a, r, f, map] = /^(\d+)_(\d+)-(\d+)(?:_(\w+))?$/.exec(n);
-    if (map === 'Emission') ((emissive[a] ??= new Set()).add(Number(r)));
-    else (frames[a] ??= [])[Number(r)] = Math.max(frames[a][Number(r)] ?? 0, Number(f) + 1);
+    (((map === 'Emission' ? lit : held)[a] ??= {})[Number(r)] ??= new Set()).add(Number(f));
   }
-  assert.deepEqual(Object.keys(DEX_ART).map(Number).sort((a, b) => a - b), Object.keys(frames).map(Number).sort((a, b) => a - b));
+  assert.deepEqual(Object.keys(DEX_ART).map(Number).sort((a, b) => a - b), Object.keys(held).map(Number).sort((a, b) => a - b));
+  // DEX2: TextureReplacement.GetMobileBillboardMaterial's import - a record's frames from 0 to the first one missing
+  const imported = (set) => { let n = 0; while (set?.has(n)) n++; return n; };
   for (const [a, e] of Object.entries(DEX_ART)) {
-    assert.deepEqual(e.frames, Array.from(frames[a], (n) => n ?? 0), `${a}'s frames`);
-    assert.deepEqual(e.emissive ?? [], [...(emissive[a] ?? [])].sort((x, y) => x - y), `${a}'s emission maps`);
+    const records = Math.max(...Object.keys(held[a]).map(Number)) + 1;
+    assert.deepEqual(e.frames, Array.from({ length: records }, (_, r) => imported(held[a][r])), `${a}'s frames`);
+    const maps = Object.fromEntries(Object.entries(lit[a] ?? {}).map(([r, set]) => [r, [...set].filter((f) => f < e.frames[r]).sort((x, y) => x - y)]).filter(([, fs]) => fs.length));
+    assert.deepEqual(e.emissive ?? {}, maps, `${a}'s emission maps, by frame`);
   }
+  assert.deepEqual([DEX_ART[1500].frames[14], DEX_ART[1500].frames[4], DEX_ART[1614].emissive[20]], [1, 2, [0, 1]], 'the gaps: 1500_14 holds frames 0 and 7, 1500_4 lacks frame 2, 1614_20-2 has no map of its own');
   assert.equal(DEX_ART[1610].from, 'derived');
   assert.equal(DEX_ART[1500].from, 'own', 'the riders\' corpse (1500_20-0) is the authors\' own; the rest of the set is derived');
   assert.equal(DEX_ART[1609].from, 'repainted');

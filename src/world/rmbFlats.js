@@ -186,7 +186,10 @@ export function mobileBillboardSize(t, record) {
   if (!byRecord) { byRecord = []; _mobileSize.set(t, byRecord); }
   let size = byRecord[record];
   if (!size) { size = scaledBillboardSize(t.getSize(record), t.getScale(record)); byRecord[record] = size; }
-  return textureReplacementEnabled() ? applyBillboardXml(t?.archive, record, size) : size;
+  // DEX2: and a stand-in's whatever the switch - a mod-only archive's pictures ARE the port's vendored art, drawn
+  // ungated (systems/textureReplacement.js SURV2), so the xml that sizes them goes with them (Daggerfall Enemy
+  // Expansion's riders at 1.3, its centurion at 0.7); DFU draws a mod's enemy only under AssetInjection, scale and all
+  return textureReplacementEnabled() || t?.vendor === true ? applyBillboardXml(t?.archive, record, size) : size;
 }
 export function billboardSize(t, record) {
   const size = scaledBillboardSize(t.getSize(record), t.getScale(record));

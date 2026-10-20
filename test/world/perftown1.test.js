@@ -74,7 +74,7 @@ test('PERF-TOWN1: a sprite does not change size while you watch it - the size is
   assert.match(src('src/world/rmbFlats.js'), /const _mobileSize = new WeakMap\(\);/);
   // the XML scale stays LIVE - it reads a per-vendor predicate, so a mod
   // toggled in the settings menu has to be seen on the next frame
-  assert.match(src('src/world/rmbFlats.js'), /return textureReplacementEnabled\(\) \? applyBillboardXml\(t\?\.archive, record, size\) : size;/);
+  assert.match(src('src/world/rmbFlats.js'), /return textureReplacementEnabled\(\) \|\| t\?\.vendor === true \? applyBillboardXml\(t\?\.archive, record, size\) : size;/);
 });
 
 test('PERF-TOWN1: a person answers into its OWN row, and the pool refills one list', () => {

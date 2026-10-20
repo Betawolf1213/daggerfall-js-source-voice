@@ -5,8 +5,8 @@
 //
 // LOADED FOR THE GAME, AS DFU LOADS A MOD (modSettings.js latchModLoaded): the switch is read here, once, and the
 // mod's doors read the latch - a switch flipped mid-game waits for the next load, as the tile says.
-//   ALWAYS (whatever the switch): the fifty enemies join the table, their careers the custom career registry and their
-//     names the text provider. In DFU a disabled mod registers nothing - and a game saved with a Goblin in it and loaded
+//   ALWAYS (whatever the switch): the fifty enemies join the table, their careers the custom career registry, their
+//     names the text provider and their pictures the texture door (DEX2, dexSprites.js). In DFU a disabled mod registers nothing - and a game saved with a Goblin in it and loaded
 //     with the mod off finds no row for it; here the row is still there and nothing that is the mod's reaches it (no
 //     table rolls it, no quest names it, no hook of the mod's runs), so the save loads and the world is DFU's.
 //   WHILE LOADED: the sixteen classic rows and the two classic classes edited (written into the table, and again at a
@@ -20,6 +20,7 @@ import { registerCustomCareerTemplate, registerCustomEnemyName } from '../../cha
 import { loadMonsterCareer, loadClassCareer, registerMintRowEditor } from '../../characters/enemy/enemyEntity.js';
 import { addIntoQuestTables } from '../quest/tables.js';
 import { modSetting, latchModLoaded, modLatchedOn } from '../modSettings.js';
+import { installDexSprites } from './dexSprites.js';   // DEX2: the fifty's pictures, whatever the switch
 
 export const DEX_VENDOR = 'daggerfall-enemy-expansion';
 /** The mod as loaded for this game: the latch its install set, else (before the install, or in a test) its switch. */
@@ -114,6 +115,7 @@ export function installEnemyExpansion({ on = modSetting(DEX_VENDOR, 'Enabled') =
   }
   registerEnemyRows(rows);
   registerCustomEnemyName((id) => read.enemies.get(id)?.props.name || null);
+  installDexSprites();   // DEX2: their pictures on the texture door, and the xml's scales
   const loaded = latchModLoaded(DEX_VENDOR, on);
   if (loaded) {
     // the classic rows edited, written into the table as EnemyBasics.Enemies is written (the originals kept, the revert's)

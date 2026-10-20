@@ -58,7 +58,7 @@ The mod in DFU's terms (`BestiaryMod.cs`, cited below by line):
 |---|---|---|
 | DEX0 | the record: the vendored files, the art in its three places, the doctrine's fourth exception, the registry row, the credit, the switch (on), the online decision (the room's, whole: Meaner Monsters' reading) | SHIPPED |
 | DEX1 | the enemy registry: rows past the classic 0-42 and 128-146, the careers, the classic replacements, the names, the quest foes | SHIPPED (section 5) |
-| DEX2 | the sprites on the texture door: a non-classic archive's real frame counts, the xml scales, the emission maps, glow, no-shadow, the ghost's transparency, the guard's spell records | open |
+| DEX2 | the sprites on the texture door: a non-classic archive's real frame counts, the xml scales, the emission maps (section 6, SHIPPED); glow, no-shadow, the ghost's transparency (DFU's own rows too - section 6) | in part |
 | DEX3 | the encounter tables in all four hosts: the dungeon's seeded choice, the water's, the climates' | open |
 | DEX4 | combat: the on-hit effects, spells 500-503 and the spellbook tables, the skeletal rule, groups and languages, forced gender, ranged | open |
 | DEX5 | the Troll's corpse: up again after ten seconds unless struck, saved with the game, the cheat | open |
@@ -147,3 +147,39 @@ the install's two halves, DFU's mod order over Meaner Monsters, both build arms,
 borrowed from Daggerfall's files is a copy; the vanilla rows untouched by the install), the bounds' six profiles
 (`test/net/foebounds_law.test.js`), the wire's pins (`auditworld6b.test.js`, `oncrash1.test.js`), and the moved source
 pins and mutant records.
+
+## 6. DEX2 - the sprites on the texture door
+
+DFU draws a custom enemy from its archive's imported textures (`TextureReplacement.GetMobileBillboardMaterial`): each
+record from frame 0 to the first frame missing, a frame's `_Emission` map beside it, and the archive xml's scale on its
+size. `systems/enemyExpansion/dexSprites.js` registers every picture DFU would import, from its one place - the authors'
+own, the fourth exception's repaints, or rebuilt from the player's files (`derived.json`) - as the stand-in archive it is
+(no TEXTURE file carries 1500-1617), whatever the switch, as the rows are.
+
+- **The import, in the index.** `tools/dexExtract.mjs` now writes `frames` as DFU imports them: the bundle has gaps -
+  1500's record 14 holds frames 0 and 7, its record 4 lacks frame 2 - and a picture past a gap ships and is never drawn,
+  as in DFU. `emissive` is by frame (record -> frames): 1614's record 20 has no map for its frame 2.
+- **A stand-in's frames** (`textureReplacement.js` vendorFrameCount): the stand-in answered one frame for every record,
+  which no vendored art had needed until a mod's enemies walked - every mobile drawn from a stand-in stood on its first
+  frame. It answers the registry's frames now, frame 0 to the first missing, cached until a registration moves the tiers.
+- **The xml's scale** (`world/rmbFlats.js` mobileBillboardSize): DFU's mobile unit lays it on every record under
+  AssetInjection, and DFU draws a mod's enemy only under AssetInjection. The port's vendored art draws ungated, so a
+  stand-in's xml applies whatever the switch (the riders at 1.3, the Barbarian at 0.385 x 0.365); a classic sprite's
+  still waits for the switch (Meaner Monsters' werewolf).
+- **The emission** (`scenes/dataPipeline.js` uploadRecordFrame): an imported frame's `_Emission` map is uploaded under
+  the frame's own key and lit white, as DFU's material is; an archive whose xml asks for emission lights a frame with no
+  map of its own by its albedo (1614_20-2) - the registration hands the albedo in as the map.
+
+**Still open in DEX2** - and DFU's own rows want them as much as the mod's (the port has never drawn them for a classic
+enemy either; `SetupDemoEnemy.cs` :129-151):
+
+- `GlowColor` - a `LightAura` light at (0, 0.3, 0.2) on the mobile in the row's colour, and the billboard receiving no
+  shadow (the fire atronach, the fire daedra, the mod's Fire Daemon and Will-o'-wisp);
+- `NoShadow` - the billboard casts none;
+- the ghost shader - DFU's by the row's `Spectral` behaviour (cutoff 0.1, the alpha blended), where the port's renderer
+  keys it to the classic ghost archives (`render/renderer.js` billboardBlended); the mod's `Transparent` property lays
+  the same shader on a non-spectral enemy (BestiaryMod.cs:1394-1402).
+
+Tests: `test/systems/enemyExpansion/dex2_sprites.test.js` (every imported picture from its one place, none past a gap;
+the stand-in's frames; the xml ungated on a stand-in only; the emission's two sources), `dex0_record.test.js` (the
+index held to DFU's import).

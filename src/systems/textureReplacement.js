@@ -274,6 +274,29 @@ export function vendorRecordCount(archive) {
   for (const e of _vendor.values()) if (e.standIn && e.archive === Number(archive)) n = Math.max(n, e.record + 1);
   return n;
 }
+/** DEX2 (bible/04-Characters/Enemy-Expansion.md section 6): THE FRAMES OF A STAND-IN'S RECORD, off the registry - frame 0
+ *  to the first one no entry names, as DFU imports a custom archive's frames (TextureReplacement.GetMobileBillboardMaterial
+ *  takes each record's frames until one is missing). At least one: a record is its frame 0. The stand-in answered 1 for
+ *  every record, which no vendored art had needed until a mod's enemies walked - a mobile drawn from a stand-in never
+ *  animated. Kept per archive until a registration moves the tiers. */
+const _frameCounts = new Map();   // archive -> { gen, counts: Map(record -> frames) }
+export function vendorFrameCount(archive, record) {
+  const a = Number(archive);
+  let held = _frameCounts.get(a);
+  if (!held || held.gen !== _tierGen) {
+    const frames = new Map();
+    for (const e of _vendor.values()) {
+      if (!e.standIn || e.archive !== a || e.map !== 'Albedo') continue;
+      if (!frames.has(e.record)) frames.set(e.record, new Set());
+      frames.get(e.record).add(e.frame);
+    }
+    const counts = new Map();
+    for (const [r, set] of frames) { let n = 0; while (set.has(n)) n++; counts.set(r, n); }
+    held = { gen: _tierGen, counts };
+    _frameCounts.set(a, held);
+  }
+  return Math.max(1, held.counts.get(Number(record)) ?? 0);
+}
 /** A TextureFile stand-in for a vendor-only archive: sizes from the
  *  decoded PNGs, a bitmap the swap arm never reads.
  *
@@ -353,7 +376,7 @@ export function vendorTextureStandIn(archive) {
     // supplies it. Zero stays the answer for art that is never worn -
     // every icon door measures from its own rect and never asks.
     getOffset: (record) => vendorEntryOf(archive, record ?? 0)?.offset ?? { x: 0, y: 0 },
-    getFrameCount: () => 1,
+    getFrameCount: (record) => vendorFrameCount(archive, record),   // DEX2: a record's own frames (a mobile's walk), never one for all
     getWidth: (record) => size(record).width,
     getHeight: (record) => size(record).height,
     // FIELD-GUN4 (Mac, from play: "The paperdoll doesn't equip the

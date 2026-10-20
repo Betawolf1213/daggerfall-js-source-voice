@@ -1,0 +1,52 @@
+[
+ {
+  "name": "DEX2-a-stand-in-one-frame-a-record",
+  "file": "src/systems/textureReplacement.js",
+  "old": "    getFrameCount: (record) => vendorFrameCount(archive, record),",
+  "new": "    getFrameCount: () => 1,",
+  "why": "every mobile drawn from a stand-in stands on its first frame",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ },
+ {
+  "name": "DEX2-a-gap-not-the-end",
+  "file": "src/systems/textureReplacement.js",
+  "old": "    for (const [r, set] of frames) { let n = 0; while (set.has(n)) n++; counts.set(r, n); }",
+  "new": "    for (const [r, set] of frames) counts.set(r, Math.max(...set) + 1);",
+  "why": "a frame past a gap counted - DFU imports a record's frames to the first missing",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ },
+ {
+  "name": "DEX2-the-xml-gated-on-a-stand-in",
+  "file": "src/world/rmbFlats.js",
+  "old": "  return textureReplacementEnabled() || t?.vendor === true ? applyBillboardXml(t?.archive, record, size) : size;",
+  "new": "  return textureReplacementEnabled() ? applyBillboardXml(t?.archive, record, size) : size;",
+  "why": "the mod's riders stand at their pictures' size with AssetInjection off",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ },
+ {
+  "name": "DEX2-the-albedo-never-the-emission",
+  "file": "src/systems/enemyExpansion/dexSprites.js",
+  "old": "        else if (art.emission) out.push(",
+  "new": "        else if (false) out.push(",
+  "why": "an emissive archive's frame with no map of its own goes unlit",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ },
+ {
+  "name": "DEX2-a-frame-emission-map-dropped",
+  "file": "src/scenes/dataPipeline.js",
+  "old": "    const lit = swapFrame ? decodedTexture(archive, record, frame, 'Emission') : null;",
+  "new": "    const lit = null;",
+  "why": "a mod frame's emission map never uploaded",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ }
+]

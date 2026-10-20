@@ -152,9 +152,11 @@ export function renderArtIndex(index, version) {
 // own ARENA2 - do not edit. Per archive the mod's tables draw: where its pictures come from (\`own\` - the authors'
 // renders under ${OWN_DIR}/; \`repainted\` - Port-Doctrine's fourth exception, under ${REPAINT_DIR}/;
 // \`derived\` - rebuilt from the player's own records, vendor/daggerfall-enemy-expansion/derived.json), each record's
-// frame count (\`frames\`, by record), the records carrying an emission map (\`emissive\`), the archive's own xml
-// emission flag (\`emission\`) and each record's xml scale (\`scale\`: record -> [x, y]). A picture derived.json names
-// is rebuilt whatever its archive's \`from\` says (a set of the authors' with one record's picture in it).
+// frames as DFU imports them (\`frames\`, by record: frame 0 to the first one missing - a picture past a gap is shipped
+// and never drawn, as in DFU), the frames carrying an emission map (\`emissive\`: record -> frames), the archive's own
+// xml emission flag (\`emission\`: a frame with no map of its own lights its albedo) and each record's xml scale
+// (\`scale\`: record -> [x, y]). A picture derived.json names is rebuilt whatever its archive's \`from\` says (a set of
+// the authors' with one record's picture in it).
 export const DEX_ART = Object.freeze({
 ${rows.join('\n')}
 });
@@ -193,6 +195,7 @@ export function dexAssets(arena2, bundleBytes) {
   for (const r of records) for (const dw of [-1, 0, 1]) for (const dh of [-1, 0, 1]) { const k = `${r.rgba.width + dw}x${r.rgba.height + dh}`; (bySize.get(k) ?? bySize.set(k, []).get(k)).push(r); }
 
   const derived = {}, own = {}, repainted = {}, index = {};
+  const held = {}, lit = {};   // archive -> record -> the frames its pictures (and its emission maps) are of
   const shipped = { own: 0, repainted: 0, indexed: 0, bytes: 0 };
   for (const t of carried) {
     const [, a, r, f, map] = NAME.exec(t.name);
@@ -201,9 +204,8 @@ export function dexAssets(arena2, bundleBytes) {
     // a repaint ships as the authors painted it (the exception's word: byte for byte) unless it IS a record, exactly
     const repaint = REPAINTED_ARCHIVES.includes(archive);
     const hit = exact.get(keyOf(pic)) ?? (repaint ? null : findClassicSource(pic, bySize.get(`${pic.width}x${pic.height}`) ?? []));
-    const entry = (index[archive] ??= { from: null, frames: [], emissive: [], ...(scale[archive] ? { scale: scale[archive] } : {}), ...(emission[archive] ? { emission: true } : {}) });
-    if (!map) entry.frames[record] = Math.max(entry.frames[record] ?? 0, frame + 1);
-    else if (map === 'Emission' && !entry.emissive.includes(record)) entry.emissive.push(record);
+    const entry = (index[archive] ??= { from: null, frames: [], ...(scale[archive] ? { scale: scale[archive] } : {}), ...(emission[archive] ? { emission: true } : {}) });
+    if (!map || map === 'Emission') (((map ? lit : held)[archive] ??= {})[record] ??= new Set()).add(frame);
     if (hit) {
       const spec = deriveSpec([hit.archive, hit.record, hit.frame], pic, hit.rgba, hit.at ?? [0, 0]);
       if (!sameOnScreen(composeDerivedPicture(spec, hit.rgba), pic)) throw new Error(`${t.name}: the rebuild from ${hit.archive}_${hit.record}-${hit.frame} differs from the texel`);
@@ -221,9 +223,14 @@ export function dexAssets(arena2, bundleBytes) {
     const total = textures.filter((t) => Number(NAME.exec(t.name)[1]) === Number(a)).length;
     e.from = e.derived === total ? 'derived' : REPAINTED_ARCHIVES.includes(Number(a)) ? 'repainted' : 'own';
     delete e.derived;
-    for (let i = 0; i < e.frames.length; i++) e.frames[i] ??= 0;
-    e.emissive.sort((x, y) => x - y);
-    if (!e.emissive.length) delete e.emissive;
+    // DEX2: AS DFU IMPORTS THEM (TextureReplacement.GetMobileBillboardMaterial) - a record's frames from 0 to the first one
+    // missing (1500's record 14 carries frames 0 and 7: one frame), and a frame's emission map where the mod ships one
+    const h = held[a] ?? {}, l = lit[a] ?? {};
+    const records = Math.max(...Object.keys(h).map(Number)) + 1;
+    e.frames = Array.from({ length: records }, (_, r) => { let n = 0; while (h[r]?.has(n)) n++; return n; });
+    const emissive = {};
+    for (const [r, set] of Object.entries(l)) { const fs = [...set].filter((f) => f < e.frames[r]).sort((x, y) => x - y); if (fs.length) emissive[r] = fs; }
+    if (Object.keys(emissive).length) e.emissive = emissive;
   }
   const bundleSha = sha(bundleBytes);
   const v = manifest.ModVersion, who = manifest.ModAuthor;
