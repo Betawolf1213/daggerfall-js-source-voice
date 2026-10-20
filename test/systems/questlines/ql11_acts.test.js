@@ -166,6 +166,7 @@ test('QL11 THE SWEEP, both ways: every kind has a producer in src/; every produc
     'rite-broken': ['src/net/gate/gateClaims.js'],
     'serpent-slain': ['src/net/serpent/serpentClaims.js'],
     'ship-struck': ['src/scenes/naval/navalHost.js'],
+    'star-held': ['src/net/starfall/starClaims.js'],   // STAR8: a fallen star's receipt the service counted (STAR7's carrier - test/net/starfall/star7_claims.test.js)
     'star-taken': ['src/net/firmament/firmamentBook.js'],
     'valkynaz-felled': ['src/scenes/eliteGates/egClient.js'],
     'wood-chopped': ['src/scenes/treeHost.js', 'src/systems/foraging/foragingInstall.js'],
@@ -195,7 +196,7 @@ test('QL11 the kinds: ACT_IDS is the leaf\'s keys, frozen; each kind lower-case 
   assert.ok(Object.isFrozen(ACT_KINDS) && Object.isFrozen(ACT_IDS));
   for (const k of ACT_IDS) assert.match(k, /^[a-z]+(-[a-z]+)*$/, k);
   for (const k of ACT_IDS) assert.ok(typeof ACT_KINDS[k] === 'string' && ACT_KINDS[k].length > 0, `${k} has its family`);
-  assert.equal(ACT_IDS.length, 23);
+  assert.equal(ACT_IDS.length, 24);   // PIN MOVED (STAR8): and star-held, a fallen star held
   assert.ok(!Object.hasOwn(ACT_KINDS, 'wagon-hauled'), 'no feature sells a wagon\'s load (qlActs.js says why)');
   assert.ok(Object.hasOwn(ACT_KINDS, 'valkynaz-felled'), 'the Weir Road\'s third step waits on it');
 });

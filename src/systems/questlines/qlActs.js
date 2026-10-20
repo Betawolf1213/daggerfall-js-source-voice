@@ -49,6 +49,7 @@ export const ACT_KINDS = Object.freeze({
   'valkynaz-felled': 'endgame',   // a Valkynaz's Redoubt taken in an Elite Breach
   'hour-broken': 'endgame',   // the Brass Remnant broken in the Shattered Hour
   'serpent-slain': 'endgame',   // the Sea Serpent slain
+  'star-held': 'endgame',   // a fallen star held through its master's fall (the Starfall - STAR8)
 });
 export const ACT_IDS = Object.freeze(Object.keys(ACT_KINDS));
 

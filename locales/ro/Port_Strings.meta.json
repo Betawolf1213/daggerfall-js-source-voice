@@ -24130,8 +24130,8 @@
   "by": "claude-in-session"
  },
  "ql.journal.stepWitnessedTitle": {
-  "en": "63a853bda2fc",
-  "tr": "7b3b92db2608",
+  "en": "ebbb8c12d6e5",
+  "tr": "08eb33fffc88",
   "by": "claude-in-session"
  },
  "ql.journal.take": {
@@ -24374,6 +24374,11 @@
   "tr": "c9dd314d70e8",
   "by": "claude-in-session"
  },
+ "ql.line.needs.starfall": {
+  "en": "651e2789e125",
+  "tr": "7ed23b3dc2e6",
+  "by": "claude-in-session"
+ },
  "ql.line.oldCoil": {
   "en": "8a6c94f071be",
   "tr": "0cd01f908089",
@@ -24417,6 +24422,21 @@
  "ql.line.stalled": {
   "en": "c95d7bec1a17",
   "tr": "4b149658972f",
+  "by": "claude-in-session"
+ },
+ "ql.line.thirteenthFrostfall": {
+  "en": "d43ecb689b96",
+  "tr": "25e1207a29c4",
+  "by": "claude-in-session"
+ },
+ "ql.line.thirteenthFrostfall.giver": {
+  "en": "a1a66c0cb59e",
+  "tr": "a9b46fd796ce",
+  "by": "claude-in-session"
+ },
+ "ql.line.thirteenthFrostfall.lead": {
+  "en": "8ab02fe9f268",
+  "tr": "f1f3aad45209",
   "by": "claude-in-session"
  },
  "ql.line.weirRoad": {
@@ -24607,6 +24627,26 @@
  "ql.step.QLOC03": {
   "en": "49ffff09e1e4",
   "tr": "05e4022919f6",
+  "by": "claude-in-session"
+ },
+ "ql.step.QLTF01": {
+  "en": "a2c4138820a1",
+  "tr": "d0d3784b2097",
+  "by": "claude-in-session"
+ },
+ "ql.step.QLTF02": {
+  "en": "d9b508799f29",
+  "tr": "cc2ee4a40170",
+  "by": "claude-in-session"
+ },
+ "ql.step.QLTF03": {
+  "en": "c8c516bd6b91",
+  "tr": "186fee90af5a",
+  "by": "claude-in-session"
+ },
+ "ql.step.QLTF04": {
+  "en": "4d9acc9fc951",
+  "tr": "c424a73f3305",
   "by": "claude-in-session"
  },
  "ql.step.QLWR01": {

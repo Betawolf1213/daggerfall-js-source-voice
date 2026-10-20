@@ -279,6 +279,9 @@ claiming no line of the shipped corpus (`test/systems/questlines/ql4_actions.tes
   "Welcome to the family"), the refusal says the story in a message of its own (1903 - L0A01L00, P0A01L00, B0B70Y14,
   B0B70Y16, B0B50Y11, A0C01Y03).
 - `ql name _person_ <Given_Name>` - a questline giver by their own name (Ysolde Marnhel wrote the breach's book).
+  `ql name _foe_ <Name> [female|male]` names a Foe the same way, and the gender word sets a class enemy's (DFU's Foe.cs
+  SetFoeName rolls a class foe 55% male; a gender on a monster is refused with a warning) - the Starfall's Spinner and
+  her Sisters (`11-Multiplayer/Starfall.md` section 7, STAR8).
 
 AS BUILT: the design's `ql reward` was not needed. GivePc's own moment reaches the layer for every reward a script pays
 (`questReward`: the gold scaled by the outcome the quest's state holds then, before a party's split - AUDIT QUESTLINES
@@ -409,7 +412,8 @@ bare-named task); they are the QUESTLINES row's Ledger B list.
 
 Each line names its lore as `Elite-Gates.md` section 3 does: **canon** (UESP and Daggerfall's own data), and **the
 port's own**, said so wherever it is said. A line is DATA (`qlLines.js` QL_LINES): its steps' quests and titles, its lead
-and giver, its tier, and when it OPENS - a level, another line finished, online. Its steps are scripts on DFU's machine
+and giver, its tier, and when it OPENS - a level, another line finished, online, a live event running (`opens.event`,
+STAR8). Its steps are scripts on DFU's machine
 (`src/systems/questlines/quests/<QUEST>.txt`, read by the one loader - `scenes/quest/questData.js`'s glob) with a sheet
 each (`sheets/questlines.json`), stamped as every quest is. A step's title is its quest's DisplayName in English, the
 pins holding the two to one word.
@@ -572,6 +576,21 @@ online (10) - each step waits, saying so ("Opens with Loot rarity on.", "Opens a
 **The work that is already work** - bounties, writs, harbour contracts, revenant errands, caravans - stays its own
 system; the window's rail already holds its rows.
 
+### 4.6 THE THIRTEENTH OF FROSTFALL (`thirteenthFrostfall`, tier 3, level 6, online, the Starfall's - STAR8)
+
+Morwen of Glenmoril, a witch of Hircine's coven. A line of its own group (`festival`) that opens only while the Starfall
+runs (`opens.event: 'starfall'`), its star steps waiting outside it, and the window drawing it outside its event only
+once begun (UI-Calm's law). Canon: the Witches' Festival on the 13th of Frostfall, the Glenmoril Witches, the Sisters of
+the Bluff. The port's own: the fallen stars and the covens' thread. The whole of it is `11-Multiplayer/Starfall.md`
+section 7.
+
+| Step | What the player does | Witness |
+|---|---|---|
+| QLTF01 Music in the Woods | hold a fallen star (`ql act star-held 1`); reach the Glenmoril Coven | star |
+| QLTF02 The Coven on the Bluff | slay the Spinner at the Coven on the Bluff and take her spindle; unwind a length (`unwound`, greater pay) or give it whole (`wound`, the Glenmoril Witches +3) | |
+| QLTF03 Three Stars | hold three more stars (`ql act star-held 3`) - the line's title, Starwarden | stars3 |
+| QLTF04 What the Thread Is Worth | burn the spindle (`burned`, the Glenmoril Witches +10, "Morwen's Hunt-Charm"), sell it to the Mages Guild (`guild`, greater pay, "Starglass Rod") or take it to Arkay's priests (`temple`, the Order of Arkay +5, "Thread-Cutter") | |
+
 ## 5. The rewards (AS BUILT - `src/systems/questlines/qlRewards.js`)
 
 ### 5.1 The tier
@@ -635,8 +654,8 @@ the holder's own stamp reads it at the receipt (AUDIT QUESTLINES REWARD-1: it wa
 
 Weir Keys and titles are the account service's (`Wallet.md`, `Sigil-Sets.md`). QL pays them through one module,
 `server-account/src/questlines.js` (`claimQl`), and one route, `POST /v1/ql/claim { line, step, phase, choice? }`, behind
-a session. The law both ends share is `src/net/questlineClaims.js`: `QL_SERVICE_LINES` names the five lines the service
-pays (the Cycle's three, the Hour, the Old Coil), each witnessed step's kind, the title and the step that pays it, and the
+a session. The law both ends share is `src/net/questlineClaims.js`: `QL_SERVICE_LINES` names the six lines the service
+pays (the Cycle's three, the Hour, the Old Coil, the Thirteenth of Frostfall - STAR8), each witnessed step's kind, the title and the step that pays it, and the
 Covens' Hoard's key. An end of a step it pays nothing is answered `{ why: 'unpaid' }`; a guest's end `{ why: 'guest' }`,
 nothing paid - and on the client a line the service pays opens only for a registered account (section 4, LINES-2).
 
@@ -660,7 +679,8 @@ nothing paid - and on the client a line the service pays opens only for a regist
 - **The witnesses.** `rite` a Dagon's Breach's rite broken (`gate_kills`, the rite's row or a fighter's two embers);
   `breach` a Dagon's Breach closed (a kill's row); `redoubt` an Elite Breach's Redoubt taken, `redoubts3` three, and
   `valkynaz` a Valkynaz's Redoubt (`eg_redoubts`, every fifth; never a Rehearsal's); `hour` an Hour broken (`sd_kills`);
-  `serpent` the Sea Serpent slain (`serpent_kills`). The Covens' Hoard's last step has no receipt of its own: it is
+  `serpent` the Sea Serpent slain (`serpent_kills`); `star` a fallen star held, `stars3` three (`stars_held`, the
+  Starfall's - STAR8). The Covens' Hoard's last step has no receipt of its own: it is
   witnessed once the Burning Doors is witnessed whole - its title, Doorwarden, held on the account (AUDIT QUESTLINES
   SERVICE-4: it read the breach step alone, so a direct client had the key with no rite broken).
 - **A title once an account, for good** (AUDIT QUESTLINES SERVICE-8, LINES-22: this said "once a character" - the titles
@@ -668,9 +688,10 @@ nothing paid - and on the client a line the service pays opens only for a regist
   on `players.ql_titles`, laid on the claim of its `titleAt` step once that step and every witnessed step before it are
   done - asked on each of those claims, so a line witnessed out of order still pays it when its last step lands.
   Doorwarden (the Burning Doors), Covenbane (the Covens' Hoard, at its end), Weirwalker (the Weir Road), Witness of the
-  Hour (the Hour) and Satakal's Witness (the Old Coil) - the badge's words (`ui/playerBadge.js` TITLE_TEXT; the vocabulary
+  Hour (the Hour), Satakal's Witness (the Old Coil) and Starwarden (the Thirteenth of Frostfall, at its three stars -
+  STAR8) - the badge's words (`ui/playerBadge.js` TITLE_TEXT; the vocabulary
   spells the last two `hourwitness` and `satakalwitness` - AUDIT QUESTLINES SERVICE-9, DOC-2: this named them by those
-  keys); the relay knows them from world228 (`src/net/identityToken.js` TITLES; world222 on the branch, renumbered past main's at the merges). A title paid is the house's
+  keys); the relay knows them from world228 (`src/net/identityToken.js` TITLES; world222 on the branch, renumbered past main's at the merges), Starwarden from the Starfall's relay (STAR8). A title paid is the house's
   HONOUR-BANNER and a HUD line, as every title grant is (AUDIT QUESTLINES SERVICE-7: it was a HUD line alone). A title
   step's later end answers the line's title HELD (`titleHeld`) where this claim did not lay it, and the runner tells it
   only for a claim an earlier attempt of which went unanswered - offline, a timeout, a 5xx, or an end a load asks again
@@ -790,6 +811,7 @@ gear only for the quests whose page says so (UI-4). Every string through `t()`, 
 | **QL5-QL10 THE WAVES** | 248 sheets in fourteen families; the 66 flagship branches | `ql1_sheets` (the sets exact) |
 | **QL11 THE ACTS** | the acts feed, its kinds and their producers | `ql11_acts` |
 | **QL12-QL16 THE QUESTLINES** | the registry and runner; thirty-five scripts in thirteen lines; the service's claim and its titles and key; `QUESTLINES_OPEN` | `ql12_lines`, `ql12_claim` |
+| **STAR8 THE THIRTEENTH OF FROSTFALL** | the Starfall's line: four scripts, `opens.event`, the `starfall` need, `star-held`, the `star`/`stars3` witnesses, Starwarden, `ql name` for a foe (section 4.6; `11-Multiplayer/Starfall.md` section 7) | `star8_frostfall`, `ql12_claim` |
 | **AUDIT QUESTLINES** (2026-10-19) | eight lanes' 151 findings, each fixed, decided or left and said (`01-Overview/audits/Audit-Questlines.md`) | `ql1_law`, `ql3_rewards`, `ql4_flow`, `ql2_pause`, and the audit's pins in every file above |
 
 ## 10. The owner's calls (taken at the record's defaults - "Develop this all")

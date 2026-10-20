@@ -17,7 +17,7 @@
 // dropped after five minutes left a step no deed could witness). An end the service has not witnessed is the step's
 // `unseen` in the window: a later deed's receipt witnesses it. The line moves on the client's own quest either way: the
 // service pays, it does not gate.
-import { QL_LINES, lineById, lineStepOf, lineOpens, opensWords, witnessOf, lineServiceOf, unmetNeeds } from './qlLines.js';
+import { QL_LINES, lineById, lineStepOf, lineOpens, opensWords, witnessOf, lineServiceOf, unmetNeeds, eventHolds } from './qlLines.js';
 import { QL_SERVICE_LINES, qlStepClaimed } from '../../net/questlineClaims.js';
 import { questlinesOn } from './qlLaw.js';
 import { t } from '../textManager.js';
@@ -26,16 +26,22 @@ import { getPref } from '../uiPrefs.js';
 import { KINGS_GAMBIT_KEY } from '../features.js';
 import { modSetting } from '../modSettings.js';
 import { revenantHeld } from '../revenant/revenant.js';
+import { starfallRuns } from '../../net/starfall/starfallLaw.js';   // STAR8: the Witches' Festival's stars falling
+import { liveEventNow } from '../../net/liveEventNow.js';   // STAR8: the hub's live event, as last said
 
 /** AUDIT QUESTLINES ACTS-2, LINES-3, LINES-6: WHAT A STEP'S DEED NEEDS, read where the game reads it - Loot rarity's own
  *  switch (a socket, a reforge refuse 'off' without it), The King's Gambit's (no table offers the game), the sea's
  *  (scenes/world.js navalOn: the Naval Combat row and Come Sail Away's own switch), and the Renown a revenant comes at
- *  (revenant.js revenantHeld - online, below it none rises). A step that needs what is off waits, saying so. */
+ *  (revenant.js revenantHeld - online, below it none rises). STAR8: and the Starfall - the hub's live event (the leaf
+ *  net/liveEventNow.js, which the hub socket writes) under the Festival's word inside its dated window, at `nowMs` (the
+ *  runner's clock), exactly as the starfall host reads it (scenes/starfall/starfallHost.js). A step that needs what is
+ *  off waits, saying so. */
 export const NEED_CHECKS = Object.freeze({
   lootRarity: () => lootRarityOn(),
   kingsGambit: () => !!getPref(KINGS_GAMBIT_KEY),
   naval: () => getPref('naval') !== false && (() => { try { return modSetting('come-sail-away', 'Enabled') !== false; } catch { return false; } })(),
   renown: () => !revenantHeld(),
+  starfall: (/** @type {number} */ nowMs) => starfallRuns(nowMs, liveEventNow()),
 });
 
 /** The game seconds a line waits between one step's end and the next step's start - an hour of the character's time,
@@ -75,7 +81,7 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
   const now = () => ctx.nowSeconds?.() ?? 0;
   /** A registered account signed in: never a guest's (AUDIT QUESTLINES LINES-2). */
   const registered = () => !!service && !service.guest?.();
-  const need = (n) => { try { return !!NEED_CHECKS[n]?.(); } catch { return false; } };
+  const need = (n) => { try { return !!NEED_CHECKS[n]?.(nowMs()); } catch { return false; } };
   const probe = { level, online, registered, need, lineDone: (id) => !!lines[id]?.done };
 
   /** The step's quest on the machine (by name) - running, or scheduled for the next tick - or null. */
@@ -226,8 +232,9 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
      */
     rows() {
       // AUDIT QUESTLINES UI-14 (decision 1): offline, a line that can only begin online is not drawn - one begun shows,
-      // "Continues online"
-      return QL_LINES.filter((l) => lines[l.id] || !l.opens.online || online()).map((l) => {
+      // "Continues online". STAR8 (UI-Calm's law): nor a seasonal line not begun outside its event - one begun shows, and
+      // says what it waits for
+      return QL_LINES.filter((l) => lines[l.id] || ((!l.opens.online || online()) && eventHolds(l, probe))).map((l) => {
         const rec = lines[l.id];
         const stepQuest = rec && !rec.done ? runningStep(l.steps[rec.step]?.quest) : null;
         const shelved = stepQuest?.shelvedAt != null;

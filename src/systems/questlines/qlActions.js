@@ -29,8 +29,13 @@
 //                                                                   names a Person only from its name banks or FACTION.TXT's
 //                                                                   individuals; underscores are spaces. Said first in the
 //                                                                   start-up, before the talk shows the person.
+//   ql name _foe_ <Name> [female|male]                              STAR8: a quest's FOE by its own name, every one of it
+//                                                                   (a coven's Spinner, its sisters), and a class foe's
+//                                                                   gender, where SetFoeName rolls both (Foe.cs:271-296).
 import { ActionTemplate } from '../quest/actions.js';
 import { Symbol as QuestSymbol } from '../quest/symbol.js';
+import { GENDERS } from '../../characters/nameHelper.js';   // STAR8: a foe's gender, named
+import { isClassEnemyId } from '../../characters/enemy/enemyBasics.js';
 import { isStamped, isEnding } from './qlLaw.js';
 import { sheetFor } from './qlSheets.js';   // AUDIT QUESTLINES BRANCH-10: an outcome is one its quest's sheet has
 
@@ -210,7 +215,12 @@ export class QlPaid extends ActionTemplate {
 }
 
 /** `ql name _person_ <Name>` - the person's name, the script's own (underscores read as spaces); saved with the person
- *  (quest/person.js's `displayName`), so a load keeps it. A symbol that is no person warns and is done. */
+ *  (quest/person.js's `displayName`), so a load keeps it. STAR8: or a foe's - `ql name _foe_ <Name> [female|male]`, the
+ *  name every one of it wears and, a class foe, the gender it stands as (DFU's Foe.cs SetFoeName rolls a humanoid's at
+ *  55% male: the Coven on the Bluff's Spinner and her sisters are its women); saved with the foe (quest/foe.js's
+ *  `displayName`, `humanoidGender`). A person's gender is its own line's (`Person ... female`), and a monster stands as
+ *  DFU stands every monster: a gender word for either warns and is not taken. A symbol that is neither warns and is
+ *  done. */
 export class QlName extends ActionTemplate {
   static typeName = 'QlName';
   constructor(parentQuest) {
@@ -218,21 +228,32 @@ export class QlName extends ActionTemplate {
     /** @type {any} */
     this.personSymbol = null;
     this.given = '';
+    /** STAR8: `female`, `male`, or '' (none named) */
+    this.gender = '';
   }
-  get saveShape() { return [['personSymbol', 'sym'], ['given']]; }
-  get pattern() { return /^\s*ql name (?<sym>_[a-zA-Z0-9_.]+_) (?<given>[A-Za-z][A-Za-z'_-]{0,47})\s*$/; }
+  get saveShape() { return [['personSymbol', 'sym'], ['given'], ['gender']]; }
+  get pattern() { return /^\s*ql name (?<sym>_[a-zA-Z0-9_.]+_) (?<given>[A-Za-z][A-Za-z'_-]{0,47})(?: (?<gender>female|male))?\s*$/; }
   createNew(source, parentQuest) {
     const match = this.test(source);
     if (!match) return null;
     const action = new QlName(parentQuest);
     action.personSymbol = new QuestSymbol(match.groups.sym);
     action.given = match.groups.given.replace(/_/g, ' ');
+    action.gender = match.groups.gender ?? '';
     return action;
   }
   update(_caller) {
+    const sym = this.personSymbol?.original ?? this.personSymbol?.name;
     const person = this.parentQuest.getPerson?.(this.personSymbol);
+    const foe = person ? null : this.parentQuest.getFoe?.(this.personSymbol) ?? null;
     if (person) person.displayName = this.given;
-    else console.warn(`[questlines] ql name: no person ${this.personSymbol?.original ?? this.personSymbol?.name}`);
+    if (foe) {
+      foe.displayName = this.given;
+      foe.namePending = false;
+      if (this.gender && isClassEnemyId(foe.foeType)) foe.humanoidGender = this.gender === 'female' ? GENDERS.Female : GENDERS.Male;
+    }
+    if (!person && !foe) console.warn(`[questlines] ql name: no person ${sym}`);
+    else if (this.gender && !(foe && isClassEnemyId(foe.foeType))) console.warn(`[questlines] ql name: ${sym} takes no gender here`);
     this.setComplete();
   }
 }

@@ -132,6 +132,7 @@ export const TITLE_TEXT = Object.freeze({
   weirwalker: 'Weirwalker',                // the Weir Road
   hourwitness: 'Witness of the Hour',      // the Hour That Was Not
   satakalwitness: "Satakal's Witness",     // the Old Coil
+  starwarden: 'Starwarden',                // STAR8: the Thirteenth of Frostfall
 });
 
 /** WB9g (2026-09-30, Mac: "an animated burning ground aura that circles the ground where your character stands"): AN
@@ -359,6 +360,9 @@ export const TITLE_RGBA = Object.freeze({
   weirwalker: Object.freeze([0.122, 0.373, 1, 1]),           // #1f5fff
   hourwitness: Object.freeze([0.678, 0.647, 0.188, 1]),      // #ada530
   satakalwitness: Object.freeze([0.071, 0.722, 0.722, 1]),   // #12b8b8
+  // STAR8: the STARWARDEN - a falling star's streak at its deepest violet (render/starfall/starfallPass.js's fall), redder
+  // than the Protector's blue and bluer than the Aegis's purple; the beacon's pale violet is the WikiMaid's lilac's
+  starwarden: Object.freeze([0.471, 0.314, 1, 1]),           // #7850ff
 });
 
 /** SHADOW-FANG: A TITLE DRAWN AS A GRADIENT - its stops, RGBA 0..1, left
