@@ -64,14 +64,14 @@ import { layoutLocation } from '../world/locationLayout.js';
 import { legalRepOf } from '../systems/court.js';
 import { LivingTown } from '../systems/livingWorld/livingTown.js';
 import { livingWorldOn } from '../systems/livingWorld/livingSwitch.js';
-import { LPT_CROWNS } from '../world/lptCrowns.js';
+import { LPT_CROWNS, LPT_TRUNKS } from '../world/lptCrowns.js';   // FB1020c TRUNK-FIT: and each prototype's trunk at the ground
 import { LPT_SCALE_MAX, lptVariety } from '../world/lowPolyTrees.js';
 import { JUNGLE_ARCHIVE, JUNGLE_MEASURES, JUNGLE_SPECIES, jungleCover } from '../world/jungle/jungleModels.js';
 import { JUNGLE } from '../world/terrain/jungleNature.js';   // AUDIT BANTHA1 PERF-5: the storeys' scales   // BANTHA1: the jungle's trees, their measures and their cover
 import { JUNGLE_SCALE_MAX, JUNGLE_SUN_LIFT } from '../systems/jungleTreesAssets.js';
 /** AUDIT BANTHA1 TREE-1: a pixel's cover stood this many proxies at a time, the stream breathing between. */
 const COVER_SLICE = 2048;
-import { lptFitCap, natureReach, pathTileMask, vergeClear } from '../world/road/roadVerge.js';
+import { lptFitCap, lptTrunkCap, natureReach, pathTileMask, vergeClear } from '../world/road/roadVerge.js';   // FB1020c TRUNK-FIT: lptTrunkCap
 import { makeBuildingKey } from '../systems/talk/talkTopics.js';
 import { makeCityGate } from '../world/city/cityGate.js';
 import { markRemapLaw, remapAsked, remapLawOf, remapSubMeshes, reskinRemap } from '../world/texRemap.js';
@@ -129,6 +129,18 @@ export function createPixelBuild(host) {
    */
   async function standFlatGroups(g, { batches, forestGroups, coverItems, lptHandles, lptGroups }) {
     let lptPathMask = null;   // LPT-FIT: the pixel's path tiles, made at its first fitted tree
+    // FB1020c TRUNK-FIT: THE PIXEL'S SOLID THINGS, measured before any tree is stood - a fountain, a well, a crate, a statue:
+    // PROP-BODIES' own bodies (world/propBodies.js flatBody, each foot off its own picture) of every flat of no nature
+    // archive (rmbFlats.js isNatureArchive - a block's own tree is no solid thing, nor a rock of its scenery). Asked first
+    // because the groups meet in the order the pixel's flats were stood, a town's fountain after a tree it stands by; each
+    // at naturePicture's `plain` (the record's own: Seasons of the Iliac Bay re-skins the nature archives alone).
+    const solids = [];
+    for (const [k, centers] of g.groups) {
+      const [archive, record] = k.split('_').map(Number);
+      if (isNatureArchive(archive)) continue;
+      const t = await getTexture(archive);
+      if (record < t.recordCount) solids.push(...flatBodies(t, archive, record, billboardSize(t, record), centers));
+    }
     for (const [k, centers] of g.groups) {
       await breather.breathe();   // PERF-EXT23: a flat group a breath - its texture is a cached promise, a microtask, and gave no frame back
       const [archive, record] = k.split('_').map(Number);
@@ -153,11 +165,15 @@ export function createPixelBuild(host) {
         // its root has from the pixel's roads, tracks and streets (world/road/roadVerge.js lptFitCap): its crown, turned
         const crown = verges ? (LPT_CROWNS[lpt.key] ?? 0) : 0;
         if (crown > 0 && !lptPathMask) lptPathMask = pathTileMask(g.tilemap, g.paths);
-        const fit = crown > 0 ? new Float32Array(centers.length) : null;
+        const trunk = LPT_TRUNKS[lpt.key] ?? 0;   // FB1020c TRUNK-FIT: its trunk where it meets the ground (world/lptCrowns.js)
+        const fit = crown > 0 || (trunk > 0 && solids.length) ? new Float32Array(centers.length) : null;
         centers.forEach((c, i) => {
           wild[i] = g.wild.has(`${k}#${i}`) ? 1 : 0;
           const v = lptVariety(g.px, g.py, c[0], c[2], !wild[i]).scale;
           if (fit) fit[i] = lptFitCap(lptPathMask, g.vergeNet, g.px, g.py, c[0], c[2], crown, v);
+          // FB1020c TRUNK-FIT (world/road/roadVerge.js lptTrunkCap): a location's tree no wider than its trunk's room to the
+          // pixel's solid things - the wild's stand clear of the sites' by their own placing (FOREST1's clearings, VERGE1)
+          if (fit && !wild[i]) fit[i] = Math.min(fit[i], lptTrunkCap(solids, c[0], c[2], trunk, v));
           scales[i] = (fit ? Math.min(v, fit[i]) : v) / LPT_SCALE_MAX;
         });
         lptGroups.push({ h: lptHandles.length - 1, centers, wild, fit });
