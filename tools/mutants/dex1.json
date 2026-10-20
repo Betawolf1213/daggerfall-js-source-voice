@@ -108,5 +108,45 @@
   "tests": [
    "test/systems/enemyExpansion/dex1_registry.test.js"
   ]
+ },
+ {
+  "name": "AUDIT-DEX-A6-the-door-unasked",
+  "file": "src/systems/textManager.js",
+  "old": "    for (const fn of _customEnemyNameText) {\n      const name = fn(id);",
+  "new": "    for (const fn of []) {\n      const name = fn(id);",
+  "why": "getLocalizedEnemyName asks no mod for a custom enemy's name in the player's language: a Lizard Man is \"Lizard Man\" in German",
+  "tests": [
+   "test/systems/enemyExpansion/dex1_registry.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-A6-the-names-unregistered",
+  "file": "src/systems/enemyExpansion/dexInstall.js",
+  "old": "  _dropNameText = registerCustomEnemyNameText(dexEnemyNameText);",
+  "new": "  _dropNameText = null;",
+  "why": "the install hands the text manager no name of the fifty: every language reads the mod's English",
+  "tests": [
+   "test/systems/enemyExpansion/dex1_registry.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-A6-the-door-kept-after-reset",
+  "file": "src/systems/enemyExpansion/dexInstall.js",
+  "old": "  _dropNameText?.();\n",
+  "new": "",
+  "why": "the mod's reset lets its names' door stand: a reset game still names the fifty",
+  "tests": [
+   "test/systems/enemyExpansion/dex1_registry.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-A6-an-English-not-the-mod-s",
+  "file": "src/systems/enemyExpansion/dexNames.js",
+  "old": "  258: () => t('dex.enemy.lizardMan', 'Lizard Man'),",
+  "new": "  258: () => t('dex.enemy.lizardMan', 'Lizardman'),",
+  "why": "the catalog's English drifts from the mod's Name column: under English the HUD reads a name the mod never wrote",
+  "tests": [
+   "test/systems/enemyExpansion/dex1_registry.test.js"
+  ]
  }
 ]

@@ -169,11 +169,16 @@ run once from `scenes/shared.js` right after Roleplay & Realism's install (its e
   none, as an unnamed kind throws none, until a slice gives them families.
 - King's Gambit's roster takes a monster below 128 or one of its ranged classes, by its own rule - with both mods
   loaded in DFU its roster has none of the mod's either.
-- *The fifty names are English in every language* (AUDIT DEX A6) - as in DFU, whose text provider answers a custom
-  enemy's name with the mod's own (BestiaryTextProvider.GetCustomEnemyName) and whose enemyNames lists have no row
-  past the classic ids (`textManager.js` getLocalizedEnemyName answers the fallback). The HUD's death line, a quest's
-  foe and the troll's recovery line show them so. A translatable table of a mod's names is a slice of its own (the
-  English catalog is read off the code's `t()` calls, and these are a table's).
+- *The fifty names are in the player's language* (AUDIT DEX A6; Mac, 2026-10-20: "We need to make everything
+  compatible. No if ands or vutts"). DFU's text provider answers a custom enemy's name with the mod's own English
+  (BestiaryTextProvider.GetCustomEnemyName), and its enemyNames lists have no row past the classic ids, so a Goblin is
+  "Goblin" in every language there. Here `enemyExpansion/dexNames.js` names each of the fifty through `t()`
+  (`dex.enemy.*`, each English the mod's Name column - the test holds them equal) and the install hands that to the
+  text manager's door for a mod's names (`textManager.js` registerCustomEnemyNameText, getLocalizedEnemyName's custom
+  arm): the HUD's "You see" and death lines, a quest's foe, a soul's name and the troll's recovery line read the
+  player's language. Every language carries a draft (the 25 tables, `claude-in-session`). The game's own English -
+  the quest Foes table's keys, the save, `enemyDisplayName` - is the table's, unchanged. A departure: Ledger A, the
+  DEX row.
 
 Tests: `test/systems/enemyExpansion/dex1_registry.test.js` (the reading column by column, the C#'s slips kept - a new
 class's attack sound written to its bark - the careers' tolerances and attack modifiers read back, Enum.Parse's rules,

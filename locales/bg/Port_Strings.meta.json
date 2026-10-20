@@ -8054,6 +8054,256 @@
   "tr": "2a9d4778e118",
   "by": "claude-in-session"
  },
+ "dex.enemy.archerRider": {
+  "en": "684bf52c59e7",
+  "tr": "13b5dd3c9bcf",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.bat": {
+  "en": "acdf41b2a875",
+  "tr": "a024467e982c",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.bloodSpider": {
+  "en": "15ffad5bd573",
+  "tr": "4c032283db74",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.boar": {
+  "en": "30efd20f542c",
+  "tr": "598df890bce4",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.bountyHunter": {
+  "en": "e5826ada69c0",
+  "tr": "97c3ef417f42",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.centurionSphere": {
+  "en": "4e3bbaa03154",
+  "tr": "2b12c5981f6b",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.darkSlayer": {
+  "en": "028f0235643f",
+  "tr": "301017bda623",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.direGhoul": {
+  "en": "ce50003528ba",
+  "tr": "52b52c4b22a9",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.dog": {
+  "en": "b866865be01a",
+  "tr": "7e82e7f000f7",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.dremoraChurl": {
+  "en": "1f3623c18bbc",
+  "tr": "332b43ac72b3",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.druid": {
+  "en": "cd770cb0f159",
+  "tr": "3aece036e2b3",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.fadedGhost": {
+  "en": "c34b5547499b",
+  "tr": "9a5ed6e0935b",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.fireDaemon": {
+  "en": "004a8846d228",
+  "tr": "7d2dbe274bd6",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.ghoul": {
+  "en": "24caf6ba794c",
+  "tr": "2bb5530cd895",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.gloomWraith": {
+  "en": "8a1bb237990c",
+  "tr": "5454ff429e86",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.goblin": {
+  "en": "42a2711c8294",
+  "tr": "e33788c0301f",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.grotesque": {
+  "en": "26786499dd60",
+  "tr": "92457c751bc1",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.guard": {
+  "en": "6e66568583d1",
+  "tr": "35c8b8484df1",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.hellHound": {
+  "en": "e726f143b79d",
+  "tr": "7607f615272c",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.homunculus": {
+  "en": "c24357c5350a",
+  "tr": "f70e614aa710",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.iceGolem": {
+  "en": "11d3a8c51aec",
+  "tr": "8599a64eb4ed",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.ironGolem": {
+  "en": "baa4025efb7a",
+  "tr": "003ba1fa142f",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.knightRider": {
+  "en": "b68974d915d3",
+  "tr": "67b9c2bfa831",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.landDreugh": {
+  "en": "43bf6dd66192",
+  "tr": "97586f779b82",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.lizardMan": {
+  "en": "2f3a97599992",
+  "tr": "852d4028b1c9",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.lizardWarrior": {
+  "en": "ae7adf345efd",
+  "tr": "bf0b98881d11",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.medusa": {
+  "en": "6fd5c64a2968",
+  "tr": "9c28f87329fc",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.minotaur": {
+  "en": "25ea2b23d54b",
+  "tr": "b609a56c44d5",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.mountainLion": {
+  "en": "64b8937b72e9",
+  "tr": "1f8d4aae14a2",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.mudcrab": {
+  "en": "6ce0989ba9ca",
+  "tr": "a97ec9e14c06",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.necromancerAcolyte": {
+  "en": "f948efbf677e",
+  "tr": "37c9d2842f3e",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.necromancerAssassin": {
+  "en": "91ec473d7e4e",
+  "tr": "fa28ef2bf4cd",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.necromancerGlaivier": {
+  "en": "1a8b19cbdcf1",
+  "tr": "f9836defa074",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.nymph": {
+  "en": "2038c841b564",
+  "tr": "a2d30dea70b8",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.ogre": {
+  "en": "105bd2ca28e3",
+  "tr": "8bf20e5fb40f",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.rogueDruid": {
+  "en": "ff594fbde147",
+  "tr": "fd8891752aaa",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.rogueRider": {
+  "en": "44e662099a70",
+  "tr": "043f2f74f8a9",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.royalKnight": {
+  "en": "03100d8eb83d",
+  "tr": "fc0ca592ec5d",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.scamp": {
+  "en": "cb5d5daae07b",
+  "tr": "9a9cd1a8dc70",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.skeletalSoldier": {
+  "en": "c9c150a7a5ab",
+  "tr": "fb174a9e98d8",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.snowWolf": {
+  "en": "37758df3bc0d",
+  "tr": "5478bdae150c",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.spellswordRider": {
+  "en": "45120d037b3a",
+  "tr": "dfecbdf500d4",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.steamCenturion": {
+  "en": "baf884650a43",
+  "tr": "d0317010489d",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.stoneGolem": {
+  "en": "4ed1cc58bc62",
+  "tr": "42941bc21c18",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.thiefRider": {
+  "en": "2e96aea26226",
+  "tr": "ce7e5b8c1932",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.troll": {
+  "en": "a21d79cdae32",
+  "tr": "b004ccff9ea3",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.vengefulKingLysandus": {
+  "en": "d2f3029dbace",
+  "tr": "05eda296a8a7",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.willOWisp": {
+  "en": "aa2a93bc4d4c",
+  "tr": "db1ceab06d96",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.witchDefender": {
+  "en": "69e5436f84a9",
+  "tr": "71d851733377",
+  "by": "claude-in-session"
+ },
+ "dex.enemy.wolf": {
+  "en": "5b7c6cb41497",
+  "tr": "f67899c4c293",
+  "by": "claude-in-session"
+ },
  "dex.troll.recovered": {
   "en": "e4f67980089d",
   "tr": "9de71567ee4b",

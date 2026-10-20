@@ -6,7 +6,7 @@
 // LOADED FOR THE GAME, AS DFU LOADS A MOD (modSettings.js latchModLoaded): the switch is read here, once, and the
 // mod's doors read the latch - a switch flipped mid-game waits for the next load, as the tile says.
 //   ALWAYS (whatever the switch): the fifty enemies join the table, their careers the custom career registry, their
-//     names the text provider, their pictures the texture door (DEX2, dexSprites.js) and their Morrowind bodies the
+//     names the text provider (and the player's language's - AUDIT DEX A6, dexNames.js), their pictures the texture door (DEX2, dexSprites.js) and their Morrowind bodies the
 //     body doors (DEX7, dexBodies.js). In DFU a disabled mod registers nothing - and a game saved with a Goblin in it
 //     and loaded with the mod off finds no row for it; here the row is still there and nothing that is the mod's
 //     reaches it (no table rolls it, no quest names it, no hook of the mod's runs), so the save loads and the world is
@@ -28,6 +28,8 @@ import { loadMonsterCareer, loadClassCareer, registerMintRowEditor } from '../..
 import { addIntoQuestTables } from '../quest/tables.js';
 import { modSetting, latchModLoaded, modLatchedOn } from '../modSettings.js';
 import { installDexSprites } from './dexSprites.js';   // DEX2: the fifty's pictures, whatever the switch
+import { dexEnemyNameText } from './dexNames.js';   // AUDIT DEX A6: the fifty's names in the player's language
+import { registerCustomEnemyNameText } from '../textManager.js';
 import { installDexBodies } from './dexBodies.js';   // DEX7: the fifty's Morrowind bodies, whatever the switch
 import { registerFoeGhost } from '../../characters/enemy/foeLook.js';   // DEX2: the Transparent property's ghost shader
 import { registerSpellRecordsAsset } from '../spell/standardSpells.js';   // DEX4a: its SpellRecords.json, merged into the standard list
@@ -121,6 +123,7 @@ function editedClassicRow(id, row, read) {
 export const dexClassicRow = (id, row) => editedClassicRow(id, row, dexRead());
 
 let _installed = false;
+let _dropNameText = null;
 /** BestiaryMod.Start, once per page. `on` is the switch as this load reads it (the test seam). Answers what loaded. */
 export function installEnemyExpansion({ on = modSetting(DEX_VENDOR, 'Enabled') === true, log = consoleLog } = {}) {
   if (_installed) return { loaded: dexLoaded(), enemies: _read?.enemies.size ?? 0 };
@@ -136,6 +139,7 @@ export function installEnemyExpansion({ on = modSetting(DEX_VENDOR, 'Enabled') =
     registerCustomCareerTemplate(id, { name: spec.name, load: careerLoader(spec) });
   }
   registerEnemyRows(rows);
+  _dropNameText = registerCustomEnemyNameText(dexEnemyNameText);   // AUDIT DEX A6: and in the player's language (the port's own door)
   registerCustomEnemyName((id) => read.enemies.get(id)?.props.name || null);
   installDexSprites();   // DEX2: their pictures on the texture door, and the xml's scales
   installDexBodies();   // DEX7: their Morrowind bodies - a creature's, a person's, or the sprite's
@@ -196,6 +200,8 @@ export function _resetEnemyExpansion() {
   _replacedAssigner = undefined;
   for (const id of _read ? _read.enemies.keys() : []) delete ENEMY_BASICS[String(id)];
   _careers.clear();
+  _dropNameText?.();
+  _dropNameText = null;
   _read = null;
   _installed = false;
 }

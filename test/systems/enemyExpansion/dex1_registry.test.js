@@ -26,6 +26,8 @@ import { KG_ROSTER, makeUnit } from '../../../src/net/kingsGambit.js';
 import { loadQuestTables, foesTable, addIntoQuestTables, _resetExtraQuestRows } from '../../../src/systems/quest/tables.js';
 import { adaptBlowClass } from '../../../src/systems/revenant/revenantFeud.js';   // AUDIT DEX A2
 import { MOBILE_TYPES } from '../../../src/characters/mobile/mobileTypes.js';
+import { DEX_ENEMY_NAME_TEXT } from '../../../src/systems/enemyExpansion/dexNames.js';   // AUDIT DEX A6
+import { getLocalizedEnemyName, parseStringTableCsv, patchLocaleTable, setLocale, clearLocaleTables } from '../../../src/systems/textManager.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const ARENA2 = process.env.ARENA2_PATH;
@@ -182,6 +184,26 @@ test('DEX1 the install: the fifty in the table, a career each, DFU\'s entity typ
   assert.equal(enemyDisplayName(256), 'Goblin'); assert.equal(enemyDisplayName(275), 'Vengeful King Lysandus');
   assert.equal(customCareerTemplate(258).name, 'Lizardman');
   assert.equal(dexEnemyIds().length, 50);
+});
+
+test('AUDIT DEX A6 the fifty names in the player\'s language: each is the mod\'s own English under English, the language\'s draft under another, and the game\'s own English (the Foes table\'s keys, enemyDisplayName) is untouched; a classic id and an id no mod names keep DFU\'s answer', (t) => {
+  t.after(() => { setLocale('en'); clearLocaleTables('de'); _resetEnemyExpansion(); clearCustomEnemies(); _resetMintRowEditors(); _resetExtraQuestRows(); });
+  installEnemyExpansion({ on: false, log: silent });
+  const ids = dexEnemyIds();
+  assert.deepEqual(Object.keys(DEX_ENEMY_NAME_TEXT).map(Number), ids, 'one translatable name for each of the fifty, and none for an id the mod does not add');
+  for (const id of ids) {
+    assert.equal(DEX_ENEMY_NAME_TEXT[id](), enemyDisplayName(id), `${id}: the catalog's English is the mod's Name column`);
+    assert.equal(getLocalizedEnemyName(id, 'fallback'), enemyDisplayName(id), `${id}: under English the HUD reads the mod's own`);
+  }
+  patchLocaleTable('de', 'Port_Strings', parseStringTableCsv(readFileSync(join(ROOT, 'locales/de/Port_Strings.csv'), 'utf8')));
+  setLocale('de');
+  assert.equal(getLocalizedEnemyName(258, 'fallback'), 'Echsenmensch', 'the Lizard Man in German');
+  assert.equal(getLocalizedEnemyName(275, 'fallback'), 'Rachsüchtiger König Lysandus');
+  assert.equal(enemyDisplayName(258), 'Lizard Man', 'the game\'s own English stays (the quest Foes table is keyed by it)');
+  assert.equal(getLocalizedEnemyName(4, 'Grizzly Bear'), 'Grizzly Bear', 'a classic id reads DFU\'s enemyNames list, as before (no pack: the fallback)');
+  assert.equal(getLocalizedEnemyName(300, 'fallback'), 'fallback', 'an id no mod names: the fallback');
+  _resetEnemyExpansion();
+  assert.equal(getLocalizedEnemyName(258, 'Lizard Man'), 'Lizard Man', 'the door goes with the mod\'s registrations');
 });
 
 test('AUDIT DEX A5 the reading\'s reachable arms: a caster that shoots keeps both ranged attacks (the Necromancer Assassin), a classic class that starts with a ranged attack keeps it under the mod (the Monk); A2 a blow\'s class asks the class bit', (t) => {
