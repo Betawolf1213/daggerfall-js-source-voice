@@ -23,7 +23,9 @@ FESTIVAL).
 - `FESTIVAL_OPEN` in `server-account/wrangler.toml` (`off`, `dev`, `on`) shuts the finds, the sales, the set-outs, the
   fills and the takes; a bowl can always be taken in, and a town then shows each caller its own offerings alone. The
   client reads the switch off the service's answers (`open`) and says why it does not play: `offline`, `guest` (a guest is
-  told to link an account) or `closed` (`festivalShut`).
+  told to link an account) or `closed` (`festivalShut`). What the service last said is its account's alone: another
+  account signed in reads every count unknown until its own answer (`festivalState`), and a count no answer has said is
+  unknown, never a known nought.
 
 ## Soul Cakes
 
@@ -56,8 +58,10 @@ never rolled: nothing is kept to ask again.
 ## The Wyrd Sister
 
 A witch of the Glenmoril Wyrd stands beside a tavern's door wherever one side of it is clear (FLATS.CFG's "mysterious
-woman", 179.2 - the covens' own, dressed; her own picture under the Morrowind people too), named by her office. A press
-opens her window (`ui/wyrdWindow.js`, the Broker's house): the cakes held, the festival's last day, and four parts; a row
+woman", 179.2 - the covens' own, dressed, her glamour and all: the young woman and the crone in turn, as Daggerfall's
+covens show her; her own picture under the Morrowind people too), named by her office. A press opens her window
+(`ui/wyrdWindow.js`, the Broker's house): the cakes held, the festival's last day, why it cannot trade here (offline, a
+guest, shut - said at its head before a press asks it), and four parts, an earned row's count `?` until heard; a row
 pressed shows its card beside the list (on a phone, brought into view), and the window looks again every
 `WYRD_WATCH_MS` at what no answer says (the relay back, a night come).
 
@@ -143,8 +147,9 @@ region's people):
 Daggerfall's own flats (TEXTURE.210's lights, 100's bones) beside three painted for the festival
 (`world/festivalArt.js`: the turnip lantern, the straw effigy, the ward-staff). A house's step piece is chosen by its town
 and its key - the same houses on every machine. A spot is taken only on the town's ground (inside its blocks, off the water
-family DFU's people never walk - `dryGround`), where no wall stands between it and the door, and a pace from every flat
-and person the town already stands. A door faces where its own normal says (the build keeps it beside the door's corners -
+family DFU's people never walk - `dryGround`), where no wall stands between it and the door, where nothing stands under it
+above the street (a house's plinth or its steps, lower than the rays across - looked down on at its middle and at its edge
+nearest the door), and a pace from every flat and person the town already stands. A door faces where its own normal says (the build keeps it beside the door's corners -
 a door on its box's middle line once faced into its building, one in seven). The dressing breathes between buildings
 (PERF7 - `witchesDressingBreathing`). The pieces are logged with the block's own flats
 (`scenes/pixelBuild.js`): they batch, stand solid, light the street at night (a fire is a hearth) and keep through a

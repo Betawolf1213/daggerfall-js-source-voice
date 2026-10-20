@@ -601,5 +601,75 @@
       "test/systems/festival/witch1_wares.test.js"
     ],
     "note": "The enhanced card says nothing of a Soul Cake or a Hearth Offering - the classic box alone tells what either is for."
+  },
+  {
+    "name": "WITCH1-AUDIT-G1-no-look-down",
+    "file": "src/world/witchesDecor.js",
+    "old": "    for (const [x, z] of [xz, [xz[0] + (tx / tl) * r, xz[1] + (tz / tl) * r]]) if (blocked([x, floorY + S.downFrom, z], [x, floorY + S.lip, z])) return false;",
+    "new": "    for (const [x, z] of []) if (blocked([x, floorY + S.downFrom, z], [x, floorY + S.lip, z])) return false;",
+    "tests": [
+      "test/world/witch1_decor.test.js"
+    ],
+    "note": "G1: a spot is never looked down on - a turnip lantern sunk in a house's plinth."
+  },
+  {
+    "name": "WITCH1-AUDIT-G1-middle-only",
+    "file": "src/world/witchesDecor.js",
+    "old": "    for (const [x, z] of [xz, [xz[0] + (tx / tl) * r, xz[1] + (tz / tl) * r]]) if (",
+    "new": "    for (const [x, z] of [xz]) if (",
+    "tests": [
+      "test/world/witch1_decor.test.js"
+    ],
+    "note": "G1: only the middle looked down on - a foot's edge on the plinth."
+  },
+  {
+    "name": "WITCH1-AUDIT-G1-lip-at-the-street",
+    "file": "src/world/witchesDecor.js",
+    "old": "downFrom: 1.2, lip: 0.08,",
+    "new": "downFrom: 1.2, lip: -0.01,",
+    "tests": [
+      "test/world/witch1_decor.test.js"
+    ],
+    "note": "G1: the look reaches the street itself - every spot refused where the ground is in the collider."
+  },
+  {
+    "name": "WITCH1-AUDIT-G2-a-nought-known",
+    "file": "src/ui/wyrdWindow.js",
+    "old": "    const heard = Number.isSafeInteger(have);",
+    "new": "    const heard = true; have = have ?? 0;",
+    "tests": [
+      "test/systems/festival/witch1_wares.test.js"
+    ],
+    "note": "G2: an unheard count shown as a known nought (0/25)."
+  },
+  {
+    "name": "WITCH1-AUDIT-G2-the-reason-unsaid",
+    "file": "src/ui/wyrdWindow.js",
+    "old": "    const told = note ?? (s.shut ? { ok: false, text: festivalRefusalText(s.shut) } : null);",
+    "new": "    const told = note;",
+    "tests": [
+      "test/systems/festival/witch1_wares.test.js"
+    ],
+    "note": "G2: why the window cannot trade said only once a press asks it."
+  },
+  {
+    "name": "WITCH1-AUDIT-G2-another-accounts-state",
+    "file": "src/systems/festival/festivalClient.js",
+    "old": "export const festivalState = () => (_stateOf === festivalAccount() ? _state : UNHEARD);",
+    "new": "export const festivalState = () => _state;",
+    "tests": [
+      "test/systems/festival/witch1_client.test.js"
+    ],
+    "note": "G2: another account signed in reads the last one's counts."
+  },
+  {
+    "name": "WITCH1-AUDIT-G2-learned-onto-anothers",
+    "file": "src/systems/festival/festivalClient.js",
+    "old": "  if (who !== _stateOf) { _state = UNHEARD; _stateOf = who; }",
+    "new": "  if (who !== _stateOf) { _stateOf = who; }",
+    "tests": [
+      "test/systems/festival/witch1_client.test.js"
+    ],
+    "note": "G2: an answer laid over another account's state - its wares kept."
   }
 ]

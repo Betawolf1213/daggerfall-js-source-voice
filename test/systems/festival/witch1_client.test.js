@@ -246,3 +246,18 @@ test('WITCH1 THE RESTACK: the pack\'s Soul Cakes one stack of the count, or none
   assert.equal(items.length, 1);
   assert.equal(restackSoulCakes(items, -1), false);
 });
+
+test('WITCH1 THE STATE IS ITS ACCOUNT\'S: unheard, every count unknown (never a known nought); heard, the account\'s; another account signed in hears none of it until its own answer (AUDIT WITCH1 G2)', async () => {
+  const alice = { ok: true, data: { cakes: 7, bowls: 1, wares: ['title:witchwarden'], given: 4, taken: 2, offerings: [], open: true } };
+  const { api } = fakeApi({ mine: () => (api.me() === 'acct-bob' ? { ok: true, data: { cakes: 2 } } : alice) });
+  assert.deepEqual([festivalState().cakes, festivalState().given, festivalState().taken], [null, null, null], 'unheard');
+  bind(api);
+  await refreshFestival();
+  assert.deepEqual([festivalState().cakes, festivalState().given, festivalState().taken, festivalState().wares], [7, 4, 2, ['title:witchwarden']]);
+  store.set(SESSION_KEY, JSON.stringify({ secret: 'other', id: 'acct-bob', name: 'Bob', kind: 'linked' }));
+  assert.deepEqual([festivalState().cakes, festivalState().given, festivalState().wares], [null, null, []], 'Bob is told nothing of Alice\'s');
+  await refreshFestival();
+  assert.deepEqual([festivalState().cakes, festivalState().given, festivalState().wares], [2, null, []], 'his own answer heard - none of hers under it');
+  seat();
+  assert.equal(festivalState().cakes, null, 'and Alice back hears nothing of his');
+});

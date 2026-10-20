@@ -102,12 +102,13 @@ export function witchCulture(/** @type {number|null|undefined} */ climateIndex, 
 }
 
 /** Where the pieces stand from a door - metres: a door pair beside each jamb and a pace out, the Wyrd Sister and the
- *  show piece further along and out, a step's piece close by its jamb; the heights a wall is looked for at; and the room
- *  kept round what the town stands (`clear`, a pace) and between the dressing's own pieces (`near`). */
+ *  show piece further along and out, a step's piece close by its jamb; the heights a wall is looked for at, and the
+ *  height a spot is looked down from to the lip over the street (`downFrom`, `lip`: a plinth or a step lower than the
+ *  rays); and the room kept round what the town stands (`clear`, a pace) and between the dressing's own pieces (`near`). */
 export const WITCH_SPOTS = Object.freeze({
   pairAlong: 0.45, pairOut: 0.5, sisterAlong: 1.3, sisterOut: 1.6, showAlong: 2.6, showOut: 1.7, stepAlong: 0.45, stepOut: 0.45,
   offeringAlong: 0.55, offeringOut: 0.55, offeringFarOut: 1.4, offeringR: 0.5,
-  rayFrom: 0.35, rayHeights: Object.freeze([0.5, 1.2]), clear: 0.35, near: 0.1,
+  rayFrom: 0.35, rayHeights: Object.freeze([0.5, 1.2]), downFrom: 1.2, lip: 0.08, clear: 0.35, near: 0.1,
 });
 
 /** The foot a flat or a person the town already stands keeps, and the Wyrd Sister's own - metres; and the cells what
@@ -233,7 +234,8 @@ function* dressTown(/** @type {DressedTown} */ { frames, taverns = [], temples =
   };
   for (const p of taken) if (p && Number.isFinite(p[0]) && Number.isFinite(p[2])) file(p[0], p[2], TAKEN_R, S.clear);
   const flats = [], sisters = [];
-  /** Whether a spot is clear for a foot `r`: on the ground, no wall from the door's front to it, a pace from what stands. */
+  /** Whether a spot is clear for a foot `r`: on the ground, no wall from the door's front to it, nothing under it above
+   *  the street, a pace from what stands. */
   const clear = (/** @type {any} */ front, /** @type {number[]} */ xz, /** @type {number} */ r) => {
     if (!ground(xz[0], xz[1])) return false;
     const gx = Math.floor(xz[0] / GRID_M), gz = Math.floor(xz[1] / GRID_M);
@@ -247,6 +249,10 @@ function* dressTown(/** @type {DressedTown} */ { frames, taverns = [], temples =
     const from = front.spot(0, S.rayFrom), fromY = Math.max(floorY, Number.isFinite(front.foot) ? front.foot : floorY);
     const dx = xz[0] - from[0], dz = xz[1] - from[1], l = Math.hypot(dx, dz) || 1;
     for (const h of S.rayHeights) if (blocked([from[0], fromY + h, from[1]], [xz[0] + (dx / l) * r, floorY + h, xz[1] + (dz / l) * r])) return false;
+    // and looked down on at its middle and at its edge nearest the door, so a piece never stands sunk in a house's plinth
+    // or its steps, which the rays pass over (AUDIT WITCH1 G1: a turnip lantern half in a Daggerfall house's base)
+    const tx = front.c[0] - xz[0], tz = front.c[1] - xz[1], tl = Math.hypot(tx, tz) || 1;
+    for (const [x, z] of [xz, [xz[0] + (tx / tl) * r, xz[1] + (tz / tl) * r]]) if (blocked([x, floorY + S.downFrom, z], [x, floorY + S.lip, z])) return false;
     return true;
   };
   const stand = (/** @type {any} */ front, /** @type {any} */ p, /** @type {number} */ s, /** @type {number} */ o) => {
