@@ -393,9 +393,12 @@ const clone = (v) => (v === null || typeof v !== 'object' ? v : JSON.parse(JSON.
 
 /** Apply ops (diffJson's) to a deep copy of `base`. `resolve(ref)`
  *  answers a copy op's source - `{ block, path }`, a node of a classic
- *  block's JSON (the patch never carries what it can point at). */
-export function patchJson(base, ops, resolve = null) {
-  let root = clone(base);
+ *  block's JSON (the patch never carries what it can point at).
+ *  WD-OWNED (2026-10-20, bible/07-Rendering/Performance-Priority.md WD-OWNED): `owned` - the base is the caller's
+ *  own, a plain JSON tree made for this patch and held nowhere else - is laid on in place: its copy would be itself
+ *  (a JSON round trip changes no plain tree), and a pack's 7,727 town files each copied one at the boot. */
+export function patchJson(base, ops, resolve = null, { owned = false } = {}) {
+  let root = owned ? base : clone(base);
   for (let op of ops) {
     if (op[0] === 'ci' || op[0] === 'cs') {
       if (!resolve) throw new Error('world-data patch: a copy op and no resolver');
