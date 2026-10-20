@@ -96,6 +96,8 @@ import { weaponSkillUsed } from '../../characters/weapons.js';
 import { friendlyProtected } from '../../combat/playerWeapon.js';
 import { careerTolerance, EFFECT_FLAGS } from '../spellcast.js';
 import { KNIGHT_CITY_WATCH } from '../../characters/mobile/mobileTypes.js';
+import { hallowedFoe } from '../festival/festivalFoes.js';   // WITCH1: the Wyrd's Raiment's Tallow-Ward - the dead and the summoned
+import { HARVEST_TEXT } from '../festival/festivalWords.js';   // WITCH1: Soul Harvest's words, in the player's language
 import { healthShare } from '../../combat/healthShare.js';   // FIELD BUGS 2026-10-18f RELAY-SHARE: a body's share of its health, the one law
 import {
   wornSets, setsAwake, RAMPAGE_SECONDS, RAMPAGE_STACKS, CLEAVE_METRES, WRATH_BELOW, NOVA_METRES, WRATH_SECONDS,
@@ -121,6 +123,7 @@ const fresh = () => ({
   hourReady: 0, hourHeal: 0,          // SD9d: the Brass of Numidium (6) - its recovery, and the heal its save owes
   armed: -1, lastCost: 0,             // EG15: the Battlemage's Panoply (4) - the element my next blow carries (-1 none), the last spell's cost
   reprieve: 0, reprieveUntil: 0, reprieveReady: 0,   // EG15: the Panoply (6) - the shield's points left, its window, its recovery
+  harvestReady: 0,                    // WITCH1: the Wyrd's Raiment (6) - Soul Harvest's recovery
   spireHeld: new Map(),               // EG15: THE SPIRE'S RECOVERY - a death save spent in a breach, `key -> the breach`, held to its next Redoubt
   recovering: new Set(),              // the powers whose "ready again" is still to be said
 });
@@ -179,6 +182,8 @@ export function setFold(entity) {
   if (brass) { add(m().resist, 'magic', brass.magic); add(m().resist, 'shock', brass.shock); }
   const bearing = t.get('panoply')?.[0];   // EG15: Battlemage's Bearing - every resistance, and the maximum magicka
   if (bearing) { for (const el of RESIST_ELEMENTS) add(m().resist, el, bearing.resist); m().magicka += bearing.magicka; }
+  const sight = t.get('wyrd')?.[0];   // WITCH1: Wyrd-Sight - Willpower, and the magic resistance no piece of the set carries
+  if (sight) { add(m().stats, 'willpower', sight.willpower); add(m().resist, 'magic', sight.magic); }
   return mods ?? EMPTY_MODS;
 }
 
@@ -239,6 +244,8 @@ export function setBlow(weapon, damage, attacker, target, info) {
   if (orcs?.[1]) pct += orcs[1].stack * bloodStacks(now);   // RAID4b: Blood for Blood
   const coil = t.get('coilscale');
   if (coil?.[1]) pct += coil[1].stack * coilStacksAt(target, now);   // SERPENT-SET: Constrict, at that foe's own coil (AUDIT 625 P3)
+  const ward = t.get('wyrd')?.[1];
+  if (ward && hallowedFoe(target)) pct += ward.more;   // WITCH1: Tallow-Ward - the dead and the summoned
   const disc = t.get('panoply')?.[1];
   if (disc && weapon && _s.armed >= 0) { pct += disc.armed * elementShare(target, _s.armed); if (keep) _s.armed = -1; }   // EG15: Battlemage's Discipline - the next weapon blow alone, whatever its element does to this foe
   let out = damage;
@@ -722,6 +729,15 @@ export function setKill(entity = null) {
   if (entity && _s.marked === entity) _s.markUntil = 0;   // AUDIT SETS L1: the marked foe's own death ends its mark (its chip counted on over a body)
   if (entity) _s.coils.delete(entity);   // SERPENT-SET: a coiled foe's death ends its coil (AUDIT 625 P3: its own - every other foe keeps theirs)
   if (t.get('thieftaker')?.[2]) markNext(door, entity, now);
+  const harvest = t.get('wyrd')?.[2];
+  if (harvest && me && now >= _s.harvestReady) {   // WITCH1: Soul Harvest - the kill's soul sent home, as health and magicka
+    _s.harvestReady = now + harvest.recover;
+    _s.recovering.add('harvest');
+    healMine(me, ((me.maxHealth ?? 0) * harvest.heal) / 100);
+    manaMine(me, ((me.maxMagicka ?? 0) * harvest.heal) / 100);
+    say(HARVEST_TEXT.proc(harvest.heal));
+    sound('harvest');
+  }
   const hide = t.get('orcsbane')?.[2];
   if (hide && now >= _s.wardReady) {   // RAID4b: Iron Hide - a fresh ward, never one on top of another
     _s.ward = hide.ward;
@@ -771,6 +787,7 @@ const READY = Object.freeze({
   shed: { at: () => _s.shedReady, line: 'Shed Skin is ready again.', set: 'coilscale', tier: 2 },   // SERPENT-SET
   hour: { at: () => _s.hourReady, line: 'The Hour Turns is ready again.', set: 'numidium', tier: 2 },   // SD9d
   reprieve: { at: () => _s.reprieveReady, line: 'Battlemage\'s Reprieve is ready again.', set: 'panoply', tier: 2 },   // EG15
+  harvest: { at: () => _s.harvestReady, get line() { return HARVEST_TEXT.ready(); }, set: 'wyrd', tier: 2 },   // WITCH1
 });
 export function setRound(entity) {
   if (!entity?.isPlayer || entity.peer || !_s.recovering.size) return;
@@ -820,6 +837,7 @@ export function setPowerStates(now = _now()) {
     // and recovery, and the death saves the Spire holds to its next Redoubt
     armed: _s.armed, reprieve: now < _s.reprieveUntil ? _s.reprieve : 0, reprieveLeft: now < _s.reprieveUntil && _s.reprieve > 0 ? left(_s.reprieveUntil) : 0,
     reprieveRecoverLeft: left(_s.reprieveReady), redoubt: Object.keys(SPIRE_SAVES).filter(spireHeld),
+    harvestRecoverLeft: left(_s.harvestReady),   // WITCH1: Soul Harvest's recovery
   };
 }
 
@@ -861,6 +879,8 @@ export function setHudChips(entity, now = _now()) {
     if (st.reprieve) out.push({ key: 'reprieve', set: 'panoply', name: 'Reprieve', text: String(st.reprieve), state: 'active' });
     else if (st.reprieveRecoverLeft || held.has('reprieve')) out.push({ key: 'reprieve', set: 'panoply', name: 'Reprieve', text: wait('reprieve', st.reprieveRecoverLeft), state: 'recovering' });
   }
+  // WITCH1: Soul Harvest's recovery, while it recovers
+  if (t.get('wyrd')?.[2] && st.harvestRecoverLeft) out.push({ key: 'harvest', set: 'wyrd', name: HARVEST_TEXT.name(), text: time(st.harvestRecoverLeft), state: 'recovering' });
   return out;
 }
 

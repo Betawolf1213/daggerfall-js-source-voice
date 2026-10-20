@@ -389,7 +389,7 @@ test('QL12 THE ROUTE (AUDIT FIVE-ASKS A1\'s lesson): /v1/ql/claim is listed, beh
 });
 
 test('QL12 THE VOCABULARY: the five join TITLES last, in QL_TITLES\' order; a registered row holds each by its bit and a guest none; their words; their colours - each its own, more than 40 from every title\'s; a title\'s loot banner (mutants: the order; the guest; a word)', () => {
-  assert.deepEqual(TITLES.slice(-5), [...QL_TITLES]);
+  assert.deepEqual(TITLES.slice(-7, -2) /* PIN MOVED (WITCH1): Witchwarden and Hearthkeeper joined the list last */, [...QL_TITLES]);
   assert.deepEqual([...QL_TITLES], ['doorwarden', 'covenbane', 'weirwalker', 'hourwitness', 'satakalwitness']);
   for (const t of QL_TITLES) {
     assert.deepEqual(titlesHeld({ handle: 'Mac', ql_titles: qlTitleBit(t) }, {}), [t], `${t} by its bit alone`);

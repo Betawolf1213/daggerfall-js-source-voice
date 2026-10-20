@@ -298,6 +298,7 @@ import { createFleetHost } from './fleetHost.js';   // HOLDINGS: the Fleet page'
 import { createQuayPool } from './quayPool.js';   // QUAYS: a harbour's quays, stood off its berths, and the gangways
 import { createLefayMonument } from './lefayMonumentHost.js';   // LEFAY1: the monument to Julian LeFay outside Privateer's Hold (HOLD-MONUMENT), and the flowers laid at it
 import { createMerchantYards } from './merchantYardsHost.js';   // MERCHANT-YARDS: every city's and town's Stable and Wagon Yard, and their trade
+import { createWitchesHost } from './witchesHost.js';   // WITCH1: the Witches' Festival in the streets - the Hearth Offerings, the Wyrd Sister's window, the festival's doors
 import { createPortHost, PORT_TEXT, stairRefusal, stairFeetY } from './portHost.js';   // SHIPYARDS: every port town's shipyard and lighthouse, their people, their press and the lamp - and the stair's refusals
 import { createShipyardHost } from './shipyardHost.js';   // SHIPYARDS: the shipmaster's window's host half
 import { createPassageHost } from './naval/passageHost.js';   // PASSAGE: a berth's friendly ship, booked and sailed
@@ -1309,6 +1310,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     else if (name === 'gear') audio.playOneShot(SD_HALL_SOUNDS.clunk, 1);   // SD9d: Gearward - the gear catching the blow (the Orrery's own clunk)
     else if (name === 'hour') audio.playOneShot(SD_HALL_SOUNDS.toll, 1);   // SD9d: The Hour Turns - the Hour's bell, turned back
     else if (name === 'reprieve') audio.playOneShotId(SPELL_CAST_SOUND[4], 1);   // EG15: Battlemage's Reprieve - a Shield spell's own cast (its element, Magic)
+    else if (name === 'harvest') audio.playOneShotId(SPELL_CAST_SOUND[2], 1);   // WITCH1: Soul Harvest - a drain's own cast, the witchfire's green
   } });
   // A1: THE TEXTURE SEASON IS THE CALENDAR'S, NOT A URL PARAM.
   // Every production site in the reference reads the world clock -
@@ -1676,6 +1678,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   let poiEditorLeave = null;   // AUDIT POI E14: its door out (mountPoiEditor's exit) - a death leaves it, read late as the editor is
   let merchantYards = null;   // MERCHANT-YARDS: the towns' Stables and Wagon Yards (scenes/merchantYardsHost.js), made beside the monument; read late as it is
   let portHost = null;   // SHIPYARDS: the port towns' shipyards and lighthouses (scenes/portHost.js), made beside the yards; read late as they are
+  let witches = null;   // WITCH1: the Witches' Festival in the streets (scenes/witchesHost.js), made before the modes host; read late as it is
   let wardenShows = null, wagonWarden = null;   // WARDEN1: the town watch's throws (scenes/wagon/wagonWardenShow.js) and its host (scenes/wagon/wagonWardenHost.js), made beside the yards; read late as they are
   const _bountyFarmLocs = [];   // BOUNTY-FARM: the game's own farmsteads - the nearest lends a farm bounty its buildings
   const _bountyDungeonPixels = new Map();   // BOUNTY1: the game's own dungeons, by pixel -> name, for a board's underground hunts
@@ -10777,6 +10780,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     (key) => lefay?.hoverName(key) ?? null,
     (key) => merchantYards?.hoverName(key) ?? null,   // MERCHANT-YARDS: a yard by its name and its keeper's, a horse or a wagon on show by its own
     (key) => portHost?.hoverName(key) ?? null,   // SHIPYARDS: a port's shipyard, crew hall and lighthouse by their names and keepers', and their rows
+    (key) => witches?.hoverName(key) ?? null,   // WITCH1: a Hearth Offering by its owner and its cakes, and its rows
     // PEER-PLAQUE1: another player, by the session's own name - the port's
     // own family (DFU has no other players), so it sits with the cart and
     // the camps ABOVE the mod's switch, as the names over heads already do.
@@ -29355,6 +29359,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // door its popup, every other way in its rule (scenes/instanceDoor.js). The room's key reads what the place was entered as
   const instanceDoor = createInstanceDoor({ online: () => onlineOn, instanceOk: () => !!(online?.instanceOk || chatLinks?.get('world')?.instanceOk), account: () => social?.acct ?? null, character: () => realmSession?.id ?? null,
     members: () => social?.others() ?? [], questMachine: () => questBridge?.machine ?? null, openOverlay: (w, onClosed) => townTalk.pushOverlay(w, onClosed), say: (l) => townTalk.say(l), wild: () => { const m = wildMapMask(), p = playerTravelPixel(); return !!m && wildInside(m, p.x, p.y); } });   // `wild`: inside the open zone nothing keeps an instance - its dungeons sealed, its halls the relay's to refuse
+  // WITCH1 (bible/06-Systems/Witches-Festival.md): THE WITCHES' FESTIVAL IN THE STREETS (scenes/witchesHost.js) - the town
+  // underfoot's Hearth Offerings stood at their doors, taken from and filled; the Wyrd Sisters' window; the finds' doors.
+  // The dressing and the Sisters themselves are the build's (scenes/pixelBuild.js, world/witchesDecor.js)
+  witches = createWitchesHost({ built, renderer, pipeline, onlineHomes, townTalk, state, player, saveSoon, chatNotice, mode: _mode, get online() { return online; } });
   // VAR, not const: the pointer and wheel listeners far above close over
   // this binding and are live before it is assigned, so it must exist
   // and read undefined rather than throw a TDZ ReferenceError. Every
@@ -30201,6 +30209,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     activateYard: (key, mode, verb) => merchantYards?.activate(key, mode, verb) ?? false,   // MERCHANT-YARDS: buy from a yard, or sell to it
     portTargets: () => portHost?.targets() ?? [],   // SHIPYARDS: the shipyards' people, boards and hulls, the lighthouses' keeper, door, hatch and lamp, in the street's one ray
     activatePort: (key, mode, verb) => portHost?.activate(key, mode, verb) ?? false,   // SHIPYARDS: the shipmaster's window on its page, the crew hall's, the tower's stair
+    witches,   // WITCH1: a Wyrd Sister's press and the Hearth Offerings', in the street's one ray (scenes/witchesHost.js)
     boardTargets: () => {
       const out = [];
       for (const p of built.values()) {
@@ -34109,6 +34118,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     try { poiEditor?.frame(); poiHost?.frame(); } catch (e) { console.warn('[poi] host', e?.message ?? e); }   // POI-3: the editor's drafts laid over the feed first   // POI-2: the approved POIs on the built pixels - stood, placed, collided; the feed asked each minute
     try { merchantYards?.frame(); } catch (e) { console.warn('[yards] the yards', e?.message ?? e); }   // MERCHANT-YARDS: each town's Stable and Wagon Yard stood where it is built
     portFrame();   // SHIPYARDS: each port town's shipyard and lighthouse stood where it is built, before the lights (its lamp)
+    witches?.frame();   // WITCH1: the town underfoot's Hearth Offerings stood, before the lights (their lanterns)
     // Lanterns on 17:00-08:00, flickering verbatim; pixel-local lights
     // placed under the current compensation, nearest 16 to the camera.
     // WOD2: the mod's lights burn at every hour and each carries its own

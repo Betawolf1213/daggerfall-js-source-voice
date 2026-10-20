@@ -1202,6 +1202,18 @@
    "has": "const lines = lampLines(Math.floor(worldMinutes() / MINUTES_PER_DAY));",
    "clock": "event",
    "why": "the lamp's words for the day (LAMP-KEEPER II)"
+  },
+  {
+   "file": "src/scenes/witchesHost.js",
+   "has": "const day = dayOfYearFromMinutes(Math.floor(skyMinutes()));",
+   "clock": "sky",
+   "why": "WITCH1: a night the dead walk - the sky's 13 Frostfall or 3 Hearth Fire, the day the service's own find reads (skyDayAt)"
+  },
+  {
+   "file": "src/scenes/witchesHost.js",
+   "has": "night: () => festivalNight(dayOfYearFromMinutes(Math.floor(skyMinutes()))),",
+   "clock": "sky",
+   "why": "WITCH1: the Wyrd Sister's window says the night the dead walk"
   }
  ]
 }

@@ -97,6 +97,7 @@ import { SKILLS } from './skills.js';
 import { SIGIL_POWER_MAX, SIGIL_BANDS } from './sigil/sigil.js';
 import { setPieceKind, setById, raidSetOf } from './sigil/sigilSets.js';   // AUDIT SET D6: the kinds a set counts, for the wire's cross-check
 import { EG_PANOPLY_IDS } from '../net/eliteGates/egPay.js';   // EG15: the nine ids the account service's sink sells by (pure, no imports)
+import { WYRD_PIECE_IDS } from '../net/festivalLaw.js';   // WITCH1: the nine ids the Wyrd Sisters sell by
 
 /** The tier's id, as `item.rarity` wears it. */
 export const AETHERIC = 'aetheric';
@@ -300,9 +301,37 @@ export const PANOPLY_SET_PIECES = Object.freeze([
   mithril('saber', 'The Spire-Saber', 'Weapons', 119, [t('damage'), t('stat', 'intelligence'), t('skill', SKILLS.LongBlade)],
     'Every Battlemage carried one into the Spire in 3E 398. Few carried one out.'),
 ]);
+// ── WITCH1: THE WYRD'S RAIMENT ──────────────────────────────────────
+/** WITCH1 (2026-10-20, bible/06-Systems/Witches-Festival.md): what the Glenmoril Wyrd wear to the Witches' Festival - nine
+ *  in the places' order (the seven body pieces, a round shield and a ONE-HANDED dagger, the Witchmoon Athame, so all nine
+ *  are worn at once), Elven, light enough for a caster. Every affix at the Legendary band's FLOOR and the Athame's blow
+ *  the raid sets' (a festival's wares, a town's thanks' measure - never a boss's). No magic resistance on any piece:
+ *  Wyrd-Sight, the 2-piece tier, carries it; one other element on one piece alone (the Regalia's AUDIT FINAL lesson). No
+ *  drop rolls it: a Wyrd Sister sells each by its id (wyrdPieceById, the festival's WYRD_PIECE_IDS). */
+const wyrd = (key, name, group, templateIndex, affixes, lore) => record(`wyrd-${key}`, name, group, templateIndex, 'wyrd', 'Elven', RAID_SET_POWER, affixes, lore);
+export const WYRD_SET_PIECES = Object.freeze([
+  wyrd('hood', "The Wyrd-Sister's Hood", 'Armor', 107, [a('armor'), a('stat', 'willpower'), a('skill', SKILLS.Mysticism)],
+    'Woven on the Glenumbra Moors, under both moons.'),
+  wyrd('right-mantle', 'Right Mantle of the Wyrd', 'Armor', 106, [a('armor'), a('stat', 'intelligence'), a('skill', SKILLS.Destruction)],
+    'Black feathers sewn to Elven plate. No bird of the Bay grew them.'),
+  wyrd('left-mantle', 'Left Mantle of the Wyrd', 'Armor', 105, [a('armor'), a('stat', 'willpower'), a('skill', SKILLS.Alteration)],
+    'Cut to lift a cauldron\'s lid, never to turn a blade. It turns both.'),
+  wyrd('robe', 'The Wyrdwoven Cuirass', 'Armor', 102, [a('armor'), a('stat', 'willpower'), a('stat', 'endurance')],
+    'Stitched with the names of every sister who wore it. The last line is blank.'),
+  wyrd('gloves', 'Gloves of the Gathering', 'Armor', 103, [a('armor'), a('stat', 'agility'), a('skill', SKILLS.Thaumaturgy)],
+    'They have dug roots by moonlight and come back clean.'),
+  wyrd('greaves', 'Greaves of the Moors', 'Armor', 104, [a('armor'), a('stat', 'speed'), a('resist', 'poison')],
+    'The bog lets go of nothing. It let go of these.'),
+  wyrd('boots', "Boots of the Witches' Road", 'Armor', 108, [a('armor'), a('stat', 'luck'), a('skill', SKILLS.Running)],
+    'They know the way to the gathering in the wilderness. Follow them.'),
+  wyrd('hearthward', 'The Hearth-Ward', 'Armor', 110, [a('armor'), a('stat', 'willpower'), a('resist', 'fire')],
+    'A ward of tallow is painted on its face. The dead do not walk past it.'),
+  wyrd('athame', 'The Witchmoon Athame', 'Weapons', 113, [a('damage'), a('stat', 'intelligence'), a('skill', SKILLS.ShortBlade)],
+    'Quenched in the light of both moons on the 13th of Frostfall.'),
+]);
 /** EVERY AETHERIC RECORD - the Regalia, then the raiding parties', then (SERPENT-SET) the Old Coil's, then (SD9d) the
- *  Walking Brass's, then (EG15) the Battlemages' - and the one every reader asks. */
-export const AETHERIC_RECORDS = Object.freeze([...REGALIA, ...RAID_SET_PIECES, ...SERPENT_SET_PIECES, ...NUMIDIUM_SET_PIECES, ...PANOPLY_SET_PIECES]);
+ *  Walking Brass's, then (EG15) the Battlemages', then (WITCH1) the Wyrd's - and the one every reader asks. */
+export const AETHERIC_RECORDS = Object.freeze([...REGALIA, ...RAID_SET_PIECES, ...SERPENT_SET_PIECES, ...NUMIDIUM_SET_PIECES, ...PANOPLY_SET_PIECES, ...WYRD_SET_PIECES]);
 export const aethericById = (id) => AETHERIC_RECORDS.find((r) => r.id === id) ?? null;
 registerAethericLore((item) => aethericById(item?.aetheric)?.lore ?? null);   // the card's last line, as a Legendary's
 /** A record's make as the item wears it: its material's id in its group's table. */
@@ -426,6 +455,12 @@ export function rollNumidiumPiece(rolls = Math.random) {
 export function mintPanoplyPiece(rolls = Math.random) {
   const n = PANOPLY_SET_PIECES.length;
   return mintAetheric(PANOPLY_SET_PIECES[Math.max(0, Math.min(n - 1, Math.floor(rolls() * n) || 0))]);
+}
+/** WITCH1, A WYRD SISTER'S SALE: the piece the festival names by its id (net/festivalLaw.js WYRD_PIECE_IDS), freshly
+ *  minted at Faint - null for any other id. */
+export function wyrdPieceById(id) {
+  const r = WYRD_PIECE_IDS.includes(id) ? aethericById(id) : null;
+  return r ? mintAetheric(r) : null;
 }
 /** EG15, THE SINK'S PIECE (the Broker's weekly sale of the buyer's choosing, the account service's `eg_sink`): the piece
  *  the pay law names by its id (net/eliteGates/egPay.js EG_PANOPLY_IDS), freshly minted - null for any other id. */
