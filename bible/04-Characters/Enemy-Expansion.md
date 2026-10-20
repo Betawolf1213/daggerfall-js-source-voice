@@ -60,7 +60,7 @@ The mod in DFU's terms (`BestiaryMod.cs`, cited below by line):
 | DEX1 | the enemy registry: rows past the classic 0-42 and 128-146, the careers, the classic replacements, the names, the quest foes | SHIPPED (section 5) |
 | DEX2 | the sprites on the texture door: a non-classic archive's real frame counts, the xml scales, the emission maps, NoShadow and the ghost shader by behaviour (DFU's own rows too) - section 6 | SHIPPED (the glow's light routed, Ledger C) |
 | DEX3 | the encounter tables in all four hosts: the dungeon's seeded choice, the water's, the climates' - on a door every reader asks, the climates' on PlayerGPS's events | SHIPPED (section 7) |
-| DEX4 | combat: the on-hit effects, spells 500-503 and the spellbook tables, the skeletal rule, groups and languages, forced gender, ranged | DEX4a SHIPPED (section 8: the spells, the spellbooks); DEX4b open (the hit's effects, the skeletal rule, groups and languages, forced gender) - ranged rode DEX1's rows |
+| DEX4 | combat: the on-hit effects, spells 500-503 and the spellbook tables, the skeletal rule, groups and languages, forced gender, ranged | SHIPPED - DEX4a (section 8: the spells, the spellbooks), DEX4b (section 9: the hit's effects, the skeletal rule, groups and languages, forced gender); ranged rode DEX1's rows |
 | DEX5 | the Troll's corpse: up again after ten seconds unless struck, saved with the game, the cheat | open |
 | DEX6 | DEX_RRICompat: the new classes equipped by their tables under Roleplay & Realism: Items | open |
 | DEX7 | the Morrowind bodies (section 4) | open |
@@ -292,4 +292,42 @@ Departures (Port-Ledger A, the DEX row):
 
 Tests: `test/systems/enemyExpansion/dex4a_spells.test.js` (the merge field for field, the list with ARENA2, the tables
 against the C#'s own arrays, the door, the install, the wire), mutants `tools/mutants/dex4a.json`.
+
+## 9. DEX4b - the hit's effects, the skeletal rule, groups and languages, the forced gender
+
+The mod's Start registers four FormulaHelper overrides (BestiaryMod.cs:183-186), and its OnLootSpawned handler forces
+a row's gender. `systems/enemyExpansion/dexCombat.js` holds them; each rides a door of DFU's own shape.
+
+- **OnMonsterHit** (`systems/diseases.js`). DFU's own asks `TryGetOverride("OnMonsterHit")` first and runs a mod's in
+  its place (FormulaHelper.cs:1265-1270); the port's does now. DFU's switch is nine arms - numbered as the mod's `OnHit`
+  column numbers them, the order its chain tests them in - and the mod's override is that switch become a chain
+  (:1477-1561): each arm taken where the attacker is its classic monster OR its row names the arm's number, in order.
+  So a classic GiantBat whose row named 1 would bite as the Rat, a Rat whose row named 3 stays the Rat. Arms 10-13 are
+  the mod's own, each readying a spell on the attacker: the Blood Spider's Blood Leech (500), the Gloom Wraith's
+  Silence (23), the Fire Daemon's Daemon Touch (501), the Will-o'-wisp's Wrack (502). The Lizard Man and Lizard
+  Warrior take the spider's touch (3), the Bat the giant bat's disease (2), the Nymph the fatigue (5), the Ghouls the
+  zombie's disease (7). The hosts' spider closure `castParalyze` is `readySpell(index)` - SetReadySpell for any
+  standard spell, as DFU's is.
+- **The Skeletal Warrior's rule** (`combat/formulas.js` isSkeletalTarget). The mod's CalculateWeaponAttackDamage is
+  DFU's body with one test widened: a row whose Affinity reads `Skeletal` (the Skeletal Soldier) takes the Skeletal
+  Warrior's blunt halving and silver doubling. The port takes the test as a door in the stock formula, so its own
+  terms (a weapon's modifiers, the blow modifiers) stand under the mod. PCAAO's core - on by default - runs its own
+  copy and never asks it, as DFU's PCAAO, replacing CalculateAttackDamage whole, never calls the overridden one.
+- **Groups and languages** (`combat/formulas.js` registerEnemyGroup, registerEnemyLanguage). The fifty's from their
+  rows - None included, over DFU's Etiquette for a class - and DFU's switch, which the C# restates, for every other.
+  A mod enemy's career index is its id, so the door keys on it.
+- **The forced gender** (`characters/mobile/mobileUnit.js` registerForcedGender). Over whatever the unit resolved,
+  after its DFRandom roll - never instead of it, so the stream moves as it did. Of 1.3.4 ten rows force one; each
+  draws one picture for both genders, so the voice is all it moves.
+
+Departures (Port-Ledger A, the DEX row):
+
+- **The forced gender picks the picture too.** DFU's unit chose its archive by the rolled gender before the handler
+  ran (a reload takes the forced one's); the port forces it where the unit resolves it. Every forced row of 1.3.4 has
+  one archive for both.
+
+Tests: `test/systems/enemyExpansion/dex4b_combat.test.js` (every arm told apart by its transcript, DFU's switch and the
+C#'s chain read off the vendored source, the mod's arms against BestiaryEnemySpells.cs, the override replacing the
+whole, the skeletal rule, the groups and languages, the gender over the roll, the install), mutants
+`tools/mutants/dex4b.json`.
 

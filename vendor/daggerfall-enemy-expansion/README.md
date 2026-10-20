@@ -176,3 +176,7 @@ through the texture door these register on, so neither draws the other's.
   foe's spawn (`src/systems/enemyExpansion/dexSpells.js`, through
   `src/systems/enemySpells.js`), a cast's spell index a u16 on the wire.
   Section 8.
+- **DEX4b** (2026-10-20): the combat hooks - OnMonsterHit's chain and the
+  four arms that ready the mod's spells, the Skeletal Warrior's rule for the
+  Skeletal Soldier, its fifty's groups and languages, the forced gender
+  (`src/systems/enemyExpansion/dexCombat.js`). Section 9.

@@ -198,7 +198,7 @@ import { applySpell, hasActiveEffect, isEntityWaterWalking, entityIsParalyzed, m
 import { tellSpellLanded } from '../systems/spell/spellPower.js';   // AUDIT SCHOOLS L2 F4: my spell on a stand-in of the court, told to the paths' riders
 import { liveStat, killIfAnyLiveStatZero, clampFatigue } from '../systems/statMods.js';   // AUDIT C&C N5: SetFatigue's clamp
 import { breathStep } from '../systems/breath.js';
-import { onMonsterHit, SPIDER_TOUCH_SPELL_INDEX } from '../systems/diseases.js';
+import { onMonsterHit } from '../systems/diseases.js';
 import { inflictPoison } from '../systems/poisons.js';
 import { exhaustionOutcome } from '../systems/rest/rest.js';
 import { restDecision, getPreventedRestMessage } from '../systems/rest/restSession.js';   // the scene-free open gate, one home   // ROAD-B B5: GetPreventedRestMessage
@@ -1515,7 +1515,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // shared DFRandom stream (== 0 male). The dungeon LAYOUT path never
     // rolled at all before this, so every random human class enemy
     // stood male; a monster stays unspecified and reads the male texture.
-    e.gender = MobileUnit.resolveGender(e.gender, basics);
+    e.gender = MobileUnit.resolveGender(e.gender, basics, e.mobileType);   // DEX4b: and a mod's forced gender over it
     // C17 THE HUMANOID PIVOT: class enemies (128+) render as classic
     // sprite mobiles too - the voxel foe rig goes ON ICE with the
     // voxel FP weapon (Mac's classic-visuals direction). The entity
@@ -7116,8 +7116,8 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       onMonsterHit: (att, tgt, hit) => onMonsterHit(att, tgt, hit, {
         currentDay: Math.floor(classicMinutesRef.value / MINUTES_PER_DAY), sinks: playerSinks,
         regionIndex: dfLocation?.regionIndex ?? -1,   // DISC10-D V3: PlayerGPS.CurrentRegionIndex underground is the dungeon's own region (VampirismInfection.cs:91)
-        castParalyze: () => {   // S19: spider/scorpion free-cast Spider Touch (66)
-          const sp = spellsByIndex?.get(SPIDER_TOUCH_SPELL_INDEX);
+        readySpell: (index) => {   // S19: SetReadySpell(spell, true) - the spider/scorpion's Spider Touch (66); DEX4b: a mod's riders' spells
+          const sp = spellsByIndex?.get(index);
           if (sp) castEnemySpell(f, sp, true);
         },
       }),

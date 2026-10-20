@@ -63,7 +63,7 @@ import { alignControllerToGround } from '../world/groundAlign.js';   // WOD3: Cr
 import { rand } from '../formats/dfRandom.js';
 import { setEnemyAlert } from '../systems/encounters.js';
 import { inflictPoison } from '../systems/poisons.js';
-import { onMonsterHit, SPIDER_TOUCH_SPELL_INDEX } from '../systems/diseases.js';   // AUDIT 24 (wave 30): the monster special-attack rider, above ground
+import { onMonsterHit } from '../systems/diseases.js';   // AUDIT 24 (wave 30): the monster special-attack rider, above ground
 import { MINUTES_PER_DAY, playerWeaponHitEntity, playerWeaponKillReported } from '../systems/worldTick.js';   // DISC10-D H1: OnWeaponHitEntity's one dispatcher
 import { FOES_MS } from '../net/online.js';   // AUDIT ALL B2: the watchman moved since the frame the striker swung at
 import { applyChampion, rollStreetChampion, championIndex, championName, properName } from '../systems/champions.js';   // LOOT7: the street's champions
@@ -515,7 +515,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       // NT2 (F210): GetTextureArchive's gender arm - a DFRandom draw off
       // the shared stream (Ledger A: a DFRandom site never rides the
       // injectable roll), humans only; monsters read the male texture.
-      const gender = MobileUnit.resolveGender(forcedGender ?? 'unspecified', basics);
+      const gender = MobileUnit.resolveGender(forcedGender ?? 'unspecified', basics, mobileType);   // DEX4b: and a mod's forced gender over it
       const behaviour = basics.behaviour ?? 'General';
       const archive = gender === 'female' ? basics.femaleTexture : basics.maleTexture;
       const tex = await getTexture(archive);
@@ -1236,8 +1236,8 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
         onMonsterHit: (att, tgt, hit) => onMonsterHit(att, tgt, hit, {
           currentDay: Math.floor(currentMinute() / MINUTES_PER_DAY), sinks: playerSinks, rolls,
           regionIndex: regionIndex(),   // DISC10-D V3: the clan is the region's, read at the turn from where the bite was taken
-          castParalyze: () => {   // S19: the spider/scorpion free-cast of classic spell 66
-            const sp = spellsByIndex?.()?.get(SPIDER_TOUCH_SPELL_INDEX);
+          readySpell: (index) => {   // S19: SetReadySpell(spell, true) - the spider/scorpion's classic spell 66; DEX4b: a mod's riders' spells
+            const sp = spellsByIndex?.()?.get(index);
             if (sp) castSpellFrom(f, sp, playerFeet, true);
           },
         }),

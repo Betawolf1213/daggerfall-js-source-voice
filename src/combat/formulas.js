@@ -59,6 +59,8 @@ export const dice100 = (chance, roll01 = Math.random()) => Math.floor(roll01 * 1
 // name per member, the mod's own install as the only writer.
 const _overrides = new Map();
 export function registerFormulaOverride(name, fn) { if (fn) _overrides.set(name, fn); else _overrides.delete(name); }
+/** The test seam: every override, group, language and skeletal word let go. */
+export function _resetFormulaDoors() { _overrides.clear(); _groups.length = 0; _languages.length = 0; _skeletal.length = 0; }
 export const formulaOverride = (name) => _overrides.get(name) ?? null;
 
 // ---- FormulaHelper.AdjustWeaponHitChanceMod / AdjustWeaponAttackDamage ----
@@ -203,7 +205,19 @@ const ENEMY_GROUP_BY_CAREER = Object.freeze({
   15: 0, 17: 0, 18: 0, 19: 0, 23: 0, 28: 0, 30: 0, 32: 0, 33: 0,            // Undead (17 "grouped as animal in classic")
   25: 1, 26: 1, 27: 1, 29: 1, 31: 1,                                        // Daedra
 });
+/** DEX4b (bible/04-Characters/Enemy-Expansion.md section 9): A MOD'S GROUP. DFU asks TryGetOverride
+ *  ("GetEnemyEntityEnemyGroup") first (:2748-2750); Daggerfall Enemy Expansion's answers its own enemies' row and DFU's
+ *  switch for the rest. `fn(careerIndex)` -> a group, or null for DFU's (a mod's enemy's career index is its id). */
+const _groups = [];
+export function registerEnemyGroup(fn) {
+  if (typeof fn !== 'function') throw new Error('registerEnemyGroup: a function of (careerIndex)');
+  _groups.push(fn);
+}
 export function enemyEntityGroup(careerIndex) {
+  for (const fn of _groups) {
+    const g = fn(careerIndex);
+    if (g != null) return g;
+  }
   return ENEMY_GROUP_BY_CAREER[careerIndex] ?? ENEMY_GROUPS.None;
 }
 
@@ -447,6 +461,19 @@ export function handToHandAttackDamage(attacker, target, damageMod, isPlayer, ro
 
 export const SKELETAL_WARRIOR_INDEX = 15;   // MonsterCareers.SkeletalWarrior
 
+/** DEX4b: A MOD'S SKELETAL ENEMY. Daggerfall Enemy Expansion overrides CalculateWeaponAttackDamage with DFU's own body
+ *  but for one test - the Skeletal Warrior's rule (blunt halved, silver doubled) for any enemy whose row says Skeletal
+ *  (BestiaryMod.cs:1587-1630). The port takes that test as a door, so the stock formula's own terms stand under the
+ *  mod. PCAAO's core runs its own copy (combat/pcaao.js pcaaoWeaponAttackDamage) and never asks it, as DFU's PCAAO,
+ *  replacing CalculateAttackDamage whole, never calls the overridden one. `fn(target)` -> true. */
+const _skeletal = [];
+export function registerSkeletalTarget(fn) {
+  if (typeof fn !== 'function') throw new Error('registerSkeletalTarget: a function of (target)');
+  _skeletal.push(fn);
+}
+/** Whether the Skeletal Warrior's rule bites `target`: its career, or a mod's word. */
+export const isSkeletalTarget = (target) => target.careerIndex === SKELETAL_WARRIOR_INDEX || _skeletal.some((fn) => fn(target) === true);
+
 /** RVN2 (bible/12-Enhanced-AI/Feud-Arc.md 13.2): NAMED VETOES on silver's double against a kind it doubles against -
  *  `fn(target) -> true` keeps silver to its plain damage on that target (a Silver-scarred revenant's: its kind's double
  *  gone). With none registered, or none answering true, DFU's double stands - in both cores (this one's Skeletal Warrior,
@@ -469,7 +496,7 @@ export function silverDoubles(target) {
 export function weaponAttackDamage(attacker, target, damageMod, weapon, rolls = Math.random, weaponAnimTime = 0, info = undefined) {
   const wMin = baseDamageMin(weapon), wMax = baseDamageMax(weapon);
   let damage = weaponDamageMods(weapon, wMin + Math.floor(rolls() * (wMax + 1 - wMin))) + damageMod;   // RF1: the weapon's own modifiers over ITS roll, before the swing's mods
-  if (!target.isPlayer && target.careerIndex === SKELETAL_WARRIOR_INDEX) {
+  if (!target.isPlayer && isSkeletalTarget(target)) {   // DEX4b: a mod's skeletal enemy too
     if ((weapon.flags & 0x10) === 0) damage = Math.trunc(damage / 2);   // edged-weapon rule
     if (weapon.material === 2 && silverDoubles(target)) damage *= 2;    // Silver (RVN2: unless a veto keeps it plain)
   }
@@ -921,7 +948,18 @@ const MONSTER_LANGUAGE = new Map([
   [1, SKILLS.Impish], [41, SKILLS.Impish],
   [28, SKILLS.Etiquette], [30, SKILLS.Etiquette], [32, SKILLS.Etiquette], [33, SKILLS.Etiquette],
 ]);
+/** DEX4b: a mod's language (TryGetOverride("GetEnemyEntityLanguageSkill"), :2810-2812) - `fn(entity)` -> a skill, or
+ *  null for DFU's. */
+const _languages = [];
+export function registerEnemyLanguage(fn) {
+  if (typeof fn !== 'function') throw new Error('registerEnemyLanguage: a function of (entity)');
+  _languages.push(fn);
+}
 export function enemyLanguageSkill(entity) {
+  for (const fn of _languages) {
+    const s = fn(entity);
+    if (s != null) return s;
+  }
   if (entity?.isClass) return CLASS_STREETWISE.has(entity.careerIndex) ? SKILLS.Streetwise : SKILLS.Etiquette;
   return MONSTER_LANGUAGE.get(entity?.careerIndex) ?? -1;
 }

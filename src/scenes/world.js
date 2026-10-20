@@ -32797,7 +32797,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // return, WeaponManager (:235-239) does ShowWeapons(false) and
     // takes no swing. Only the dungeon hosts carried it, and a spider
     // or scorpion out of the wilderness encounter tables casts Spider
-    // Touch (exteriorFoes.js castParalyze), so the landed paralysis
+    // Touch (exteriorFoes.js readySpell), so the landed paralysis
     // was inert here. Declared above `walkMode` because the motor and
     // the weapon rig are two sibling blocks.
     const paralyzed = entityIsParalyzed(playerEntity);
