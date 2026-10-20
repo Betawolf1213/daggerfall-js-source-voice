@@ -3284,7 +3284,7 @@ all dead (+14: the mint before the ban, off a replica, binding-only, the first-p
 unminted and unread, the save's and the beat's session and ban unread or unsent, a timeout forgetting, a registration
 keeping, the realm's offline keep).
 
-## THE OVERLOAD OF 2026-10-19: LEAN-READS (2026-10-19, this branch - acct161, migrations 0134-0138, no drop; acct159 then acct160 and 0133-0137 on its branch, renumbered past QL12 and WB14 at the merges)
+## THE OVERLOAD OF 2026-10-19: LEAN-READS (2026-10-19, this branch - acct162, migrations 0134-0138, no drop; acct159, acct160 then acct161 and 0133-0137 on its branch, renumbered past QL12, WB14 and JUNGLE-WOODS at the merges)
 
 The owner: "Can you check the server. I think certain actions like gathering and menus are having issues", then, handed
 the Cloudflare token: "Use it", then "Do everything. No band aids. No short fixes."
@@ -3426,17 +3426,17 @@ the Cloudflare token: "Use it", then "Do everything. No band aids. No short fixe
 
 ### Deploying it
 
-- The migrations run before the new Worker; the old Worker (acct160, live on 2026-10-20 - AUDIT LEAN-READS 2 C7/D6)
-  works on the new schema - it reads none of the new columns, and the triggers keep every new table through its writes,
+- The migrations run before the new Worker; the old Worker (main's: acct160 when the audit read it, acct161 - JUNGLE-WOODS,
+  the same witness and strike code - since; AUDIT LEAN-READS 2 C7/D6) works on the new schema - it reads none of the new columns, and the triggers keep every new table through its writes,
   its strikes among them. One thing it must not do there: STRIKE A DISPUTED OR SPLIT KEY - its strike is one DELETE,
   which turns such a key's confirmation over at each confirmer (2 A1/D1: 1,516 rows some 13-20 s on D1); a key whose
   answers agree costs 28 ms. No strike between the migrations and the Worker, nor after a rollback. Rollback is
-  Worker-first: acct160 may stand on these migrations for as long as it must, the triggers moving every version; acct161
-  reads what it finds there as stale when it returns. The reverse is not safe - dropping the triggers while acct161 runs
+  Worker-first: acct161 may stand on these migrations for as long as it must, the triggers moving every version; acct162
+  reads what it finds there as stale when it returns. The reverse is not safe - dropping the triggers while acct162 runs
   leaves `late`, the confirmations and the three boards stale. A Time Travel restore to the bookmark the deploy prints
-  takes away every player's write since it, not the migrations alone: once acct160 is live again, a forward migration
+  takes away every player's write since it, not the migrations alone: once the old Worker is live again, a forward migration
   that drops the new triggers, tables and column undoes them and loses nothing (these migrations only add). And with
-  acct161 still live a restore takes away tables it reads (500s): put the code back first, then restore, then redeploy -
+  acct162 still live a restore takes away tables it reads (500s): put the code back first, then restore, then redeploy -
   from the reverted tree, or the deploy applies 0134-0138 again (D6). A migration recorded in `d1_migrations` is never
   applied again: a fix to one of these files once it has run is a new migration.
 - The migrations hold the primary in separate requests (2 D3, measured on a production-shaped copy of every table they
@@ -3470,7 +3470,7 @@ the Cloudflare token: "Use it", then "Do everything. No band aids. No short fixe
 - **The writs never swept**: no code deletes a writ, so `writs` grows by its days (some 862,000 rows); every read is by
   its day now, so the growth costs storage and a future index's build, not a read. A sweep is a retention call.
 - **The old Worker's strike of a disputed key** (AUDIT LEAN-READS 2 A1/D1): one DELETE, quadratic in such a key -
-  acct160 cannot be changed; no strike while it runs on this schema (Deploying it).
+  the old Worker cannot be changed; no strike while it runs on this schema (Deploying it).
 - **D1's own temporary storage** (2 D2): whether D1 keeps SQLite's temporary files in memory is not public; workerd
   spills 0137's sort to them - some 37 MB today, at worst in memory.
 - **A version row deleted by hand** (2 B4): never stale - a board with no version row is never served, and the row is
@@ -3525,7 +3525,7 @@ finding below is fixed and pinned, or answered with its reason.
 
 ### AUDIT LEAN-READS 2 (2026-10-20) - the owner: "Audit this"
 
-Four cold lanes again, over the branch as audit one left it (acct161, 0134-0138): A LEAN-WITNESS (a fuzzer of some 420,000
+Four cold lanes again, over the branch as audit one left it (acct161 then, 0134-0138): A LEAN-WITNESS (a fuzzer of some 420,000
 operations through the real migration on node:sqlite and 900 on workerd's own D1 engine, every confirmation and late flag
 held to the law after every statement: no mismatch); B the kept boards (three differential oracles against the code
 before this branch - 108,000, 7,200 and 13,500 comparisons: no mismatch); C SLOW-SHED and the pins; D the deploy, D1 and
@@ -3555,7 +3555,7 @@ pinned, or answered with its reason.
 | C4 | A lone slow window opens the shed | answered, measured: the service's own 30 s windows over three days - 342 of 8,640 over the line, 266 of them in 12 slowdowns of 2.5 minutes or more (10-18 01:49 for 15 minutes, up to 5,216 ms a statement; 14:18 for 31; each night's 00:00, below); the 41 lone windows some 0.6% of the time, each at some 1 s a statement where the healthy median is 89 ms | - |
 | C5 | The pin's clock was the machine's | the pin's own | `slow_shed` |
 | C6 | A read sent while a hold ran, timing out after it, doubled the hold again | a read counts only where it was sent after the hold | SLOWSHED-client-late-read-counted |
-| C7 | Deploying it named acct158 as the old Worker | acct160 | - |
+| C7 | Deploying it named acct158 as the old Worker | the Worker live before this one: acct160 at the audit, acct161 since JUNGLE-WOODS merged | - |
 | C8 | A trip that threw was never counted | counted as it ends, whatever it answered | SLOWSHED-trip-only-where-answered |
 | C9 | An invocation the platform cancels never reaches the shed's ear | answered: the requests that finish open it - an overload's are slow, not cancelled alone | - |
 | C10 | The window was summed again on every request | running sums | SLOWSHED-sums-keep-the-gone |
@@ -3577,32 +3577,43 @@ the traders' and the yards' kept rows.
 
 ### Pins
 
-- `test/server/lean_witness.test.js` (9): the schema (and no source REPLACEs a kept table); the backfill held to the
+- `test/server/lean_witness.test.js` (12): the schema (and no source REPLACEs a kept table - quoted or schema-named too -
+  every outer conflict policy keeps a key, and an answer is never rewritten); the backfill held to the
   triggers' law; the oracle - forty seeds of answers agreeing, dissenting and a liar's own, seconds shared and out of
   order, accounts deleted under them and strikes, the database's confirmation and late rows held to witnessedFact over
   every row after each, and the halls' and the seats' laws over the service's judged reads to their laws over every row,
   region by region; one second's two answers; an ignored confirmer read whole; the witness's region read and version; the
-  judging reads' plans; a key's answers deleted in one statement; every trigger statement's plan and the bump's.
-  `tools/mutants/lean_witness.json`: 27 dead, 1 recorded equivalent.
-- `test/server/yard_snap.test.js` (5): the oracle (pieces placed, moved within and between towns, in and out of a yard,
+  judging reads' plans; a key's answers deleted in one statement; every trigger statement's plan and the bump's; AUDIT
+  LEAN-READS 2: the plans under ANALYZE's statistics against the unnamed reads they turn, the strikes of split, disputed
+  and dissenting keys (each row once), a liar among a town's confirmers moving its region.
+  `tools/mutants/lean_witness.json`: 43 dead, 1 recorded equivalent.
+- `test/server/yard_snap.test.js` (6): the oracle (pieces placed, moved within and between towns, in and out of a yard,
   taken away, homes released), the bound and the order, the route and the clock, the backfill and its shape, another
-  shape. `tools/mutants/yard_snap.json`: 17 dead, 1 recorded equivalent (the sort after the build - json_group_array keeps
+  shape; AUDIT LEAN-READS 2: the version a row of its own, a town with no version row, a version made past the kept one,
+  rows past the bound. `tools/mutants/yard_snap.json`: 22 dead, 1 recorded equivalent (the sort after the build - json_group_array keeps
   its ordered subquery's order wherever this service runs, which SQLite does not promise).
-- `test/server/vendor_board.test.js` (4): the oracle - the board's two statements as they stood before this slice, their
-  caller's door asked in SQL, every field of the answer, against the service through every write that moves a board, and
-  every kept answer against the answer read afresh; the kept read, its order, its keep and its race; the audit's cases;
-  the triggers. `tools/mutants/vendor_board.json`: 28, all dead.
+- `test/server/vendor_board.test.js` (5): the oracle - the board's two statements as they stood before this slice, their
+  caller's door asked in SQL, every field of the answer, against the service through every write that moves a board (an
+  heir's house, a trader or a listing deleted outright too), at the callers' own and lagging clocks, and every kept
+  answer against the answer read afresh; the kept read, its order, its keep and its race; the audit's cases; the
+  triggers, each write and the regions it moves by name; AUDIT LEAN-READS 2: the seconds a board serves.
+  `tools/mutants/vendor_board.json`: 35, all dead.
 - `test/server/writ_board.test.js` (1) and `tools/mutants/writ_board.json`: 5, all dead.
 - `test/server/arena_board.test.js` (4): the oracle, hand-counted standings, laurel, rosters and members, the keep, its
-  race, its herd, its shape and its order, the triggers. `tools/mutants/arena_board.json`: 15, all dead.
-- `test/net/slow_shed.test.js` (3): the law, the service hearing its own wait a trip at a time, the page.
-  `tools/mutants/slow_shed.json`: 18, all dead.
+  race, its herd, its shape and its order, the reads' rows alone kept, the triggers. `tools/mutants/arena_board.json`: 16,
+  all dead.
+- `test/net/slow_shed.test.js` (3): the law (its sums), the service hearing its own wait a trip at a time (each trip
+  capped, a throwing one counted), the page (a stall's late reads and a burst's 503s one word).
+  `tools/mutants/slow_shed.json`: 23, all dead.
 - `test/tooling/scale4e.test.js`: a reset never asked again. `tools/mutants/scale4e.json`: 7, all dead.
 - PIN MOVED: the seats' read counters (`d1load`, `seat_replica`, `seat_facts`, `stormshed`, `gatherspeed`: the judged read
   is a read of the rows); the schema's table list (`accountworker`); the yards' reads (`yardshed`, `primary_trips` - a
   refused bookmark refuses any first statement - and `scale4d`: the town's built row); the clock's quiet minute
   (`auditscale` D7: eleven statements a minute and thirty-four an hour); a heartbeat timed out holds the reads
-  (`sessionsign_client`); the deploy's smoke calls (`home2`: twelve); ACCOUNT_VERSION acct161 (acct159 then acct160 on its branch, renumbered past QL12 and WB14 at the merges) and every pin and mutant
-  record on acct158 (each pin's PIN MOVED history kept). Records of earlier slices re-aimed by content at the code this
+  (`sessionsign_client`); the deploy's smoke calls (`home2`: twelve, the kept rows asked of D1, a shed read passed);
+  ACCOUNT_VERSION acct162 (acct159, acct160 then acct161 on its branch, renumbered past QL12, WB14 and JUNGLE-WOODS at the
+  merges) and every pin and mutant record on the version before it (acct158 at the branch; acct159, acct160 and acct161
+  at the merges), each pin's PIN MOVED history kept; AUDIT LEAN-READS 2: the schema's tables (`accountworker`), the
+  yards' read (`primary_trips`, `scale4d`: the town's version and row). Records of earlier slices re-aimed by content at the code this
   one moved (audit_chap2, audit_chap3, auditlwii2_service, chap3a, d1load, homevendor, lw15, seat_replica, busy_gate,
   scale4f), all dead.
