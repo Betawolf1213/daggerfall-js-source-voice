@@ -5,7 +5,7 @@
 import '../../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createStarClaims, starClaimVerdict, starRecordText, STAR_CLAIM_TEXT, STAR_CLAIMS_KEY, STAR_SETTLED_KEY, STAR_CLAIMS_MAX, STAR_CLAIM_RETRY_MS } from '../../../src/net/starfall/starClaims.js';
+import { createStarClaims, starClaimVerdict, starRecordText, STAR_CLAIM_TEXT, STAR_CLAIMS_KEY, STAR_SETTLED_KEY, STAR_CLAIMS_MAX, STAR_CLAIM_RETRY_MS, STAR_ACTS_KEY, STAR_ACTS_MAX, STAR_ME_POLL_MS } from '../../../src/net/starfall/starClaims.js';
 import { mintStarReceipt } from '../../../src/net/starfall/starReceipt.js';
 import { importReceiptKey } from '../../../src/net/gate/gateReceipt.js';
 import { createStarRewards } from '../../../src/scenes/starfall/starRewards.js';
@@ -17,6 +17,9 @@ import { setActSink } from '../../../src/systems/questlines/qlActs.js';
 import { profileStarLine } from '../../../src/ui/profileWindow.js';
 import { CLAIM_SOURCE, claimHauls } from '../../../src/ui/haulCards.js';
 import { FESTIVALS } from '../../../src/net/festivalLaw.js';
+import { witchesNight, heartStar, HEART_STAR } from '../../../src/systems/starfall/starfallNight.js';
+import { bindFestival, _resetFestivalClientForTests } from '../../../src/systems/festival/festivalClient.js';
+import { SESSION_KEY } from '../../../src/net/accountClient.js';
 const FESTIVAL_FROM_MS = FESTIVALS[0].fromMs;   // the Witches' Festival's first day, the Starfall's own (net/festivalLaw.js)
 
 const { subtle } = globalThis.crypto;
@@ -54,7 +57,7 @@ test('STAR7 THE CARRIER: a signed receipt kept with the character that held it a
     let me = A;
     const c = createStarClaims({
       claim: async (rr, ch, nm, cid) => { asked.push({ rr, ch, nm, cid }); return { ok: true, data: { recorded: true, held: 3, spoils: false, renown: { credited: 70 } } }; },
-      store, nowS: () => T0S, nowMs: () => 1_000_000, me: () => me, say: (t) => said.push(t),
+      store, nowS: () => T0S, nowMs: () => 1_000_000, me: () => me, who: () => CH, say: (t) => said.push(t),
     });
     assert.equal(c.add(r, CH, 'Ann', 12), true);
     await settle();
@@ -153,9 +156,13 @@ test('STAR7 THE REWARDS ON THIS DEVICE: a receipt the relay hands is kept with t
     renownXpAdopt: (x) => xp.push(x), renownAdopt: (l) => levels.push(l), renownRose: () => {}, renownSaid: null,
     _sharedOffsetMs: 0,
   };
+  const acts = [];
+  setActSink((kind) => { acts.push(kind); return 1; });
   const rw = createStarRewards(host);
   assert.equal(rw.receipt(r), true);
   await settle();
+  setActSink(null);
+  assert.deepEqual(acts, ['star-held'], 'the act, the standing character\'s own (AUDIT STARFALL 7: the host hands `who`)');
   assert.ok(took.some((p) => p.kind === 'item' && p.item.templateIndex === 576), 'the Starglass into the pack');
   assert.ok(took.some((p) => p.kind === 'gold' && p.gold > 0), 'the gold');
   assert.ok(said.some((t) => t.startsWith('The star is on your record.')));
@@ -192,4 +199,113 @@ test('STAR7 THE CARDS: the account card\'s stars held - a count, "None yet", not
   assert.equal(profileStarLine(null), null);
   assert.equal(CLAIM_SOURCE.star, 'Star held');
   assert.equal(claimHauls({ marks: { struck: 30, balance: 130 } }, 'star')[0]?.source, 'Star held');
+});
+
+/** A heart night: the first Witches' Night from the rig's night on (systems/starfall/starfallNight.js). */
+const HEART_N = (() => { let n = N; while (!witchesNight(n) && n < N + 24 * 800) n++; return n; })();
+
+test('AUDIT STARFALL 7: A STAR\'S ACT IS THE CHARACTER THAT HELD IT - another character standing when the receipt is counted, the act is owed on the device (never noted for the one standing, never dropped) and noted when the holder stands, one star a poll, once; a page loaded again keeps what is owed (mutants: STAR7-act-for-anyone; STAR7-owed-dropped; STAR7-owed-twice)', async () => {
+  const acts = [];
+  setActSink((kind) => { acts.push(kind); return 1; });
+  try {
+    const store = memStore();
+    let standing = 'char-other', clock = 1_000_000;
+    const deps = { claim: async () => ({ ok: true, data: { recorded: true, held: 1, spoils: false, renown: { character: CH, credited: 10 } } }), store, nowS: () => T0S, nowMs: () => clock, me: () => A, who: () => standing };
+    const c = createStarClaims(deps);
+    c.add(await receipt({ k: 0 }), CH);
+    c.add(await receipt({ k: 1 }), CH);
+    await settle();
+    assert.deepEqual(acts, [], 'another character stands: nothing noted for it');
+    assert.deepEqual(store.get(STAR_ACTS_KEY), [{ ch: CH, h: 0 }, { ch: CH, h: 0 }], 'owed the holder, on the device');
+    clock += STAR_ME_POLL_MS; c.tick();
+    assert.deepEqual(acts, [], 'still not the holder');
+    standing = null;
+    clock += STAR_ME_POLL_MS; c.tick();
+    assert.deepEqual(acts, [], 'none standing');
+    // a page loaded again, the holder standing: one star a poll, each its own turn
+    standing = CH;
+    const again = createStarClaims(deps);
+    clock += STAR_ME_POLL_MS; again.tick();
+    assert.deepEqual(acts, ['star-held'], 'the holder stands: the first');
+    clock += STAR_ME_POLL_MS; again.tick();
+    assert.deepEqual(acts, ['star-held', 'star-held'], 'the second, at the next poll');
+    clock += STAR_ME_POLL_MS; again.tick();
+    assert.equal(acts.length, 2, 'each once');
+    assert.deepEqual(again.owed(), []);
+    assert.ok(STAR_ACTS_MAX >= 27, 'more than a festival day\'s stars (nine) thrice');
+  } finally { setActSink(null); }
+});
+
+test('AUDIT STARFALL B3: AN ANSWER LOST - an attempt the service never answered marks its entry; a later `claimed` that is this device\'s own row finishes it once (the act, the line, the Renown heard); a spoils grant that fails keeps it and finishes nothing twice; a `claimed` heard with no lost attempt, or another device\'s, finishes nothing; a refusal the service made marks nothing (mutants: B3-lost-never-marked; B3-own-unread; B3-finished-twice; B3-a-refusal-marks)', async () => {
+  const acts = [];
+  setActSink((kind) => { acts.push(kind); return 1; });
+  try {
+    const own = { ok: true, data: { recorded: false, why: 'claimed', own: true, held: 4, spoils: true, renown: { character: CH, xp: 700, level: 3, credited: 70, rose: false } } };
+    const answers = [{ ok: false, error: 'server', status: 503 }, own, own];
+    const store = memStore(), said = [], heard = [];
+    let failGrant = true;
+    const c = createStarClaims({
+      claim: async () => answers.shift() ?? own, store, nowS: () => T0S, nowMs: () => 0, me: () => A, who: () => CH,
+      say: (t) => said.push(t), onRecorded: (d) => heard.push(d.renown.credited),
+      onSpoils: async () => { if (failGrant) { failGrant = false; throw new Error('the pack'); } },
+    });
+    const r = await receipt({ k: 0 });
+    c.add(r, CH);
+    await settle();
+    assert.equal(store.get(STAR_CLAIMS_KEY)[0].lost, true, 'a 503: the attempt may have landed');
+    assert.deepEqual(acts, []);
+    await c.flush();
+    assert.deepEqual(acts, ['star-held'], 'the lost answer\'s act, once');
+    assert.deepEqual(heard, [70], 'its Renown heard');
+    assert.deepEqual(said, [STAR_CLAIM_TEXT.recorded(4, 70)]);
+    assert.equal(c.kept().length, 1, 'the spoils grant failed: kept');
+    assert.equal(c.kept()[0].lost, false, 'its mark cleared as it finished');
+    await c.flush();
+    assert.deepEqual([acts.length, heard.length, said.length], [1, 1, 1], 'never twice');
+    assert.equal(c.kept().length, 0, 'settled');
+    // a `claimed` heard with no attempt lost (a second browser, an answer that arrived): nothing to finish
+    const quiet = [];
+    const d = createStarClaims({ claim: async () => own, store: memStore(), nowS: () => T0S, nowMs: () => 0, me: () => A, who: () => CH, onRecorded: () => quiet.push(1) });
+    d.add(await receipt({ k: 1 }), CH);
+    await settle();
+    assert.deepEqual([acts.length, quiet.length], [1, 0], 'no lost attempt: no act');
+    // lost, then another device's row: nothing
+    const theirs = [{ ok: false, error: 'offline' }, { ok: true, data: { recorded: false, why: 'claimed', held: 4, spoils: false } }];
+    const e = createStarClaims({ claim: async () => theirs.shift(), store: memStore(), nowS: () => T0S, nowMs: () => 0, me: () => A, who: () => CH });
+    e.add(await receipt({ k: 2 }), CH);
+    await settle();
+    assert.equal(e.kept()[0].lost, true, 'offline: marked');
+    await e.flush();
+    assert.deepEqual([acts.length, e.kept().length], [1, 0], 'another device\'s row: settled, nothing finished');
+    // a refusal the service made (a 4xx) is no lost attempt
+    const f = createStarClaims({ claim: async () => ({ ok: false, error: 'receipt', why: 'clock', status: 400 }), store: memStore(), nowS: () => T0S, nowMs: () => 0, me: () => A, who: () => CH });
+    f.add(await receipt({ k: 0, n: N + 1 }), CH);
+    await settle();
+    assert.equal(f.kept()[0].lost, undefined, 'a refusal: unmarked');
+  } finally { setActSink(null); }
+});
+
+test('T-A THE HEART-STAR\'S ACT: a counted Heart-Star notes `heart-star-held` beside `star-held` in the same turn, any other star `star-held` alone; the festival\'s finds hear the two as ONE DEED - one endgame find, not two (mutants: T-A-the-heart-unsaid; T-A-the-heart-for-every-star; T-A-two-turns)', async () => {
+  assert.ok(witchesNight(HEART_N) && heartStar(HEART_N, HEART_STAR), 'the rig\'s heart night');
+  const acts = [];
+  setActSink((kind) => { acts.push(kind); return 1; });
+  const mem = new Map([[SESSION_KEY, JSON.stringify({ secret: 'sekrit', id: A, name: 'Ann', kind: 'linked' })]]);
+  globalThis.localStorage = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, String(v)), removeItem: (k) => mem.delete(k) };
+  const finds = [];
+  bindFestival({
+    online: () => true, entity: () => ({ items: [] }), say: () => {}, saved: () => {}, nowMs: () => FESTIVAL_FROM_MS + 3_600_000,
+    api: { mine: async () => ({ ok: true, data: { cakes: 0, open: true } }), find: async (src) => { finds.push(src); return { ok: true, data: { found: 4, cakes: 4 } }; }, me: () => A },
+  });
+  try {
+    await settle();
+    const c = createStarClaims({ claim: async () => ({ ok: true, data: { recorded: true, held: 1, spoils: false } }), store: memStore(), nowS: () => T0S, nowMs: () => 0, me: () => A, who: () => CH });
+    c.add(await receipt({ n: HEART_N, k: HEART_STAR }), CH);
+    await settle();
+    assert.deepEqual(acts, ['star-held', 'heart-star-held'], 'the Heart-Star: both');
+    assert.deepEqual(finds, ['endgame'], 'one deed, one find');
+    c.add(await receipt({ n: HEART_N, k: 0 }), CH);
+    await settle();
+    assert.deepEqual(acts, ['star-held', 'heart-star-held', 'star-held'], 'the night\'s first star: no Heart-Star');
+    assert.deepEqual(finds, ['endgame', 'endgame'], 'its own deed, its own find');
+  } finally { setActSink(null); _resetFestivalClientForTests(); delete globalThis.localStorage; }
 });

@@ -50,7 +50,7 @@ Every find lands in the pack (a face on a body is one the count cannot see). A d
 A kill is my own blow's (`systems/playerKills.js` - every pool tells it: the street's, a dungeon's room bodies, a foe
 another machine runs), once a body, never the watch or an ally. Acts are `systems/questlines/qlActs.js`'s, heard through
 `hearActs`: ONE DEED, ONE FIND - the acts one receipt says together (a breach closed with its rite broken, a Valkynaz's
-Redoubt) ask once, and an elite foe's act never beside its kill's. A find whose ask never reached the service was a die
+Redoubt, the Heart-Star held with its star) ask once, and an elite foe's act never beside its kill's. A find whose ask never reached the service was a die
 never rolled: nothing is kept to ask again.
 
 ## The Wyrd Sister
@@ -156,7 +156,22 @@ each real hour one of the Bay's covens pulls three stars down into its region's 
 against four waves and their master. The stars fall on THESE days - `net/starfall/starfallLaw.js` `starfallRuns` is
 `festivalOpen` - and a held star is the act `star-held` (the endgame family), so it is a find like a breach closed: the
 endgame's four cakes, twice on the nights the dead walk. The Heart-Star falls on the sky's 13th of Frostfall, the
-festival's own day. The questline's giver, Morwen, is of the Glenmoril Wyrd, the Wyrd Sisters' own coven.
+festival's own day; held, it is `heart-star-held` beside its `star-held`, said in one turn - one deed, one find. The
+questline's giver, Morwen, is of the Glenmoril Wyrd, the Wyrd Sisters' own coven.
+
+### The Starwarden's purse
+
+The Thirteenth of Frostfall pays its title, Starwarden, on QLTF03's witnessed end - and, in the same write, 30 Soul Cakes
+(`QL_STARWARDEN_CAKES`, `src/net/festivalLaw.js`) onto `players.fest_cakes`
+(`server-account/src/questlines.js:"export const QL_PURSES = Object.freeze({ thirteenthFrostfall: QL_STARWARDEN_CAKES });"`).
+The title's own UPDATE carries it, so the title row's guard is the purse's: once an account, never on a re-claim (which
+answers the title held). Only while the festival is open for the account at the claim's clock - its days
+(`festivalOpen`) and its switch (`festivalOpenFor`) - and never to a guest (a guest's end is refused before the batch).
+The answer says `purse`, the cakes paid; the page hears it at the questlines' door
+(`src/scenes/quest/questlineHost.js:"export function hearPurse(answer, { say = (line) => festivalDoors().say(line), refresh = refreshFestival } = {}) {"`):
+"+30 Soul Cakes", said as a find is, and the account's count read again through the festival's own door
+(`refreshFestival`), which restacks the pack's Soul Cakes to it. A purse whose answer was lost is on the count all the
+same, and the pack's face follows at the festival's next answer.
 
 ## The four hosts
 

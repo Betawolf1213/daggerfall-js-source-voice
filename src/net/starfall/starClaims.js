@@ -18,16 +18,31 @@
 // (systems/starfall/starSpoils.js). A receipt this device SETTLED is remembered (STAR_SETTLED_KEY).
 //
 // THE QUESTLINE HEARS IT: a counted receipt notes the act `star-held` once (systems/questlines/qlActs.js) - The Thirteenth of
-// Frostfall's stars (section 7), witnessed by the service over `stars_held`.
+// Frostfall's stars (section 7), witnessed by the service over `stars_held` - and the Heart-Star's `heart-star-held` beside it,
+// in the same turn (the festival's finds hear the two as one deed). THE CHARACTER THAT HELD IT (AUDIT STARFALL 7): the act is
+// that character's quests' - noted while it stands here (`who`), else owed it on the device (STAR_ACTS_KEY) and noted when it
+// stands, one star a poll; never another character's, never dropped.
+//
+// AN ANSWER LOST (AUDIT STARFALL B3): an attempt the service never answered (offline, a timeout, a 5xx, a body that never
+// came) may have landed - the entry is marked (`lost`), and a later `claimed` that says the row is this device's own
+// (`own`, its claim id on the row) finishes it once: the act owed, the line said, the Renown adopted (`onRecorded`, the
+// snapshot the row credited). The mark is the entry's own flag, cleared as it finishes - an answer heard is never finished
+// twice, and a `claimed` for another device's row never at all.
 //
 // Pure - the call, the store and the clocks are handed in. Not a DFU member. Ledger A (STARFALL).
 import { readStarReceipt } from './starReceipt.js';
 import { t } from '../../systems/textManager.js';
 import { noteAct } from '../../systems/questlines/qlActs.js';
+import { heartStar } from '../../systems/starfall/starfallNight.js';
 
-/** The device's star receipts not yet settled with the account service: `[{ r, ch, nm, lv, cid }]` - the receipt, the
- *  character that held it, its name, its level (the spoils roll at it), and this device's claim id. */
+/** The device's star receipts not yet settled with the account service: `[{ r, ch, nm, lv, cid, lost? }]` - the receipt,
+ *  the character that held it, its name, its level (the spoils roll at it), this device's claim id, and (B3) whether an
+ *  attempt went unanswered. */
 export const STAR_CLAIMS_KEY = 'star7.claims';
+/** AUDIT STARFALL 7: the acts counted receipts owe characters not standing when they were counted - `[{ ch, h }]` (`h` 1 for
+ *  the Heart-Star's), the oldest first; past STAR_ACTS_MAX the oldest go (a festival's stars, more than any step asks). */
+export const STAR_ACTS_KEY = 'star7.acts';
+export const STAR_ACTS_MAX = 64;
 /** The receipts this device has settled with the service - `night.star|account` - never claimed again. */
 export const STAR_SETTLED_KEY = 'star7.settled';
 export const STAR_SETTLED_MAX = 64;
@@ -78,13 +93,14 @@ export function starRecordText(rec) {
  *   onRecorded?: (data: any, entry: { r: string, ch: string, nm: string|null, lv: number, cid: string }) => void,
  *   onSpoils?: (entry: { r: string, ch: string, nm: string|null, lv: number, cid: string }, data: any) => (void|Promise<any>),
  *   onMarks?: (data: any) => (string|string[]|null),
- *   me?: () => (string|null), cid?: () => string,
- * }} deps `claim` is net/accountClient.js accountStars' - `{ ok, data }` or `{ ok: false, error, why? }`, never a throw;
- *   `me` the signed-in account's id; `onRecorded` hears each counted receipt's answer (its Renown and order); `onSpoils`
- *   each receipt whose spoils the service gave THIS claim - awaited, its receipt settled only once they are given;
- *   `onMarks` each counted receipt's silver, the lines it answers said as the raids' are
+ *   me?: () => (string|null), who?: () => (string|null), cid?: () => string,
+ * }} deps `claim` is net/accountClient.js accountStars' - `{ ok, data }` or `{ ok: false, error, why?, status? }`, never a
+ *   throw; `me` the signed-in account's id; `who` the character standing here (systems/characterId.js), whose acts are noted
+ *   at once - none standing, every act is owed; `onRecorded` hears each counted receipt's answer (its Renown and order),
+ *   and a lost one's `claimed` once; `onSpoils` each receipt whose spoils the service gave THIS claim - awaited, its receipt
+ *   settled only once they are given; `onMarks` each counted receipt's silver, the lines it answers said as the raids' are
  */
-export function createStarClaims({ claim, store = null, nowS = () => Math.floor(Date.now() / 1000), nowMs = () => Date.now(), say = () => {}, onRecorded = () => {}, onSpoils = () => {}, onMarks = () => null, me = () => null, cid = mintCid }) {
+export function createStarClaims({ claim, store = null, nowS = () => Math.floor(Date.now() / 1000), nowMs = () => Date.now(), say = () => {}, onRecorded = () => {}, onSpoils = () => {}, onMarks = () => null, me = () => null, who = () => null, cid = mintCid }) {
   let busy = false, again = false, lastAt = -Infinity;
   let lastMe, meAt = -Infinity;
   const settled = new Set(), guestSaid = new Set();
@@ -106,6 +122,38 @@ export function createStarClaims({ claim, store = null, nowS = () => Math.floor(
     return (Array.isArray(v) ? v : v === undefined ? memory : []).filter((e) => entry(e));
   }
   const keep = (list) => { memory = list; try { store?.set(STAR_CLAIMS_KEY, list); } catch { /* memory holds it */ } };
+  /** B3: a kept entry's `lost` mark, laid or cleared on the entry as it is stored */
+  const mark = (e, lost) => { e.lost = lost; keep(kept().map((k) => (k.r === e.r ? { ...k, lost } : k))); };
+
+  // ═══ THE ACTS (AUDIT STARFALL 7, T-A) ═══
+  let owedMemory = [];
+  /** The acts owed characters not standing (STAR_ACTS_KEY). */
+  function owed() {
+    let v;
+    try { v = store ? store.get(STAR_ACTS_KEY) : undefined; } catch { v = undefined; }
+    return (Array.isArray(v) ? v : v === undefined ? owedMemory : []).filter((o) => o && typeof o.ch === 'string' && o.ch);
+  }
+  const keepOwed = (list) => { owedMemory = list; try { store?.set(STAR_ACTS_KEY, list); } catch { /* memory holds it */ } };
+  /** A held star's acts, in ONE turn: `star-held`, and the Heart-Star's beside it (the festival's finds: one deed, one find). */
+  const noteStar = (heart) => { noteAct('star-held'); if (heart) noteAct('heart-star-held'); };
+  /** A counted receipt's acts: noted for the character standing here, else owed the one that held it. */
+  function owe(e) {
+    const c = readStarReceipt(e.r);
+    const heart = !!c && heartStar(c.night, c.star);
+    const ch = who();
+    if (ch && ch === e.ch) { noteStar(heart); return; }
+    keepOwed([...owed(), { ch: e.ch, h: heart ? 1 : 0 }].slice(-STAR_ACTS_MAX));
+  }
+  /** One act owed the character standing now noted (a poll each - each star its own turn, so its own find). */
+  function payOwed() {
+    const ch = who();
+    if (!ch) return false;
+    const list = owed(), i = list.findIndex((o) => o.ch === ch);
+    if (i < 0) return false;
+    keepOwed(list.filter((_, j) => j !== i));
+    noteStar(list[i].h === 1);
+    return true;
+  }
 
   async function flush() {
     if (busy) { again = true; return 0; }
@@ -121,14 +169,17 @@ export function createStarClaims({ claim, store = null, nowS = () => Math.floor(
         let answer;
         try { answer = await claim(e.r, e.ch, e.nm ?? null, e.cid); } catch { answer = { ok: false, error: 'offline' }; }
         const given = answer?.ok && answer.data?.spoils === true ? await granted(onSpoils, e, answer.data) : true;   // the spoils, this claim's
-        if (answer?.ok && answer.data?.recorded === true) {
+        const counted = answer?.ok && answer.data?.recorded === true;
+        // B3: a `claimed` for this device's own row, after an attempt it never heard answered - the lost answer's work, once
+        const found = !counted && answer?.ok && answer.data?.why === 'claimed' && answer.data?.own === true && e.lost === true;
+        if (counted || found) {
           recorded++;
-          noteAct('star-held');   // STAR8: The Thirteenth of Frostfall's stars - a counted receipt, once (`recorded`)
+          owe(e);   // STAR8: The Thirteenth of Frostfall's stars - a counted receipt's act, once: the holder's (AUDIT STARFALL 7)
           const n = Number.isSafeInteger(answer.data.held) ? answer.data.held : null;
           const xp = Number.isSafeInteger(answer.data.renown?.credited) ? answer.data.renown.credited : 0;
           if (n != null) say(STAR_CLAIM_TEXT.recorded(n, xp));
           let lines = null;
-          try { lines = onMarks(answer.data); } catch (err) { console.warn('[star] silver lines', err?.message ?? err); }
+          if (counted) { try { lines = onMarks(answer.data); } catch (err) { console.warn('[star] silver lines', err?.message ?? err); } }
           for (const line of Array.isArray(lines) ? lines : [lines]) if (typeof line === 'string' && line) say(line);
           hear(onRecorded, answer.data, e);
         } else if (answer?.ok && answer.data?.why === 'guest' && !guestSaid.has(e.r)) {
@@ -138,6 +189,10 @@ export function createStarClaims({ claim, store = null, nowS = () => Math.floor(
           dayFullSaid = true;
           say(STAR_CLAIM_TEXT.dayFull());
         }
+        // B3: an attempt unanswered may have landed (no answer, and no refusal the service made - a 4xx) - marked; one
+        // answered clears it (a `claimed` that is not this device's own has nothing of the attempt's to finish)
+        const unheard = !answer?.ok && answer?.error !== 'no-session' && !(answer?.status >= 400 && answer?.status < 500);
+        if (unheard !== !!e.lost && (unheard || answer?.ok)) mark(e, unheard);
         if (given && starClaimVerdict(answer) === 'done') { settled.add(e.r); markSettled(live(e.r)); keep(kept().filter((k) => k.r !== e.r)); }
       }
     } finally { busy = false; }
@@ -166,6 +221,7 @@ export function createStarClaims({ claim, store = null, nowS = () => Math.floor(
       const now = nowMs(), due = now - lastAt >= STAR_CLAIM_RETRY_MS;
       if (!due && now - meAt < STAR_ME_POLL_MS) return false;
       meAt = now;
+      payOwed();   // AUDIT STARFALL 7: an act owed the character standing now
       const mine = me(), signedIn = mine !== lastMe;
       lastMe = mine;
       if (!signedIn && !due) return false;
@@ -176,5 +232,7 @@ export function createStarClaims({ claim, store = null, nowS = () => Math.floor(
     flush,
     /** What is kept, for the tests and the stats. */
     kept,
+    /** The acts owed characters not standing, for the tests. */
+    owed,
   };
 }

@@ -84,6 +84,13 @@ export const OFFERING_TAKE = 1;
 export const HEARTHKEEPER_GIVEN = 25;
 export const SOULCAKE_TAKEN = 10;
 
+// ═══ THE STARWARDEN'S PURSE ══════════════════════════════════════════════════════════════════════════════════════════
+/** The Soul Cakes The Thirteenth of Frostfall's title pays beside it (bible/11-Multiplayer/Starfall.md section 7): laid on
+ *  the account's count by the batch that lays Starwarden (server-account/src/questlines.js QL_PURSES), once an account,
+ *  only while the festival is open for it, never to a guest. A quarter of a day's finds (FIND_CAKES_PER_DAY) - the line's
+ *  four stars and its coven fight are the festival's longest deed. */
+export const QL_STARWARDEN_CAKES = 30;
+
 // ═══ THE WYRD SISTER'S WARES ═════════════════════════════════════════════════════════════════════════════════════════
 /** The Wyrd's Raiment, the festival's Aetheric set (systems/aetheric.js WYRD_SET_PIECES mints each by its id). */
 export const WYRD_PIECE_IDS = Object.freeze([

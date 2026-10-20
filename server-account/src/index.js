@@ -1385,11 +1385,14 @@ const service = {
         // and stars.js `claimStar` holds the rest - the signature, the account, one row a (star, account), the day's bound,
         // the Renown, the device's spoils, and its silver under the day's combat cap (marks.js starStrikeStatement). A
         // level that ROSE comes back with a signed order, as a raid's does.
+        // AUDIT STARFALL B3: INT5's fill rides the claim's own batch (stars.js - budget.js spoilsGrantStatement), never after
+        // it: an answer lost past the batch is retried as `claimed`, and the fill was lost with it. What runs below is no
+        // credit: INT17's measure (a debit a lost answer only spares), the order (signed again for a `claimed` that is the
+        // device's own - stars.js `own`), the silver's answer (struck in the batch)
         const r = await claimStar(ctx, who.player, { receipt: body.receipt, character: body.character, name: body.name ?? null, cid: body.cid ?? null }, await gatePublicKey(env, subtle), {
           strike: (key, nonce) => starStrikeStatement(ctx, who.player, env, key, nonce),
         });
         if (r.error) return json({ error: r.error, ...(r.why ? { why: r.why } : {}) }, r.error === 'no-gate-key' ? 503 : r.error === 'not-yours' ? 403 : 400, origin);
-        if (r.recorded === true) await grantSpoils(ctx.db, who.player.id);   // INT5: a signed win's spoils, the budget's fill
         await progressSpent(ctx, who.player.id, path, r);   // INT17: the Renown it paid
         let order = null;
         if (r.renown?.rose) {

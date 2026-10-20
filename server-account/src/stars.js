@@ -28,6 +28,14 @@
 // A GUEST is thanked (the spoils' row, once a device) and never counted,
 // as at a raid; registered later, its next receipt counts.
 //
+// AN ANSWER LOST AFTER THE BATCH (AUDIT STARFALL B3): the batch is the
+// whole of the claim's money - the row, the Renown, the silver and INT5's
+// fill (budget.js spoilsGrantStatement) - so a 5xx past it, or a dropped
+// line, takes nothing. Its retry is `claimed`, and where the row is THIS
+// DEVICE'S (its claim id on the row, `own`) the answer carries what the
+// lost one said - the count and the Renown the row credited its
+// character - so the device finishes once (starClaims.js).
+//
 // EVERY CLOCK IS AN ARGUMENT, as in accounts.js.
 // ═══════════════════════════════════════════════════════════════════
 
@@ -35,6 +43,7 @@ import { verifyStarReceipt } from '../../src/net/starfall/starReceipt.js';
 import { starTimes } from '../../src/net/starfall/starfallLaw.js';
 import { renownForXp, renownRaidXp, RENOWN_XP_MAX, RENOWN_XP_HOUR_MAX, RENOWN_TRACKS_MAX } from '../../src/net/renown.js';
 import { renownCharacterOk, renownNameOf, renownTrackOf, renownHeldSql } from './renownTracks.js';
+import { spoilsGrantStatement } from './budget.js';
 
 /** The stars an account is counted for in one UTC day - three nights' worth (a night's three, nine an evening's
  *  hours), well past what a player defends in a sitting and well short of a day's every star (seventy-two). */
@@ -74,7 +83,9 @@ export async function starRecordOf({ db }, playerId) {
  * it, as much as the account's hour has left: a star is a fight about as long as a raid). Answers, each with `spoils`
  * (whether THIS claim is given the star's spoils):
  *   `{ recorded: true, held, key, renown: { character, xp, level, credited, rose }, spoils, struck }`,
- *   `{ recorded: false, why: 'claimed' | 'guest' | 'day-full', held, spoils }`, or
+ *   `{ recorded: false, why: 'claimed' | 'guest' | 'day-full', held, spoils }` - and a `claimed` whose row this device's
+ *   claim id wrote `{ ..., own: true, renown: { character, xp, level, credited, rose } }` (B3: what the lost answer said -
+ *   the row's character and what it credited, the track as it stands), or
  *   `{ error }` - `no-gate-key` (no public half here), `receipt` (`why` the verifier's rung), `not-yours`,
  *   `renown-character` (no character to pay).
  * @param {{ db: any, nowS: number, subtle: SubtleCrypto, rand: (b: Uint8Array) => Uint8Array }} ctx
@@ -113,13 +124,14 @@ export async function claimStar({ db, nowS, subtle, rand }, player, { receipt, c
   const room = 'CASE WHEN renown_hour >= ?8 THEN MAX(0, ?7 - renown_hour_xp) ELSE ?7 END';
   const credit = `CASE WHEN ${mine} THEN MIN(${want}, ${room}) ELSE 0 END`;
   const res = await db.batch([
-    // THE ROW, under the day's bound, stamped with this claim's nonce - RETURNING it only when it was written
+    // THE ROW, under the day's bound, stamped with this claim's nonce and the device's claim id (B3: whose row a `claimed`
+    // retry finds) - RETURNING it only when it was written
     db.prepare(
-      `INSERT OR IGNORE INTO stars_held (star, account, day, char_id, xp, nonce, at)
-       SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7
+      `INSERT OR IGNORE INTO stars_held (star, account, day, char_id, xp, nonce, at, cid)
+       SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?9
        WHERE (SELECT COUNT(*) FROM stars_held WHERE account = ?2 AND day = ?3) < ?8
        RETURNING nonce`,
-    ).bind(key, player.id, day, character, xp, nonce, nowS, STAR_CLAIMS_DAY_MAX),
+    ).bind(key, player.id, day, character, xp, nonce, nowS, STAR_CLAIMS_DAY_MAX, thanks ? cid : null),
     // THE HOUR SPENT and THE CREDIT DECIDED - by THIS claim's row alone; every SET reads the row as it WAS
     db.prepare(
       `UPDATE players SET
@@ -152,14 +164,28 @@ export async function claimStar({ db, nowS, subtle, rand }, player, { receipt, c
     // the star's silver (marks.js starStrikeStatement - under the day's combat cap), by THIS claim's row alone: a claim that
     // strikes nothing more is still counted, and one whose batch fails takes the silver back with its row
     ...(mint ? [mint] : []),
+    // INT5's FILL - a signed win's spoils, the playing character's bucket - by THIS claim's row alone, IN the batch (B3: run
+    // after it, as index.js ran it, an answer lost between the two lost the fill for good)
+    spoilsGrantStatement(db, player.id, 0, `EXISTS (SELECT 1 FROM stars_held WHERE star = ?5 AND account = ?1 AND nonce = ?6)`, key, nonce),
   ]);
   const [row, decided, , , , after, count] = res;
   const spoils = thanks ? spoilsAnswer(res[8], cid) : false;
   const struck = !!mint && Number(res[7 + (thanks ? 2 : 0)]?.meta?.changes ?? 0) > 0;
   const held = int(count?.results?.[0]?.n);
   if (!row?.results?.length) {
-    const had = await db.prepare('SELECT 1 AS x FROM stars_held WHERE star = ?1 AND account = ?2').bind(key, player.id).first();
-    return { recorded: false, why: had ? 'claimed' : 'day-full', held, spoils };
+    const had = await db.prepare('SELECT char_id, xp, cid FROM stars_held WHERE star = ?1 AND account = ?2').bind(key, player.id).first();
+    if (!had) return { recorded: false, why: 'day-full', held, spoils };
+    // B3: THIS DEVICE'S OWN ROW - its claim id on it - answered with what its lost answer said: the row's character, what
+    // the row credited it, and its track as it stands (the device adopts it once, starClaims.js - never on an answer it heard)
+    if (!thanks || had.cid !== cid) return { recorded: false, why: 'claimed', held, spoils };
+    const now = await renownTrackOf({ db }, player.id, String(had.char_id));
+    const paid = int(had.xp);
+    return {
+      recorded: false, why: 'claimed', held, spoils, own: true,
+      renown: now
+        ? { character: String(had.char_id), xp: now.xp, level: renownForXp(now.xp), credited: paid, rose: renownForXp(now.xp) > renownForXp(Math.max(0, now.xp - paid)) }
+        : { character: String(had.char_id), xp: null, level: null, credited: 0, rose: false },
+    };
   }
   const total = after?.results?.length ? int(after.results[0].xp) : null;
   const was = before?.xp ?? 0;

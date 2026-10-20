@@ -227,5 +227,125 @@
   "tests": [
    "test/ui/questlines/ql2_journal.test.js"
   ]
+ },
+ {
+  "name": "T-B-the-purse-unpaid",
+  "file": "server-account/src/questlines.js",
+  "old": "fest_cakes = fest_cakes + ?6 WHERE",
+  "new": "fest_cakes = fest_cakes + 0 * ?6 WHERE",
+  "tests": [
+   "test/server/ql12_claim.test.js"
+  ],
+  "why": "T-B: the Starwarden's purse lands on the account's count"
+ },
+ {
+  "name": "T-B-the-days-unread",
+  "file": "server-account/src/questlines.js",
+  "old": "&& festivalOpenFor(player, env) && festivalOpen(nowS * 1000) ?",
+  "new": "&& festivalOpenFor(player, env) ?",
+  "tests": [
+   "test/server/ql12_claim.test.js"
+  ],
+  "why": "T-B: only inside the festival's days"
+ },
+ {
+  "name": "T-B-the-switch-unread",
+  "file": "server-account/src/questlines.js",
+  "old": "Object.hasOwn(QL_PURSES, line) && festivalOpenFor(player, env) &&",
+  "new": "Object.hasOwn(QL_PURSES, line) &&",
+  "tests": [
+   "test/server/ql12_claim.test.js"
+  ],
+  "why": "T-B: only while FESTIVAL_OPEN opens the festival for the account"
+ },
+ {
+  "name": "T-B-the-purse-unguarded",
+  "file": "server-account/src/questlines.js",
+  "old": "fest_cakes = fest_cakes + ?6 WHERE id = ?1 AND (ql_titles & ?2) = 0",
+  "new": "fest_cakes = fest_cakes + ?6 WHERE id = ?1 AND (?6 > 0 OR (ql_titles & ?2) = 0)",
+  "tests": [
+   "test/server/ql12_claim.test.js"
+  ],
+  "why": "T-B: the title row's own guard is the purse's - once an account"
+ },
+ {
+  "name": "T-B-the-purse-said-to-every-claim",
+  "file": "server-account/src/questlines.js",
+  "old": "...(titled && purse > 0 ? { purse } : {}),",
+  "new": "...(purse > 0 ? { purse } : {}),",
+  "tests": [
+   "test/server/ql12_claim.test.js"
+  ],
+  "why": "T-B: `purse` answers the claim whose write paid it"
+ },
+ {
+  "name": "T-B-the-amount",
+  "file": "src/net/festivalLaw.js",
+  "old": "export const QL_STARWARDEN_CAKES = 30;",
+  "new": "export const QL_STARWARDEN_CAKES = 40;",
+  "tests": [
+   "test/server/ql12_claim.test.js"
+  ]
+ },
+ {
+  "name": "T-B-the-door-deaf",
+  "file": "src/scenes/quest/questlineHost.js",
+  "old": "const a = await door.claim(body); hearPurse(a); return a;",
+  "new": "const a = await door.claim(body); return a;",
+  "tests": [
+   "test/server/ql12_claim.test.js"
+  ],
+  "why": "T-B: the page hears a paid purse at the questlines' door"
+ },
+ {
+  "name": "T-B-the-pack-unrestacked",
+  "file": "src/scenes/quest/questlineHost.js",
+  "old": "  refresh().catch(() => {});\n",
+  "new": "  void refresh;\n",
+  "tests": [
+   "test/server/ql12_claim.test.js"
+  ],
+  "why": "T-B: the pack's Soul Cakes restacked through the festival's own door"
+ },
+ {
+  "name": "T-A-the-heart-unsaid",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "noteAct('star-held'); if (heart) noteAct('heart-star-held'); };",
+  "new": "noteAct('star-held'); };",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ],
+  "why": "T-A: the Heart-Star held notes its own act"
+ },
+ {
+  "name": "T-A-the-heart-for-every-star",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "const heart = !!c && heartStar(c.night, c.star);",
+  "new": "const heart = !!c;",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ],
+  "why": "T-A: the Heart-Star alone"
+ },
+ {
+  "name": "T-A-two-turns",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "if (heart) noteAct('heart-star-held'); };",
+  "new": "if (heart) void Promise.resolve().then(() => noteAct('heart-star-held')); };",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ],
+  "why": "T-A: said in the star's own turn, so the festival's finds hear one deed"
+ },
+ {
+  "name": "T-A-another-family",
+  "file": "src/systems/questlines/qlActs.js",
+  "old": "  'heart-star-held': 'endgame',",
+  "new": "  'heart-star-held': 'world',",
+  "tests": [
+   "test/systems/questlines/ql11_acts.test.js",
+   "test/net/starfall/star7_claims.test.js"
+  ],
+  "why": "T-A: the endgame family, as its star's - one deed, one find"
  }
 ]
