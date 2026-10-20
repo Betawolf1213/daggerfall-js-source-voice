@@ -13,18 +13,19 @@ export const cakesText = (/** @type {number} */ n) => t('festival.cakes', '{n, p
 
 /** What a refusal says, by its code (server-account/src/festival.js's words; any other is the service unheard). */
 const REFUSALS = Object.freeze({
-  closed: () => t('festival.refusal.closed', 'The festival is over.'),
+  closed: () => t('festival.refusal.closed', 'The festival is not open.'),
   guest: () => t('festival.refusal.guest', 'Link an account to keep Soul Cakes.'),
   offline: () => t('festival.refusal.offline', 'The Wyrd cannot hear you right now.'),
   cakes: () => t('festival.refusal.cakes', 'You need more Soul Cakes.'),
   owned: () => t('festival.refusal.owned', 'You already own that.'),
   ware: () => t('festival.refusal.ware', 'The Wyrd Sister has no such thing.'),
   empty: () => t('festival.refusal.empty', 'The bowl is empty.'),
-  taken: () => t('festival.refusal.taken', 'You have taken a cake here today.'),
+  taken: () => t('festival.refusal.taken', 'You already took a cake here today.'),
   own: () => t('festival.refusal.own', 'This offering is your own.'),
   full: () => t('festival.refusal.full', 'The bowl is full.'),
   home: () => t('festival.refusal.home', 'Set it out at your own home.'),
   set: () => t('festival.refusal.set', 'An offering already stands here.'),
+  room: () => t('festival.refusal.room', 'There is no room for it by this door.'),
   none: () => t('festival.refusal.none', 'No offering of yours stands here.'),
   item: () => t('festival.refusal.item', 'You have no Hearth Offering.'),
   gone: () => t('festival.refusal.gone', 'This offering has been taken in.'),
@@ -32,6 +33,8 @@ const REFUSALS = Object.freeze({
   capped: () => t('festival.refusal.capped', 'You have found enough for today.'),
   rate: () => t('festival.refusal.rate', 'Too fast. Wait a moment.'),
 });
+/** Whether a refusal's code is the festival's own (every other is the account service's - net/accountClient.js). */
+export const isFestivalRefusal = (/** @type {unknown} */ code) => typeof code === 'string' && Object.hasOwn(REFUSALS, code);
 export const festivalRefusalText = (/** @type {unknown} */ code) => (typeof code === 'string' && Object.hasOwn(REFUSALS, code) ? REFUSALS[/** @type {keyof typeof REFUSALS} */ (code)]() : REFUSALS.offline());
 
 /** A find's line: "+2 Soul Cakes". */
@@ -43,8 +46,8 @@ export function lastDayText(/** @type {{ toMs: number } | null | undefined} */ f
 }
 /** The festival's notice, once a session, on the first town that keeps it. */
 export const festivalNotice = (/** @type {string} */ last) => t('festival.notice', "The Witches' Festival: until {last}. Find a Wyrd Sister at any tavern.", { last });
-/** A night the dead walk (the sky's 13 Frostfall or 3 Hearth Fire). */
-export const festivalNightText = () => t('festival.night', 'Tonight the dead walk. Finds give twice.');
+/** A night the dead walk (the sky's 13 Frostfall or 3 Hearthfire, or the festival's own night - festivalLaw deadWalk). */
+export const festivalNightText = () => t('festival.night', 'The dead walk tonight. Soul Cake finds are doubled.');
 /** The Wyrd's Raiment's Soul Harvest (systems/sigil/sigilSetPowers.js): its name, its proc and its recovery's end. */
 export const HARVEST_TEXT = Object.freeze({
   name: () => t('festival.harvest.name', 'Soul Harvest'),

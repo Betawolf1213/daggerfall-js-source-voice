@@ -29,7 +29,7 @@ import { paintTitle, titleBadge, TITLE_TEXT, AURA_TEXT, WITCH_FIRE, WITCH_GLOW, 
 import { profileIconNode, ICON_TEXT } from './profileIcons.js';
 import { iliacCardLines } from '../systems/iliac/iliacItems.js';
 import { SOUL_CAKE_TEXT } from '../systems/festival/soulCake.js';
-import { cakesText, festivalName, vendorOffice, festivalNightText } from '../systems/festival/festivalWords.js';
+import { cakesText, festivalName, vendorOffice, festivalNightText, festivalRefusalText } from '../systems/festival/festivalWords.js';
 import { FESTIVAL_WARES, accountWare, HEARTHKEEPER_GIVEN, SOULCAKE_TAKEN } from '../net/festivalLaw.js';
 import { t } from '../systems/textManager.js';
 
@@ -89,22 +89,25 @@ export function wyrdRows(state, worn, itemOf, nameOf) {
   });
   const at = rows.findIndex((r) => r.part !== 'insignia');
   rows.splice(at, 0,
-    gift('title', 'hearthkeeper', state?.given ?? 0, HEARTHKEEPER_GIVEN, t('festival.window.earnGiven', 'Earned: cakes taken from your offerings.')),
-    gift('icon', 'soulcake', state?.taken ?? 0, SOULCAKE_TAKEN, t('festival.window.earnTaken', "Earned: cakes taken from others' offerings.")));
+    gift('title', 'hearthkeeper', state?.given ?? 0, HEARTHKEEPER_GIVEN, t('festival.window.earnGiven', 'Earned when others take Soul Cakes from your offerings.')),
+    gift('icon', 'soulcake', state?.taken ?? 0, SOULCAKE_TAKEN, t('festival.window.earnTaken', "Earned by taking Soul Cakes from others' offerings.")));
   return rows;
 }
 
-/** The press a row shows, and why it cannot be pressed (null when it can). Pure. */
-export function wyrdPress(/** @type {any} */ row, /** @type {{ cakes: number|null, live: boolean, busy: boolean }} */ s) {
+/** The press a row shows, and why it cannot be pressed (null when it can): `shut` why the festival is not played here
+ *  (festivalClient festivalShut - a guest, offline, closed), or null. Pure. */
+export function wyrdPress(/** @type {any} */ row, /** @type {{ cakes: number|null, shut: string|null, busy: boolean }} */ s) {
   if (row.worn) return { label: t('festival.window.takeOff', 'Take off'), why: null };
   if (row.owned) return { label: t('festival.window.wear', 'Wear'), why: null };
   if (row.earned) return { label: row.progress, why: row.earned };
   const need = row.price - (s.cakes ?? 0);
-  if (!s.live) return { label: t('festival.window.buy', 'Buy'), why: t('festival.refusal.offline', 'The Wyrd cannot hear you right now.') };
-  if (s.cakes != null && need > 0) return { label: t('festival.window.need', 'Need {n} more', { n: need }), why: t('festival.refusal.cakes', 'You need more Soul Cakes.') };
+  if (s.shut) return { label: t('festival.window.buy', 'Buy'), why: festivalRefusalText(s.shut) };
+  if (s.cakes != null && need > 0) return { label: t('festival.window.need', '{n} more', { n: need }), why: festivalRefusalText('cakes') };
   return { label: t('festival.window.buy', 'Buy'), why: null };
 }
 
+/** How often an open window looks again at what no answer says (ms). */
+export const WYRD_WATCH_MS = 2000;
 /** THE FESTIVAL'S COLOURS over the Broker's sheet: the moss and the witchfire for the Deadlands' red, the icons' tiles,
  *  the Witchfire aura's ring (green fire and its candles' glow). */
 export const WYRD_STYLE_ID = 'wyrd-style';
@@ -126,6 +129,8 @@ export const WYRD_CSS = `
 .wyrd-shell svg.wyrd-icon { display: block; }
 .wyrd-shell .insignia-sign.hero svg.wyrd-icon { width: 110px; height: 110px; }
 .wyrd-shell .broker-insig.earned:not(.owned) .broker-name { opacity: 0.7; }
+.wyrd-shell .broker-card { position: sticky; top: 0; }
+.wyrd-shell .broker-buy, .wyrd-shell .broker-price { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 `;
 function injectWyrdStyle(doc = document) {
   if (!isEnhancedPlus() && !doc.getElementById?.(BROKER_SKIN_STYLE_ID)) {
@@ -149,7 +154,7 @@ function insigniaSign(/** @type {any} */ row, hero = false) {
     paintTitle(word, titleBadge({ title: row.key }));
     sign.append(word);
   } else if (row.kind === 'aura') sign.append(el('span', ['aura-ring', `aura-${row.key}`].join(' ')));
-  else { const svg = profileIconNode(document, row.key, 'wyrd-icon', hero ? 110 : 36); if (svg) sign.append(svg); }
+  else { const svg = profileIconNode(document, row.key, 'wyrd-icon', hero ? 110 : 36); if (svg) { svg.setAttribute('aria-hidden', 'true'); sign.append(svg); } }   // its name stands beside it
   return sign;
 }
 
@@ -158,7 +163,7 @@ function insigniaSign(/** @type {any} */ row, hero = false) {
  * @param {HTMLElement} host
  * @param {{
  *   state: () => { cakes: number|null, wares: string[], given: number, taken: number }, worn: () => any,
- *   live: () => boolean, lastDay: () => string, night: () => boolean,
+ *   shut: () => string|null, lastDay: () => string, night: () => boolean,
  *   itemOf: (w: any) => any, nameOf: (item: any) => string, wearer?: any,
  *   buy: (id: string) => Promise<{ ok: boolean, text: string }>, wear: (row: any) => Promise<{ ok: boolean, text: string }>,
  *   load?: () => Promise<any>, hear?: (fn: () => void) => () => void, onExit?: () => void,
@@ -173,7 +178,7 @@ export function mountWyrdWindow(host, deps) {
   /** The minted pieces, once each - their pictures and cards. */
   const items = new Map();
   const itemOf = (/** @type {any} */ w) => { if (!items.has(w.id)) items.set(w.id, deps.itemOf(w)); return items.get(w.id); };
-  let picked = null, pending = null;
+  let picked = null, pending = null, reveal = false;
   let note = /** @type {{ ok: boolean, text: string } | null} */ (null);
   const say = (/** @type {string} */ text, ok = false) => { note = text ? { ok, text } : null; render(); };
   const shell = el('div', 'broker-shell wyrd-shell');
@@ -231,7 +236,7 @@ export function mountWyrdWindow(host, deps) {
     if (!alive) return;
     const st = deps.state();
     const rows = wyrdRows(st, deps.worn(), itemOf, deps.nameOf);
-    const s = { cakes: st.cakes, live: deps.live(), busy: pending != null };
+    const s = { cakes: st.cakes, shut: deps.shut(), busy: pending != null };
     sub.textContent = t('festival.window.until', '{festival} - until {last}.', { festival: festivalName(), last: deps.lastDay() });
     night.textContent = deps.night() ? festivalNightText() : '';
     if (deps.night()) night.removeAttribute('hidden'); else night.setAttribute('hidden', '');
@@ -253,9 +258,11 @@ export function mountWyrdWindow(host, deps) {
         if (r) li.dataset.rarity = r;
         li.setAttribute('aria-pressed', picked === row.id ? 'true' : 'false');
         const text = el('div', 'broker-offer-body');
-        const kind = part === 'insignia' ? KIND_WORD[/** @type {keyof typeof KIND_WORD} */ (row.kind)]() : PART_WORDS[part]()[0];
+        // its kind in a word (an insignia's, a part's heading) - the bowl's own line, never its name twice
+        const kind = part === 'insignia' ? KIND_WORD[/** @type {keyof typeof KIND_WORD} */ (row.kind)]() : part === 'offering' ? PART_WORDS.offering()[1] : PART_WORDS[part]()[0];
         text.append(el('span', 'broker-name', row.name), el('span', 'broker-set', kind));
-        const price = el('span', 'broker-price', row.worn ? t('festival.window.worn', 'Worn') : row.owned ? t('festival.window.owned', 'Owned') : row.price != null ? cakesText(row.price) : row.progress);
+        // an earned row's progress is its press's word, never said twice
+        const price = el('span', 'broker-price', row.worn ? t('festival.window.worn', 'Worn') : row.owned ? t('festival.window.owned', 'Owned') : row.price != null ? cakesText(row.price) : '');
         const p = wyrdPress(row, s);
         const btn = el('button', 'act broker-buy', pending === row.id ? '...' : p.label);
         btn.setAttribute('type', 'button');
@@ -264,7 +271,7 @@ export function mountWyrdWindow(host, deps) {
         if (p.why) refusePress(btn, p.why, (reason) => say(reason));
         else btn.onclick = (e) => { e.stopPropagation(); void press(row); };
         li.append(tile(row), text, price, btn);
-        pressable(li, () => { picked = row.id; render(); });
+        pressable(li, () => { picked = row.id; reveal = true; render(); });
         list.append(li);
       }
     }
@@ -289,11 +296,17 @@ export function mountWyrdWindow(host, deps) {
       if (set) card.append(set);
     }
     body.append(card);
+    // the Broker's reveal (U4): on a phone the card stands under the whole list - brought into view as it is pressed
+    if (reveal && globalThis.matchMedia?.('(max-width: 720px)')?.matches) card.scrollIntoView?.({ block: 'start', behavior: 'smooth' });
+    reveal = false;
   };
   render();
   host.append(shell);
   if (deps.load) Promise.resolve().then(() => deps.load?.()).catch(() => null).then(() => render());
   const unhear = deps.hear?.(() => render()) ?? (() => {});
+  // what the festival's state is without an answer to say it - the relay back, the night come, the clock past a day
+  let was = `${deps.shut()}|${deps.night()}`;
+  const watch = setInterval(() => { const now = `${deps.shut()}|${deps.night()}`; if (now !== was) { was = now; render(); } }, WYRD_WATCH_MS);
   const onKey = (/** @type {KeyboardEvent} */ e) => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (overlayAction(e) === 'back') { e.preventDefault(); e.stopPropagation(); exit(); }
@@ -305,6 +318,7 @@ export function mountWyrdWindow(host, deps) {
     unmount() {
       if (!alive) return;
       alive = false;
+      clearInterval(watch);
       unhear();
       globalThis.removeEventListener('keydown', onKey, { capture: true });
       offOutside();

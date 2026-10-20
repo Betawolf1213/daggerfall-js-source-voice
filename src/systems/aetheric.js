@@ -304,16 +304,18 @@ export const PANOPLY_SET_PIECES = Object.freeze([
 // ── WITCH1: THE WYRD'S RAIMENT ──────────────────────────────────────
 /** WITCH1 (2026-10-20, bible/06-Systems/Witches-Festival.md): what the Glenmoril Wyrd wear to the Witches' Festival - nine
  *  in the places' order (the seven body pieces, a round shield and a ONE-HANDED dagger, the Witchmoon Athame, so all nine
- *  are worn at once), Elven, light enough for a caster. Every affix at the Legendary band's FLOOR and the Athame's blow
+ *  are worn at once), LEATHER - a witch's, and a caster's: the Mage, the Sorcerer, the Nightblade and their kind wear eight
+ *  of the nine (never the shield), every one but the Burglar, the Monk and the Knight reaches Soul Harvest (AUDIT WITCH1
+ *  B4: as Elven plate, only the Ranger, the Warrior and the Knight did); the Athame Elven. Every affix at the Legendary band's FLOOR and the Athame's blow
  *  the raid sets' (a festival's wares, a town's thanks' measure - never a boss's). No magic resistance on any piece:
  *  Wyrd-Sight, the 2-piece tier, carries it; one other element on one piece alone (the Regalia's AUDIT FINAL lesson). No
  *  drop rolls it: a Wyrd Sister sells each by its id (wyrdPieceById, the festival's WYRD_PIECE_IDS). */
-const wyrd = (key, name, group, templateIndex, affixes, lore) => record(`wyrd-${key}`, name, group, templateIndex, 'wyrd', 'Elven', RAID_SET_POWER, affixes, lore);
+const wyrd = (key, name, group, templateIndex, affixes, lore) => record(`wyrd-${key}`, name, group, templateIndex, 'wyrd', group === 'Weapons' ? 'Elven' : 'Leather', RAID_SET_POWER, affixes, lore);
 export const WYRD_SET_PIECES = Object.freeze([
-  wyrd('hood', "The Wyrd-Sister's Hood", 'Armor', 107, [a('armor'), a('stat', 'willpower'), a('skill', SKILLS.Mysticism)],
+  wyrd('hood', "The Wyrd Sister's Hood", 'Armor', 107, [a('armor'), a('stat', 'willpower'), a('skill', SKILLS.Mysticism)],
     'Woven on the Glenumbra Moors, under both moons.'),
   wyrd('right-mantle', 'Right Mantle of the Wyrd', 'Armor', 106, [a('armor'), a('stat', 'intelligence'), a('skill', SKILLS.Destruction)],
-    'Black feathers sewn to Elven plate. No bird of the Bay grew them.'),
+    'Black feathers sewn to tanned hide. No bird of the Bay grew them.'),
   wyrd('left-mantle', 'Left Mantle of the Wyrd', 'Armor', 105, [a('armor'), a('stat', 'willpower'), a('skill', SKILLS.Alteration)],
     'Cut to lift a cauldron\'s lid, never to turn a blade. It turns both.'),
   wyrd('robe', 'The Wyrdwoven Cuirass', 'Armor', 102, [a('armor'), a('stat', 'willpower'), a('stat', 'endurance')],

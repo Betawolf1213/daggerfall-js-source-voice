@@ -93,7 +93,7 @@ import { staticBuildingBox, staticBuildingWorldAabb } from '../world/staticBuild
 import { BUILDING_TYPES as TALK_BUILDING_TYPES } from '../world/buildingNames.js';
 import { TownPopulation } from '../systems/town/townPopulation.js';
 import { windfallResponse } from '../systems/windfall.js';
-import { colliderBlocked, witchesDressing } from '../world/witchesDecor.js';   // WITCH1: the Witches' Festival's dressing and its Wyrd Sisters
+import { colliderBlocked, dryGround, witchesDressingBreathing } from '../world/witchesDecor.js';   // WITCH1: the Witches' Festival's dressing and its Wyrd Sisters
 import { wodRockUvs } from '../world/worldOfDaggerfall/wodRockUv.js';
 import { WodSpawner } from '../world/worldOfDaggerfall/wodSpawner.js';
 import { lateSolidsOf } from '../player/lateSolid.js';   // ROCK-CLEAR: a pixel's statics built round a body already standing are withheld until it is clear
@@ -601,7 +601,7 @@ export function createPixelBuild(host) {
             if (isLefayTown(dfLocation)) for (const sd of staticDoors) if (sd.doorType === DOOR_TYPE.DUNGEON_ENTRANCE) lefayExitDoors.push(sd);   // HOLD-MONUMENT: the way out of the Hold
             // GUILD1d: the building's first door, measured where it stands - its hall's banners hang beside it
             const hf = homeKey != null ? pixelHomeFrames.get(homeKey) : null;
-            if (hf && !hf.door) hf.door = doorCornersOf(cpu.doors[0], local);
+            if (hf && !hf.door) { hf.door = doorCornersOf(cpu.doors[0], local); hf.normal = doorNormalOf(cpu.doors[0], local); }   // AUDIT WITCH1 D1: and its own outward normal - a door on its box's middle line takes its face from it, never the vertices' order (systems/siegeField.js doorFaceSign)
             if (dfLocation.hasDungeon) for (const d of cpu.doors) if (d.type === DOOR_TYPE.DUNGEON_ENTRANCE) pixelDungeonDoors.push({ door: doorCornersOf(d, local), box, normal: doorNormalOf(d, local), arena: b.blockName === ARENA_BLOCK });   // CASTLE-GATE (AUDIT G1: its outward normal; AUDIT PRE-MERGE 1003 W7: the undercroft's stair, no castle's - castleEntranceOf passes it over)
             for (const door of staticDoors) {
               host.doorGeneration += 1;   // WORLD-HOVER: a pixel's doors arriving
@@ -1089,11 +1089,11 @@ export function createPixelBuild(host) {
     // way and a Wyrd Sister at each tavern's door (world/witchesDecor.js) - its flats logged with the block's (they batch,
     // light, stand solid and keep through a re-skin as those do), a fire among them a hearth, the Sisters stood with the
     // street's people below; each spot clear of the walls the pixel's bucket now holds and of what the town stands
-    const witchDress = witchFloor != null && locBlocks ? witchesDressing({
+    const witchDress = witchFloor != null && locBlocks ? await witchesDressingBreathing({
       frames: pixelHomeFrames, taverns: buildingKeysOfType(locBlocks, makeBuildingKey, TALK_BUILDING_TYPES.Tavern), temples: buildingKeysOfType(locBlocks, makeBuildingKey, TALK_BUILDING_TYPES.Temple),
       mapId: dfLocation?.mapTableData?.mapId ?? 0, climateIndex: maps.getClimateIndex(px, py), region: dfLocation?.regionIndex ?? null, floorY: witchFloor,
-      blocked: colliderBlocked(collider, host.state, px, py), taken: [...flatLog.map((f) => f.c), ...[...pixelNpcFlats, ...pixelStandFlats].map((n) => [n.x, n.y, n.z])],
-    }) : null;
+      blocked: colliderBlocked(collider, host.state, px, py), ground: dryGround(locBlocks, locOrigin), taken: [...flatLog.map((f) => f.c), ...[...pixelNpcFlats, ...pixelStandFlats].map((n) => [n.x, n.y, n.z])],
+    }, () => breather.breathe()) : null;   // PERF7: a city's rays breathe
     for (const f of witchDress?.flats ?? []) {
       addFlat(f.archive, f.record, ...f.c);
       if (f.archive !== LIGHTS_ARCHIVE) continue;
@@ -1226,7 +1226,7 @@ export function createPixelBuild(host) {
       // SetActive(false)) and `questBehaviour` the component
       // SetupIndividualStaticNPC attaches; both are what the interior
       // host's people carry, so the click seam reads one shape.
-      pixelNpcs.push({ ...pn, drawArchive, drawRecord, width: size.w, height: size.h, active: true, questBehaviour: null, host: null, witch: flat.witch ?? null });   // WITCH1: a Wyrd Sister marked
+      pixelNpcs.push({ ...pn, drawArchive, drawRecord, width: size.w, height: size.h, active: true, questBehaviour: null, host: null, witch: flat.witch ?? null, ...(flat.witch ? { _mwLook: null } : {}) });   // WITCH1: a Wyrd Sister marked - and her own picture, never a Morrowind commoner's look (scenes/world.js streetLook)
       // The extent still belongs to the pixel's culling box even though
       // the billboard is batched later (a pixel whose only content near
       // an edge is a street NPC must not cull itself away).

@@ -1803,7 +1803,7 @@ vec3 witchGround(vec2 p) {
     float heat = band * (0.35 + 0.65 * flow);
     col += witchRamp(clamp(heat, 0.0, 1.0)) * heat * 0.9 * breath;
     // THE CANDLES: tallow flames standing in the ring, each guttering on its own beat (witchCandleAt)
-    float k = floor(fract(a / TAU) * ${WITCH_CANDLES.toFixed(1)} + 0.5);
+    float k = mod(floor(fract(a / TAU) * ${WITCH_CANDLES.toFixed(1)} + 0.5), ${WITCH_CANDLES.toFixed(1)});   // AUDIT WITCH1 E5: the first candle one candle, never two halves out of step (witchCandleAt's wrap)
     float ak = k / ${WITCH_CANDLES.toFixed(1)} * TAU;
     vec2 d = p - vec2(cos(ak), sin(ak)) * uRingR;
     float flick = 0.75 + 0.25 * sin(uTime * TAU ${hzGlsl(WITCH_HZ.flicker)} * (1.0 + mod(k, 3.0)) + k * 2.3);

@@ -51,8 +51,8 @@ export const CARD_EMBLEMS = Object.freeze([
   // KG-SET: the nine The King's Gambit's roster brought into the set - the bear, the great cat, the spider, the fish, the
   // wrapped dead, the bow (the Archer's and the Ranger's)
   'bear', 'cat', 'spider', 'fish', 'mummy', 'bow',
-  // WITCH1 (2026-10-20, bible/06-Systems/Witches-Festival.md): the Witches' Festival's - a witch's hat under the twin moons,
-  // a tallow candle
+  // WITCH1 (2026-10-20, bible/06-Systems/Witches-Festival.md): the Witches' Festival's - the Wyrd's cauldron, a tallow
+  // candle
   'witch', 'candle',
 ]);
 

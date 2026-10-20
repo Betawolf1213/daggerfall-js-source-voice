@@ -1,17 +1,18 @@
 // @ts-check
 // WITCH1 (2026-10-20, the owner: "We should decorate each town with its own lore appropriate decorations"; bible/06-
 // Systems/Witches-Festival.md): THE TOWNS DRESSED FOR THE WITCHES' FESTIVAL, each in its own people's way, and a Wyrd
-// Sister at every tavern's door.
+// Sister at a tavern's door wherever one side of it is clear.
 //
 // THE KITS, by a town's climate and its region's people (formats/mapsTables.js REGION_RACES):
 //   HIGH ROCK (Breton): turnip lanterns at the tavern's door, a straw effigy beside it, standing candles at the temples;
 //     a house in three a turnip lantern on its step, now and then a skull candle.
-//   HAMMERFELL (Redguard, and every desert): the ancestors' lights - standing candles at the door, a bowl of fire with
-//     skull candles beside it, torches at the temples, candles on the steps.
+//   HAMMERFELL (Redguard - every town of a Redguard region but its swamps and its mountains, and every desert): the
+//     ancestors' lights - standing candles at the door, a bowl of fire with skull candles beside it, torches at the
+//     temples, candles on the steps.
 //   THE MOUNTAINS (the Wrothgarians, the Dragontails): torches on poles, a bonfire with an effigy to burn and a horned
 //     skull beside it, skulls on stakes at the houses.
-//   THE FENS AND THE JUNGLES (the swamps, the rainforest, the subtropics): ward-staves at the doors and the steps, a bowl
-//     of fire between two more.
+//   THE FENS AND THE JUNGLES (every swamp; the rainforest and the subtropics of a Breton region): ward-staves at the doors
+//     and the steps, a bowl of fire between two more.
 //   THE HAUNTED WOODLANDS: skull candles at the door, an effigy over a pile of skulls, turnips, skulls and bones at the
 //     houses - "the dead do walk tonight" (TEXT.RSC 8387, Tales and Tallows).
 // Daggerfall's own flats (TEXTURE.210's lights - each lights the street at night as the town's lanterns do -, 100's
@@ -32,6 +33,8 @@ import { CLIMATES, REGION_RACES } from '../formats/mapsTables.js';
 import { isResidence } from './buildingNames.js';
 import { homeCandidate } from '../systems/online/onlineHomes.js';
 import { doorFace } from '../systems/siegeField.js';
+import { RMB_SIDE } from './locationLayout.js';
+import { tileWeight } from './city/cityNavigation.js';
 
 /** The Wyrd Sister's picture: FLATS.CFG's "mysterious woman" (179.2), the covens' own witch, dressed - NUDE-FLATS'
  *  stand-in for the coven's (characters/nudeFlats.js). */
@@ -85,13 +88,17 @@ export const WITCH_KITS = Object.freeze({
   }),
 });
 
-/** A town's kit's name: by its climate (maps.getClimateIndex - the world's 223..232), else its region's people. Pure. */
+/** A town's kit's name: by its climate (maps.getClimateIndex - the world's 223..232) and its region's people - the
+ *  haunted woods, the mountains and the swamps their own; then a Redguard region's, and every desert, Hammerfell's (its
+ *  jungle coast too - Sentinel's own: AUDIT WITCH1 F-M3, three Hammerfell towns in four are subtropical); a Breton
+ *  region's rainforest the fens'; the rest High Rock's. Pure. */
 export function witchCulture(/** @type {number|null|undefined} */ climateIndex, /** @type {number|null|undefined} */ region) {
   if (climateIndex === CLIMATES.HauntedWoodlands) return 'haunted';
   if (climateIndex === CLIMATES.Mountain || climateIndex === CLIMATES.MountainWoods) return 'highland';
-  if (climateIndex === CLIMATES.Swamp || climateIndex === CLIMATES.Rainforest || climateIndex === CLIMATES.Subtropical) return 'fen';
-  if (climateIndex === CLIMATES.Desert || climateIndex === CLIMATES.Desert2) return 'redguard';
-  return REGION_RACES[region ?? -1] === 1 ? 'redguard' : 'breton';
+  if (climateIndex === CLIMATES.Swamp) return 'fen';
+  if (REGION_RACES[region ?? -1] === 1 || climateIndex === CLIMATES.Desert || climateIndex === CLIMATES.Desert2) return 'redguard';
+  if (climateIndex === CLIMATES.Rainforest || climateIndex === CLIMATES.Subtropical) return 'fen';
+  return 'breton';
 }
 
 /** Where the pieces stand from a door - metres: a door pair beside each jamb and a pace out, the Wyrd Sister and the
@@ -158,19 +165,59 @@ export function colliderBlocked(collider, state, px, py) {
   };
 }
 
+/** A ground tile's side and a block's tiles a row (an RMB's 16 x 16). */
+const TILE_M = RMB_SIDE / 16;
+/**
+ * THE GROUND A PIECE STANDS ON (AUDIT WITCH1 D7): `(x, z) => boolean`, whether a pixel-local point is on a location's
+ * dry ground - inside its blocks (outside them the ground is eased away from the street's height) and on no water (the
+ * water family DFU's people never walk - world/city/cityNavigation.js tileWeight; a dock, a moat's shallows and a puddle
+ * are walked on, and stood on). `blocks` the
+ * location's laid blocks (each `{ x, y, dfBlock }` - world/locationLayout.js), `origin` its pixel-local origin. The RMB's
+ * rows run against the world's z (world/city/cityNavigation.js setBlockData's flip). Pure.
+ * @param {any[]} blocks @param {ArrayLike<number>} origin
+ */
+export function dryGround(blocks, origin) {
+  const at = new Map((blocks ?? []).map((b) => [`${b.x},${b.y}`, b]));
+  return (/** @type {number} */ x, /** @type {number} */ z) => {
+    const lx = x - origin[0], lz = z - origin[2];
+    const bx = Math.floor(lx / RMB_SIDE), by = Math.floor(lz / RMB_SIDE);
+    const tiles = at.get(`${bx},${by}`)?.dfBlock?.rmbBlock?.fldHeader?.groundData?.groundTiles;
+    if (!tiles) return false;
+    const tx = Math.floor((lx - bx * RMB_SIDE) / TILE_M), ty = 15 - Math.floor((lz - by * RMB_SIDE) / TILE_M);
+    return tileWeight((tiles[tx]?.[ty]?.textureRecord ?? 0) & 0x3f) !== 0;
+  };
+}
+
 /**
  * THE TOWN DRESSED: `{ flats, sisters, homes }` while the festival's days run at `nowMs`, else null - `flats` the pieces
  * (`{ archive, record, c }`, pixel-local, standing on `floorY`), `sisters` the Wyrd Sisters as the street's people's flats
  * (scenes/pixelBuild.js stands them as RMBLayout's, each marked `witch: { key }` with its tavern's building key), `homes`
  * each home's Hearth Offering spot by its key ([x, y, z], kept clear of the dressing).
  * `frames` the pixel's building frames (`homeFrames`), `taverns` and `temples` their keys; `mapId` and `climateIndex`,
- * `region` the town's; `blocked(a, b)` whether a wall stands between two pixel-local points; `taken` the points the
- * town's flats and people stand at. Pure.
- * @param {{ frames: Map<number, any>|null, taverns?: number[], temples?: number[], mapId?: number, climateIndex?: number|null,
- *   region?: number|null, floorY?: number, nowMs?: number, blocked?: (a: number[], b: number[]) => boolean,
- *   taken?: Iterable<ArrayLike<number>> }} town
+ * `region` the town's; `blocked(a, b)` whether a wall stands between two pixel-local points; `ground(x, z)` whether a
+ * point is ground to stand on (dryGround); `taken` the points the town's flats and people stand at. Pure.
+ * @param {DressedTown} town
  */
-export function witchesDressing({ frames, taverns = [], temples = [], mapId = 0, climateIndex = null, region = null, floorY = 0, nowMs = Date.now(), blocked = () => false, taken = [] }) {
+export function witchesDressing(town) {
+  const steps = dressTown(town);
+  let r = steps.next();
+  while (!r.done) r = steps.next();
+  return r.value;
+}
+/** THE SAME, BREATHING (PERF7): `breathe()` awaited between buildings - a city's thousand rays never one frame's. */
+export async function witchesDressingBreathing(/** @type {DressedTown} */ town, /** @type {() => Promise<unknown>} */ breathe) {
+  const steps = dressTown(town);
+  let r = steps.next();
+  while (!r.done) { await breathe(); r = steps.next(); }
+  return r.value;
+}
+/**
+ * @typedef {{ frames: Map<number, any>|null, taverns?: number[], temples?: number[], mapId?: number, climateIndex?: number|null,
+ *   region?: number|null, floorY?: number, nowMs?: number, blocked?: (a: number[], b: number[]) => boolean,
+ *   ground?: (x: number, z: number) => boolean, taken?: Iterable<ArrayLike<number>> }} DressedTown
+ */
+/** The dressing, a building a step (witchesDressing runs it whole, witchesDressingBreathing breathes between). */
+function* dressTown(/** @type {DressedTown} */ { frames, taverns = [], temples = [], mapId = 0, climateIndex = null, region = null, floorY = 0, nowMs = Date.now(), blocked = () => false, ground = () => true, taken = [] }) {
   if (!frames?.size || !festivalOpen(nowMs)) return null;
   const kit = WITCH_KITS[witchCulture(climateIndex, region)];
   const S = WITCH_SPOTS;
@@ -186,8 +233,9 @@ export function witchesDressing({ frames, taverns = [], temples = [], mapId = 0,
   };
   for (const p of taken) if (p && Number.isFinite(p[0]) && Number.isFinite(p[2])) file(p[0], p[2], TAKEN_R, S.clear);
   const flats = [], sisters = [];
-  /** Whether a spot is clear for a foot `r`: no wall from the door's front to it, a pace from what stands. */
+  /** Whether a spot is clear for a foot `r`: on the ground, no wall from the door's front to it, a pace from what stands. */
   const clear = (/** @type {any} */ front, /** @type {number[]} */ xz, /** @type {number} */ r) => {
+    if (!ground(xz[0], xz[1])) return false;
     const gx = Math.floor(xz[0] / GRID_M), gz = Math.floor(xz[1] / GRID_M);
     for (let i = -1; i <= 1; i++) {
       for (let j = -1; j <= 1; j++) {
@@ -233,10 +281,12 @@ export function witchesDressing({ frames, taverns = [], temples = [], mapId = 0,
       for (const p of kit.show) any = stand(front, p, base + s * p.along, S.showOut + p.out) || any;
       if (any) break;
     }
+    yield;
   }
   for (const key of temples) {
     const front = doorFront(frames.get(key));
     if (front) pair(front, kit.temple);
+    yield;
   }
   // EVERY HOME'S OFFERING SPOT, kept before a step is stood - the near side where it is clear, else out before the door
   /** @type {Map<number, number[]>} */
@@ -251,6 +301,7 @@ export function witchesDressing({ frames, taverns = [], temples = [], mapId = 0,
       homes.set(key, [xz[0], floorY, xz[1]]);
       break;
     }
+    yield;
   }
   for (const [key, f] of frames) {
     if (!isResidence(f?.type)) continue;
@@ -258,7 +309,7 @@ export function witchesDressing({ frames, taverns = [], temples = [], mapId = 0,
     let edge = 0;
     const p = kit.step.find((pick) => roll < (edge += /** @type {number} */ (pick[1])))?.[0];
     const front = p ? doorFront(f) : null;
-    if (front) stand(front, p, witchStepSide(mapId, key) * (front.half + S.stepAlong), S.stepOut);
+    if (front) { stand(front, p, witchStepSide(mapId, key) * (front.half + S.stepAlong), S.stepOut); yield; }
   }
   return { flats, sisters, homes };
 }

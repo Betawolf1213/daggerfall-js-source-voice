@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  WITCH_KITS, WITCH_SPOTS, WYRD_SISTER_FLAT, witchCulture, witchesDressing, doorFront, offeringSpot, witchStepSide, colliderBlocked,
+  WITCH_KITS, WITCH_SPOTS, WYRD_SISTER_FLAT, witchCulture, witchesDressing, witchesDressingBreathing, dryGround, doorFront, offeringSpot, witchStepSide, colliderBlocked,
 } from '../../src/world/witchesDecor.js';
 import { FESTIVAL_ARCHIVE, FESTIVAL_ART } from '../../src/world/festivalArt.js';
 import { CLIMATES } from '../../src/formats/mapsTables.js';
@@ -19,13 +19,14 @@ const TAVERN = 101, TEMPLE = 102;
 const town = (extra = {}) => new Map([[TAVERN, frame(0, 0, BUILDING_TYPES.Tavern)], [TEMPLE, frame(40, 0, BUILDING_TYPES.Temple)], ...Object.entries(extra).map(([k, v]) => [Number(k), v])]);
 const pic = (f) => `${f.archive}.${f.record}`;
 
-test('WITCH1 THE KITS: each people\'s pieces, by the town\'s climate, else its region\'s people', () => {
+test('WITCH1 THE KITS: each people\'s pieces, by the town\'s climate and its region\'s people', () => {
   assert.equal(witchCulture(CLIMATES.HauntedWoodlands, 0), 'haunted');
   assert.equal(witchCulture(CLIMATES.Mountain, 0), 'highland');
   assert.equal(witchCulture(CLIMATES.MountainWoods, 1), 'highland');
   assert.equal(witchCulture(CLIMATES.Swamp, 0), 'fen');
-  assert.equal(witchCulture(CLIMATES.Rainforest, 0), 'fen');
-  assert.equal(witchCulture(CLIMATES.Subtropical, 1), 'fen');
+  assert.equal(witchCulture(CLIMATES.Rainforest, 17), 'fen', 'a Breton region\'s rainforest');
+  assert.equal(witchCulture(CLIMATES.Subtropical, 1), 'redguard', 'Hammerfell\'s jungle coast is Hammerfell\'s - Sentinel\'s own (AUDIT WITCH1 F-M3)');
+  assert.equal(witchCulture(CLIMATES.Rainforest, 0), 'redguard');
   assert.equal(witchCulture(CLIMATES.Desert, 0), 'redguard');
   assert.equal(witchCulture(CLIMATES.Desert2, 0), 'redguard');
   assert.equal(witchCulture(CLIMATES.Woodlands, 17), 'breton', 'a Breton region\'s woods (Daggerfall\'s own)');
@@ -50,6 +51,15 @@ test('WITCH1 A DOOR\'S FRONT: its middle, its face out of the building, the wall
   assert.deepEqual(f.spot(0, 2), [0, 2]);
   assert.equal(Math.abs(f.spot(1, 0)[0]), 1, 'along the wall');
   assert.equal(doorFront({ box: [0, 0, 0, 1, 1, 1] }), null, 'no door, no front');
+});
+
+test('WITCH1 A DOOR ON ITS BOX\'S MIDDLE LINE faces where its own normal says - never where its vertices happen to run; the build keeps the normal beside the door (AUDIT WITCH1 D1: one door in seven faced into its building)', () => {
+  // a building whose door stands at its box's middle (Daggerfall's House2, model 214): the box's middle says nothing
+  const mid = { at: [0, 0, 0], box: [-5, 0, -7, 5, 6, 7], rects: [], type: 17, faction: 0, door: { a: [0.6, 0, 0], b: [-0.6, 2.4, 0] } };
+  assert.deepEqual(doorFront({ ...mid, normal: [0, 0, 1] }).out, [0, 1]);
+  assert.deepEqual(doorFront({ ...mid, normal: [0, 0, -1] }).out, [0, -1]);
+  const pb = readFileSync(new URL('../../src/scenes/pixelBuild.js', import.meta.url), 'utf8');
+  assert.match(pb, /if \(hf && !hf\.door\) \{ hf\.door = doorCornersOf\(cpu\.doors\[0\], local\); hf\.normal = doorNormalOf\(cpu\.doors\[0\], local\); \}/, 'the first door\'s corners and its normal, together');
 });
 
 test('WITCH1 THE TOWN DRESSED: closed outside the festival\'s days; open, a pair at each door, the Sister on one side of the tavern and the show on the other', () => {
@@ -132,7 +142,37 @@ test('WITCH1 THE BUILD LOGS THEM WITH THE BLOCK\'S OWN: after the collider holds
   assert.match(src, /for \(const f of witchDress\?\.flats \?\? \[\]\) \{\n\s+addFlat\(f\.archive, f\.record, \.\.\.f\.c\);/);
   assert.match(src, /if \(isHearthFlat\(LIGHTS_ARCHIVE, f\.record\)\) pixelHearths\.push/);
   assert.match(src, /pixelNpcFlats\.push\(\.\.\.\(witchDress\?\.sisters \?\? \[\]\)\);/);
-  assert.match(src, /host: null, witch: flat\.witch \?\? null \}\);/);
+  assert.match(src, /host: null, witch: flat\.witch \?\? null, \.\.\.\(flat\.witch \? \{ _mwLook: null \} : \{\}\) \}\);/, 'her own picture under the Morrowind people (AUDIT WITCH1 D6)');
   assert.match(src, /witchHomes: witchDress\?\.homes \?\? null, witchFloor,/);
-  assert.match(src, /blocked: colliderBlocked\(collider, host\.state, px, py\)/);
+  assert.match(src, /blocked: colliderBlocked\(collider, host\.state, px, py\), ground: dryGround\(locBlocks, locOrigin\),/);
+  assert.match(src, /const witchDress = witchFloor != null && locBlocks \? await witchesDressingBreathing\(\{/, 'a city\'s rays breathe (PERF7, AUDIT WITCH1 D3)');
+  assert.match(src, /\}, \(\) => breather\.breathe\(\)\) : null;/);
+});
+
+test('WITCH1 THE GROUND A PIECE STANDS ON: inside the location\'s blocks and off its water (the family DFU\'s people never walk) - a dock or a puddle stood on; the build asks it (AUDIT WITCH1 D7)', () => {
+  const tiles = (rec) => Array.from({ length: 16 }, () => Array.from({ length: 16 }, () => ({ textureRecord: rec })));
+  const wet = tiles(2);
+  wet[3][15].textureRecord = 0;   // the RMB's row 15 is the block's first 6.4 m of z
+  const blocks = [{ x: 0, y: 0, dfBlock: { rmbBlock: { fldHeader: { groundData: { groundTiles: wet } } } } }];
+  const g = dryGround(blocks, [100, 0, 200]);
+  assert.equal(g(100 + 1, 200 + 1), true);
+  assert.equal(g(100 + 3 * 6.4 + 1, 200 + 1), false, 'open water');
+  assert.equal(g(100 + 3 * 6.4 + 1, 200 + 7), true, 'the next tile north');
+  assert.equal(g(50, 200), false, 'outside the blocks');
+  wet[5][15].textureRecord = 5;   // a shore - the water family's, as DFU's people never walk it
+  assert.equal(g(100 + 5 * 6.4 + 1, 200 + 1), false, 'a shore');
+  wet[6][15].textureRecord = 8;   // a dock's (SHALLOW_WHOLE) - walked on, stood on
+  assert.equal(g(100 + 6 * 6.4 + 1, 200 + 1), true, 'a dock');
+  const d = witchesDressing({ frames: town(), taverns: [TAVERN], nowMs: IN, ground: () => false });
+  assert.deepEqual([d.flats.length, d.sisters.length, d.homes.size], [0, 0, 0], 'nothing stood where there is no ground');
+});
+
+test('WITCH1 THE DRESSING BREATHES: the same town as the whole run, a breath between its buildings (PERF7 - AUDIT WITCH1 D3)', async () => {
+  const houses = Object.fromEntries([1, 2, 3].map((i) => [500 + i, frame(-40 * i, 0, BUILDING_TYPES.House1)]));
+  const at = { frames: town(houses), taverns: [TAVERN], temples: [TEMPLE], mapId: 9, floorY: 0, nowMs: IN };
+  let breaths = 0;
+  const breathed = await witchesDressingBreathing(at, async () => { breaths++; });
+  assert.deepEqual(breathed, witchesDressing(at));
+  assert.ok(breaths >= 2 + 3, `a breath a building at least (${breaths})`);
+  assert.equal(await witchesDressingBreathing({ ...at, nowMs: OUT }, async () => { breaths++; }), null);
 });

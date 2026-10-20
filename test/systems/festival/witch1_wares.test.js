@@ -25,7 +25,9 @@ import { AURA_LOOK, AURA_FS, witchfireRatesWhole } from '../../../src/render/aur
 import { profileIconNode, ICON_ART, ICON_TEXT } from '../../../src/ui/profileIcons.js';
 import { ICONS } from '../../../src/net/identityToken.js';
 import { FESTIVAL_PAINTERS, FESTIVAL_ART, registerFestivalArt, _resetFestivalArt } from '../../../src/world/festivalArt.js';
-import { wyrdRows, wyrdPress } from '../../../src/ui/wyrdWindow.js';
+import { wyrdRows, wyrdPress, mountWyrdWindow, WYRD_WATCH_MS, WYRD_CSS } from '../../../src/ui/wyrdWindow.js';
+import { withDom } from '../../invdrag.mjs';
+import { mock } from 'node:test';
 import { TITLE_TEXT, AURA_TEXT } from '../../../src/ui/playerBadge.js';
 
 test('WITCH1 THE WYRD\'S RAIMENT: nine Aetheric pieces of Elven make in the Wyrd\'s set - the eight of a body and its shield, the Athame its weapon - each minted by its id alone', () => {
@@ -178,13 +180,56 @@ test('WITCH1 THE WINDOW\'S ROWS AND PRESSES: the wares in their parts, the two t
   assert.deepEqual([by('earned:soulcake').owned, by('earned:soulcake').progress], [false, '3/10']);
   assert.equal(by('piece:wyrd-athame').name, 'piece wyrd-athame');
   assert.equal(by('aura:witchfire').name, 'Witchfire');
-  const live = { cakes: 50, live: true, busy: false };
+  const live = { cakes: 50, shut: null, busy: false };
   assert.deepEqual(wyrdPress(by('title:witchwarden'), live), { label: 'Take off', why: null });
   assert.deepEqual(wyrdPress(by('icon:twinmoons'), live), { label: 'Wear', why: null });
   assert.deepEqual(wyrdPress(by('earned:hearthkeeper'), live), { label: 'Wear', why: null });
   assert.equal(wyrdPress(by('earned:soulcake'), live).label, '3/10');
-  assert.match(wyrdPress(by('earned:soulcake'), live).why, /^Earned: /);
-  assert.deepEqual(wyrdPress(by('aura:witchfire'), live), { label: 'Need 100 more', why: 'You need more Soul Cakes.' });
+  assert.equal(wyrdPress(by('earned:soulcake'), live).why, "Earned by taking Soul Cakes from others' offerings.");
+  assert.deepEqual(wyrdPress(by('aura:witchfire'), live), { label: '100 more', why: 'You need more Soul Cakes.' });
   assert.deepEqual(wyrdPress(by('card:warlock'), live), { label: 'Buy', why: null });
-  assert.deepEqual(wyrdPress(by('card:warlock'), { ...live, live: false }), { label: 'Buy', why: 'The Wyrd cannot hear you right now.' });
+  assert.deepEqual(wyrdPress(by('card:warlock'), { ...live, shut: 'offline' }), { label: 'Buy', why: 'The Wyrd cannot hear you right now.' });
+  assert.deepEqual(wyrdPress(by('card:warlock'), { ...live, shut: 'guest' }), { label: 'Buy', why: 'Link an account to keep Soul Cakes.' }, 'a guest is told why (AUDIT WITCH1 F-M1)');
 });
+
+const kidsOf = (n, cls) => (n?.children ?? []).flatMap((c) => [...(c.classList?.contains(cls) ? [c] : []), ...kidsOf(c, cls)]);
+test('WITCH1 THE WINDOW MOUNTED: the reason a press cannot be said (a guest\'s, offline\'s), an earned row\'s progress said once, the bowl\'s row never its name twice, the card sticky and brought into view on a phone; it looks again at what no answer says, and leaves nothing behind (AUDIT WITCH1 E3/E8/E10)', () => {
+  withDom(() => {
+    mock.timers.enable({ apis: ['setInterval'] });
+    let shut = 'guest', renders = 0;
+    const host = document.createElement('div');
+    const view = mountWyrdWindow(host, {
+      state: () => { renders++; return { cakes: 10, wares: [], given: 3, taken: 0 }; }, worn: () => null, shut: () => shut,
+      lastDay: () => '7 November', night: () => false, itemOf: () => null, nameOf: (it) => it?.name ?? '?',
+      buy: async () => ({ ok: true, text: '' }), wear: async () => ({ ok: true, text: '' }),
+    });
+    try {
+      const rows = kidsOf(host, 'broker-offer');
+      const row = (id) => rows.find((r) => r.dataset.ware === id);
+      const btn = (id) => kidsOf(row(id), 'broker-buy')[0];
+      const price = (id) => kidsOf(row(id), 'broker-price')[0];
+      assert.equal(btn('earned:hearthkeeper').textContent, '3/25');
+      assert.equal(price('earned:hearthkeeper').textContent, '', 'its progress the press\'s word alone');
+      assert.notEqual(kidsOf(row('item:offering'), 'broker-set')[0].textContent, kidsOf(row('item:offering'), 'broker-name')[0].textContent, 'the bowl\'s kind line is its own');
+      btn('card:warlock').onclick?.({ stopPropagation() {} });
+      assert.ok(WYRD_CSS.includes('.wyrd-shell .broker-card { position: sticky; top: 0; }'));
+      assert.ok(WYRD_CSS.includes('text-overflow: ellipsis'));
+      // the relay comes back, no answer says so: the window looks again
+      const before = renders;
+      shut = null;
+      mock.timers.tick(WYRD_WATCH_MS);
+      assert.ok(renders > before, 'repainted as the festival came live');
+      const after = renders;
+      mock.timers.tick(WYRD_WATCH_MS * 3);
+      assert.equal(renders, after, 'nothing changed, nothing repainted');
+    } finally {
+      view.unmount();
+      const left = renders;
+      shut = 'offline';
+      mock.timers.tick(WYRD_WATCH_MS * 2);
+      assert.equal(renders, left, 'unmounted: its watch went with it');
+      mock.timers.reset();
+    }
+  });
+});
+

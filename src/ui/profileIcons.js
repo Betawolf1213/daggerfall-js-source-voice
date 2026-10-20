@@ -46,8 +46,8 @@ export const ICON_ART = Object.freeze({
       ['circle', { cx: 28, cy: 34, r: 15, fill: '#c8502c', stroke: '#6a2412', 'stroke-width': 1.5 }],
       ['circle', { cx: 23, cy: 29, r: 3.2, fill: '#a63c20' }], ['circle', { cx: 33, cy: 39, r: 4.5, fill: '#a63c20' }],
       ['circle', { cx: 31, cy: 27, r: 2, fill: '#a63c20' }],
-      ['circle', { cx: 46, cy: 22, r: 7, fill: '#e6ecf4', stroke: '#7a8494', 'stroke-width': 1 }],
-      ['circle', { cx: 48.5, cy: 20.5, r: 6.2, fill: '#1d2a52' }],
+      // Secunda's crescent, a shape of its own (AUDIT WITCH1 E7: a sky-blue disc laid over the gradient showed as a patch)
+      ['path', { d: 'M45.62 15.01 A7 7 0 1 0 51.99 25.63 A6.2 6.2 0 0 1 45.62 15.01 Z', fill: '#e6ecf4', stroke: '#7a8494', 'stroke-width': 1 }],
     ],
   }),
   wyrdcauldron: Object.freeze({

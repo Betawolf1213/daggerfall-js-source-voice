@@ -2010,15 +2010,15 @@ const service = {
           '/v1/festival/mine': async () => festivalOf(ctx, who.player, env),
           '/v1/festival/find': async () => findFestival(ctx, who.player, body, env),
           '/v1/festival/buy': async () => buyFestival(ctx, who.player, body, env),
-          '/v1/festival/town': async () => festivalTown(ctx, who.player, body),
+          '/v1/festival/town': async () => festivalTown(ctx, who.player, body, env),
           '/v1/festival/offering/set': async () => setOffering(ctx, who.player, body, env),
           '/v1/festival/offering/fill': async () => fillOffering(ctx, who.player, body, env),
-          '/v1/festival/offering/take-in': async () => takeInOffering(ctx, who.player, body, env),
+          '/v1/festival/offering/take-in': async () => takeInOffering(ctx, who.player, body),
           '/v1/festival/offering/take': async () => takeFromOffering(ctx, who.player, body, env),
         }[path];
         if (!act) return no('not-found', 404, origin);
         const r = await act();
-        if ('error' in r) return json({ error: r.error, ...(Number.isSafeInteger(r.cakes) ? { cakes: r.cakes } : {}) }, FEST_STATUS[r.error] ?? 400, origin);
+        if ('error' in r) return json({ error: r.error, ...(Number.isSafeInteger(r.cakes) ? { cakes: r.cakes } : {}), ...(Number.isSafeInteger(r.bowls) ? { bowls: r.bowls } : {}) }, FEST_STATUS[r.error] ?? 400, origin);
         return json(r, 200, origin);
       }
 

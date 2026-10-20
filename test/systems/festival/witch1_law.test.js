@@ -4,7 +4,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  FESTIVALS, festivalAt, festivalOpen, festivalNext, FESTIVAL_NIGHTS, festivalNight, FIND_NIGHT_MULT,
+  FESTIVALS, festivalAt, festivalOpen, festivalNext, FESTIVAL_NIGHTS, festivalNight, festivalEve, deadWalk, FIND_NIGHT_MULT,
   SOUL_CAKE_TEMPLATE, HEARTH_OFFERING_TEMPLATE, FIND_SOURCES, isFindSource, findCount, FIND_ASKS_PER_DAY, FIND_CAKES_PER_DAY,
   OFFERING_STOCK_MAX, OFFERING_FILL, OFFERING_TAKE, HEARTHKEEPER_GIVEN, SOULCAKE_TAKEN, WYRD_PIECE_IDS, FESTIVAL_CARD_IDS,
   FESTIVAL_ICONS, FESTIVAL_WARES, wareById, accountWare, festivalWaresHeld, SALE_RID_RE,
@@ -43,6 +43,12 @@ test('WITCH1 THE NIGHTS THE DEAD WALK: the sky\'s Witches\' Festival (13 Frostfa
   assert.equal(findCount('endgame', 283), 8);
   assert.equal(findCount('endgame', 100), 4);
   assert.equal(findCount('gold', 283), 0);
+  // and the festival's own night on the real calendar: 31 October, its whole UTC day (B6 - a sky's night is a real hour)
+  assert.deepEqual([FESTIVALS[0].eveFromMs, FESTIVALS[0].eveToMs], [Date.UTC(2026, 9, 31), Date.UTC(2026, 10, 1)]);
+  assert.deepEqual([festivalEve(Date.UTC(2026, 9, 31)), festivalEve(Date.UTC(2026, 9, 31, 23, 59)), festivalEve(Date.UTC(2026, 10, 1)), festivalEve(Date.UTC(2026, 9, 30, 23))], [true, true, false, false]);
+  assert.equal(findCount('endgame', 100, Date.UTC(2026, 9, 31, 12)), 8);
+  assert.equal(findCount('endgame', 283, Date.UTC(2026, 9, 31, 12)), 8, 'twice, never four times');
+  assert.equal(deadWalk(100, Date.UTC(2026, 9, 25)), false);
   // the tables moved out of holidays.js are the same tables it hands on (a leaf the service can read)
   assert.equal(holidays.HOLIDAYS, HOLIDAYS);
   assert.equal(holidays.holidayDayOfYear, holidayDayOfYear);

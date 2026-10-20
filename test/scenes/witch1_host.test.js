@@ -2,7 +2,8 @@
 // candy"; bible/06-Systems/Witches-Festival.md): THE WITCHES' FESTIVAL IN THE STREETS (src/scenes/witchesHost.js) - the
 // town underfoot asked for its offerings and each stood at its home's kept spot as the pixel's own batch and lantern, a
 // target in the street's ray named with its rows, taken from, filled and taken in; set out by the item's Use at one's
-// own door; taken down offline; the festival said once - and the four hosts' wiring that reaches it.
+// own door; taken down offline or for another account; asked only while the festival is live or one's own stands there;
+// the festival said once - and the four hosts' wiring that reaches it.
 import { test, beforeEach, afterEach, mock } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -36,7 +37,7 @@ function standWorld({ town } = {}) {
   };
   const entry = {
     px: 5, py: 6, homeTown: MAP, homeFrames: new Map([[MINE, frame(0)], [THEIRS, frame(20)]]),
-    witchHomes: new Map([[MINE, [1.15, 0.2, 0.55]]]), witchFloor: 0.2, batches: [], lights: [], placeHold: null,
+    witchHomes: new Map([[MINE, [1.15, 0.2, 0.55]], [THEIRS, [21.1, 0.2, 0.6]]]), witchFloor: 0.2, batches: [], lights: [], placeHold: null,
   };
   const built = new Map([['5,6', entry]]);
   const made = [], destroyed = [], said = [], notices = [], overlays = [];
@@ -68,20 +69,37 @@ afterEach(() => { mock.timers.reset(); _resetFestivalClientForTests(); delete gl
 
 const standUp = async () => { H.frame(); await settle(); H.frame(); await settle(); };
 
-test('WITCH1 THE OFFERINGS STAND: the town underfoot asked, each offering at its home\'s kept spot (else beside its door) - the pixel\'s own batch and lantern', async () => {
+test('WITCH1 THE OFFERINGS STAND: the town underfoot asked, each offering at its home\'s kept spot - the pixel\'s own batch and lantern', async () => {
   await standUp();
   assert.ok(world.asked.some(([n, m]) => n === 'town' && m === MAP), 'the town asked');
   assert.equal(world.made.length, 2);
   assert.ok(world.made.every((b) => b.a === FESTIVAL_ARCHIVE && b.r === FESTIVAL_ART.offering));
   const [mine, theirs] = world.made;
   assert.deepEqual(mine.centers, [[1.15, 0.2, 0.55]], 'the build\'s kept spot');
-  assert.equal(theirs.centers[0][1], 0.2, 'beside its door, on the street');
+  assert.deepEqual(theirs.centers, [[21.1, 0.2, 0.6]]);
   assert.deepEqual(world.entry.batches, world.made, 'on the pixel\'s own list: its frame walk draws them, destroyPixel frees them');
   assert.equal(world.entry.lights.length, 2);
   assert.ok(Math.abs(world.entry.lights[0][1] - (0.2 + 56 * 0.025 - OFFERING_LIGHT_DROP)) < 1e-9, 'the tallow lantern under the picture\'s top');
   assert.equal(world.notices.length, 1, 'the festival said once');
   H.frame(); await settle();
   assert.equal(world.made.length, 2, 'a frame with nothing new stands nothing again');
+  // the next ask, a minute on, says what the last said: the bowls stand on, never torn down and built again
+  mock.timers.setTime(Date.now() + 61_000);
+  await standUp();
+  assert.equal(world.asked.filter(([n]) => n === 'town').length, 2);
+  assert.deepEqual([world.made.length, world.destroyed.length], [2, 0]);
+});
+
+test('WITCH1 A DRESSED TOWN STANDS A BOWL AT ITS KEPT SPOT ALONE: a home the build kept none for stands none (where it found no room); an undressed pixel (built after the festival) stands its owner\'s beside the door (AUDIT WITCH1 D2)', async () => {
+  world.entry.witchHomes.delete(THEIRS);
+  await standUp();
+  assert.deepEqual(world.made.map((b) => b.centers[0]), [[1.15, 0.2, 0.55]]);
+  world = standWorld({ town: [{ buildingKey: MINE, stock: 3, owner: 'Alice', mine: true, taken: false }] });
+  world.entry.witchHomes = null;
+  H = world.host;
+  await standUp();
+  assert.equal(world.made.length, 1);
+  assert.equal(world.made[0].centers[0][1], 0.2, 'beside its door, on the street');
 });
 
 test('WITCH1 THE RAY AND THE PLAQUE: each offering a target at a door\'s reach; another\'s takes a cake, the owner\'s fills and takes in', async () => {
@@ -113,22 +131,24 @@ test('WITCH1 THE RAY AND THE PLAQUE: each offering a target at a door\'s reach; 
   assert.equal(moves[2][1].character, characterIdOf(playerEntity), 'the owner\'s moves name the character');
   assert.equal('character' in moves[0][1], false, 'a take names none');
   assert.ok(world.said.includes('+1 Soul Cake'));
-  assert.ok(world.said.includes('The bowl holds 13.'));
-  assert.ok(world.said.includes('The Wyrd watches over offerings.'));
+  assert.ok(world.said.includes('The bowl holds 13 Soul Cakes.'));
+  assert.ok(world.said.includes('The Wyrd watch over offerings.'));
   assert.ok(world.said.some((l) => l.includes("Bobby's Hearth Offering")), 'Info names it whole');
 });
 
 test('WITCH1 a cake taken today, an empty bowl, an account\'s other character\'s: each row says why', async () => {
   world = standWorld({ town: [{ buildingKey: THEIRS, stock: 5, owner: 'Bobby', mine: false, taken: true }, { buildingKey: MINE + 100, stock: 0, owner: 'Cara', mine: false, taken: false }] });
   world.entry.homeFrames.set(MINE + 100, frame(40));
+  world.entry.witchHomes.set(MINE + 100, [41.1, 0.2, 0.6]);
   H = world.host;
   await standUp();
-  assert.deepEqual(H.hoverName(offeringKey(MAP, THEIRS)).actions, [{ id: 'take', label: 'You have taken a cake here today.', disabled: true }]);
+  assert.deepEqual(H.hoverName(offeringKey(MAP, THEIRS)).actions, [{ id: 'take', label: 'You already took a cake here today.', disabled: true }]);
   assert.deepEqual(H.hoverName(offeringKey(MAP, MINE + 100)).actions, [{ id: 'take', label: 'The bowl is empty.', disabled: true }]);
 });
 
-test('WITCH1 OFFLINE THE OFFERINGS GO: their batches freed and their lanterns out; a pixel streamed out is forgotten', async () => {
+test('WITCH1 OFFLINE THE OFFERINGS GO - EVERY PIXEL\'S: their batches freed and their lanterns out, the player standing in the next pixel or not; another account signed in, the same; a pixel streamed out is forgotten (AUDIT WITCH1 D5)', async () => {
   await standUp();
+  world.deps.state.current = { x: 9, y: 9 };   // stepped out of town, the town still built
   world.online.status = 'closed';
   H.frame();
   assert.deepEqual(world.destroyed, world.made);
@@ -136,10 +156,34 @@ test('WITCH1 OFFLINE THE OFFERINGS GO: their batches freed and their lanterns ou
   assert.deepEqual(world.entry.lights, []);
   assert.deepEqual(H.targets(), []);
   world.online.status = 'open';
+  world.deps.state.current = { x: 5, y: 6 };
+  await standUp();
+  const before = world.destroyed.length;
+  store.set(SESSION_KEY, JSON.stringify({ secret: 'other', id: 'acct-bob', name: 'Bob', kind: 'linked' }));
+  H.frame();
+  assert.equal(world.destroyed.length, before + 2, 'another account: what the last one was shown goes');
   await standUp();
   world.built.delete('5,6');
   H.frame();
   assert.deepEqual(H.targets(), [], 'its batches went with it');
+});
+
+test('WITCH1 THE TOWN IS ASKED WHILE IT MATTERS: the festival live here, or one of the account\'s own standing in it - never a guest, never all year (AUDIT WITCH1 A5)', async () => {
+  store.set(SESSION_KEY, JSON.stringify({ secret: 'g', id: 'acct-guest', name: 'Guest', kind: 'guest' }));
+  await standUp();
+  assert.equal(world.asked.filter(([n]) => n === 'town').length, 0, 'a guest asks nothing');
+  store.set(SESSION_KEY, JSON.stringify({ secret: 'sekrit', id: 'acct-alice', name: 'Alice', kind: 'linked' }));
+  mock.timers.setTime(FESTIVALS[0].toMs + 3600_000);
+  await standUp();
+  assert.equal(world.asked.filter(([n]) => n === 'town').length, 0, 'after the festival, no offering of mine here: nothing');
+  world.deps.api.mine = async () => ({ ok: true, data: { cakes: 0, offerings: [{ mapId: MAP, buildingKey: MINE, character: 'c', stock: 3 }] } });
+  world = { ...world };
+  _resetFestivalClientForTests();
+  world = standWorld();
+  world.deps.api.mine = async () => ({ ok: true, data: { cakes: 0, offerings: [{ mapId: MAP, buildingKey: MINE, character: 'c', stock: 3 }] } });
+  H = world.host;
+  await standUp();
+  assert.ok(world.asked.some(([n]) => n === 'town'), 'my own still stands here: asked, to take it in');
 });
 
 test('WITCH1 SETTING ONE OUT: the Hearth Offering\'s Use at the door of a home the playing character owns, on foot, within reach', async () => {
@@ -157,6 +201,13 @@ test('WITCH1 SETTING ONE OUT: the Hearth Offering\'s Use at the door of a home t
   world.deps.player.feetAt = () => [101, 0.2, 201];
   world.deps.player.riding = true;
   assert.equal(use(hearthOffering()).text, 'Set it out at your own home.');
+  world.deps.player.riding = false;
+  // a door the build kept no spot by: no room there, said so
+  world.entry.witchHomes.delete(MINE);
+  assert.equal(use(hearthOffering()).text, 'There is no room for it by this door.');
+  // a guest is told to link an account
+  store.set(SESSION_KEY, JSON.stringify({ secret: 'g', id: 'acct-guest', name: 'Guest', kind: 'guest' }));
+  assert.equal(use(hearthOffering()).text, 'Link an account to keep Soul Cakes.');
   playerEntity.items = [];
 });
 

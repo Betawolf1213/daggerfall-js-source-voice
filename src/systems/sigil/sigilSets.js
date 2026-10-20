@@ -309,7 +309,7 @@ export const SIGIL_SETS = Object.freeze({
         (v) => `+${v.willpower} Willpower, +${v.magic} magic resist`),
       tier(4, 'tallow-ward', 'Tallow-Ward', { more: [10, 30] },
         (v) => `Your weapon deals ${v.more}% more damage to the undead, the Daedra and the atronachs`,
-        (v) => `+${v.more}% vs undead and Daedra`),
+        (v) => `+${v.more}% vs undead and summoned`),
       tier(6, 'soul-harvest', 'Soul Harvest', { heal: [8, 20], recover: [40, 20] },
         (v) => `A kill restores ${v.heal}% of your health and magicka. Recovers in ${v.recover} s`,
         (v) => `A kill: +${v.heal}% health, magicka`),

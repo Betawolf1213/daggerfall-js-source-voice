@@ -18,17 +18,22 @@
 // Every move is one `db.batch` whose first statement decides it against the rows as they stand, and whose others run only
 // where it did: a take moves a cake out of a bowl only while one is in it and the taker has not taken there today, and
 // into the taker's count in the same transaction; a fill and a take-in move the owner's cakes and the bowl's together.
-// A sale asked twice is one sale (its request id, `fest_sales`), answered `repeat` with the ware it sold.
+// A sale asked twice is one sale (its request id, `fest_sales`), answered `repeat` with the ware it sold. No count is
+// read in one request and written in another: a statement that credits reads what it credits in its own transaction.
+//
+// THE BOWL IS THE ACCOUNT'S, AS ITS CAKES (`fest_bowls`): bought, it is counted on the row; set out, one is spent; taken
+// in, or come home from a home left, it is counted again. The pack's Hearth Offerings are its face (soulCake.js).
 //
 // REGISTERED ONLY: a guest's cakes would be a cleared browser's to lose (MARKS1's reading) - `guest`.
-// FESTIVAL_OPEN (off, dev, on) shuts it whole; outside the festival's days (festivalLaw FESTIVALS) a find, a sale, a
-// set-out and a fill are `closed` - a bowl's cakes can still be taken in, and the counts are kept.
+// FESTIVAL_OPEN (off, dev, on) shuts it; outside the festival's days (festivalLaw FESTIVALS) a find, a sale, a set-out,
+// a fill and a take are `closed`, and a town shows its callers their own offerings alone. A bowl can always be taken in -
+// under any switch, on any day - and the counts are kept.
 //
 // EVERY CLOCK IS AN ARGUMENT (accounts.js's law): `nowS` is the request's.
 // Not a DFU member. Ledger A (THE WITCHES' FESTIVAL).
 // ═══════════════════════════════════════════════════════════════════
 import { isDeveloper } from './titles.js';
-import { overRate } from './accounts.js';
+import { overAccountRate } from './accounts.js';
 import { CHAR_ID_RE } from './service.js';
 import { dice } from './unitRoll.js';
 import { utcDay } from '../../src/net/marksLaw.js';
@@ -37,10 +42,12 @@ import { dayOfYearFromMinutes } from '../../src/systems/gameDate.js';
 import { homeMapIdOk, homeBuildingKeyOk } from '../../src/net/homeLaw.js';
 import {
   festivalOpen, isFindSource, FIND_SOURCES, findCount, FIND_ASKS_PER_DAY, FIND_CAKES_PER_DAY,
-  OFFERING_STOCK_MAX, OFFERING_FILL, OFFERING_TAKE, wareById, accountWare, festivalWaresHeld, SALE_RID_RE,
+  OFFERING_STOCK_MAX, OFFERING_FILL, OFFERING_TAKE, wareById, accountWare, bowlWare, festivalWaresHeld, SALE_RID_RE,
 } from '../../src/net/festivalLaw.js';
 
-/** The festival's moves an account an hour - a find a kill, so a fight's worth a minute and then some. */
+/** The festival's moves an account an hour - a find a kill, so a fight's worth a minute and then some. Counted in the
+ *  isolate's memory (accounts.js overAccountRate, ACCT-RATE-MEM): a write on every find is the outage that law ended,
+ *  and the day's asks (fest_finds) bound the finds across isolates. */
 export const FEST_OPS_MAX = 900;
 export const FEST_OPS_WINDOW_S = 3600;
 
@@ -64,7 +71,7 @@ export const skyDayAt = (/** @type {number} */ nowS) => dayOfYearFromMinutes(Mat
 async function gate(ctx, player, env) {
   if (!player?.handle) return { error: 'guest' };
   if (!festivalOpenFor(player, env)) return { error: 'closed' };
-  if (await overRate(ctx, `fest:${player.id}`, FEST_OPS_MAX, FEST_OPS_WINDOW_S)) return { error: 'rate' };
+  if (overAccountRate(`fest:${player.id}`, ctx.nowS, FEST_OPS_MAX, FEST_OPS_WINDOW_S)) return { error: 'rate' };
   return null;
 }
 const inDays = (/** @type {number} */ nowS) => festivalOpen(nowS * 1000);
@@ -74,26 +81,28 @@ const inDays = (/** @type {number} */ nowS) => festivalOpen(nowS * 1000);
  *  that account's next read of its festival (festivalOf, orphansHome) - never lost, and no road out of a home has to remember it. */
 const ORPHAN = `player = ?1 AND NOT EXISTS (SELECT 1 FROM homes h WHERE h.map_id = fest_offerings.map_id
   AND h.building_key = fest_offerings.building_key AND h.player = fest_offerings.player AND h.char_id = fest_offerings.char_id)`;
-/** ONE TRANSACTION: the orphans' cakes credited, then the orphans gone - nothing between the two can move them. */
+/** ONE TRANSACTION: the orphans' cakes and bowls credited, then the orphans gone - nothing between the two can move them;
+ *  the row written only where an orphan stands. */
 const orphansHome = (/** @type {any} */ db, /** @type {string} */ id) => db.batch([
-  db.prepare(`UPDATE players SET fest_cakes = fest_cakes + (SELECT COALESCE(SUM(stock), 0) FROM fest_offerings WHERE ${ORPHAN}) WHERE id = ?1`).bind(id),
+  db.prepare(`UPDATE players SET fest_cakes = fest_cakes + (SELECT COALESCE(SUM(stock), 0) FROM fest_offerings WHERE ${ORPHAN}),
+    fest_bowls = fest_bowls + (SELECT COUNT(*) FROM fest_offerings WHERE ${ORPHAN}) WHERE id = ?1 AND EXISTS (SELECT 1 FROM fest_offerings WHERE ${ORPHAN})`).bind(id),
   db.prepare(`DELETE FROM fest_offerings WHERE ${ORPHAN}`).bind(id),
 ]);
 
 /**
- * THE ACCOUNT'S FESTIVAL: its cakes, the account wares it bought, what its offerings gave and what it took, and whether
- * the festival is open - `{ cakes, wares, given, taken, open, offerings }` (`offerings` its own standing, each
- * `{ mapId, buildingKey, character, stock }`). An orphaned offering's cakes come home first (orphansHome). A guest answers
- * `guest`.
+ * THE ACCOUNT'S FESTIVAL: its cakes and bowls, the account wares it bought, what its offerings gave and what it took,
+ * and whether the festival is open - `{ cakes, bowls, wares, given, taken, open, offerings }` (`offerings` its own
+ * standing, each `{ mapId, buildingKey, character, stock }`). An orphaned offering comes home first (orphansHome). A guest
+ * answers `guest`.
  * @param {{ db: any, nowS: number }} ctx @param {{ id: string, handle?: string|null }} player @param {any} env
  */
 export async function festivalOf({ db, nowS }, player, env) {
   if (!player?.handle) return { error: 'guest' };
   await orphansHome(db, player.id);
   const { results: mine } = await db.prepare('SELECT map_id, building_key, char_id, stock FROM fest_offerings WHERE player = ?1').bind(player.id).all();
-  const row = await db.prepare('SELECT fest_cakes, fest_wares, fest_given, fest_taken FROM players WHERE id = ?1').bind(player.id).first();
+  const row = await db.prepare('SELECT fest_cakes, fest_bowls, fest_wares, fest_given, fest_taken FROM players WHERE id = ?1').bind(player.id).first();
   return {
-    cakes: int(row?.fest_cakes), wares: festivalWaresHeld(row?.fest_wares), given: int(row?.fest_given), taken: int(row?.fest_taken),
+    cakes: int(row?.fest_cakes), bowls: int(row?.fest_bowls), wares: festivalWaresHeld(row?.fest_wares), given: int(row?.fest_given), taken: int(row?.fest_taken),
     open: festivalOpenFor(player, env) && inDays(nowS),
     offerings: (mine ?? []).map((/** @type {any} */ r) => ({ mapId: int(r.map_id), buildingKey: int(r.building_key), character: String(r.char_id), stock: int(r.stock) })),
   };
@@ -101,8 +110,8 @@ export async function festivalOf({ db, nowS }, player, env) {
 
 /**
  * A FIND: the account's word that it did `source` (festivalLaw FIND_SOURCES - a foe by its kind, an act by its group),
- * decided by this service's die at the source's odds; a hit gives its count (twice on a night the dead walk - the sky's
- * own day, skyDayAt), never past the day's cakes. `{ found, cakes }` (`found` the cakes this find gave, 0 for none);
+ * decided by this service's die at the source's odds; a hit gives its count (twice while the dead walk - the sky's own
+ * night, skyDayAt, or the festival's own, 31 October: festivalLaw deadWalk), never past the day's cakes. `{ found, cakes }` (`found` the cakes this find gave, 0 for none);
  * `capped` once the day's asks are spent (`cakes` with it).
  * @param {{ db: any, nowS: number, rand?: (b: Uint8Array) => Uint8Array }} ctx @param {{ id: string, handle?: string|null }} player
  * @param {any} body @param {any} env
@@ -119,7 +128,7 @@ export async function findFestival(ctx, player, body, env) {
     ON CONFLICT (account, day) DO UPDATE SET asks = asks + 1 WHERE asks < ?3 RETURNING asks, found`).bind(player.id, day, FIND_ASKS_PER_DAY).first();
   if (!ask) return { error: 'capped', cakes: await cakesOf(db, player.id) };
   let found = 0;
-  const want = Math.min(findCount(source, skyDayAt(nowS)), FIND_CAKES_PER_DAY - int(ask.found));
+  const want = Math.min(findCount(source, skyDayAt(nowS), nowS * 1000), FIND_CAKES_PER_DAY - int(ask.found));
   if (want > 0 && typeof rand === 'function' && dice(rand) < FIND_SOURCES[source].p) {
     // ONE TRANSACTION: the day's count first, under its cap - the count's own row decides - then the cakes where it moved
     const [took] = await db.batch([
@@ -134,7 +143,8 @@ export async function findFestival(ctx, player, body, env) {
 /**
  * A SALE: ware `body.ware` (festivalLaw FESTIVAL_WARES) for its price, under the client's request id `body.rid` - one
  * guarded UPDATE that takes the price only while the account's cakes cover it and, for an account ware, only while the
- * account does not own it yet (and lays it on the row). `{ ware, cakes, wares }`; asked again by the same id,
+ * account does not own it yet (and lays it on the row); a Hearth Offering is counted on the row (`fest_bowls`).
+ * `{ ware, cakes, bowls, wares }`; asked again by the same id,
  * `{ repeat: true, ware, ... }` and nothing moves. Refusals: `ware`, `rid`, `owned`, `cakes` (with `cakes`), `closed`.
  * @param {{ db: any, nowS: number }} ctx @param {{ id: string, handle?: string|null }} player @param {any} body @param {any} env
  */
@@ -153,10 +163,10 @@ export async function buyFestival(ctx, player, body, env) {
   if (!inDays(nowS)) return { error: 'closed' };
   const w = wareById(body?.ware);
   if (!w) return { error: 'ware' };
-  const own = accountWare(w);
+  const own = accountWare(w), bowl = bowlWare(w);
   if (own && festivalWaresHeld((await db.prepare('SELECT fest_wares FROM players WHERE id = ?1').bind(player.id).first())?.fest_wares).includes(w.id)) return { error: 'owned' };
   const [took] = await db.batch([
-    db.prepare(`UPDATE players SET fest_cakes = fest_cakes - ?2${own ? ", fest_wares = TRIM(fest_wares || ' ' || ?3)" : ''}
+    db.prepare(`UPDATE players SET fest_cakes = fest_cakes - ?2${own ? ", fest_wares = TRIM(fest_wares || ' ' || ?3)" : ''}${bowl ? ', fest_bowls = fest_bowls + 1' : ''}
       WHERE id = ?1 AND fest_cakes >= ?2${own ? " AND (' ' || fest_wares || ' ') NOT LIKE ('% ' || ?3 || ' %')" : ''} RETURNING fest_cakes`)
       .bind(player.id, w.price, ...(own ? [w.id] : [])),
     db.prepare('INSERT INTO fest_sales (account, rid, ware, price, at) SELECT ?1, ?2, ?3, ?4, ?5 WHERE changes() > 0').bind(player.id, rid, w.id, w.price, nowS),
@@ -165,8 +175,8 @@ export async function buyFestival(ctx, player, body, env) {
   return saleAnswer(db, player.id, w.id);
 }
 async function saleAnswer(/** @type {any} */ db, /** @type {string} */ id, /** @type {string} */ ware) {
-  const row = await db.prepare('SELECT fest_cakes, fest_wares FROM players WHERE id = ?1').bind(id).first();
-  return { ware, cakes: int(row?.fest_cakes), wares: festivalWaresHeld(row?.fest_wares) };
+  const row = await db.prepare('SELECT fest_cakes, fest_bowls, fest_wares FROM players WHERE id = ?1').bind(id).first();
+  return { ware, cakes: int(row?.fest_cakes), bowls: int(row?.fest_bowls), wares: festivalWaresHeld(row?.fest_wares) };
 }
 
 // ═══ THE HEARTH OFFERINGS ════════════════════════════════════════════════════════════════════════════════════════════
@@ -179,18 +189,22 @@ const charOk = (/** @type {any} */ b) => typeof b?.character === 'string' && CHA
 /**
  * A TOWN'S OFFERINGS, for anyone standing in it (a guest too - looking takes nothing): each standing at a home its owner
  * still owns, its cakes, whether it is the caller's account's own (`mine`) and whether the caller took from it today
- * (`taken`). `{ mapId, offerings: [{ buildingKey, stock, owner, mine, taken }] }`.
- * @param {{ db: any, nowS: number }} ctx @param {{ id: string, handle?: string|null }} player @param {any} body
+ * (`taken`). Outside the festival's days, or with it shut for the caller, the caller's own alone - its owner can still
+ * take it in, and nobody else can take from it. `{ mapId, open, offerings: [{ buildingKey, stock, owner, mine, taken }] }`.
+ * A read and nothing else (service.js REPLICA_ROUTES).
+ * @param {{ db: any, nowS: number }} ctx @param {{ id: string, handle?: string|null }} player @param {any} body @param {any} env
  */
-export async function festivalTown({ db, nowS }, player, body) {
+export async function festivalTown({ db, nowS }, player, body, env) {
   if (!homeMapIdOk(body?.mapId)) return { error: 'bad-home' };
   const day = utcDay(nowS);
+  const open = !!player?.handle && festivalOpenFor(player, env) && inDays(nowS);
   const { results } = await db.prepare(`SELECT o.building_key, o.stock, o.player, h.owner_name,
       EXISTS (SELECT 1 FROM fest_takes t WHERE t.map_id = o.map_id AND t.building_key = o.building_key AND t.taker = ?2 AND t.day = ?3) AS taken
     FROM fest_offerings o JOIN homes h ON h.map_id = o.map_id AND h.building_key = o.building_key AND h.player = o.player AND h.char_id = o.char_id
-    WHERE o.map_id = ?1`).bind(body.mapId, player?.id ?? '', day).all();
+    WHERE o.map_id = ?1${open ? '' : ' AND o.player = ?2'}`).bind(body.mapId, player?.id ?? '', day).all();
   return {
     mapId: body.mapId,
+    open,
     offerings: (results ?? []).map((/** @type {any} */ r) => ({
       buildingKey: int(r.building_key), stock: int(r.stock), owner: String(r.owner_name ?? ''), mine: r.player === player?.id, taken: Number(r.taken) === 1,
     })),
@@ -198,9 +212,9 @@ export async function festivalTown({ db, nowS }, player, body) {
 }
 
 /**
- * SET OUT: an offering at the named character's own home, its bowl empty (`{ ok, stock: 0 }`). One a home: one standing
- * there is `set` - but one left by the home's old owner (the home sold since) is theirs to have back, its cakes returned
- * to them in the same transaction, and this one stands in its place.
+ * SET OUT: one of the account's bowls (`fest_bowls`) at the named character's own home, its bowl empty (`{ ok, stock: 0,
+ * bowls }`). One a home: one standing there is `set` - but one left by the home's old owner (the home sold since) goes
+ * back to them, its bowl and its cakes, in the same transaction, and this one stands in its place. `item` with no bowl.
  * @param {{ db: any, nowS: number }} ctx @param {{ id: string, handle?: string|null }} player @param {any} body @param {any} env
  */
 export async function setOffering(ctx, player, body, env) {
@@ -211,17 +225,26 @@ export async function setOffering(ctx, player, body, env) {
   if (!homeOk(body) || !charOk(body)) return { error: 'home' };
   const { mapId, buildingKey, character } = body;
   if (!(await db.prepare(`SELECT ${OWNED_HOME} AS own`).bind(mapId, buildingKey, player.id, character).first())?.own) return { error: 'home' };
-  const old = await db.prepare('SELECT player, char_id, stock FROM fest_offerings WHERE map_id = ?1 AND building_key = ?2').bind(mapId, buildingKey).first();
+  const old = await db.prepare('SELECT player, char_id FROM fest_offerings WHERE map_id = ?1 AND building_key = ?2').bind(mapId, buildingKey).first();
   if (old && old.player === player.id && old.char_id === character) return { error: 'set' };
-  await db.batch([
-    ...(old ? [
-      db.prepare('UPDATE players SET fest_cakes = fest_cakes + ?2 WHERE id = ?1').bind(old.player, int(old.stock)),
-      db.prepare('DELETE FROM fest_offerings WHERE map_id = ?1 AND building_key = ?2 AND player = ?3').bind(mapId, buildingKey, old.player),
-    ] : []),
-    db.prepare(`INSERT INTO fest_offerings (map_id, building_key, player, char_id, stock, placed_at) SELECT ?1, ?2, ?3, ?4, 0, ?5 WHERE ${OWNED_HOME}`)
-      .bind(mapId, buildingKey, player.id, character, nowS),
+  // EVERY STATEMENT ASKS THE SAME THING - this character owns the home and its account holds a bowl - of the rows as
+  // they stand in this transaction: the old owner's bowl is credited from its own row (taken in or come home since, it
+  // credits nothing), then gone; then one bowl spent where no offering stands, and the offering laid where it was
+  const may = `${OWNED_HOME} AND (SELECT fest_bowls FROM players WHERE id = ?3) >= 1`;
+  const prev = `map_id = ?1 AND building_key = ?2 AND player = ?5 AND char_id = ?6`;
+  const [, , spent, laid] = await db.batch([
+    db.prepare(`UPDATE players SET fest_cakes = fest_cakes + (SELECT stock FROM fest_offerings WHERE ${prev}), fest_bowls = fest_bowls + 1
+      WHERE id = ?5 AND EXISTS (SELECT 1 FROM fest_offerings WHERE ${prev}) AND ${may}`).bind(mapId, buildingKey, player.id, character, old?.player ?? '', old?.char_id ?? ''),
+    db.prepare(`DELETE FROM fest_offerings WHERE ${prev} AND ${may}`).bind(mapId, buildingKey, player.id, character, old?.player ?? '', old?.char_id ?? ''),
+    db.prepare(`UPDATE players SET fest_bowls = fest_bowls - 1 WHERE id = ?3 AND ${may}
+      AND NOT EXISTS (SELECT 1 FROM fest_offerings WHERE map_id = ?1 AND building_key = ?2) RETURNING fest_bowls`).bind(mapId, buildingKey, player.id, character),
+    db.prepare(`INSERT INTO fest_offerings (map_id, building_key, player, char_id, stock, placed_at) SELECT ?1, ?2, ?3, ?4, 0, ?5 WHERE changes() > 0
+      ON CONFLICT DO NOTHING RETURNING stock`).bind(mapId, buildingKey, player.id, character, nowS),
   ]);
-  return { ok: true, stock: 0 };
+  if (laid?.results?.[0]) return { ok: true, stock: 0, bowls: int(spent?.results?.[0]?.fest_bowls) };
+  if (!(await db.prepare(`SELECT ${OWNED_HOME} AS own`).bind(mapId, buildingKey, player.id, character).first())?.own) return { error: 'home' };
+  const row = await db.prepare('SELECT fest_bowls FROM players WHERE id = ?1').bind(player.id).first();
+  return int(row?.fest_bowls) < 1 ? { error: 'item', bowls: 0 } : { error: 'set' };
 }
 
 /**
@@ -256,25 +279,27 @@ export async function fillOffering(ctx, player, body, env) {
 }
 
 /**
- * TAKE IN: the owner's offering taken off its door, its bowl's cakes back to the owner - `{ ok, cakes, returned }`.
- * Allowed after the festival too (a bowl's cakes are never lost to its end). `none` where none of this character's stands.
- * @param {{ db: any, nowS: number }} ctx @param {{ id: string, handle?: string|null }} player @param {any} body @param {any} env
+ * TAKE IN: the owner's offering taken off its door, its bowl and its cakes back to the account - `{ ok, cakes, bowls,
+ * returned }`. ONE TRANSACTION: the credit reads the bowl it credits, and the bowl goes where it did. Under any switch and
+ * on any day (a bowl's cakes are never lost to the festival's end); a guest has none. `none` where none of this
+ * character's stands.
+ * @param {{ db: any, nowS: number }} ctx @param {{ id: string, handle?: string|null }} player @param {any} body
  */
-export async function takeInOffering(ctx, player, body, env) {
+export async function takeInOffering(ctx, player, body) {
   if (!player?.handle) return { error: 'guest' };
-  if (!festivalOpenFor(player, env)) return { error: 'closed' };
-  if (await overRate(ctx, `fest:${player.id}`, FEST_OPS_MAX, FEST_OPS_WINDOW_S)) return { error: 'rate' };
+  if (overAccountRate(`fest:${player.id}`, ctx.nowS, FEST_OPS_MAX, FEST_OPS_WINDOW_S)) return { error: 'rate' };
   const { db } = ctx;
   if (!homeOk(body) || !charOk(body)) return { error: 'home' };
   const { mapId, buildingKey, character } = body;
-  const [gone] = await db.batch([
-    db.prepare('DELETE FROM fest_offerings WHERE map_id = ?1 AND building_key = ?2 AND player = ?3 AND char_id = ?4 RETURNING stock').bind(mapId, buildingKey, player.id, character),
+  const key = 'map_id = ?1 AND building_key = ?2 AND player = ?3 AND char_id = ?4';
+  const [back, gone] = await db.batch([
+    db.prepare(`UPDATE players SET fest_cakes = fest_cakes + (SELECT stock FROM fest_offerings WHERE ${key}), fest_bowls = fest_bowls + 1
+      WHERE id = ?3 AND EXISTS (SELECT 1 FROM fest_offerings WHERE ${key}) RETURNING fest_cakes, fest_bowls`).bind(mapId, buildingKey, player.id, character),
+    db.prepare(`DELETE FROM fest_offerings WHERE ${key} AND changes() > 0 RETURNING stock`).bind(mapId, buildingKey, player.id, character),
   ]);
-  const back = gone?.results?.[0];
-  if (!back) return { error: 'none' };
-  const n = int(back.stock);
-  if (n > 0) await db.prepare('UPDATE players SET fest_cakes = fest_cakes + ?2 WHERE id = ?1').bind(player.id, n).run();
-  return { ok: true, returned: n, cakes: await cakesOf(db, player.id) };
+  const was = gone?.results?.[0], now = back?.results?.[0];
+  if (!was || !now) return { error: 'none' };
+  return { ok: true, returned: int(was.stock), cakes: int(now.fest_cakes), bowls: int(now.fest_bowls) };
 }
 
 /**
@@ -295,10 +320,12 @@ export async function takeFromOffering(ctx, player, body, env) {
   if (!o) return { error: 'none' };
   if (o.player === player.id) return { error: 'own' };
   const day = utcDay(nowS);
-  // the take's own row decides: one an account an offering a day, and only while the bowl holds a cake
+  // the take's own row decides: one an account an offering a day, and only while the bowl the read named - the same
+  // owner's, at a home that owner still owns - holds a cake
   const [took] = await db.batch([
     db.prepare(`INSERT INTO fest_takes (map_id, building_key, taker, day) SELECT ?1, ?2, ?3, ?4
-      WHERE (SELECT stock FROM fest_offerings WHERE map_id = ?1 AND building_key = ?2) >= ?5 ON CONFLICT DO NOTHING RETURNING taker`).bind(mapId, buildingKey, player.id, day, OFFERING_TAKE),
+      WHERE (SELECT o.stock FROM fest_offerings o JOIN homes h ON h.map_id = o.map_id AND h.building_key = o.building_key AND h.player = o.player AND h.char_id = o.char_id
+        WHERE o.map_id = ?1 AND o.building_key = ?2 AND o.player = ?6 AND o.player <> ?3) >= ?5 ON CONFLICT DO NOTHING RETURNING taker`).bind(mapId, buildingKey, player.id, day, OFFERING_TAKE, o.player),
     db.prepare('UPDATE fest_offerings SET stock = stock - ?3 WHERE map_id = ?1 AND building_key = ?2 AND changes() > 0').bind(mapId, buildingKey, OFFERING_TAKE),
     db.prepare(`UPDATE players SET fest_cakes = fest_cakes + ?2, fest_taken = fest_taken + ?2 WHERE id = ?1
       AND EXISTS (SELECT 1 FROM fest_takes WHERE map_id = ?3 AND building_key = ?4 AND taker = ?1 AND day = ?5)

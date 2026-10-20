@@ -398,7 +398,7 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
         const worn = w.icon === key;
         const b = keyedAs(el('button', ['acttitle', 'acticon', ...(worn ? ['worn'] : [])].join(' ')), `icon:${key}`);
         const art = profileIconNode(doc, key, 'acticonart', 22);
-        if (art) b.append(art);
+        if (art) { art.setAttribute('aria-hidden', 'true'); b.append(art); }   // its word stands beside it: read once
         b.append(el('span', 'acticonword', ICON_TEXT[key] ?? key));
         b.type = 'button';
         b.disabled = !!flow.busy;

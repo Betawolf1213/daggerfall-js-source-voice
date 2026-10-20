@@ -3,54 +3,57 @@
 // of the client's half of the economy: the Soul Cakes this account holds (the service's count, the pack's stack its face),
 // the finds a kill and an act ask for, the Wyrd Sister's sales, and the moves on a Hearth Offering.
 //
-// THE SERVICE DECIDES, THIS PAGE ASKS (net/festivalLaw.js; server-account/src/festival.js). A kill of mine, an act of
-// mine (systems/questlines/qlActs.js, every act a feature says), a quest of mine done and a bounty paid each ask for a
-// find by its source; the service's die decides it and caps the day. A find on a body is thrown onto it (as a Weir Key's
-// is - systems/eliteGates/egFind.js) and the pack restacked to the count less it, so the body's cakes taken up make the
-// pack the count; any other find lands in the pack. Asks run one after another (a fight's kills, in order), never dropped.
+// THE SERVICE DECIDES, THIS PAGE ASKS (net/festivalLaw.js; server-account/src/festival.js). A kill my own blow made
+// (systems/playerKills.js - every pool's word, a dungeon's room bodies and a foe another machine runs among them), an act
+// of mine (systems/questlines/qlActs.js), a quest of mine done and a bounty paid each ask for a find by its source; the
+// service's die decides it and caps the day. Every find lands in the pack: the pack's cakes are the count's face, and a
+// face on a body is a face the count cannot see. Asks run one after another (a fight's kills, in order), never dropped. A
+// find whose ask never reached the service was a die never rolled - nothing is owed, so nothing is kept to ask again.
 //
 // A SALE IS ASKED BY ITS OWN ID and kept on the character's save until its answer lands (`pending`, systems/
-// modSaveData.js), so an answer lost to a closed tab is asked again by the same id at the next refresh - the service
-// answers `repeat` with the ware it sold, and the ware is minted then, once.
+// modSaveData.js), under the account that made it (AUDIT 28 M2's law, net/marksBook.js): an answer lost - a closed tab, a
+// dropped line, an overloaded service - is asked again by the same id at the next refresh, the service answers `repeat`
+// with the ware it sold, and the ware is minted then, ONCE: one ask of a sale is in flight at a time, and an answer mints
+// only while its sale is still the one pending. Only a refusal that says the sale never happened lets it go.
 //
 // HOSTS: the world host binds its doors (bindFestival - online, the player, a line, the save, the room - scenes/
 // witchesHost.js). Unbound - the ?exterior bench, a pin - nothing is asked and nothing is found: the festival is the
 // online realm's (the decorations are the calendar's, world/witchesDecor.js).
 //
 // Not a DFU member. Ledger A (THE WITCHES' FESTIVAL).
-import { accountFestival, equipTitle, equipAura, equipIcon, adoptIdentity, storedSession, serviceBase, readAccount } from '../../net/accountClient.js';
+import { accountFestival, equipTitle, equipAura, equipIcon, adoptIdentity, storedSession, serviceBase, readAccount, accountRefusalText } from '../../net/accountClient.js';
 import { appStorage } from '../appStorage.js';
-import { registerEnemyDeathHandler } from '../../scenes/corpseMarker.js';
-import { registerLootSupply } from '../foeLootCap.js';
+import { registerPlayerKillListener } from '../playerKills.js';
 import { hearActs, ACT_KINDS } from '../questlines/qlActs.js';
 import { registerModSaveData } from '../modSaveData.js';
 import { KNIGHT_CITY_WATCH } from '../../characters/mobile/mobileTypes.js';
-import { festivalOpen, isFindSource, wareById, accountWare, festivalWaresHeld, SALE_RID_RE } from '../../net/festivalLaw.js';
-import { soulCakes, restackSoulCakes, isSoulCake, isHearthOffering, hearthOffering } from './soulCake.js';
+import { festivalOpen, isFindSource, wareById, accountWare, bowlWare, festivalWaresHeld, SALE_RID_RE } from '../../net/festivalLaw.js';
+import { restackSoulCakes, restackHearthOfferings, isHearthOffering } from './soulCake.js';
 import { foeFindSource } from './festivalFoes.js';
-import { cakesFoundText, festivalRefusalText } from './festivalWords.js';
+import { cakesFoundText, festivalRefusalText, isFestivalRefusal } from './festivalWords.js';
 import { wyrdPieceById } from '../aetheric.js';
 import { mintIliacCard } from '../iliac/iliacItems.js';
 import { addItem } from '../inventory.js';
 
-/** The death handler's and the act hearer's name. */
+/** The kill listener's and the act hearer's name. */
 export const FESTIVAL_FIND = 'festival-find';
 
-const NO_DOORS = Object.freeze({ online: () => false, entity: () => null, say: (/** @type {string} */ _l) => {}, selfId: () => null, saved: () => {}, room: () => null });
+const NO_DOORS = Object.freeze({ online: () => false, entity: () => null, say: (/** @type {string} */ _l) => {}, selfId: () => null, saved: () => {}, room: () => null, nowMs: () => Date.now() });
 /** @type {any} */
 let _doors = NO_DOORS;
 /** @type {any} */
 let _api = null;
-/** The account's festival as the service last said it: its cakes (null unknown), its wares, given and taken, its own
- *  offerings standing, and whether the festival is open for it. */
-let _state = { cakes: /** @type {number|null} */ (null), wares: /** @type {string[]} */ ([]), given: 0, taken: 0, offerings: /** @type {any[]} */ ([]), open: false };
+/** The account's festival as the service last said it: its cakes and bowls (null unknown), its wares, given and taken,
+ *  its own offerings standing, and whether the festival is open for it (null until it says). */
+let _state = { cakes: /** @type {number|null} */ (null), bowls: /** @type {number|null} */ (null), wares: /** @type {string[]} */ ([]), given: 0, taken: 0, offerings: /** @type {any[]} */ ([]), open: /** @type {boolean|null} */ (null) };
 const _hear = new Set();
 let _version = 0;
 const changed = () => { _version++; for (const fn of _hear) { try { fn(); } catch { /* a listener's throw is not ours */ } } };
 
 /** THE HOST'S DOORS: `online()` the world plays online, `entity()` the player, `say(line)` a line on the screen,
  *  `selfId()` this client's peer id, `saved()` the save asked for, `room()` the relay's client (my own badge worn at once -
- *  net/online.js adoptIdentity). Null unbinds. Answers the door to the service (or null). */
+ *  net/online.js adoptIdentity), `nowMs()` the shared clock (the relay's - this machine's clock and its offset). Null
+ *  unbinds. Answers the door to the service (or null). */
 export function bindFestival(doors = null) {
   _doors = doors ? { ...NO_DOORS, ...doors } : NO_DOORS;
   _api = doors ? (doors.api ?? accountFestival({ fetch: (/** @type {any} */ u, /** @type {any} */ i) => globalThis.fetch(u, i), storage: appStorage() })) : null;
@@ -65,24 +68,38 @@ export const festivalVersion = () => _version;
 /** The account's festival as last heard. */
 export const festivalState = () => _state;
 /** The clock the festival's days are read by on this page. The decorations are the calendar's, so the device's own; what
- *  a find, a sale and an offering may do is the service's days, read off its clock. */
-export const festivalNowMs = () => Date.now();
-/** Whether this page plays the festival now: bound, online, a registered account, inside its days. */
-export function festivalLive() {
-  if (!_api || !_doors.online() || !festivalOpen(festivalNowMs())) return false;
+ *  a find, a sale and an offering may do is the service's days, read off the shared clock (the host's `nowMs`). */
+export const festivalNowMs = () => _doors.nowMs();
+/** WHY THIS PAGE DOES NOT PLAY THE FESTIVAL NOW - `offline` (unbound, or no relay), `guest` (signed out, or a guest's
+ *  session: a guest's cakes would be a cleared browser's), `closed` (outside its days, or the service has said it is shut
+ *  for this account) - or null when it does. */
+export function festivalShut() {
+  if (!_api || !_doors.online()) return 'offline';
   const s = storedSession(appStorage());
-  return !!s && s.kind !== 'guest';
+  if (!s || s.kind === 'guest') return 'guest';
+  if (!festivalOpen(festivalNowMs()) || _state.open === false) return 'closed';
+  return null;
 }
+/** The account this page asks for (the stored session's), or null - a host clears what it stood when it changes. */
+export const festivalAccount = () => _api?.me?.() ?? storedSession(appStorage())?.id ?? null;
+/** Whether this page plays the festival now: bound, online, a registered account, inside its days, open for it. */
+export const festivalLive = () => festivalShut() == null;
+/** A refusal's line: the festival's own words, else the account service's (a session signed out, a ban, its fault). */
+export const refusalText = (/** @type {unknown} */ code) => (isFestivalRefusal(code) || typeof code !== 'string' ? festivalRefusalText(code) : accountRefusalText(code));
 
-/** Lay an answer's count on the state and the pack: `cakes` the count, `onBody` the cakes a find left on a body (the pack
- *  holds the rest). */
-function learn(/** @type {any} */ d, onBody = 0) {
+/** Lay an answer's counts on the state and the pack: `cakes` and `bowls` the account's, the pack's stacks their faces. */
+function learn(/** @type {any} */ d) {
   if (!d || typeof d !== 'object') return;
   let moved = false;
+  const items = _doors.entity()?.items;
   if (Number.isSafeInteger(d.cakes) && d.cakes >= 0) {
     _state = { ..._state, cakes: d.cakes };
-    const items = _doors.entity()?.items;
-    if (Array.isArray(items) && restackSoulCakes(items, Math.max(0, d.cakes - onBody))) _doors.saved();
+    if (Array.isArray(items) && restackSoulCakes(items, d.cakes)) _doors.saved();
+    moved = true;
+  }
+  if (Number.isSafeInteger(d.bowls) && d.bowls >= 0) {
+    _state = { ..._state, bowls: d.bowls };
+    if (Array.isArray(items) && restackHearthOfferings(items, d.bowls)) _doors.saved();
     moved = true;
   }
   if (Array.isArray(d.wares)) { _state = { ..._state, wares: festivalWaresHeld(d.wares.join(' ')) }; moved = true; }
@@ -109,20 +126,17 @@ const _asked = new WeakSet();
 /** A kill that never pays (Renown's own rule, net/renownTracker.js neverPays): the city watch, and my own ally. */
 const neverPays = (/** @type {any} */ e) => e?.mobileType === KNIGHT_CITY_WATCH || e?.team === 'PlayerAlly' || e?.mobileTeam === 'PlayerAlly';
 /**
- * ASK FOR A FIND: `source` (festivalLaw FIND_SOURCES), `body` the fallen whose items a find is thrown onto (null: the
- * pack). Queued behind the asks before it. Answers a promise of the cakes found.
- * @param {string} source @param {any} [body]
+ * ASK FOR A FIND: `source` (festivalLaw FIND_SOURCES), queued behind the asks before it; the cakes it gives land in the
+ * pack (the count's face). Answers a promise of the cakes found.
+ * @param {string} source
  */
-export function askFind(source, body = null) {
+export function askFind(source) {
   if (!isFindSource(source) || !festivalLive()) return Promise.resolve(0);
-  if (body && typeof body === 'object') { if (_asked.has(body)) return Promise.resolve(0); _asked.add(body); }
   const run = async () => {
     const r = await _api.find(source).catch(() => null);
-    const d = r?.ok ? r.data : null;
-    const found = Number.isSafeInteger(d?.found) ? d.found : 0;
-    const onBody = found > 0 && Array.isArray(body?.items) ? found : 0;
-    if (onBody) body.items.push(soulCakes(onBody));
-    learn(d, onBody);
+    const d = r?.ok ? r.data : r;   // a refusal (`capped`) carries the count too
+    const found = r?.ok && Number.isSafeInteger(d?.found) ? d.found : 0;
+    learn(d);
     if (found > 0) _doors.say(cakesFoundText(found));
     return found;
   };
@@ -135,24 +149,41 @@ export function festivalQuestEnded(/** @type {any} */ q) { if (q?.questSuccess) 
 /** A bounty of mine paid (scenes/bountyHost.js): the same. */
 export const festivalBountyPaid = () => askFind('world');
 
-registerEnemyDeathHandler(FESTIVAL_FIND, (/** @type {any} */ entity, /** @type {any} */ opts = {}) => {
-  if (opts.room || neverPays(entity)) return;   // a room's body is its base, never a kill (PARTY-LOOT, egFind.js)
-  const by = opts.by ?? null;
-  if (by != null && by !== _doors.selfId()) return;   // a joiner's kill is the joiner's to ask
-  askFind(foeFindSource(entity), entity);
+/** A kill my blow made: one find by the foe's kind - once a body, whichever pool says it. */
+registerPlayerKillListener(FESTIVAL_FIND, (/** @type {any} */ entity) => {
+  if (!entity || typeof entity !== 'object' || neverPays(entity) || _asked.has(entity)) return;
+  _asked.add(entity);
+  askFind(foeFindSource(entity));
 });
-hearActs(FESTIVAL_FIND, (/** @type {string} */ kind) => { const g = ACT_KINDS[/** @type {keyof typeof ACT_KINDS} */ (kind)]; if (g) askFind(g); });
-registerLootSupply(FESTIVAL_FIND, isSoulCake);   // a body's cakes outrank a Common piece under its cap (systems/foeLootCap.js)
+/** ONE DEED, ONE FIND: an elite foe's fall is its kill's find (`elite`, above), never its act's too; and the acts one
+ *  receipt says together - a breach closed with its rite broken, a Valkynaz's Redoubt taken - ask one find of their family,
+ *  not one each (the acts a turn says are one deed). */
+const ACT_NOT_FOUND = Object.freeze(['elite-foe-slain']);
+let _actTurn = /** @type {Set<string>|null} */ (null);
+hearActs(FESTIVAL_FIND, (/** @type {string} */ kind) => {
+  const g = ACT_KINDS[/** @type {keyof typeof ACT_KINDS} */ (kind)];
+  if (!g || ACT_NOT_FOUND.includes(kind)) return;
+  if (!_actTurn) { _actTurn = new Set(); queueMicrotask(() => { _actTurn = null; }); }
+  if (_actTurn.has(g)) return;
+  _actTurn.add(g);
+  askFind(g);
+});
 
 // ═══ THE SALES ═══════════════════════════════════════════════════════════════════════════════════════════════════════
-/** The sale asked and not yet answered, on the character's save: `{ rid, ware }` or null. */
-let _pending = /** @type {{ rid: string, ware: string } | null} */ (null);
+/** The sale asked and not yet answered, on the character's save: `{ rid, ware, account }` or null. */
+let _pending = /** @type {{ rid: string, ware: string, account: string } | null} */ (null);
+/** The ask of the pending sale in flight (one at a time): `{ sale, p }`. */
+let _asking = /** @type {{ sale: object, p: Promise<any> } | null} */ (null);
 export const FESTIVAL_SAVE_VENDOR = 'WitchesFestival';
-const validPending = (/** @type {any} */ r) => (r && typeof r.rid === 'string' && SALE_RID_RE.test(r.rid) && wareById(r.ware) ? { rid: r.rid, ware: r.ware } : null);
+/** The refusals that say a sale never happened (server-account/src/festival.js buyFestival) - the only answers that let a
+ *  kept sale go. Every other (no answer, a session signed out, a ban, the service's fault) keeps it to ask again. */
+export const SALE_FINAL = Object.freeze(['ware', 'rid', 'owned', 'cakes', 'closed', 'rate']);
+const validPending = (/** @type {any} */ r) => (r && typeof r.rid === 'string' && SALE_RID_RE.test(r.rid) && wareById(r.ware) && typeof r.account === 'string' && r.account
+  ? { rid: r.rid, ware: r.ware, account: r.account } : null);
 registerModSaveData(FESTIVAL_SAVE_VENDOR, {
   newSaveData: () => ({ pending: null }),
   getSaveData: () => ({ pending: _pending ? { ..._pending } : null }),
-  restoreSaveData: (/** @type {any} */ r) => { _pending = validPending(r?.pending); },
+  restoreSaveData: (/** @type {any} */ r) => { _pending = validPending(r?.pending); _asking = null; },
 });
 export const pendingSale = () => _pending;
 /** Twelve hex digits for a sale's id. */
@@ -161,24 +192,44 @@ export function saleRid(rand = Math.random) {
   for (let i = 0; i < 12; i++) s += Math.floor(rand() * 16).toString(16);
   return s;
 }
-/** The pack's piece a ware mints, or null for an account ware (a title, an aura, an icon - the service's to hold). */
+/** The pack's piece a ware mints, or null for one the account holds (a title, an aura, an icon, the Hearth Offering's
+ *  bowl - the service's to count). A Raiment piece is BOUND to its buyer, as the Sigil Broker's are: the cakes that bought
+ *  it are bound, and it is never gold or another player's. */
 export function wareItem(/** @type {any} */ w) {
-  if (!w || accountWare(w)) return null;
-  if (w.kind === 'piece') return wyrdPieceById(w.key);
+  if (!w || accountWare(w) || bowlWare(w)) return null;
+  if (w.kind === 'piece') { const it = wyrdPieceById(w.key); if (it) it.bound = true; return it; }
   if (w.kind === 'card') return mintIliacCard(w.key);
-  if (w.kind === 'item' && w.key === 'offering') return hearthOffering();
   return null;
 }
-/** A sale answered: its ware minted into the pack (an account ware is the service's), the count and the wares learned. */
-function landSale(/** @type {any} */ d) {
+/** A sale answered: while it is still the one pending, its ware minted into the pack (once) and let go; the counts and the
+ *  wares learned either way. */
+function landSale(/** @type {object} */ sale, /** @type {any} */ d) {
+  if (_pending !== sale) { learn(d); return wareById(d?.ware); }
+  _pending = null;
   const w = wareById(d?.ware);
   const items = _doors.entity()?.items;
   const item = wareItem(w);
   if (item && Array.isArray(items)) addItem(items, item);
-  _pending = null;
   learn(d);
   _doors.saved();
   return w;
+}
+/** ONE ASK OF A SALE IN FLIGHT: its answer landed (or, final, let go); answers the service's reply. */
+function askSale(/** @type {{ rid: string, ware: string, account: string }} */ sale) {
+  if (_asking?.sale === sale) return _asking.p;
+  const p = (async () => {
+    const r = await _api.buy(sale.ware, sale.rid).catch(() => null);
+    if (r?.ok) landSale(sale, r.data);
+    else if (r && SALE_FINAL.includes(r.error)) {
+      if (_pending === sale) { _pending = null; _doors.saved(); }
+      learn(r);
+    }
+    return r;
+  })();
+  const asking = { sale, p };
+  _asking = asking;
+  p.finally(() => { if (_asking === asking) _asking = null; }).catch(() => {});
+  return p;
 }
 /**
  * BUY a ware by its id: the sale asked by a fresh id (kept on the save until answered), its piece minted on the answer.
@@ -188,27 +239,22 @@ function landSale(/** @type {any} */ d) {
 export async function buyWare(wareId) {
   const w = wareById(wareId);
   if (!w) return { ok: false, text: festivalRefusalText('ware') };
-  if (!festivalLive()) return { ok: false, text: festivalRefusalText(_doors.online() ? 'closed' : 'offline') };
+  const shut = festivalShut();
+  if (shut) return { ok: false, text: festivalRefusalText(shut) };
   if (_pending) await resumeSale();
-  if (_pending) return { ok: false, text: festivalRefusalText('offline') };
-  _pending = { rid: saleRid(), ware: w.id };
+  if (_pending) return { ok: false, text: festivalRefusalText('offline') };   // the sale before it is still unanswered
+  const sale = { rid: saleRid(), ware: w.id, account: _api.me() ?? '' };
+  _pending = sale;
   _doors.saved();
-  const r = await _api.buy(w.id, _pending.rid).catch(() => null);
-  if (r?.ok) { landSale(r.data); return { ok: true, text: '' }; }
-  if (!r || r.error === 'offline' || r.error === 'no-session') return { ok: false, text: festivalRefusalText('offline') };   // kept: asked again by its id
-  _pending = null;
-  _doors.saved();
-  learn(r.data ?? null);
-  return { ok: false, text: festivalRefusalText(r.error) };
+  const r = await askSale(sale);
+  if (r?.ok) return { ok: true, text: '' };
+  return { ok: false, text: !r || !SALE_FINAL.includes(r.error) ? festivalRefusalText('offline') : refusalText(r.error) };   // kept: asked again by its id
 }
-/** A pending sale asked again by its own id: answered `repeat` (it landed), or as a sale now, or refused (dropped). */
+/** A pending sale asked again by its own id, under the account that made it: answered `repeat` (it landed), or as a sale
+ *  now, or refused for good (let go). Another account signed in leaves it kept for its own. */
 async function resumeSale() {
-  if (!_pending || !_api) return;
-  const r = await _api.buy(_pending.ware, _pending.rid).catch(() => null);
-  if (r?.ok) { landSale(r.data); return; }
-  if (!r || r.error === 'offline' || r.error === 'no-session') return;
-  _pending = null;
-  _doors.saved();
+  if (!_pending || !_api || _pending.account !== _api.me()) return;
+  await askSale(_pending);
 }
 
 // ═══ THE WARDROBE ════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -246,12 +292,12 @@ export async function wearAccount(kind, key, on = true) {
   if (!io) return { ok: false, text: festivalRefusalText('offline') };
   const want = on ? key : null;
   const r = await (kind === 'title' ? equipTitle(io, want) : kind === 'aura' ? equipAura(io, want) : equipIcon(io, want)).catch(() => null);
-  if (!r?.ok) return { ok: false, text: festivalRefusalText(r?.error === 'not-held' ? 'held' : 'offline') };
+  if (!r?.ok) return { ok: false, text: r?.error === 'not-held' ? festivalRefusalText('held') : refusalText(r?.error ?? 'offline') };
   adoptWardrobe(r.data);
   const w = _wardrobe;
   adoptIdentity(io.storage, { glyphs: r.data?.glyphs, glyphsOff: r.data?.glyphsOff, aura: w?.aura ?? null, icon: w?.icon ?? null, secret: io.secret });
   const room = _doors.room();
-  room?.adoptIdentity?.({ title: w?.title ?? null, glyphs: room.glyphs, level: room.lv, aura: w?.aura ?? null, icon: w?.icon ?? null });
+  room?.adoptIdentity?.({ title: w?.title ?? null, ts: (w?.title ?? null) === (room.title ?? null) ? room.ts : null, glyphs: room.glyphs, level: room.lv, aura: w?.aura ?? null, icon: w?.icon ?? null });   // a seat title's claim kept while its title is
   return { ok: true, text: '' };
 }
 /** WEAR a ware the account bought (festivalLaw FESTIVAL_WARES: a title, an aura, an icon). */
@@ -262,42 +308,37 @@ export async function wearWare(/** @type {string} */ wareId, on = true) {
 }
 
 // ═══ THE HEARTH OFFERINGS ════════════════════════════════════════════════════════════════════════════════════════════
-/** One move on an offering through the service: `set`, `fill`, `takeIn` or `take` - its answer learned (the cakes, the
- *  pack's offering item set out or brought back). Answers `{ ok, data, text }`. */
+/** One move on an offering through the service: `set`, `fill`, `takeIn` or `take` - its answer's counts learned (the
+ *  cakes, and the bowls: set out, one fewer in the pack; taken in, one more). A take-in goes on whatever the festival's
+ *  state (a bowl's cakes are never lost to its end). Answers `{ ok, data, text, error? }`. */
 export async function offeringMove(/** @type {'set'|'fill'|'takeIn'|'take'} */ move, /** @type {any} */ at) {
-  if (!_api) return { ok: false, data: null, text: festivalRefusalText('offline') };
-  if (move !== 'takeIn' && !festivalLive()) return { ok: false, data: null, text: festivalRefusalText(_doors.online() ? 'closed' : 'offline') };
+  if (!_api || !_doors.online()) return { ok: false, data: null, text: festivalRefusalText('offline'), error: 'offline' };
+  const shut = move === 'takeIn' ? null : festivalShut();
+  if (shut) return { ok: false, data: null, text: festivalRefusalText(shut), error: shut };
   const items = _doors.entity()?.items;
-  if (move === 'set' && !(Array.isArray(items) && items.some(isHearthOffering))) return { ok: false, data: null, text: festivalRefusalText('item') };
+  if (move === 'set' && !(Array.isArray(items) && items.some(isHearthOffering))) return { ok: false, data: null, text: festivalRefusalText('item'), error: 'item' };
   const r = await _api[move](at).catch(() => null);
   if (!r?.ok) {
-    learn(r?.data ?? null);
+    learn(r);   // a refusal's counts (`cakes`, `bowls`)
     const code = move === 'take' && r?.error === 'none' ? 'gone' : r?.error ?? 'offline';   // a take's `none`: taken in since
-    return { ok: false, data: r?.data ?? null, text: festivalRefusalText(code), error: code };
+    return { ok: false, data: null, text: refusalText(code), error: code };
   }
-  if (move === 'set' && Array.isArray(items)) takeOneOffering(items);
-  if (move === 'takeIn' && Array.isArray(items)) addItem(items, hearthOffering());
   learn(r.data);
   if (move !== 'take') refreshFestival().catch(() => {});   // the account's own offerings, as they stand now
   _doors.saved();
   return { ok: true, data: r.data, text: '' };
 }
-function takeOneOffering(/** @type {any[]} */ items) {
-  const it = items.find(isHearthOffering);
-  if (!it) return;
-  const n = Math.max(1, it.stackCount ?? 1);
-  if (n > 1) it.stackCount = n - 1; else items.splice(items.indexOf(it), 1);
-}
-/** A town's offerings, as the service says them (`{ mapId, offerings }`), or null. */
+/** A town's offerings, as the service says them (`{ mapId, open, offerings }`), or null. */
 export async function townOfferings(/** @type {number} */ mapId) {
   if (!_api || !_doors.online()) return null;
   const r = await _api.town(mapId).catch(() => null);
+  if (r?.ok && typeof r.data?.open === 'boolean' && r.data.open !== _state.open) learn({ open: r.data.open });   // the switch, as it stands
   return r?.ok ? r.data : null;
 }
 
 /** Tests only. */
 export function _resetFestivalClientForTests() {
-  _doors = NO_DOORS; _api = null; _pending = null; _wardrobe = null; _chain = Promise.resolve();
-  _state = { cakes: null, wares: [], given: 0, taken: 0, offerings: [], open: false };
+  _doors = NO_DOORS; _api = null; _pending = null; _asking = null; _wardrobe = null; _chain = Promise.resolve(); _actTurn = null;
+  _state = { cakes: null, bowls: null, wares: [], given: 0, taken: 0, offerings: [], open: null };
   _hear.clear(); _version = 0;
 }

@@ -7,7 +7,7 @@
 //
 // ONE ARCHIVE, FESTIVAL_ARCHIVE (world/eliteGates/pseudoArchives.js registers it), a record each picture
 // (FESTIVAL_ART): the Soul Cake's and the Hearth Offering's item pictures, the offering as it stands at a door, and the
-// towns' turnip lantern, straw effigy and ward-staff (world/festivalDecor.js stands them). Each reaches every door a picture
+// towns' turnip lantern, straw effigy and ward-staff (world/witchesDecor.js stands them). Each reaches every door a picture
 // does as a STAND-IN of its archive (systems/textureReplacement.js addVendorTextures - `standIn`, `build`), so an item list
 // and a billboard batch ask `getTexture(archive)` as they ask any of Daggerfall's (world/eliteGates/egKeyArt.js's law).
 //

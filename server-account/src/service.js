@@ -173,6 +173,7 @@ export const REPLICA_ROUTES = new Map([
   ['/v1/realm/unions', 'POST'],
   ['/v1/saves', 'GET'],
   ['/v1/arena/board', 'POST'],
+  ['/v1/festival/town', 'POST'],   // WITCH1: a town's Hearth Offerings - reads and nothing else (festival.js festivalTown)
 ]);
 /** SCALE4d: where a replica session's FIRST statement goes - the primary. A mint's first statement is the session
  *  lookup, and every statement after it is served by a replica at least as new as that answer (D1's Sessions API: one
