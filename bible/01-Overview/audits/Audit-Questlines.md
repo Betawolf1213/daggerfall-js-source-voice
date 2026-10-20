@@ -327,12 +327,13 @@ REWARD fix; `test/systems/questlines/ql4_flow.test.js` (12, new) - the `ask`'s f
 `test/ui/questlines/ql2_journal.test.js` (17) and `test/server/ql12_claim.test.js` (13), each with the audit's pins
 added and titled by the mutants they kill; `test/ui/questlines/ql2_pause.test.js` (6, new) - the Quests tab drawn
 whole in the real pause window. Mutant records:
-`tools/mutants/ql12_claim.json` (31, all dead), `tools/mutants/ql11_acts.json` (35, all dead),
-`tools/mutants/ql4_flow.json` (32, all dead) and `tools/mutants/ql3_rewards.json` (50 - the REWARD fixer's 44 and the
-author's six: REWARD-14, the bridge's two doors, the lens's look twice, the ladders' titles; all dead) and
-`tools/mutants/ql2_ui.json` (25, all dead - the UI lane's three probes among them).
-The PATCH and SCRIPTS fixers' probes (32 and 15, every one dead) ran from their scratch and are named in their pins'
-titles. Re-aimed by content and run again: `tools/mutants/fb1017b.json` (10, all dead - the seam's second word),
-`tools/mutants/shipcrew.json` (40, all dead - the one helper), `tools/mutants/questreset1.json` and
-`tools/mutants/share_mend.json` (the records FLOW's edits to `machine.js` and `questShare.js` moved), and DOC-31's notes
-in nine records. Every questlines suite above passes on the tree the record describes: 188 tests.
+`tools/mutants/ql12_claim.json` (35, all dead - SERVICE-7 (c)'s four among them), `tools/mutants/ql11_acts.json` (35,
+all dead), `tools/mutants/ql4_flow.json` (32, all dead), `tools/mutants/ql3_rewards.json` (51 - the REWARD
+fixer's 44 and the author's: REWARD-14, the bridge's two doors, the lens's look twice, the ladders' titles, the waiting
+reward's name; all dead) and `tools/mutants/ql2_ui.json` (25, all dead - the UI lane's three probes among them). The
+PATCH, SCRIPTS and VOICE fixers' probes, recorded: `tools/mutants/ql1_patch.json` (33), `tools/mutants/ql12_scripts.json`
+(15) and `tools/mutants/qlvoice.json` (15, the patches' own messages among them), all dead. Re-aimed by content and run
+again: `tools/mutants/fb1017b.json` (10, all dead - the seam's second word), `tools/mutants/shipcrew.json` (40, all dead
+- the one helper), `tools/mutants/questreset1.json` and `tools/mutants/share_mend.json` (the records FLOW's edits to
+`machine.js` and `questShare.js` moved), and DOC-31's notes in nine records. Every questlines suite above, `test/systems/questlines/qlvoice.test.js` (3, new) and `ql12_claim.test.js` (14, SERVICE-7
+(c) added) pass on the tree the record describes.
