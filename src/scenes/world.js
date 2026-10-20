@@ -8730,7 +8730,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** CSA-F: the waves' pass, and their pictures (InitializeWaveTextures, 1811-1819): the author's two paints and the
    *  snow they key, TEXTURE.303 record 1 of the player's ARENA2 - loaded at boot, as Start has them (CSA-J). */
   const csaRender = csaRuntime ? new ComeSailAwayRenderer(renderer) : null;
-  if (csaRender) void warmPrograms([() => csaRender._ensurePart(), () => csaRender._ensureWave()]);   // PERF-COMPILE1 (stutter): the sea's four programs at idle, not on the first frame at sea
+  if (csaRender) void warmPrograms(csaRender.warmSteps());   // PERF-COMPILE1 (stutter): the sea's four programs at idle, not on the first frame at sea; SHADER-STALL: each built once its compile is done
   let _csaWaveLoad = null;
   function csaWaveFrames() {
     _csaWaveLoad ??= (async () => {

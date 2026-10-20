@@ -40,7 +40,17 @@
  *
  *  Answers how many steps actually ran (the tests drive it with their
  *  own scheduler). The latch is per-call, not per-session: a scene that
- *  boots a second renderer warms it too. */
+ *  boots a second renderer warms it too.
+ *
+ *  SHADER-STALL (2026-10-20): a step may NAME its programs - `{ start, run }`,
+ *  `start()` starting them and answering whether the driver is done
+ *  (render/glProgram.js startPrograms) - and then runs only once it is,
+ *  asked again at each idle wait. The idle alone moved a compile off the
+ *  frame that needed it onto one that did not, and the main thread still
+ *  waited the whole compile: the sea's programs were 9.7 s of one task in
+ *  the real game's boot here (bible/07-Rendering/Performance-Priority.md
+ *  SHADER-STALL). A bare function runs as it always did.
+ *  @param {ReadonlyArray<(() => void) | { start: () => () => boolean, run: () => void }>} steps */
 export async function warmPrograms(steps, {
   idle = (fn) => (globalThis.requestIdleCallback
     ? globalThis.requestIdleCallback(fn, { timeout: 4000 })
@@ -55,7 +65,17 @@ export async function warmPrograms(steps, {
     // A warm is an optimisation and never a failure: whatever a step
     // could not build, the draw that needs it will build the same way
     // it always did, and throw there if it is going to throw.
-    try { step(); done++; } catch { /* the draw path is still the one that reports */ }
+    try {
+      if (typeof step !== 'function') {
+        const ready = step.start();
+        while (!ready()) {
+          await new Promise((resolve) => idle(resolve));
+          if (!alive()) return done;
+        }
+      }
+      (typeof step === 'function' ? step : step.run)();
+      done++;
+    } catch { /* the draw path is still the one that reports */ }
   }
   return done;
 }

@@ -23,7 +23,7 @@
 // near and fades out from NODE_GLOW_FADE_M to NODE_GLOW_M; it breathes, and stands still under reduced motion; the fog and
 // the jungle's haze fade it as they fade the node. Not a DFU member.
 import { bbVertexShader } from './renderer.js';
-import { buildProgram } from './glProgram.js';
+import { buildProgram, startPrograms } from './glProgram.js';
 import { BAYER_GLSL } from './orderedDither.js';
 import { FOG_FACTOR_GLSL } from './labGrass.js';
 import { billboardKey } from './billboardKey.js';
@@ -238,12 +238,17 @@ function mul4(a, b, out) {
   return out;
 }
 
+/** SHADER-STALL: the pass's two programs, the mask's and the ring's, as its constructor builds them - what the host
+ *  starts ahead of the build (createNodeOutlinePass; render/glProgram.js startPrograms). */
+export const NODE_OUTLINE_PROGRAMS = /** @type {ReadonlyArray<readonly [string, string]>} */ (Object.freeze([[NODE_MASK_VS, NODE_MASK_FS], [NODE_RING_VS, NODE_RING_FS]]));
+
 export class NodeOutlineRenderer {
   /** @param {WebGL2RenderingContext} gl */
   constructor(gl) {
     this.gl = gl;
-    this.mask = buildProgram(gl, NODE_MASK_VS, NODE_MASK_FS, 'node outline mask');
-    this.ring = buildProgram(gl, NODE_RING_VS, NODE_RING_FS, 'node outline ring');
+    const [mask, ring] = NODE_OUTLINE_PROGRAMS;
+    this.mask = buildProgram(gl, mask[0], mask[1], 'node outline mask');
+    this.ring = buildProgram(gl, ring[0], ring[1], 'node outline ring');
     /** @type {Record<string, WebGLUniformLocation|null>} */
     this.um = {};
     for (const n of MASK_UNIFORMS) this.um[n] = gl.getUniformLocation(this.mask, n);
@@ -515,16 +520,17 @@ const idleCall = (fn) => (globalThis.requestIdleCallback ? globalThis.requestIdl
  * THE WORLD HOST'S PASS: the gathering host's marks each frame - a mark with its pictures ringed by the outline, a mark
  * with none lit by the glow (`glow`, nodeGlow.js's pass - a body drawn as a 3D character; the pass builds its own, so the
  * host wires one pass and bootWorld holds no glow of its own - HOST-SPLIT), each kindling as it first
- * stands near (nodeGlows). The programs are built at IDLE once a node is first ringed (PERF-WARM's law) - nothing is
- * ringed until they stand; an outline that will not build costs the outline, never the game (its marks go to the glow).
+ * stands near (nodeGlows). The programs are STARTED once a node is first ringed, and the pass built at IDLE once the
+ * driver says they are done (`start`, SHADER-STALL: render/glProgram.js startPrograms - PERF-WARM's idle alone held a
+ * frame for the whole compile, 5.65 s of a player's) - nothing is ringed until they stand; an outline that will not build costs the outline, never the game (its marks go to the glow).
  * A pass that ran is a foreign pass. `draw(marks)` answers how many it ringed; `marks` null forgets every node.
  * @param {any} renderer
  * @param {{ glow?: { draw: (marks: any) => number } | null, now?: () => number, build?: (gl: any) => NodeOutlineRenderer,
- *   idle?: (fn: () => void) => void, reduced?: (nowS: number) => boolean }} [o]
+ *   start?: (gl: any) => () => boolean, idle?: (fn: () => void) => void, reduced?: (nowS: number) => boolean }} [o]
  */
-export function createNodeOutlinePass(renderer, { glow = createNodeGlowPass(renderer), now = () => performance.now() / 1000, build = (gl) => new NodeOutlineRenderer(gl), idle = idleCall, reduced = reducedMotionReader() } = {}) {
+export function createNodeOutlinePass(renderer, { glow = createNodeGlowPass(renderer), now = () => performance.now() / 1000, build = (gl) => new NodeOutlineRenderer(gl), start = (gl) => startPrograms(gl, NODE_OUTLINE_PROGRAMS), idle = idleCall, reduced = reducedMotionReader() } = {}) {
   const state = createNodeGlowState(), list = /** @type {any[]} */ ([]), bare = /** @type {any[]} */ ([]), ringed = /** @type {any[]} */ ([]);
-  let pass = /** @type {NodeOutlineRenderer|null} */ (null), asked = false, dead = false, failed = false;
+  let pass = /** @type {NodeOutlineRenderer|null} */ (null), asked = false, dead = false, failed = false, ready = /** @type {(() => boolean)|null} */ (null);
   const make = () => {
     if (dead) return;
     try { pass = build(renderer.gl); } catch (e) { failed = true; console.warn('[prof] the nodes\' outline would not build', e?.message ?? e); pass = null; }
@@ -536,7 +542,7 @@ export function createNodeOutlinePass(renderer, { glow = createNodeGlowPass(rend
       if (marks) for (const m of marks) (failed || !m?.pictures?.length ? bare : ringed).push(m);
       glow?.draw(marks ? bare : null);   // a node with no picture to ring keeps its glow
       const t = now();
-      if (!asked && ringed.length) { asked = true; idle(make); }   // the first node ringed: the compile, at idle
+      if (!asked && ringed.length && (ready ??= start(renderer.gl))()) { asked = true; idle(make); }   // the first node ringed: the compile started; the build at idle once it is done
       if (!nodeGlows(marks ? ringed : null, renderer._camPos, t, state, list).length || !pass) return 0;
       const n = pass.draw(list, renderer, t % 60, reduced(t));
       renderer.markForeignPass();

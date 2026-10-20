@@ -22,14 +22,15 @@ import { GATE_BOSSES, gateBossOf, gateTimes, GATE_COLLAPSE_MS } from '../../net/
 import { COURT_WATCH_ASK_MS } from '../../net/gate/gateBrain.js';   // COURT-WATCH: a watcher's ask for a seat, this often
 import { bossAct, bossFrame, bossGlow, bossPlace, bossHop, bossLookOf, bossStandIn, bossCue, BOSS_CUES, BOSS_STRIDE_M, GROWL_EVERY_MS, HURT_GAP_MS, HURT_SHARE, QUAKE_ON, THUD_AT_MS, WARD_COLOR, EMBER_COLOR, poolColor, emberColor, attackColor, crystalStandIn, crystalColor, groundStepCue, hostPulseColor, gateHitFlash, GATE_FLASH_SHARE, RELEASE_LEAD_MS, landShake, LANDING_LIGHT_Y, CORPSE_SCALE, WAKE_LEAD_MS, LOW_HEALTH } from '../../world/gate/gateBoss.js';
 import { courtToDungeon, portalDoor, PORTAL_AFTER_MS, PORTAL_RISE_MS, PORTAL_DROP, COURT_TEXT, WAY_IN_Z, WAY_IN_HOLD_MS, WAY_IN_NEAR_M, ARRIVE_Z, arrivalOf, planOfDay, COURT_SILENT_MS, COURT_FRAME_GAP_MS, COURT_DOOR_WAIT_MS, wayInStep, portalFade } from '../../world/gate/gateArena.js';
-import { GateTelegraphRenderer, telegraphShape, markShape, poolShapes, telegraphEdge, TELEGRAPH_STYLE, TELEGRAPH_EDGE, TELEGRAPH_NOW_MS } from '../../render/gate/gateTelegraph.js';
-import { CourtCrystalRenderer, crystalGrowth, CRYSTAL_GROW_MS, CRYSTAL_SHATTER_MS, CRYSTAL_FLASH_MS, CRYSTALS_DRAW_MAX } from '../../render/courtCrystals.js';   // WB9c: the crystals of Oblivion, drawn
-import { GateFxRenderer, fxBurstOf, meteorFall, FX_BURST_MS, FX_BURSTS_MAX, FX_KINDS, FX_LIGHT_MS } from '../../render/gate/gateFx.js';   // WB9e: his blows seen landing
+import { GateTelegraphRenderer, telegraphPrograms, telegraphShape, markShape, poolShapes, telegraphEdge, TELEGRAPH_STYLE, TELEGRAPH_EDGE, TELEGRAPH_NOW_MS } from '../../render/gate/gateTelegraph.js';
+import { CourtCrystalRenderer, CRYSTAL_PROGRAMS, crystalGrowth, CRYSTAL_GROW_MS, CRYSTAL_SHATTER_MS, CRYSTAL_FLASH_MS, CRYSTALS_DRAW_MAX } from '../../render/courtCrystals.js';   // WB9c: the crystals of Oblivion, drawn
+import { GateFxRenderer, GATE_FX_PROGRAMS, fxBurstOf, meteorFall, FX_BURST_MS, FX_BURSTS_MAX, FX_KINDS, FX_LIGHT_MS } from '../../render/gate/gateFx.js';   // WB9e: his blows seen landing
 import { relight } from '../../render/lightId.js';   // LIGHT-ID: a burst's slot handed to the next burst - its flash another light
 import { setBatchHitFlash } from '../../systems/hitFlash.js';   // WB13d: his body struck flashes, as every foe's does
 import { tierColour } from '../../render/spoilsGlow.js';   // WB9f: a piece's landing sparks in its tier's colour
 import { RARITIES } from '../../systems/loot/lootRarity.js';
-import { GatePassRenderer, gateSpinRate } from '../../render/gate/gatePass.js';   // WBX2: the portal's fire is the gate's own
+import { GatePassRenderer, GATE_PASS_PROGRAMS, gateSpinRate } from '../../render/gate/gatePass.js';   // WBX2: the portal's fire is the gate's own
+import { compiledPass } from '../../render/glProgram.js';   // SHADER-STALL: the court's passes built once their programs are done
 import { gateArchProfile } from '../../world/gate/gateModel.js';
 import { ONLINE_MINUTES_PER_MS, GATE_HEAL_ROWS_MAX, GATE_HEAL_WIRE_MAX } from '../../net/wire.js';   // WBX7: a soul trap's rounds on the shared world's clock; GATE-HEAL: the heal word's bounds
 import { spoilsLevel } from '../spoilsPool.js';   // AUDIT WBX S2: the spoils never rolled past the level the fight admitted
@@ -318,8 +319,11 @@ export function createGateCourt({
   let watchAskedAt = -Infinity;
   const bodiesLane = createPopulationLane({ laneName: 'gate', renderer, ...(wantBodies ? { want: wantBodies } : {}), make: makeBodies });
   const bossRec = {};
-  let pass = null;
-  try { if (gl) pass = new GateTelegraphRenderer(gl); } catch (e) { console.warn('[gate] the telegraph would not build', e?.message ?? e); pass = null; }
+  // SHADER-STALL (render/glProgram.js compiledPass): each of the court's passes is built the first frame it is wanted AND
+  // its programs are done - started where it was built (the telegraph's with the court; the portal's as it rises; his
+  // blows' and the crystals' at their first), never a frame frozen on a compile.
+  const telegraphPass = compiledPass(gl, telegraphPrograms(false), () => new GateTelegraphRenderer(gl), (e) => console.warn('[gate] the telegraph would not build', e?.message ?? e));
+  telegraphPass();   // started with the court, as it was built with it
   /** WB11c: HIS HOST (scenes/gate/gateHost.js) - its blows land on me through the door his own do (`land`), each its share,
    *  its base and its element through my saving throw; a Ward-Bearer's Pulse flares the rim in his element's colour */
   const host = createGateHost({
@@ -420,7 +424,8 @@ export function createGateCourt({
   /** WBX2: the portal home once he has fallen - where it stands (the court's frame) and how far it has risen, its fire's
    *  pass and the arch's opening (made the first time one stands), its fire's turn, and whether its door is laid and its
    *  rising said */
-  let portal = null, portalPass = null, portalTried = false, profile = null, spin = 0, portalLaid = false, portalSaid = false;
+  let portal = null, profile = null, spin = 0, portalLaid = false, portalSaid = false;
+  const portalPass = compiledPass(gl, GATE_PASS_PROGRAMS, () => new GatePassRenderer(gl, profile), (e) => console.warn('[gate] the portal would not build', e?.message ?? e));
   /** GATE-FBX: THE WAY IN at the bridge's foot - how far its fire stands (0 shut .. 1 whole), until when it is held open
    *  (a fighter just stepped out of it), and whether my own step out of it has been counted on this fight's state */
   let wayIn = 0, wayInHeld = -Infinity, wayInMine = false;
@@ -452,7 +457,8 @@ export function createGateCourt({
    *  (null standing) and when I last struck it, its turn and seed, when its Reckoning lands; `ended` once the relay has
    *  done with it (broken or landed) - kept until the last shard has flown. The last one ended (never seen again as new),
    *  the stun last heard, the stand-in every crystal shares (made once a fight), and the pass. */
-  let rk = null, rkDone = null, stunHeard = 0, crystalPass = null, crystalTried = false;
+  let rk = null, rkDone = null, stunHeard = 0;
+  const crystalPassOf = compiledPass(gl, CRYSTAL_PROGRAMS, () => new CourtCrystalRenderer(gl), (e) => console.warn('[gate] the crystals would not build', e?.message ?? e));
   /** AUDIT WB11 W1: the crystals' stand-ins, one a crystal, each naming its own (world/gate/gateBoss.js crystalStandIn) */
   const crystalIns = [];
   /** FIELD BUGS 2026-10-18f RELAY-SHARE: crystal `c`'s reader of its health - the share the relay's word last gave it in the
@@ -474,7 +480,8 @@ export function createGateCourt({
   /** WB13e: the fall's white and the Wrath's light - one each, refilled (AUDIT WB D10's law) */
   const _fallLight = { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0] }, _wrathLight = { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0] };
   const flash = (L, at, c, k, range) => { L.x = at[0]; L.y = at[1]; L.z = at[2]; L.range = range; L.color[0] = c[0] * k; L.color[1] = c[1] * k; L.color[2] = c[2] * k; return L; };
-  let meteorNow = null, fxPass = null, fxTried = false;
+  let meteorNow = null;
+  const fxPassOf = compiledPass(gl, GATE_FX_PROGRAMS, () => new GateFxRenderer(gl), (e) => console.warn('[gate] his effects would not build', e?.message ?? e));
 
   function reset(d) {
     day = d; judged = noMark(); cued = noMark(); landed = noMark(); phaseHeard = 0; fellCued = false; wrathLanded = false;
@@ -526,10 +533,7 @@ export function createGateCourt({
   /** The court's fire - the gate's own pass (made the first time a portal stands) on the arch's opening, and its turn. */
   function firePass(dt) {
     profile ??= gateArchProfile();   // the arch's opening - the fire's shape and the step's bound, with or without a GL
-    if (!portalTried && gl) {
-      portalTried = true;
-      try { portalPass = new GatePassRenderer(gl, profile); } catch (e) { console.warn('[gate] the portal would not build', e?.message ?? e); portalPass = null; }
-    }
+    portalPass();
     spin = (spin + gateSpinRate(1) * Math.max(0, dt)) % 1;
   }
 
@@ -1248,9 +1252,10 @@ export function createGateCourt({
     drawPass(proj, view, eye, seconds, fog = null) {
       let drew = false;
       if (_crystalDraw.length) {   // WB9c: the crystals first - opaque, their depth written, so his ground's glow sits behind them
-        if (!crystalTried && gl) { crystalTried = true; try { crystalPass = new CourtCrystalRenderer(gl); } catch (e) { console.warn('[gate] the crystals would not build', e?.message ?? e); crystalPass = null; } }
+        const crystalPass = crystalPassOf();
         if (crystalPass) { crystalPass.draw(_crystalDraw, proj, view, eye, seconds, fog); drew = drew || crystalPass.drawn > 0; }
       }
+      const pass = telegraphPass();
       if (pass) {
         for (const ps of poolDraw) { pass.draw(ps, proj, view, eye, seconds, fog, COURT_CENTRE, _walked, _floors); drew = true; }   // WBX5: the burning ground under all
         if (mark) { pass.draw(mark, proj, view, eye, seconds, fog); drew = true; }   // WBX4: where he stands and faces
@@ -1260,7 +1265,7 @@ export function createGateCourt({
         for (const cs of captive.shapes()) { pass.draw(cs, proj, view, eye, seconds, fog, COURT_CENTRE, _walked, _floors); drew = true; }   // WB14f: the Captive's chains
       }
       if (_fxLive.length || meteorNow) {   // WB9e: his blows landing - the sparks and the meteor's fall, over the telegraph
-        if (!fxTried && gl) { fxTried = true; try { fxPass = new GateFxRenderer(gl); } catch (e) { console.warn('[gate] his effects would not build', e?.message ?? e); fxPass = null; } }
+        const fxPass = fxPassOf();
         if (fxPass) { fxPass.draw(_fxLive, meteorNow, proj, view, eye, seconds, fog); drew = drew || fxPass.bursts > 0 || fxPass.meteors > 0; }
       }
       _fires.length = 0;
@@ -1269,9 +1274,10 @@ export function createGateCourt({
         _fires.push(_portalFire);
       }
       if (wayIn > 0) { _wayIn.fade = wayIn; _wayIn.spin = spin; _fires.push(_wayIn); }   // GATE-FBX: the way in, its fire alone
-      if (_fires.length && portalPass) {
-        portalPass.draw(_fires, proj, view, eye, seconds, fog);
-        drew = drew || portalPass.drawn > 0;
+      const fire = _fires.length ? portalPass() : null;
+      if (fire) {
+        fire.draw(_fires, proj, view, eye, seconds, fog);
+        drew = drew || fire.drawn > 0;
       }
       const lit = !!spoils?.drawPass(proj, view, eye, seconds, fog);
       return drew || lit;

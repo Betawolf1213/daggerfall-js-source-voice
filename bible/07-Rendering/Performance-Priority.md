@@ -52,7 +52,9 @@ Chromium under a CPU profile (`tools/bootFreezeProbe.mjs`) - and it carries #854
 of them a change to what a player sees, every answer the old one: BOOT-RECTS (the boot's two rect walks read each block
 once), WD-OWNED (a town file's edits laid on its own base, and a kept base copied by a walk), REGION-VIEWS (a MAPS
 region's records read where MAPS.BSA holds them) and FIT-BITS (the Bay's fit on the picture counted 32 cells a word).
-Their sections are after TRIP-PICKS'.
+Their sections are after TRIP-PICKS'. The same pass took two reports the owner handed on: TRADE-VIRT (a player's audit of
+the trading windows: the rows on screen drawn, a picture into its tile) and SHADER-STALL (a player's capture: a pass
+built in play never waits on its compile). Their sections are after FIT-BITS'.
 
 ## How the pass was run
 
@@ -1254,13 +1256,135 @@ None of these moves the picture; each needs its own pass.
 2. **The door's first build of each replaced block** - ~1.8 s of the two walks after BOOT-RECTS, beside the stream's:
    the expand and `blockFromJson` past WD-COPY's copy. The walks need a block's ground alone, which the ops that reach it
    could rebuild without the rest.
-3. **The GPU's** - the sea's wave program compiled at idle (`warmPrograms`, 9-10 s under SwiftShader; a driver's own on a
-   GPU), the ground's tile array uploaded (`uploadTileArray`), a canvas read back. `KHR_parallel_shader_compile` would let
-   a compile run beside the frame; unmeasurable here.
+3. **The GPU's** - the sea's programs compiled at idle (taken by SHADER-STALL, below), the ground's tile array uploaded
+   (`uploadTileArray`), and the classic dial's art read back off a canvas (`dialClassicArt.js wearClassicDial`'s
+   `toDataURL`: 7.3-8.3 s of the first task after the first world frame here, a round trip that pays the GPU process's
+   queue; a 2D canvas kept in memory, `willReadFrequently`, would read back without one).
 4. **A ground set's puddle masks** - 0.5-1.1 s, at the boot and again when the stream meets a new climate or season
    (`world.js groundLayersOf`): `puddleMask.js cleanMask` allocates an array a texel it walks, `shoreWaterColours` counts
    2.6 million texels into a Map.
 5. **The world-data spot check** - `packFileSha256`'s canonical JSON of one block in eight, ~0.8 s across the boot.
+
+## TRADE-VIRT — the trading windows draw the rows on screen, and a picture lands in its tile
+
+*A player's audit of the NPC and player-to-player trading windows, handed on by the owner (2026-10-20: "Someone also
+sent this"): "full UI rebuilds on every click, missing list virtualization, and repeated rendering when item icons
+load", with a synthetic prototype's 28.7x/14.4x. Its claims were read against the code and measured in the windows
+themselves before anything was taken.*
+
+**Found.** All three claims held, and the third was worse than reported. The shop counter (`ui/enhanced/enhancedTrade.js`)
+and the trade between players (`ui/enhanced/enhancedPlayerTrade.js`) rebuild their DOM on every state change (the shape
+`ui/domRepaint.js` says why), and both drew every row of every list. Both handed a cold picture's `onReady` the
+window's whole repaint, so a pack whose pictures come in one by one repainted itself once a picture. The counter's
+`onReady` was `render` itself, which the fitted-picture door (`ui/textureCanvas.js`) dedupes. The trade between players
+gave each row a fresh closure, and the door wakes up to WAKE_MAX (8) waiters a picture, each a whole repaint that signed
+the rows up again: 2,160 repaints of a 300-piece pack, 193 s before its last picture stood. A verb of mine in the trade
+between players also painted twice: the session's `onChange` is the host's repaint, and it fired inside the verb before
+the verb's own repaint.
+
+**The fix.** VIRT's law (`10-UI/UI-Arc.md`, the pack's) carried to both windows, and its landing given one home:
+- `ui/enhanced/landingTiles.js` - a tile drawn on its initials waits with what it was drawn from; a landing asks for ONE
+  pass on the next frame, which swaps each waiting tile for the one `draw` makes now, its wear bar carried. The pack's
+  `liveTile` asks it too (its `_waitingTiles`/`tileLanded`/`paintLandedTiles` are the module's `waiting`/`landed`/`pass`).
+- `ui/virtualRows.js` over every list of both windows (past VIRTUAL_MIN, 120): the rows in the visible band and a
+  margin. A repaint lets go of the lists it replaces (their scroll listeners), measures the new ones before it gives a
+  scroll back (`sync({ draw: false })`) and aims them after; a resize repaints; the unmount lets go of every one.
+- The trade between players paints once a verb of mine: `acting` quiets the session's call inside the verb, and a
+  change the host asks for of its own (the peer's) paints at once.
+- The counter's pack filter asks one Set a paint for what the counter holds, not a walk of the lot each piece.
+Nothing a player sees changed: the same rows in the same places, the same pictures, the same moves.
+
+**Measured** in Chromium over the freeware ARENA2's pictures (`tools/tradePerfProbe.mjs`: the windows mounted as the game
+mounts them over N real pieces, every weapon in every metal and armour piece in every material; a shelf of 0.65 N at the
+counter that sells; the real TradeSession for the trade between players). Settled is every row's picture in, a click is
+a preview to the frame, a move is a double click to the frame (a sale staged, a piece bought, an offer made). Main
+(fc2a29e0c7, #1068's merge) and this branch, one after the other, nothing else running:
+
+| window, pieces | settled (repaints) | a click | a move |
+|---|---|---|---|
+| sell 300 | 26.5 s (273) -> 0.30 s (1) | 106 -> 43 ms | 224 -> 95 ms |
+| sell 1,000 | 106 s (292) -> 0.43 s (1) | 348 -> 57 ms | 550 -> 70 ms |
+| buy 300 | 43.7 s (292) -> 0.50 s (1) | 156 -> 55 ms | 391 -> 84 ms |
+| buy 700 | 107 s (292) -> 0.55 s (1) | 809 -> 50 ms | 2,881 -> 101 ms |
+| buy 1,000 | 120 s (292) -> 0.41 s (1) | 421 -> 52 ms | 858 -> 103 ms |
+| players 100 | 19.6 s (760) -> 0.37 s (1) | 60 -> 43 ms | 135 -> 75 ms |
+| players 300 | 193 s (2,160; a 4.3 s task) -> 0.30 s (1) | 92 -> 37 ms | 148 -> 97 ms |
+| players 700 | 498 s (2,323; a 7.6 s task) -> 0.29 s (1) | 234 -> 29 ms | 459 -> 57 ms |
+| players 1,000 | not settled in 28 min (stopped) -> 0.30 s (1) | - -> 26 ms | - -> 61 ms |
+
+At 1,000 pieces the buy window's DOM is 953 nodes where it was 15,445 (96 rows drawn of 1,650). Below the threshold a
+list is drawn whole by the same code it was, and the first read of a 100-piece click looked 10-15 ms slower here. That
+was the JIT: main's repaint storm while its pictures came in (156 repaints) had warmed `render` before the clicks were
+timed. Warmed alike (150 repaints first), five runs a tree, the sell window at 100: a click's render 34.3 ms on main and
+33.6 here (35 clicks each), a repaint 29.2 and 28.0 (300 each).
+
+**Not taken.** The audit's incremental mount (rows kept across a selection) and its per-row caches: the repaint stays the
+codebase's shape (`ui/domRepaint.js`), and with the lists windowed a repaint costs the rows on screen, not the lot. The
+classic counter (`ui/native/nativeTrade.js`, its P2) draws a few slots on a canvas and was not measured.
+
+Pins: `test/ui/enhanced/tradevirt.test.js` (7), and the pack's `test/systems/virt_pack.test.js` over the shared fakes
+(`test/virtFakes.mjs`). Mutants: `tools/mutants/tradevirt.json`, 14, all dead; `virt.json`'s
+VIRT-a-landing-repaints-the-pack and AUDIT-VIRT-a-frame-a-landing re-aimed at the module, dead. `fb1011_tradeloc`'s pin
+on the player trade's rows moved with them.
+
+## SHADER-STALL — a pass built in play never waits on its compile
+
+*A player's capture, handed on by the owner (2026-10-20: "told there are shader conflicts"): "the load problem is a
+bunch if fucking shaders ive stripped out like 5 diffrent shader and i dont lag oon load up" - "Gate shader
+initialization: 11.43-second stall", "Node-outline shader initialization: 5.65-second stall".*
+
+**Found.** No conflict: no two passes fight over a program. Every pass built its programs through `render/glProgram.js
+buildProgram`, whose LINK_STATUS read (PERF-COMPILE1's one sync point) is a round trip. It holds the page's thread until
+the GPU process has compiled and linked the program, and everything queued ahead of it. A pass built in play froze the
+game for its compile:
+- the world's gate fire the first frame a gate stands (online: the first frames after the load);
+- the gate court's telegraph, built with the court (online: the boot), and its portal, his blows and the crystals
+  (and the Elite Gates' telegraphs and crystals) at their first frame, mid-fight;
+- the veil, built whole at idle the first frame a gate stands;
+- the nodes' outline at idle, the first node ringed;
+- PERF-COMPILE1's idle warms: the sea's four programs and the spells' impact pass;
+- the snow's terrain program, the moment its masks land.
+
+PERF-WARM's idle moved a compile off the frame that needed it onto one that did not, and the main thread still waited the
+whole compile. D3D11's compiler takes seconds over a pass's shaders where SwiftShader takes milliseconds. A player who
+strips the passes strips the waits, which is the report's own test.
+
+**The fix.** `KHR_parallel_shader_compile` (every Chromium on a GPU, the desktop app's Electron included: ANGLE compiles
+on threads of its own) lets the page ask whether a program is done without waiting (COMPLETION_STATUS_KHR).
+`glProgram.js startPrograms` starts a pass's programs and answers that question; `buildProgram` takes the started
+program for the same sources instead of compiling its own, so a pass's constructor (unchanged) reads a link already
+made. `compiledPass` is the host's door: the pass built the first time it is wanted AND its programs are done.
+`warmPrograms` takes named steps (`{ start, run }`): it runs a step once its programs are done, asking again at each
+idle. Each pass lists its programs beside its constructor (GATE_PASS_PROGRAMS, telegraphPrograms, GATE_FX_PROGRAMS,
+GATE_VEIL_PROGRAMS, CRYSTAL_PROGRAMS, NODE_OUTLINE_PROGRAMS, CSA_PART/WAVE_PROGRAMS, SPELL_IMPACT_PROGRAMS), and the
+constructor builds from that list, so the list can't drift from what the constructor compiles. Each of the builds above
+goes through the door; the veil's warm makes its context and starts its program, and the step's build takes it. A pass
+waiting on its compile draws nothing for those frames: the gate's fire, a blow's sparks, the snow's surface stand a
+frame or two late. A browser that cannot say (no extension) is answered "done" at once and waits as it always did.
+
+**Measured.** SwiftShader is not D3D11, so the claim is in two parts: what the door does to a wait, and what the real
+game waited on here.
+- A compile alone (a 340 ms fragment program, a page with nothing else): read at once, the main thread froze 341 ms.
+  Through the door, a poll took 0.1-0.4 ms, the read after it 0.1 ms, and a 4 ms timer ticked through the compile with an
+  8 ms worst gap.
+- Behind the GPU process's queue (six 64 MB texture uploads; a getError round trip 650-685 ms): a poll took 0 ms, a fence
+  0 ms. The poll waits on neither the compile nor the queue.
+- The real game (`tools/compileStallProbe.mjs knight`: Knightstale booted over the freeware ARENA2 with ANGLE's parallel
+  compile on, as a GPU's Chromium has it, every program read timed and named; main and this branch one after the
+  other). After the first world frame the main thread waited on programs 9,033, 8,797 and 114 ms on main (the sea's warm
+  7,127 ms in one run, the spells' 7,558 ms in another); on this branch 14 and 477 ms. The 477 is one uniform lookup of
+  the snow's program, built after its compile: the lookup is a round trip, and it paid the queue's work.
+- The passes no scene here stands (`compileStallProbe.mjs passes`, each in a context of its own): built at once, the
+  gate's fire waited 19 ms, the telegraphs 12-14, his blows 9, the veil 5, the outline 15; through the door 2-3 ms each.
+  These are SwiftShader's milliseconds; the player's driver took 11.4 and 5.7 seconds over the same reads.
+
+**Not changed.** The renderer's own programs, built in its constructor behind the loading screen (2.6-3.1 s here, the
+same on both), and the passes the other scenes build in play (the Spire's, the Hour's, the arenas') keep their builds.
+Each can take the door by listing its programs; `compileStallProbe.mjs` names what still waits.
+
+Pins: `test/render/shaderstall.test.js` (11), and the snow's in `test/systems/audit_environs.test.js`. Mutants:
+`tools/mutants/shaderstall.json`, 16, all dead. Source pins moved with the code: `wbx_gate_fixes` (the court's portal),
+`eglook_lines` (the Spire's telegraph).
 
 ## For the owner
 

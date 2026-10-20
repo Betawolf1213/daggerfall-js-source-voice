@@ -29,9 +29,10 @@
 // Not a DFU member. Ledger A (WB).
 import { audio as defaultAudio } from '../../systems/audio.js';
 import { SOUND } from '../../systems/soundClips.js';
-import { GateVeilRenderer, veilAt, VEIL_CLOSE_S, VEIL_OPEN_S, VEIL_HOLD_MAX_S, VEIL_FRONT_IN, VEIL_FRONT_OUT } from '../../render/gate/gateVeil.js';
+import { GateVeilRenderer, GATE_VEIL_PROGRAMS, veilAt, VEIL_CLOSE_S, VEIL_OPEN_S, VEIL_HOLD_MAX_S, VEIL_FRONT_IN, VEIL_FRONT_OUT } from '../../render/gate/gateVeil.js';
 import { FIRE_CAST_ID } from '../../world/gate/gateBoss.js';
 import { loseGlContext, onPageGone } from '../../render/glRelease.js';   // GL-LEAK: its context let go with it, and as the page goes
+import { startPrograms } from '../../render/glProgram.js';   // SHADER-STALL: the warm starts the veil's program, the step takes it compiled
 import { SdVeilRenderer, SD_VEIL_MODE, sdVeilQuarters } from '../../render/superDungeon/sdVeil.js';
 import { midiNote } from '../../systems/gate/gateScore.js';
 import { HOUR_CHIME, HOUR_CHIME_MENDED } from '../../systems/superDungeon/sdScore.js';
@@ -229,9 +230,19 @@ export function createGateVeil({ doc = globalThis.document, raf = (f) => globalT
     return true;
   }
   const current = (t) => veilAt(phase, seconds(t), from);
-  function build() {
-    if (pass) return true;
+  /** The veil failed to build: said once, and no veil from then (the step goes on unveiled). */
+  function fail(e) {
+    console.warn('[gate] the veil would not build', e?.message ?? e);
+    broken = true;
+    canvas?.remove?.();
+    canvas = null; pass = null;
+  }
+  /** SHADER-STALL (render/glProgram.js startPrograms): the canvas and its context made, and the veil's program STARTED -
+   *  what `warm` does now, so the build at the step takes it compiled. AUDIT WB D5's warm built the pass whole at idle
+   *  the first frame a gate stands, and that idle task waited the whole compile. */
+  function begin() {
     if (broken || !doc?.createElement || !doc.body) return false;
+    if (veilGl) return true;
     try {
       canvas = doc.createElement('canvas');
       canvas.style.cssText = `${VEIL_CSS}display:none;`;
@@ -241,15 +252,14 @@ export function createGateVeil({ doc = globalThis.document, raf = (f) => globalT
       if (!gl) throw new Error('no WebGL2');
       veilGl = gl;
       unseat = onPageGone(() => loseGlContext(gl));   // GL-LEAK
-      pass = new GateVeilRenderer(gl);
+      startPrograms(gl, GATE_VEIL_PROGRAMS);
       return true;
-    } catch (e) {
-      console.warn('[gate] the veil would not build', e?.message ?? e);
-      broken = true;
-      canvas?.remove?.();
-      canvas = null; pass = null;
-      return false;
-    }
+    } catch (e) { fail(e); return false; }
+  }
+  function build() {
+    if (pass) return true;
+    if (!begin()) return false;
+    try { pass = new GateVeilRenderer(veilGl); return true; } catch (e) { fail(e); return false; }
   }
   /** SD-LOOK: the Hour's program, built the first time it is drawn - none where it would not build (the brass whirl
    *  draws the Hour's veil instead). */
@@ -372,8 +382,9 @@ export function createGateVeil({ doc = globalThis.document, raf = (f) => globalT
     aim(x, y) { if (Number.isFinite(x) && Number.isFinite(y)) { aimX = x; aimY = y; aimAt = now(); } },
     /** AUDIT WB D5: the host drew a frame of its place - the hold counts these, not the veil's own ticks. */
     frameDrawn() { hostCounts = true; drawnN++; },
-    /** AUDIT WB D5: build the canvas and its program now, ahead of the first step (the host's idle time). */
-    warm() { return build(); },
+    /** AUDIT WB D5: the canvas made and its program started now, ahead of the first step (the host's idle time) -
+     *  SHADER-STALL: started, never waited on; the step's build takes it. */
+    warm() { return begin(); },
     destroy() {
       settle(false);
       phase = 'idle';
