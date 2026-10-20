@@ -258,6 +258,8 @@ where the Bay's broken endings still turn against each other and the last of the
 Bay's people crowd thickest, their many souls press the world thin, and a dungeon beneath them is swallowed by a seam
 of the Warp - a Hollow - whose deepest hall opens on the Hour.
 
+QL0 (2026-10-19, `06-Systems/Questlines-Arc.md` decision 5, the owner's answer): the online world is about 3E 406, eleven years before the Warp this paragraph tells. In the world the Hour is the echo of a Break to come - a Dragon Break has no before and after - and the questline that leads to it reads it so; no string a player reads names the year.
+
 The realm is a made level (`world/superDungeon/sdRealm.js`, the Court's pattern: a made location `0x7ffff200`, block index 900200,
 one pseudo-archive, 38151 - records 0-4 the realm's, 5-20 the Orrery's hall, 21-22 the Steps, 23-24 the Echoes, 25-30 the
 Endings' lights, 31-32 the Threshold's cobbles and the edge line, 33-36 the Rift's and its Return's hand-plate alight, 56-56 the
@@ -3340,7 +3342,7 @@ by (`sdCities` empty, logged as *"[sd] slot N: the world offers no Hollow (no si
 **Not changed.** The Discord herald still names the record's own region (`sdRegionName`). A Hollow the old relay raised
 at sea is announced *in the High Rock sea coast* when it is found, falls or fades. This relay never raises another.
 
-**The relay: `world228`** (`world226` on its branch, renumbered past LORD-SHARES' `world226` and PLAIN-SWEEP's `world227` at the merge; NOT YET DEPLOYED). No frame changes shape. The relay and the clients can deploy in either
+**The relay: `world229`** (`world226` on its branch, renumbered past LORD-SHARES' `world226`, PLAIN-SWEEP's `world227` and QL12's `world228` at the merges; NOT YET DEPLOYED). No frame changes shape. The relay and the clients can deploy in either
 order: until the relay deploys, this build's clients stand the sea's Hollows by the great cities.
 
 Pins: `test/net/superDungeon/fb1020_sdsea.test.js` (5: the list, the census, the hub's director over the real Room, the
@@ -3348,7 +3350,7 @@ client's fallback and, with ARENA2, the list against MAPS.BSA, every water pixel
 region the census can choose); `tools/mutants/fb1020_sdsea.json` (5, all dead). PIN MOVED: `sd1_sdlaw.test.js`'s
 census pins (Dwynnen, 5, for Yeorth Burrowland, 4, and Ilessan Hills, 60, for Cybiades, 61, as the last region with a
 town); `sd3_relay.test.js`'s census rest (Wayrest, 23, for High Rock bay coast, 30); RELAY_VERSION's pin in 42 files,
-disc7's list of versions and soc1.json's version record (world228).
+disc7's list of versions and soc1.json's version record (world229).
 
 THE FOUR HOSTS: none wired. `scenes/world.js`, `scenes/worldModes.js`, `scenes/dungeonContext.js` and
 `scenes/exterior.js` are untouched. The fallback is `scenes/superDungeon/sdHost.js`'s, which `scenes/world.js` wires
