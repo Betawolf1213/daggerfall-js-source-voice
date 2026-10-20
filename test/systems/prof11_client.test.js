@@ -129,7 +129,7 @@ test('PROF11 DONE WHEN: Rough Stone cut with a clean chisel at a General Store\'
     cutQty.oninput();
     page.button('Cut').onclick();
     assert.equal(page.lines().length, CHISEL_ACT.lines, 'the stone\'s five lines');
-    assert.match(page.text(), /The chisel \(Cut Stone, 5 times\) - strike the marked line, 4 strikes/);
+    assert.match(page.text(), /The chisel \(Cut Stone, 5 times\): strike the marked line 4 times/);
     strikes(page, 4);
     await settled();
     assert.equal(book.held('stone:cut'), 5);
@@ -155,7 +155,7 @@ test('PROF11 DONE WHEN: Rough Stone cut with a clean chisel at a General Store\'
     assert.match(page.text(), /Stone Column - a Sculptor's/);
     assert.match(page.text(), /Quality chances: Fine 40% \| Superior 52% \| Masterwork 8%\. They get better the further your rank \(100\) is above the recipe's \(10\)\. Hit the marked line with every strike to raise the result one quality\./);   // PIN MOVED (PLAIN-ODDS): the odds said in plain words
     page.button('Craft').onclick();
-    assert.match(page.text(), /The chisel \(Stone Column\) - strike the marked line, 7 strikes/);
+    assert.match(page.text(), /The chisel \(Stone Column\): strike the marked line 7 times/);
     const realRandom = globalThis.crypto.getRandomValues.bind(globalThis.crypto);
     globalThis.crypto.getRandomValues = (arr) => (arr.byteLength === 4 ? (new Uint8Array(arr.buffer, arr.byteOffset, 4).fill(0xff), arr) : realRandom(arr));
     try {
@@ -422,7 +422,7 @@ test('PROF11 pages: the Sculptor\'s stone decor - shut to all but a Sculptor ("a
   drawProfessionsPage(root, () => {}, kit);
   const text = root.textContent;
   try {
-    assert.doesNotMatch(text, /not practised/);
+    assert.doesNotMatch(text, /not practiced/);
     const cards = [...root.querySelectorAll('button')].filter((b) => b.className.includes('prof-spec'));
     const card = (name) => cards.find((b) => b.textContent.startsWith(name));
     // PIN MOVED (CRAFT3): Building's four a rank, Carpentry's two and Masonry's, each card naming its discipline

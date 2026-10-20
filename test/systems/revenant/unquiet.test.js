@@ -620,7 +620,7 @@ test('UNQUIET THE PAGE: how it gets away (its craft, from rank II), the wounds I
   assert.equal(PG.ambitionLine({ personality: 'witty', dread: true }), '');
   assert.equal(PG.bloodLine({ blood: 1, rank: 2 }), 'If it kills you once more, or fells one more companion, it grows bolder.');   // PIN MOVED (AUDIT UNQUIET): a companion is felled
   assert.deepEqual([PG.bloodLine({ blood: 0, rank: 2 }), PG.bloodLine({ blood: 1, rank: 5 })], ['', '']);
-  assert.equal(PG.dreadStandLine({ dread: true, rank: 5 }), `Last stands: twice a fight it rises again, at ${Math.round(F.lastStandHealth(5) * 100)}% and 25% of its health.`);
+  assert.equal(PG.dreadStandLine({ dread: true, rank: 5 }), `Last stands: twice in a fight it rises again, at ${Math.round(F.lastStandHealth(5) * 100)}% and at 25% of its health.`);
   assert.equal(PG.comeWords({ dread: true, lair: { name: 'Tomb of Vaness' }, dueAt: 0 }, 0, false).tag, 'The Dread');
   const src = read('src/ui/revenant/revenantPage.js');
   assert.match(src, /for \(const line of fallen \? \[\] : \[craftLine\(r\), woundLine\(r, now\), ambitionLine\(r\), bloodLine\(r\), tearLine\(r\)\]\) if \(line\)/);

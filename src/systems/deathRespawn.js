@@ -101,7 +101,7 @@ const FLAVOR = Object.freeze({
     'A passing guard found you and dragged you to the city gate. You come to just outside the walls, owing him one.',
   ],
   graveyard: [
-    'You claw your way up through loose earth. Not your grave, not yet.',
+    'You claw your way up through loose earth. It was not your grave. Not yet.',
     'You wake among the headstones, cold and very much alive, brushing the dirt from your clothes.',
   ],
   dungeon: [

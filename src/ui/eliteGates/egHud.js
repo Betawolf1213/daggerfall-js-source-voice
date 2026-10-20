@@ -88,7 +88,7 @@ export const EG_PANEL_TEXT = Object.freeze({
   get keys() { return t('eg.panel.keys', 'Keys'); },
   surplus: (n) => t('eg.panel.surplus', 'Surplus {n}', { n }),
   surplusCard: (n) => t('eg.panel.surplusCard', 'Spend a Surplus: a fourth card ({n} left)', { n }),
-  get surplusReroll() { return t('eg.panel.surplusReroll', 'Spend a Surplus: reroll the cards'); },
+  get surplusReroll() { return t('eg.panel.surplusReroll', 'Spend a Surplus: draw new cards'); },
   get majority() { return t('eg.panel.majority', 'The majority of those who answer decides.'); },
   get circles() { return t('eg.panel.circles', 'Circles'); },
   get company() { return t('eg.panel.company', 'Company'); },

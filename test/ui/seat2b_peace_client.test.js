@@ -36,9 +36,9 @@ test('SEAT2b part two THE WATCHTOWERS\' WORD: due only for a guild holding a sea
   await book.read();
   assert.deepEqual([book.towersDue('gsh'), book.towersDue('gdg'), book.towersDue('gic'), book.towersDue(null)], [true, true, false, false]);
   const said = [];
-  assert.deepEqual(await book.towers('gsh', (t) => said.push(t)), ['The Watchtowers of Anticlere see Ebon Oath <EO> past half of our defence.']);
+  assert.deepEqual(await book.towers('gsh', (t) => said.push(t)), ['The Watchtowers of Anticlere see Ebon Oath <EO> past half of our defense.']);
   assert.deepEqual(asked, [[3021, 'c1']], 'the towered seat alone, its standings read afresh');
-  assert.deepEqual(said, ['The Watchtowers of Anticlere see Ebon Oath <EO> past half of our defence.']);
+  assert.deepEqual(said, ['The Watchtowers of Anticlere see Ebon Oath <EO> past half of our defense.']);
   assert.deepEqual(JSON.parse(store.getItem(SEAT_TOWERS_KEY)), ['40:3021:geo:0.5']);
   assert.equal(book.towersDue('gsh'), false, 'asked just now');
   now += SEAT_TOWERS_EVERY_MS - 1;
@@ -52,7 +52,7 @@ test('SEAT2b part two THE WATCHTOWERS\' WORD: due only for a guild holding a sea
   assert.deepEqual(await book2.towers('gsh', (t) => said.push(t)), []);
   // past a quarter now - a new share; and a new week
   towers = [{ guild: 'geo', influence: 300, share: 0.25, name: 'Ebon Oath', tag: 'EO' }];
-  assert.deepEqual(await book2.towers('gsh'), ['The Watchtowers of Anticlere see Ebon Oath <EO> past a quarter of our defence.']);
+  assert.deepEqual(await book2.towers('gsh'), ['The Watchtowers of Anticlere see Ebon Oath <EO> past a quarter of our defense.']);
   week = 41;
   assert.equal((await book2.towers('gsh')).length, 1, 'a new week, said again');
   assert.equal(said.length, 1);
@@ -91,7 +91,7 @@ test('SEAT2b part two THE SEAT TAB\'S TOWERS: the standings the service answered
   };
   const tab = rig([{ guild: 'geo', influence: 600, share: 0.5, name: 'Ebon Oath', tag: 'EO' }]);
   await tab.open(); await settle();
-  assert.deepEqual(byClass(tab.body(), 'notice-seat-towers').map((n) => n.textContent), ['The Watchtowers of Anticlere see Ebon Oath <EO> past half of our defence.']);
+  assert.deepEqual(byClass(tab.body(), 'notice-seat-towers').map((n) => n.textContent), ['The Watchtowers of Anticlere see Ebon Oath <EO> past half of our defense.']);
   const none = rig(null);
   await none.open(); await settle();
   assert.equal(byClass(none.body(), 'notice-seat-towers').length, 0);

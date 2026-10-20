@@ -119,7 +119,7 @@ export const SIGIL_SETS = Object.freeze({
     role: 'The one who will not fall',
     tiers: Object.freeze([
       tier(2, 'orc-hide', 'Orc-Hide', { armor: [2, 5], endurance: [2, 6] },
-        (v) => `+${v.armor} armour on every part, +${v.endurance} Endurance`,
+        (v) => `+${v.armor} armor on every part, +${v.endurance} Endurance`,
         (v) => `+${v.armor} armour, +${v.endurance} Endurance`),
       tier(4, 'spite', 'Spite of the Spurned', { back: [10, 30] },
         (v) => `Enemies that hit you take ${v.back}% of the damage back. This never kills them`,
@@ -140,7 +140,7 @@ export const SIGIL_SETS = Object.freeze({
         (v) => `Your weapon deals ${v.more}% more damage, or ${v.more * 2}% more while you are below half health`,
         (v) => `+${v.more}% damage, +${v.more * 2}% below half HP`),
       tier(6, 'rampage', 'Rampage', { stack: [4, 10] },
-        (v) => `Each kill gives a Rampage stack for ${RAMPAGE_SECONDS} s, up to ${RAMPAGE_STACKS}: +${v.stack}% weapon damage per stack`,
+        (v) => `Each kill adds ${v.stack}% weapon damage for ${RAMPAGE_SECONDS} s, up to ${RAMPAGE_STACKS} times`,
         (v) => `+${v.stack}% per kill, up to ${RAMPAGE_STACKS} (${RAMPAGE_SECONDS}s)`),
     ]),
   }),
@@ -198,7 +198,7 @@ export const SIGIL_SETS = Object.freeze({
     role: 'The shield the town stands behind',
     tiers: Object.freeze([
       tier(2, 'watch-oath', 'Oath of the Watch', { armor: [1, 4], willpower: [2, 6] },
-        (v) => `+${v.armor} armour on every part, +${v.willpower} Willpower`,
+        (v) => `+${v.armor} armor on every part, +${v.willpower} Willpower`,
         (v) => `+${v.armor} armour, +${v.willpower} Willpower`),
       tier(4, 'riposte', 'Riposte', { more: [15, 40] },
         (v) => `When an enemy hits you, your next weapon hit within ${RIPOSTE_SECONDS} s deals ${v.more}% more damage`,
@@ -231,7 +231,7 @@ export const SIGIL_SETS = Object.freeze({
         (v) => `+${v.endurance} Endurance, +${v.blunt} Blunt Weapon`,
         (v) => `+${v.endurance} Endurance, +${v.blunt} Blunt Weapon`),
       tier(4, 'blood-for-blood', 'Blood for Blood', { stack: [3, 8] },
-        (v) => `Each enemy hit on you gives a stack for ${BLOOD_SECONDS} s, up to ${BLOOD_STACKS}: +${v.stack}% weapon damage per stack`,
+        (v) => `Each enemy hit on you adds ${v.stack}% weapon damage for ${BLOOD_SECONDS} s, up to ${BLOOD_STACKS} times`,
         (v) => `+${v.stack}% per hit taken, up to ${BLOOD_STACKS} (${BLOOD_SECONDS}s)`),
       tier(6, 'iron-hide', 'Iron Hide', { ward: [10, 40], recover: [60, 30] },
         (v) => `A kill gives you a ward that blocks the next ${v.ward} damage you take. Recovers in ${v.recover} s`,
@@ -250,7 +250,7 @@ export const SIGIL_SETS = Object.freeze({
         (v) => `+${v.frost} frost resistance, +${v.endurance} Endurance`,
         (v) => `+${v.frost} frost resist, +${v.endurance} Endurance`),
       tier(4, 'constrict', 'Constrict', { stack: [3, 8] },
-        (v) => `Each weapon hit on an enemy adds a stack against it: +${v.stack}% weapon damage per stack, up to ${COIL_STACKS}, lasting ${COIL_SECONDS} s after your last hit. Each enemy has its own stacks`,   // AUDIT 625 P3 (Mac: "A coil per foe")
+        (v) => `Each weapon hit on an enemy adds ${v.stack}% weapon damage against it, up to ${COIL_STACKS} times, lasting ${COIL_SECONDS} s after your last hit. Each enemy keeps its own count`,   // AUDIT 625 P3 (Mac: "A coil per foe")
         (v) => `+${v.stack}% per hit on a foe, up to ${COIL_STACKS}`),
       tier(6, 'shed-skin', 'Shed Skin', { heal: [10, 30], recover: [240, 120] },
         (v) => `When a hit drops you below ${Math.round(SHED_BELOW * 100)}% health, you shed your skin and heal ${v.heal}% of your health. Recovers in ${v.recover} s`,

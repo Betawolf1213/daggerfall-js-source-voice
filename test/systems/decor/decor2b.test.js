@@ -213,9 +213,9 @@ test('DECOR2b the panel: delivered furniture among "Your things" - its kind\'s l
   tab(root, /^Your things/).fire('click');
   const line = (r) => [one(r, 'dfdecor-row-name').textContent, one(r, 'dfdecor-row-sub').textContent, one(r, 'dfdecor-row-price').textContent];
   assert.deepEqual(rows(root).map(line), [
-    ['Oak Chair', 'delivered - free to set down as any of the furniture you choose, and back here when taken down', 'free'],
-    ['Large Pillow', 'delivered - free to set down, and back here when taken down', 'free'],
-    ['Curtains', 'delivered - free to set down as any of the furniture or decorations you choose, and back here when taken down', 'free'],
+    ['Oak Chair', 'delivered, free to set down as any of the furniture you choose, and back here when taken down', 'free'],
+    ['Large Pillow', 'delivered, free to set down, and back here when taken down', 'free'],
+    ['Curtains', 'delivered, free to set down as any of the furniture or decorations you choose, and back here when taken down', 'free'],
   ]);
   assert.equal(decorFurnishLine(own[0]), line(rows(root)[0])[1]);
   await settle();
@@ -260,10 +260,10 @@ test('DECOR2b the panel: delivered furniture among "Your things" - its kind\'s l
   assert.deepEqual([panel.mode(), card.dataset.mode], ['own', 'own'], 'back to the list');
   // in the room
   panel.showRoom('f9');
-  assert.deepEqual(line(rows(root)[0]), ['Oak Chair', 'yours - back to Your things when taken down', 'yours']);
+  assert.deepEqual(line(rows(root)[0]), ['Oak Chair', 'yours, back to Your things when taken down', 'yours']);
   assert.equal(pick(root)[2], 'Take down: back to Your things');
   assert.deepEqual([decorBackTo(mine), decorBackTo({ item: { t: 265, g: 10 } }), decorBackTo({ item: { t: 265 } })], ['Your things', 'your pack', 'your pack']);
-  assert.equal(decorPlacedSub({ piece: mine, holds: false }), 'yours - back to Your things when taken down');
+  assert.equal(decorPlacedSub({ piece: mine, holds: false }), 'yours, back to Your things when taken down');
   panel.destroy();
 });
 

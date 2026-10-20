@@ -566,7 +566,7 @@ export function createWorldModes(host) {
   /** TAVERN-TABLES: why this player may not sit at the gold table (a key of CARD_GOLD_BARRED), or null - online it seats
    *  a realm character's stake, at a relay that deals, and nobody else; offline it is a table like the other. */
   const cardGoldBarred = (i) => (!cardTableGold(i) || !isOnlinePage() ? null : !host.cardStakes?.goldOk?.() ? 'realm' : !host.cardOnline?.ok?.() ? 'relay' : null);
-  const CARD_GOLD_BARRED = Object.freeze({ realm: 'This table plays for gold, and only a realm character can stake at it. The green table plays for chips.', relay: 'This table plays for gold and is not dealing right now. The green table plays for chips.' });
+  const CARD_GOLD_BARRED = Object.freeze({ realm: 'This table plays for gold, and only a realm character may stake at it. The green table plays for chips.', relay: 'This table plays for gold and is not dealing right now. The green table plays for chips.' });
   function sitAtCardTable(i) {
     // TAVERN-TABLES: told before he sits - the relay refuses a sit at the gold table with no stake, and the refusal
     // stood him up (the owner's report: one table, and "it doesnt let him use gold tables")
@@ -991,7 +991,7 @@ export function createWorldModes(host) {
     if (id === 'stand') { standFromCardTable(); return; }
     if (id === 'iliac') { openIliacGame(); return; }   // CARDS10: the other game at this table
     if (id === 'gambit') { openGambitGame(); return; }   // KG3: and the third
-    if (id === 'pack') { const r = buyCardPackHere(); say(r.ok ? `You buy a pack of Iliac Hand cards for ${r.price} gold. Use it from your pack to open it.` : `A pack costs ${r.price} gold, and your purse is short.`); paintCardGame(); return; }   // CARDS9: the house's packs
+    if (id === 'pack') { const r = buyCardPackHere(); say(r.ok ? `You buy a pack of Iliac Hand cards for ${r.price} gold. Use it from your pack to open it.` : `A pack costs ${r.price} gold. Your purse is short.`); paintCardGame(); return; }   // CARDS9: the house's packs
     if (game.remote) {
       // CARDS5: the relay's table - an action is a word to it, and the relay answers with the table; alone, the regulars
       if (id === 'regulars') {
@@ -8271,7 +8271,7 @@ export function createWorldModes(host) {
       options: [
         ...homeVoteChoices(home).map((c) => ({ code: c.code, label: c.label, action: () => pressHomeVote(bd, c.vote) })),   // AUDIT HOME-VOTE II B1
         ...list.map((r, i) => ({
-          code: `Digit${i + 1}`, label: `${i + 1} - Room ${r.room}: ${goldSum(r.price)} gold a day${r.yours ? ' (yours - renew it)' : ''}`,
+          code: `Digit${i + 1}`, label: `${i + 1} - Room ${r.room}: ${goldSum(r.price)} gold a day${r.yours ? ' (yours, renew it)' : ''}`,
           action: () => { const days = rentDayRows(r, nowS); if (days.length) openHomeRentDays(bd, r, days); else townTalk?.say?.(RENT_FULL_LINE); },   // RENT-RENEW: only the days the service takes - none left, said
         })),
         { code: 'Escape', label: 'Esc - close', action: () => {} },

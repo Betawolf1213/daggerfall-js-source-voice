@@ -1235,7 +1235,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     }
     if (E.sg !== 'closing') downAt = -Infinity;
     // THE REDOUBT: the company healed once, the way home stood at the Court's heart through the rest
-    if (E.sg === 'rest') { if (rdSeen !== E.h) { rdSeen = E.h; redoubt?.(E.rd); say(`${EG_TEXT.redoubt(E.rd)} taken. Choose a Vestige. The way home stands at the Court's centre, and the stair down opens when the rest ends.`); } standDoor(E); }
+    if (E.sg === 'rest') { if (rdSeen !== E.h) { rdSeen = E.h; redoubt?.(E.rd); say(`${EG_TEXT.redoubt(E.rd)} taken. Choose a Vestige. The way home stands at the Court's center, and the stair down opens when the rest ends.`); } standDoor(E); }
     else if (door) dropDoor();
   }
 

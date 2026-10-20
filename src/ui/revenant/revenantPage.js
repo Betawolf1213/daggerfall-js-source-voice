@@ -95,7 +95,7 @@ export function comeWords(r, now, held = revenantHeld()) {
   // "wounded" - its wounds are what the player left on it, and heal by their own law)
   if (trailWarm(r, now)) return { tag: t('rvn.unq.page.woundedTag', 'Weakened'), cls: '', line: t('rvn.unq.page.woundedCome', 'Recovering in {lair}, whole again in {hours, plural, one {# hour} other {# hours}}. Find it there.', { lair: r.lair?.name ?? '', hours: trailHours(r, now) }) };
   const left = r.dueAt - now;
-  if (left <= 0) return { tag: 'Hunting', cls: '', line: 'Hunting you. It may come on any road.' };
+  if (left <= 0) return { tag: 'Hunting', cls: '', line: 'Hunting you. It may appear on any road.' };
   const days = Math.round(left / 1440);
   return { tag: 'Biding', cls: 'is-waiting', line: days >= 1 ? `It will come for you in about ${plural(days, 'day')}.` : `It will come for you within the day.` };
 }
@@ -168,7 +168,7 @@ export function weaknessWords(r) {
   return 'Weakness: unknown.';
 }
 /** RVN3 (14.2): from its will's rank (revenantFeud.js WILL_RANK - UNQUIET: rank 2, it was 3), the rule of its will. */
-export const willWords = (r) => (willMatters(r?.rank) ? 'Its will must be broken: strike its weakness, stagger it, or dodge its blow perfectly.' : '');   // FEUD BALANCE (Feud-Arc.md OPEN 22)
+export const willWords = (r) => (willMatters(r?.rank) ? 'Its will must be broken. Strike its weakness, stagger it, or evade its blow at the last moment.' : '');   // FEUD BALANCE (Feud-Arc.md OPEN 22)
 /** RVN4 (section 15): from rank 3, its last stand - once a fight it rises again from the edge of death. */
 export const lastStandWords = (r) => ((r?.rank | 0) >= LAST_STAND_RANK ? `Last stand: once a fight it rises again, at ${Math.round(lastStandHealth(r.rank) * 100)}% of its health.` : '');
 /** RVN5 (section 16; RVN12 completes the page): what its signature does, by its shape (a pyre's by its element). */
@@ -239,7 +239,7 @@ export function ambitionLine(r) {
 export const bloodLine = (r) => ((r?.blood | 0) >= 1 && (r?.rank | 0) < REVENANT_MAX_RANK ? t('rvn.unq.page.blood', 'If it kills you once more, or fells one more companion, it grows bolder.') : '');
 export const tearLine = (r) => ((r?.tears | 0) >= 1 && (r?.rank | 0) < REVENANT_MAX_RANK ? t('rvn.unq.page.tears', 'If its will holds at your killing blow once more, it grows bolder.') : '');
 /** UNQUIET: the Dread's two last stands. */
-export const dreadStandLine = (r) => (r?.dread ? t('rvn.unq.page.dreadStand', 'Last stands: twice a fight it rises again, at {first}% and {second}% of its health.', { first: Math.round(lastStandHealth(r.rank) * 100), second: Math.round(DREAD.SECOND_STAND * 100) }) : '');
+export const dreadStandLine = (r) => (r?.dread ? t('rvn.unq.page.dreadStand', 'Last stands: twice in a fight it rises again, at {first}% and at {second}% of its health.', { first: Math.round(lastStandHealth(r.rank) * 100), second: Math.round(DREAD.SECOND_STAND * 100) }) : '');
 /** Its scars, newest first and each once - the ways it was hurt and what it learned (a deed's scar is the history's). */
 export function scarWords(r) {
   const seen = new Set();

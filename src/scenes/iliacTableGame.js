@@ -70,13 +70,13 @@ export function iliacOnlineLine(/** @type {any} */ e, /** @type {(string|null)[]
     case 'sit': return `${who(e.seat)} ${e.seat === me ? 'sit' : 'sits'} down to Iliac Hand.`;
     case 'leave': return e.idle ? `${e.seat === me ? 'You are' : `${e.name ?? 'A player'} is`} removed from the seat: the clock passed ${e.seat === me ? 'you' : 'them'} ${ILIAC_IDLE_TURNS} turns in a row.`   // AUDIT CARDS-6 C6
       : `${e.seat === me ? 'You' : e.name ?? 'A player'} ${e.seat === me ? 'stand' : 'stands'} up.`;
-    case 'gone': return `${who(e.seat)} ${e.seat === me ? 'have' : 'has'} lost connection. The seat is held for a moment.`;   // AUDIT CARDS-6 C7
+    case 'gone': return `${who(e.seat)} ${e.seat === me ? 'have' : 'has'} lost the connection. The seat is held for a moment.`;   // AUDIT CARDS-6 C7
     case 'back': return `${who(e.seat)} ${e.seat === me ? 'are' : 'is'} back at the table.`;
     case 'game': return `The holdings: ${e.holdings.map((id) => cardById(id)?.name ?? id).join(', ')}.${e.ranked ? ' A ranked game.' : ''}`;
-    case 'commit': return e.seat === me ? (e.timeout ? 'Your time runs out. You pass.' : '') : `${who(e.seat)} ${e.timeout ? 'runs out of time and passes' : 'commits'}.`;
+    case 'commit': return e.seat === me ? (e.timeout ? 'Your time runs out and you pass.' : '') : `${who(e.seat)} ${e.timeout ? 'runs out of time and passes' : 'commits'}.`;
     case 'turn': return `Turn ${e.turn}.`;
     case 'unveil': return 'The face-down cards are turned up.';
-    case 'end': return e.how === 'left' ? `${who(1 - e.winner)} ${1 - e.winner === me ? 'concede' : 'concedes'} the game.` : e.how === 'void' ? 'No contest. The game is called off.' : '';   // AUDIT CARDS-6 C7/E13
+    case 'end': return e.how === 'left' ? `${who(1 - e.winner)} ${1 - e.winner === me ? 'concede' : 'concedes'} the game.` : e.how === 'void' ? 'No contest. The game is abandoned.' : '';   // AUDIT CARDS-6 C7/E13
     default: return '';
   }
 }
@@ -84,7 +84,7 @@ export function iliacOnlineLine(/** @type {any} */ e, /** @type {(string|null)[]
 /** CARDS10: a watched game's end, as its watcher hears it (the relay's `last`). */
 export function lastLineOf(/** @type {any} */ last) {
   if (!last) return null;
-  if (last.how === 'void') return 'No contest. The game was called off.';   // AUDIT CARDS-6 C7/E13
+  if (last.how === 'void') return 'No contest. The game was abandoned.';   // AUDIT CARDS-6 C7/E13
   if (last.winner === null || last.winner === undefined) return 'The game is drawn.';
   const w = last.names?.[last.winner] ?? 'A player', l = last.names?.[1 - last.winner] ?? 'the other';
   return last.how === 'left' ? `${l} concedes. ${w} wins.` : `${w} beats ${l}${last.how === 'holdings' ? ' on the holdings' : last.how === 'power' ? ' on power' : ''}.`;

@@ -521,7 +521,7 @@
   {
     "name": "MARKET-ANY-tab-own-make-from-the-pack",
     "file": "src/ui/marketTab.js",
-    "old": "h === 'yours' ? 'made by you - list it as a crafted piece' :",
+    "old": "h === 'yours' ? 'made by you. List it as a crafted piece' :",
     "new": "h === 'yours' ? null :",
     "tests": [
       "test/systems/fb1001_market_goods.test.js"

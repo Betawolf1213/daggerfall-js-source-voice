@@ -94,7 +94,7 @@ export function levelingOptions(s = null, { online = false } = {}) {
           : 'rolls over. Attribute points are set to 0,',
         purse > 0
           ? `to spend on up to ${set.maxUpdatableAttribute} attributes.`
-          : 'so levelling raises only your health.',
+          : 'so leveling raises only your health.',
       ]),
     }),
   ]);

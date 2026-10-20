@@ -151,7 +151,7 @@ export const VERDICT_WORDS = Object.freeze({
  * @param {{phase: 'setup'|'playing'|'over', view?: any, staged?: {card: number, holding: number}[], pick?: number|null, setup?: any, end?: string|null, prize?: any, log?: string[], packPrice?: number|null, online?: any, friendly?: boolean, why?: string|null, gambit?: boolean}} p
  */
 export function iliacHudModel({ phase, view = null, staged = [], pick = null, setup = null, end = null, prize = null, log = [], packPrice = null, online = null, friendly = false, why = null, gambit = false }) {
-  const title = 'Card table - Iliac Hand';
+  const title = 'Card table: Iliac Hand';
   const note = online ? (online.ranked ? 'A ranked game against another player. The result counts on the season board.' : 'A game against another player in the room.')
     : friendly ? 'A friendly game. Online, no cards change hands at a regulars\' table.' : null;
   const pack = packPrice ? [{ id: 'pack', label: `Buy a card pack (${packPrice} gold)`, enabled: true }] : [];

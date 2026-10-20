@@ -145,7 +145,7 @@ test('WRIT-WALL the report: Iron off an Alchemist\'s shelf in the bag, then Iron
   assert.equal(takeOf(card).disabled, true, 'nothing a writ may spend: Take shut, as it was');
   assert.deepEqual(walledOf(card), [SAID(100)], 'ON THE CARD - a phone has no hover');
   assert.equal(walledOf(card)[0], writWalledText(100, 'Iron'));
-  assert.equal(takeOf(card).title, SAID(100), 'and Take\'s title the same - never "Not enough - your Stores, Materials Bag and pack together"');
+  assert.equal(takeOf(card).title, SAID(100), 'and Take\'s title the same - never "Not enough, even counting your Stores, Materials Bag and pack together"');
   let guild = b.card('Guild writ');
   assert.ok(guild, 'the guild writ beside it');
   assert.deepEqual(walledOf(guild), [SAID(100)], 'a guild writ\'s card names them too');

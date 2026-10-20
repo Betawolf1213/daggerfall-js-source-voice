@@ -330,14 +330,14 @@ test('PROF8 meter: each phase its words - wind (the throw it makes), the wait (o
   throwFor(a, 0.3);
   a.tick(0.05, {}); a.tick(0.05, {}); a.tick(0.05, {}); a.tick(0.05, {}); a.tick(0.05, {}); a.tick(0.05, {}); a.tick(0.05, {}); a.tick(0.05, {}); a.tick(0.05, {}); a.tick(0.05, {}); a.tick(0.05, {}); a.tick(0.05, {}); a.tick(0.05, {});
   hud.setMeter(a, 'E');
-  assert.match(meter().textContent, /waiting for a bite - over a school/);
+  assert.match(meter().textContent, /waiting for a bite, over a school/);
   waitOut(a);
   hud.setMeter(a, 'E');
   assert.match(meter().textContent, /a tug! press E now/);
   assert.ok(meter().className.split(' ').includes('fish-tug'), 'the tug flashed (PROF-SCENES: on the panel, whole)');
   a.tick(0.05, { attack: true });
   hud.setMeter(a, 'E');
-  assert.match(meter().textContent, /hold E to raise the band, let go to lower it - keep the weight inside/);
+  assert.match(meter().textContent, /hold E to raise the band and let go to lower it\. Keep the weight inside/);
   assert.ok(meter().querySelector('.prof-haulband') && meter().querySelector('.prof-haulweight'));
   hud.setMeter(null);
 });

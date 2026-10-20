@@ -107,7 +107,7 @@ test('BA1: the Mods pane entry is the shipped modsettings.json - six sections, t
     'Dungeon Fog.minFogDistance': 'How far past its start the fog reaches, at least',
     'Dungeon Fog.maxFogStart': 'Furthest from you the fog can start',
     'Dungeon Fog.minFogStart': 'Nearest to you the fog can start',
-    'Dungeon Lighting.enableFogAmbientEffect': 'Lights each dungeon in the colour of its fog',
+    'Dungeon Lighting.enableFogAmbientEffect': 'Lights each dungeon in the color of its fog',
   };
   let n = 0; const kinds = new Set();
   for (const section of shipped.Sections) {

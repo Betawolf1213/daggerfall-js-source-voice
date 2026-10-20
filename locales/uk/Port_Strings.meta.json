@@ -10,8 +10,8 @@
   "by": "claude-in-session"
  },
  "account.refusal.escrowLate": {
-  "en": "0714da75b473",
-  "tr": "73e90574b3a4",
+  "en": "e0e8c053ee85",
+  "tr": "8da44147dc26",
   "by": "claude-in-session"
  },
  "account.refusal.escrowMoved": {
@@ -220,8 +220,8 @@
   "by": "claude-in-session"
  },
  "firm.readFail.closed": {
-  "en": "de16f9841240",
-  "tr": "5f6c89fc5204",
+  "en": "8982b21cc3de",
+  "tr": "9f8fbd3b37df",
   "by": "claude-in-session"
  },
  "firm.readFail.missing": {
@@ -230,42 +230,42 @@
   "by": "claude-in-session"
  },
  "firm.readFail.offline": {
-  "en": "b9fe9c4963f9",
-  "tr": "1da713435cb2",
+  "en": "698ce7615047",
+  "tr": "13a1d05b9a46",
   "by": "claude-in-session"
  },
  "firm.readFail.other": {
-  "en": "8cd2f55c90e4",
-  "tr": "9804fbac2ca9",
+  "en": "68902bdb70c7",
+  "tr": "5a771b888c24",
   "by": "claude-in-session"
  },
  "firm.readFail.session": {
-  "en": "e36c0e7d74ac",
-  "tr": "a76c18709645",
+  "en": "3e6e7bc41a64",
+  "tr": "de05267b863c",
   "by": "claude-in-session"
  },
  "holdings.horse.boons.hungry": {
-  "en": "412661eaa7ad",
-  "tr": "e6351286de38",
+  "en": "11b471ca7d1e",
+  "tr": "026d32099dfd",
   "by": "claude-in-session"
  },
  "holdings.horse.boons.starving": {
-  "en": "77a85e079362",
+  "en": "94a4ad563701",
   "tr": "91fba0ef6417",
   "by": "claude-in-session"
  },
  "holdings.wagon.boons.failing": {
-  "en": "48537f168e37",
-  "tr": "c44713b6f4a7",
+  "en": "97ed74fbd35a",
+  "tr": "2769897ec9da",
   "by": "claude-in-session"
  },
  "holdings.wagon.boons.rickety": {
-  "en": "8697f41cd330",
-  "tr": "b565e32f16ec",
+  "en": "c8543ecb0c08",
+  "tr": "18f929c79aed",
   "by": "claude-in-session"
  },
  "holdings.wagon.boons.sound": {
-  "en": "25b3b3fa348b",
+  "en": "71476c661351",
   "tr": "8c6ccf371e82",
   "by": "claude-in-session"
  },
@@ -330,7 +330,7 @@
   "by": "claude-in-session"
  },
  "lamp.offline": {
-  "en": "3b3847dceb73",
+  "en": "e34f9ea2cbb0",
   "tr": "2bfe76e208e0",
   "by": "claude-in-session"
  },
@@ -539,6 +539,26 @@
   "tr": "1c780f1daf39",
   "by": "claude-in-session"
  },
+ "mods.eyeOfTheBeholder.Graphics.LayeredGear.description": {
+  "en": "464f3493d33a",
+  "tr": "b0473ff11731",
+  "by": "claude-in-session"
+ },
+ "mods.eyeOfTheBeholder.skin.layeredFemale": {
+  "en": "b7c17e97d3d6",
+  "tr": "50f82c835408",
+  "by": "claude-in-session"
+ },
+ "mods.eyeOfTheBeholder.skin.layeredMale": {
+  "en": "3f3a489c72de",
+  "tr": "d3c69618b533",
+  "by": "claude-in-session"
+ },
+ "mods.eyeOfTheBeholder.skin.layeredOff": {
+  "en": "e3de5ab0ca4c",
+  "tr": "f095cc005df3",
+  "by": "claude-in-session"
+ },
  "naval.yard.grogDrunk": {
   "en": "fffab87cdcec",
   "tr": "ef054e68d6e8",
@@ -546,7 +566,7 @@
  },
  "rest.exhausted.fighting": {
   "en": "5be7c6bd55ff",
-  "tr": "ad4209ba1ac7",
+  "tr": "d46a4c5dd6d3",
   "by": "claude-in-session"
  },
  "saddle.hello.key": {
@@ -690,7 +710,7 @@
   "by": "claude-in-session"
  },
  "stats.breakdown.foeArmourTip": {
-  "en": "5f63e50ca583",
+  "en": "aaef957ee77c",
   "tr": "3363184c5b61",
   "by": "claude-in-session"
  },
@@ -805,7 +825,7 @@
   "by": "claude-in-session"
  },
  "stats.damage.tip": {
-  "en": "ede74d1691e2",
+  "en": "ea5e65c64460",
   "tr": "8fb82a12d7f9",
   "by": "claude-in-session"
  },
@@ -820,7 +840,7 @@
   "by": "claude-in-session"
  },
  "stats.defence.armourTip": {
-  "en": "543f418238d6",
+  "en": "9f6c30dcd86c",
   "tr": "baa3c950e58a",
   "by": "claude-in-session"
  },
@@ -920,12 +940,12 @@
   "by": "claude-in-session"
  },
  "stats.rules.classic": {
-  "en": "b65a0dff50da",
-  "tr": "d9b20b31b954",
+  "en": "6570e2d2bc2c",
+  "tr": "7bdc8c9e42a1",
   "by": "claude-in-session"
  },
  "stats.rules.overhaul": {
-  "en": "035acce29a31",
+  "en": "35d5415bc069",
   "tr": "8cf123b584e2",
   "by": "claude-in-session"
  },
@@ -1090,7 +1110,7 @@
   "by": "claude-in-session"
  },
  "town.econ.reason.harbour": {
-  "en": "b29764e02c6b",
+  "en": "032653ac6fca",
   "tr": "3b310825b111",
   "by": "claude-in-session"
  },
@@ -1171,7 +1191,7 @@
  },
  "wild.escrow.heldBack": {
   "en": "e08076947af9",
-  "tr": "952ad8838634",
+  "tr": "0c366c9d9db3",
   "by": "claude-in-session"
  },
  "wild.escrow.heldNote": {
@@ -1181,7 +1201,7 @@
  },
  "wild.escrow.heldNoteAnon": {
   "en": "eda23a0deeec",
-  "tr": "15f3fa021215",
+  "tr": "6dc392986ddd",
   "by": "claude-in-session"
  },
  "wild.escrow.heldTaken": {

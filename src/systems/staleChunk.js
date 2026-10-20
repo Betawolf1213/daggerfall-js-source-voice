@@ -77,7 +77,7 @@ export const STALE_CHUNK_TEXT =
  *  and what fixes it - on ONE line of the classic HUD's 320-pixel panel
  *  (AUDIT DISC19: the first wording ran 143 characters and was cut off
  *  at both ends), for long enough to be read once the level is up. */
-export const STALE_CHUNK_IN_PLAY_TEXT = 'Game updated. Reload the page to load enemies.';
+export const STALE_CHUNK_IN_PLAY_TEXT = 'The game was updated. Reload to see the enemies.';
 export const STALE_CHUNK_IN_PLAY_SECONDS = 12;
 
 /**

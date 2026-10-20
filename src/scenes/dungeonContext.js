@@ -9760,7 +9760,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         const p = this.startSpawn({ preferEnterMarker: false });
         if (p) {
           setPlayerPos(p);
-          hudText.add('The dungeon size setting changed, so you were moved to the start.');
+          hudText.add('The dungeon size setting changed, so you were moved to the entrance.');
         }
       }
       // F222/F101 + AUDIT 63 F25: Sheathed and UsingRightHand as ONE

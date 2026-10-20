@@ -587,8 +587,8 @@
   {
     "name": "AUDIT-SERPENT-words-stun-seconds",
     "file": "src/ui/serpentBar.js",
-    "old": "stunned: (s) => `Stunned - strike its head! ${s}s`,",
-    "new": "stunned: (s) => `Stunned - strike its head! ${s}`,",
+    "old": "stunned: (s) => `Stunned. Strike its head! ${s}s`,",
+    "new": "stunned: (s) => `Stunned. Strike its head! ${s}`,",
     "tests": [
       "test/systems/serpent1_client.test.js",
       "test/net/serpent/serpent1_auditclient.test.js"

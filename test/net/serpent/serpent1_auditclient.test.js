@@ -278,7 +278,7 @@ test('AUDIT SERPENT D4/B8/B10/B11 and the words: the inspect card and the accoun
   assert.doesNotMatch(SERPENT_SPOILS_TEXT.granted(boss), /hold/);
   assert.equal(SERPENT_SPOILS_TEXT.kept('Ama', boss), 'Vharos\'s hoard waits for Ama.');
   assert.match(SERPENT_CLAIM_TEXT.recorded(2, 0, boss), /^The Bay will remember Vharos's fall\./);
-  assert.equal(serpentBarModel({ name: 'S', title: 'T', hp: 1, max: 2, phase: 2, phaseName: 'x', fighters: 1, stunned: true, stunLeft: 8200, now: 0 }).callout.text, 'Stunned - strike its head! 9s');
+  assert.equal(serpentBarModel({ name: 'S', title: 'T', hp: 1, max: 2, phase: 2, phaseName: 'x', fighters: 1, stunned: true, stunLeft: 8200, now: 0 }).callout.text, 'Stunned. Strike its head! 9s');
   assert.doesNotMatch(src('src/scenes/serpentHost.js'), /[`'"]Sethrakul/, 'no name written in the host\'s words');
 });
 

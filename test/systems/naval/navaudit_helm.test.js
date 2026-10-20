@@ -656,7 +656,7 @@ test('AUDIT NAV1 H13 the shipwright: a port\'s yard sells hull, canvas, hands an
   const w = await atPort({ save: SAVE({ hull: 0, sail: 160, crew: 24, state: 'wrecked' }) });
   w.at.port = false;
   frames(w, [[w.e, { pos: [0, 0, 1500], yaw: 0 }]]);
-  assert.equal(navalHudText(w.host.hudModel(), {}).plate.hint, 'Crippled - make port for a shipwright');
+  assert.equal(navalHudText(w.host.hudModel(), {}).plate.hint, 'Crippled. Make for port and a shipwright');
   // the world wires the purse, the payment and his window
   const world = src('scenes/world.js');
   assert.match(world, /gold: \(\) => totalGoldAmount\(playerEntity\),\n\s*pay: \(n\) => \{ deductGold\(playerEntity, n\); surfacePlayer\(\); \},\n\s*openYard: \(model\) => navalOpenYard\(model\),/);
@@ -806,7 +806,7 @@ test('AUDIT NAV1 H16 heave to: a struck ship in reach with the helm too fast to 
   const keys = { board: 'E' };
   let t = navalHudText({ ...m, target: { ...m.target, name, state: 'struck' } }, keys);
   assert.equal(t.plate.hint, `E: heave to beside ${name}`);
-  assert.equal(t.card.state, 'Colours struck - E: heave to');
+  assert.equal(t.card.state, 'Colors struck - E: heave to');
   assert.equal(h.host.brake(), 0);
   // the press
   assert.equal(h.host.activate(), true);
@@ -819,7 +819,7 @@ test('AUDIT NAV1 H16 heave to: a struck ship in reach with the helm too fast to 
   assert.equal(m.board.heaving, true);
   t = navalHudText({ ...m, target: { ...m.target, name, state: 'struck' } }, keys);
   assert.equal(t.plate.hint, `Heaving to beside ${name}`);
-  assert.equal(t.card.state, 'Colours struck - heaving to');
+  assert.equal(t.card.state, 'Colors struck, heaving to');
   // under BOARD_SPEED: done, and the grapples are the key's
   h.runtime.state.velocityCurrent = [0, 0, BOARD_SPEED - 0.5];
   frames(h, [[h.e, at]]);

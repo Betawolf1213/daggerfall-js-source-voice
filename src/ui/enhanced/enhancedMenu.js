@@ -999,7 +999,7 @@ function paneTest(body) {
   const intro = el('div', 'card');
   intro.append(el('h3', null, t('menu.test.title', 'The test room')));
   intro.append(el('p', 'meta', t('menu.test.blurb',
-    'A ready-made character in the normal world, with one of every weapon, armour in every '
+    'A ready-made character in the normal world, with one of every weapon, armor in every '
     + 'material, all four shields and spare clothes in the pack. Equip things from the inventory '
     + 'to see them on the paperdoll and in your hands, and on the Morrowind body if you have its '
     + 'data. Scroll to switch views. Nothing here touches your real saves.')));
@@ -1166,7 +1166,7 @@ function accountWindow() {
   for (const c of ['tl', 'tr', 'bl', 'br']) win.append(el('span', `px-gem px-corner px-${c}`));
   const body = el('div', 'px-body');
   body.append(accountBody());
-  body.append(skinCard(document).root);   // DISC23-B2 (Mac: "a choosable skin system in the menu player profile system itself"): who you are drawn as, beside who you are
+  body.append(skinCard(document, { gender: () => playerEntity?.gender }).root);   // DISC23-B2 (Mac: "a choosable skin system in the menu player profile system itself"): who you are drawn as, beside who you are; LAYERED-GEAR: the character's own body, the one Layered Gearing first wears
   win.append(body);
   return win;
 }
@@ -1269,7 +1269,7 @@ function paneOnline(body) {
   // page in the bible cannot reach them.
   const foot = el('div', 'card svonlinefoot');
   // L10N4: ONE pattern, the sky's sentence an argument in it (skyDayWords is itself routed)
-  foot.append(el('p', 'meta', t('menu.online.rules', 'Everyone plays their own save, and you can see and talk to each other anywhere. Dungeons and buildings are shared: enemies, doors, levers and opened chests are the same for everyone and stay that way. In towns and the wilds, everyone nearby sees the same monsters and can fight them, and they can hurt you too. {skyDay} The world\u2019s clock and sky run on real time. Resting, travel, jail and training don\u2019t move them, so a quest waiting for a time of day waits for the world\u2019s, and a lycanthrope\u2019s full moon lasts one night. Your character also has their own clock. It runs while you play and stops while you are logged off. Resting, travel, jail and training use it. Your wounds, spells, hunger, diseases, curses, guild ranks, rented rooms, loans and repairs run on it. Quest timers run on the world\u2019s clock while you play. Resting, waiting and travelling don\u2019t use up a quest\u2019s days, and time logged off never counts. A quest that only asks you to wait, like a letter or \u201ccome back in a few days\u201d, moves on after a couple of minutes of play. Rest at a fire, a tent or a bed: a night passes at once, at most once every 10 minutes of play, and party members within 15 metres sleep with you. Every enhancement is on for everyone, but your interface is your own. Most mods stay your choice online. A few are set for everyone: those that change the ground, monsters, loot or the rules. The Mods page marks each one.', { skyDay: skyDayWords() })));   // AUDIT WORLD5 C12: the shared clock, said at the door; OL1: the lane, said at the door; QCLOCK-WORLD: the quests' clock; REST8: the short wait; REST9: the rest act and the party's night
+  foot.append(el('p', 'meta', t('menu.online.rules', 'Everyone plays their own save, and you can see and talk to each other anywhere. Dungeons and buildings are shared: enemies, doors, levers and opened chests are the same for everyone and stay that way. In towns and the wilds, everyone nearby sees the same monsters and can fight them, and they can hurt you too. {skyDay} The world\u2019s clock and sky run on real time. Resting, travel, jail and training don\u2019t move them, so a quest waiting for a time of day waits for the world\u2019s, and a lycanthrope\u2019s full moon lasts one night. Your character also has their own clock. It runs while you play and stops while you are logged off. Resting, travel, jail and training use it. Your wounds, spells, hunger, diseases, curses, guild ranks, rented rooms, loans and repairs run on it. Quest timers run on the world\u2019s clock while you play. Resting, waiting and traveling don\u2019t use up a quest\u2019s days, and time logged off never counts. A quest that only asks you to wait, like a letter or \u201ccome back in a few days\u201d, moves on after a couple of minutes of play. Rest at a fire, a tent or a bed: a night passes at once, at most once every 10 minutes of play, and party members within 15 meters sleep with you. Every enhancement is on for everyone, but your interface is your own. Most mods stay your choice online. A few are set for everyone: those that change the ground, monsters, loot or the rules. The Mods page marks each one.', { skyDay: skyDayWords() })));   // AUDIT WORLD5 C12: the shared clock, said at the door; OL1: the lane, said at the door; QCLOCK-WORLD: the quests' clock; REST8: the short wait; REST9: the rest act and the party's night
   foot.append(field(t('menu.online.relay', 'Relay'), 'onlineServer', DEFAULT_SERVER, 200));
   body.append(foot);
   body.append(onlineSyncCard());   // UXB1-E: under the rules it copies
@@ -2358,7 +2358,7 @@ const ONLINE_LOCK_NOTE = 'Always on online: the shared world uses every enhancem
 /** MODS-ONLINE-2: the Mods pane's own line. The lane's note (above)
  *  is about the PORT's switches and was wrong over the tiles the
  *  moment a mod stopped being forced. */
-const ONLINE_MODS_NOTE = 'Most mods are your choice online. A few are set for everyone, so all players share the same ground and rules. Ground: Basic Roads, World of Daggerfall, Detailed Ships, Iliac Puddle No More\u2019s sea and depth, and There\u2019s a Hole in the Bottom of the Ocean. Rules: every setting of Meaner Monsters, the Combat and Armor Overhaul, Unleveled Loot, Roleplay & Realism, Roleplay & Realism: Items and Oblivion leveling, except who stands behind shop counters and which leveling your character uses. Travel Options is on for everyone, so every trip over land is travelled and ships sail only from ports. Immersive Travel is on for everyone too: carriages wait at every city gate, a driver\u2019s fare is your fast travel over land, and fares are the same for everyone. Its map style stays your choice.';   // AUDIT IT1 W5: a port's ship passage is fast travel online too
+const ONLINE_MODS_NOTE = 'Most mods are your choice online. A few are set for everyone, so all players share the same ground and rules. Ground: Basic Roads, World of Daggerfall, Detailed Ships, Iliac Puddle No More\u2019s sea and depth, and There\u2019s a Hole in the Bottom of the Ocean. Rules: every setting of Meaner Monsters, the Combat and Armor Overhaul, Unleveled Loot, Roleplay & Realism, Roleplay & Realism: Items and Oblivion leveling, except who stands behind shop counters and which leveling your character uses. Travel Options is on for everyone, so every trip over land is traveled and ships sail only from ports. Immersive Travel is on for everyone too: carriages wait at every city gate, a driver\u2019s fare is your fast travel over land, and fares are the same for everyone. Its map style stays your choice.';   // AUDIT IT1 W5: a port's ship passage is fast travel online too
 const ONLINE_GROUND_NOTE = 'Set for everyone online, because everyone has to stand on the same ground: roads, rivers, camp sites, ship decks and the seafloor. Offline, your own choice applies.';   // AUDIT LANDFORMS C4: the rivers' row is one of the ground's since LANDFORM3 cut their channels
 /** WOD1: the vendors whose room-owned switch is the GROUND's - the two
  *  that write terrain heights (roads' beds, World of Daggerfall's sites). */
@@ -2385,11 +2385,11 @@ const ONLINE_WORLD_EVENT_VENDORS = Object.freeze(['world-events-raiding-parties'
 const ONLINE_WORLD_EVENT_NOTE = 'On for everyone online: a raid is shared, so everyone in town fights the same raiders and every kill counts for all. Offline, your own choice applies.';
 /** TRAVEL-ONLINE: Travel Options' three room switches - the mod and its two journey dials - and their own reason. */
 const ONLINE_TRAVEL_VENDORS = Object.freeze(['travel-options']);
-const ONLINE_TRAVEL_NOTE = 'On for everyone online: every trip over land is travelled, and ships sail only from ports. Offline, your own choice applies.';
+const ONLINE_TRAVEL_NOTE = 'On for everyone online: every trip over land is traveled, and ships sail only from ports. Offline, your own choice applies.';
 /** IT1: Immersive Travel's two room switches - the mod (its carriages stand at the gates, ground everyone walks among) and
  *  Disable Normal Travel held off - and their own reason. */
 const ONLINE_CARRIAGE_VENDORS = Object.freeze(['immersive-travel']);
-const ONLINE_CARRIAGE_NOTE = 'Set for everyone online. Carriages wait at every city gate, trips on the travel map are travelled in full, and a driver\u2019s fare is your fast travel over land, at the same price for everyone. Offline, your own choice applies.';   // AUDIT IT1 W5
+const ONLINE_CARRIAGE_NOTE = 'Set for everyone online. Carriages wait at every city gate, trips on the travel map are traveled in full, and a driver\u2019s fare is your fast travel over land, at the same price for everyone. Offline, your own choice applies.';   // AUDIT IT1 W5
 /** L10N4: the notes above in the player's language. Each constant stays the English identity the ladders below hand
  *  round (and the pins read); a note is turned into words where it is shown (noteText). */
 const NOTE_TEXT = new Map([
@@ -2779,7 +2779,7 @@ export const MIDI_OUT_NOTE = 'Play the music on a MIDI synth or device.';
 export const MIDI_OUT_NONE = 'This browser has no MIDI.';
 export const MIDI_OUT_DENIED = 'MIDI is blocked for this site.';
 export const MIDI_OUT_EMPTY = 'No MIDI device connected.';
-export const MIDI_OUT_AWAY = 'Not connected. The game\u2019s own synth plays.';
+export const MIDI_OUT_AWAY = 'Not connected. The game’s own synthesizer plays.';
 let midiOutList = null;   // the outputs as last asked - null until the row's first click
 function portRowsAudio() {
   const can = midiOutSupported();
@@ -2917,7 +2917,7 @@ function portRowsInterface({ pause = false } = {}) {
  *  player's language, as the rows around them (L10N4). */
 function spireAccessRows() {
   const motion = prefRow('reducedMotion', t('menu.spire.motion.name', 'Reduced motion'), t('menu.spire.motion.note', 'Nothing on the HUD pulses, flies or rises. Your system\'s own setting does the same.'));
-  const palette = choiceRow('dangerPalette', t('menu.spire.palette.name', 'Danger colours'), t('menu.spire.palette.note', 'The colour of a blow\'s edge, of safe ground and of a hazard.'),
+  const palette = choiceRow('dangerPalette', t('menu.spire.palette.name', 'Danger colors'), t('menu.spire.palette.note', 'The color of a blow\'s edge, of safe ground and of a hazard.'),
     EG_DANGER_PALETTE_KEYS.map((k) => [k, EG_DANGER_PALETTES[k].name]));   // AUDIT EG V (c, L7-10): each its own t() (ui/eliteGates/egAccess.js)
   const fill = choiceRow('telegraphFill', t('menu.spire.fill.name', 'Danger fill'), t('menu.spire.fill.note', 'How brightly a blow\'s ground fills. Its edge stays whole.'),
     [[1, '100%'], [0.85, '85%'], [0.7, '70%'], [0.5, '50%']]);
@@ -3126,7 +3126,7 @@ function peerSpritesCard() {
   c.append(prefRow('restWithParty', t('menu.peers.rest', 'Rest with my party'),
     t('menu.peers.restNote', 'Sleep when a party member within 15 m sleeps at a fire, a tent or a bed.'), { home: true }));   // AUDIT REST: REST5's night, no vote
   // TV3 (2026-09-28, bible/06-Systems/Travel-View.md): being SEEN - the region's travellers see where you are
-  c.append(prefRow('showToTravellers', t('menu.peers.show', 'Show me to travellers in my region'),
+  c.append(prefRow('showToTravellers', t('menu.peers.show', 'Show me to travelers in my region'),
     t('menu.peers.showNote', 'Outdoors, players in your region see you on the overworld and the map. '
     + 'Nothing is shared from indoors except with your party. Kept on this device.'), { home: true }));   // AUDIT DEEP2 C5: the party pose rides from indoors too
   // CHAT-LANG, CHAT-COLOURS, PING1 (2026-10-11, the players: "More chat channels per-language", "Chat color-coding per
@@ -3140,8 +3140,8 @@ function peerSpritesCard() {
     t('menu.chat.tradeNote', 'A chat tab for buying, selling and swapping with players anywhere. /join trade in the chat joins it too.'), { home: true }));
   c.append(prefRow('chatLfg', t('menu.chat.lfg', 'LFG channel'),
     t('menu.chat.lfgNote', 'A chat tab for finding a group, or one more for yours. /join lfg in the chat joins it too.'), { home: true }));
-  c.append(prefRow('chatChannelColours', t('menu.chat.colours', 'Chat colours by channel'),
-    t('menu.chat.coloursNote', 'World white, Region green, Guild purple, Local grey, Party teal, Language rose, Trade gold, LFG blue.'), { home: true }));
+  c.append(prefRow('chatChannelColours', t('menu.chat.colours', 'Chat colors by channel'),
+    t('menu.chat.coloursNote', 'World white, Region green, Guild purple, Local gray, Party teal, Language rose, Trade gold, LFG blue.'), { home: true }));
   c.append(prefRow('chatPingSound', t('menu.chat.ping', 'Chime when someone @mentions you'),
     t('menu.chat.pingNote', 'A line with @YourName is always marked in gold; this adds a chime.'), { home: true }));
   return c;
@@ -3977,8 +3977,8 @@ function overhaulPanel(p) {
     } else {
     const row = el('div', 'look-colours');
     row.setAttribute('role', 'group');
-    row.setAttribute('aria-label', t('menu.ovh.plusColour', 'Enhanced Plus colour'));
-    row.append(el('span', 'look-colours-label', t('menu.ovh.uiColour', 'UI colour')));   // Mac, 2026-09-29
+    row.setAttribute('aria-label', t('menu.ovh.plusColour', 'Enhanced Plus color'));
+    row.append(el('span', 'look-colours-label', t('menu.ovh.uiColour', 'UI color')));   // Mac, 2026-09-29
     const now = plusTheme();
     for (const [id, th] of Object.entries(PLUS_THEMES)) {
       const b = el('button', 'look-colour');
@@ -5002,9 +5002,9 @@ function statsMaster(detail, m) {
   // AUDIT GROWTH LANE5-6: and only for a character with a family still to reach or one held (AUDIT SCHOOLS L4 8)
   if (ms.on && (ms.paths?.open || ms.paths?.held)) {
     const card = el('section', 'px-mgroup px-spec');
-    card.append(el('div', 'px-master-about', ms.paths.open ? t('pause.master.specMoved', 'Master two schools of magic or two weapon skills to unlock a specialisation. See every path and what it needs on the Growth tab.')
-      : t('pause.master.specHeld', '{n, plural, one {Your specialisation is on the Growth tab.} other {Your specialisations are on the Growth tab.}}', { n: ms.paths.held })));
-    const go = acts([{ label: t('pause.master.specGo', 'Specialisations'), onClick: () => { setGrowthSection('specs'); pauseTab = 'growth'; render(); } }]);
+    card.append(el('div', 'px-master-about', ms.paths.open ? t('pause.master.specMoved', 'Master two schools of magic or two weapon skills to unlock a specialization. See every path and what it needs on the Growth tab.')
+      : t('pause.master.specHeld', '{n, plural, one {Your specialization is on the Growth tab.} other {Your specializations are on the Growth tab.}}', { n: ms.paths.held })));
+    const go = acts([{ label: t('pause.master.specGo', 'Specializations'), onClick: () => { setGrowthSection('specs'); pauseTab = 'growth'; render(); } }]);
     card.append(go);
     detail.append(card);
   }

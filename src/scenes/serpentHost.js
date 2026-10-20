@@ -59,7 +59,7 @@ export const SERPENT_NEAR_M = ENGAGE_R;
  *  into the wind at that, where she made 8.9: a ship its blows threw downwind of the fight sails back into it. */
 export const SERPENT_GALE = Object.freeze({ wind: 1.15, turn: 1.5 });
 /** The line the gale's first breath says, once a serpent day. */
-export const GALE_LINE = 'A gale howls about the serpent, and your canvas fills on every heading!';
+export const GALE_LINE = 'A gale howls about the serpent. Your canvas fills on every heading!';
 /** The coiled ship's word is said this long after the landing at most - her own machine's moment (the brain hears an
  *  escape for COIL_ESC_MS). */
 export const COIL_WORD_MS = 400;

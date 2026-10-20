@@ -94,7 +94,7 @@ test('UNCOUNTED: the Stores page lists the looted blood and says what it is; LOO
     assert.deepEqual(deposits, [[HERB, 4, 'all'], [TROLL, n, 'work']], 'Put everything in: the gathered herbs as they were, the blood as loose');
   });
   setProfessionsPages(null);
-  assert.match(BAG_PAGE_WORDS.uncounted, /^Materials you loot, buy at a shop or get from another player go into your Stores as loose\. Crafting stations can use them, but writs, guild Stores and the market only take what you gathered/);
+  assert.match(BAG_PAGE_WORDS.uncounted, /^Materials you loot, buy at a shop or get from another player go into your Stores as loose goods\. Crafting stations can use them, but writs, guild Stores and the market only take what you gathered/);
   assert.equal(BAG_PAGE_WORDS.uncountedSplit(2), '2 loose');
 });
 

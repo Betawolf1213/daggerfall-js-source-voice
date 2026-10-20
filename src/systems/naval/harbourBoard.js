@@ -211,7 +211,7 @@ function offerOf(kind, { id, port, crown, level, pay, ports, seaAt, regionIndex,
     const d = cheb(to, port);
     const days = DELIVERY_DAYS_BASE + Math.ceil(d / DELIVERY_PX_DAY);
     const cargo = CARGOES[Math.floor(r() * CARGOES.length) % CARGOES.length];
-    return { ...base, title: `Cargo for ${to.name}`, words: `${cargo.charAt(0).toUpperCase()}${cargo.slice(1)}, to ${to.name}'s harbourmaster within ${days} days. It goes in your hold. If you lose your ship, you lose the cargo.`,
+    return { ...base, title: `Cargo for ${to.name}`, words: `${cargo.charAt(0).toUpperCase()}${cargo.slice(1)}, to ${to.name}'s harbormaster within ${days} days. It goes in your hold. If you lose your ship, you lose the cargo.`,
       pay: payOf('delivery', { level, px: d, pay }), standing: STANDING_DONE.delivery, days, to: { key: to.key, name: to.name, px: to.px, py: to.py }, cargo };
   }
   if (kind === 'salvage') {

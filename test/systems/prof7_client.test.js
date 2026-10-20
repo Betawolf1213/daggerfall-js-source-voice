@@ -472,7 +472,7 @@ test('PROF7 pages: the Loom at a Clothing Store - the cures for the hides held a
   press('Craft');
   const bar = root.querySelector('.prof-heatbar');
   assert.ok(bar, 'the stitch\'s bar');
-  assert.match(text(), /The stitch - press on the beat, 8 in a row/);
+  assert.match(text(), /The stitch: press on the beat, 8 in a row/);
   // eight stitches on the beat: the page's act ticked by hand, each stitch on it
   const { _loomForTests } = await import('../../src/ui/professions/profPages.js');
   const act = _loomForTests().act;
@@ -514,12 +514,12 @@ test('PROF7 pages: the Loom at a Clothing Store - the cures for the hides held a
     return root.textContent;
   };
   const hunting = page('Hunting');
-  assert.doesNotMatch(hunting, /not practised/);
-  assert.match(hunting, /Today: 7 hides, 1 of 3 from tiers 5-6 \(shared by all your characters\)/);   // PIN MOVED (CAP-OFF, 2026-10-07 - Mac: "Remove the cap on life skills"): '7 of 30 hides'
+  assert.doesNotMatch(hunting, /not practiced/);
+  assert.match(hunting, /Today: 7 hides, 1 of 3 of grades 5 and 6 \(shared by all your characters\)/);   // PIN MOVED (CAP-OFF, 2026-10-07 - Mac: "Remove the cap on life skills"): '7 of 30 hides'
   assert.match(hunting, /Comes when trophies are added/);
   assert.match(hunting, /Harpy Feathers, Dreugh Shell/);
   const outfitting = page('Outfitting');
-  assert.doesNotMatch(outfitting, /not practised/);
+  assert.doesNotMatch(outfitting, /not practiced/);
   assert.match(outfitting, /Comes when cloth can take a second dye/);   // PIN MOVED: BR5
   assert.match(outfitting, /Comes when wagons can be upgraded/);
   const smithing = page('Smithing');

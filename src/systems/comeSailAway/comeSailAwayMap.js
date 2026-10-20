@@ -49,7 +49,7 @@ export const DAGGERFALL_DEFAULT_SHADOW_POS = Object.freeze([1, 1]);
 export const MAP_HELP_LINES = Object.freeze([
   'Left-click to place a marker',
   'Right-click to remove a marker',
-  'Press 1-8 to change the marker colour',
+  'Press 1-8 to change the marker color',
   'Hold Left Shift for finer placement',
   'Press Esc to exit',
 ]);

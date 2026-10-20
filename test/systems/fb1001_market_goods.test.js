@@ -476,7 +476,7 @@ test('MARKET-ANY tab: Goods after the Auctions - each piece its name, condition,
   selects().find((x) => x.getAttribute('aria-label') === 'What to list').onchange();
   const pick = selects().find((x) => x.getAttribute('aria-label') === 'Piece from your pack');
   assert.deepEqual(opts(pick).map((o) => o.textContent), [eve.goods.goodName(weapon), eve.goods.goodName(armour), eve.goods.goodName(theirs)]);
-  assert.match(text(), new RegExp(`Not for the market: Deadlands Ember \\(bound to you\\); ${eve.goods.goodName(own)} \\(made by you - list it as a crafted piece\\)\\.`));
+  assert.match(text(), new RegExp(`Not for the market: Deadlands Ember \\(bound to you\\); ${eve.goods.goodName(own)} \\(made by you\\. List it as a crafted piece\\)\\.`));
   assert.match(text(), /No fee to list\. Up for 72 hours on every board\. If it sells you get \d+ gold \(after a 1% fee and 5% tax\), collected at a bank\. It leaves your pack now and comes back if it does not sell\./);   // AUDIT 657 B9 (PIN MOVED): the 1% the sale's fee; BOARD-UI (PIN MOVED): its form says gold, its terms one line
   assert.equal(selects().some((x) => x.getAttribute('aria-label') === 'Currency'), false, 'no Drakes to choose');
   const price = [...root.querySelectorAll('input')].find((i) => i.getAttribute('data-focus') === 'list-price');

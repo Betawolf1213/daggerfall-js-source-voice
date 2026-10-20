@@ -171,7 +171,7 @@ export function artWords(r, { sworn = !!r?.sworn } = {}) {
     case 'warcry': return t('rvn.art.hunt.warcry', 'Art: {n} - it roars as the fight begins, and it and its band strike harder. Strike it to cut the roar short{below}.', { n, below });
     case 'siphon': return t('rvn.art.hunt.siphon', 'Art: {n} - a beam that drains your life. Step out of its line{below}.', { n, below });
     case 'barrage': return t('rvn.art.hunt.barrageCount', 'Art: {n} - {count} blasts at your feet, one after another. Keep moving{below}.', { n, count: ART_LAW.BARRAGE.COUNT, below });
-    default: return t('rvn.art.hunt.novaRing', 'Art: {n} - a ring bursts where it stands. Step out of it, or into its centre{below}.', { n, below });
+    default: return t('rvn.art.hunt.novaRing', 'Art: {n} - a ring bursts where it stands. Step out of it, or into its center{below}.', { n, below });
   }
 }
 const pct = (x) => `${Math.round(x * 100)}%`;

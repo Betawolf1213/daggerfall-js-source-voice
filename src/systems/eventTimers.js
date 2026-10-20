@@ -67,11 +67,11 @@ export function eventTimerRows(src) {
   const sPhase = serpentPhase(s, now, src?.serpent?.fellAt?.(s.day) ?? null);
   const sName = serpentBossOf(s.day).name;
   const off = src?.serpent?.place ? `Off ${src.serpent.place}` : null;
-  if (sPhase === 'quiet') coming(`serpent:${s.day}`, 'serpent', `${sName} rises`, s.riseAt, null, 'The harbour bells ring 15 minutes before');
-  else if (sPhase === 'omen') coming(`serpent:${s.day}`, 'serpent', `${sName} rises`, s.riseAt, off, 'The harbour bells are ringing. Its waters are circled on your map');
+  if (sPhase === 'quiet') coming(`serpent:${s.day}`, 'serpent', `${sName} rises`, s.riseAt, null, 'The harbor bells ring 15 minutes before');
+  else if (sPhase === 'omen') coming(`serpent:${s.day}`, 'serpent', `${sName} rises`, s.riseAt, off, 'The harbor bells are ringing. Its waters are circled on your map');
   // SERPENT4 (2026-10-11): its waters stand open until it dives - one row from its rising to its dive, the storm's breaking
   // no instant a ship sails against
-  else if (sPhase === 'rising' || sPhase === 'hunt' || sPhase === 'late') live(`serpent:${s.day}`, 'serpent', `${sName} hunts`, s.soundAt, off, 'It dives when this runs out. Sail out to join');
+  else if (sPhase === 'rising' || sPhase === 'hunt' || sPhase === 'late') live(`serpent:${s.day}`, 'serpent', `${sName} hunts`, s.soundAt, off, 'It dives when this runs out. Sail out to join the hunt');
   if (sPhase !== 'quiet') {
     const nextDay = s.day + SERPENT_EVERY_DAYS;
     coming(`serpent:${nextDay}`, 'serpent', 'Next sea serpent rises', serpentTimes(nextDay).riseAt);

@@ -394,7 +394,7 @@ export const trailWords = (lair) => t('rvn.unq.trail', 'Its trail leads to {lair
 export function omenWords(a, given) {
   switch (a) {
     case 'mastery': return t('rvn.unq.omen.mastery', 'Word reaches you that {given} is ready to face you again.', { given });
-    case 'plunder': return t('rvn.unq.omen.plunder', 'Travellers speak of {given} on the roads again. It is coming for you.', { given });
+    case 'plunder': return t('rvn.unq.omen.plunder', 'Travelers speak of {given} on the roads again. It is coming for you.', { given });
     default: return t('rvn.unq.omen.vengeance', 'You feel eyes on your back. {given} is hunting you again.', { given });
   }
 }

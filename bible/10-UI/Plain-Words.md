@@ -202,7 +202,8 @@ only: no logic moved, no ICU argument was added or dropped, no hard-coded litera
 - **Translations**: the 823 keys drafted again in every language that holds them, in-session through
   `tools/l10nInSession.mjs` (the thirteen whole languages all 823; the languages still drafting the rows they had).
 - **The relay** carries player-facing lines in its bundle (the Elite Breach's law, the arena's, the duel's, the
-  serpent's, the name filter's, the staff commands'): `world224`, words only (`test/net/relayversion.test.js`).
+  serpent's, the name filter's, the staff commands'): `world225`, words only (`test/net/relayversion.test.js`;
+  world224 on its branch, renumbered past LAYERED-GEAR and VOICE2's world224 at the merge of main).
 
 ### 6.4 Left alone, and why
 
@@ -228,3 +229,36 @@ records whose `old` quoted a changed line were re-aimed by content (114 files) a
 finds every one; `test/systems/l10n4_hardcoded.test.js`'s counts fell where a line was routed or merged and rose
 nowhere; `node tools/l10nExtract.mjs --check` is in step; the bible's prose quotes of changed lines were kept true where
 they describe the game as it is (dated records keep their history). The whole suite, run once with every lane in: 31,265 tests, the seven pins it found still on old words moved and green.
+
+### 6.7 At the merge of main: the sweep meets VOICE2 (2026-10-20)
+
+While the sweep was out, main merged VOICE1/VOICE2 (`10-UI/Voice.md`): a voice pass over 862 strings in 201 files, and
+American spelling across the game's own text. The two passes had rewritten many of the same lines, and the merge met
+746 conflicting hunks in 400 files. Each line was written once, to both rule sets: Voice.md's (whole sentences, the
+game's own words, no HUD, cooldown, stack, reroll, boss or XP in a sentence, no dash asides, American spelling) and
+section 6.2's (short, the event and then what to do, no developer talk).
+
+- **Source** (433 hunks, 172 files): counted per string, 360 kept the sweep's line, 122 took main's and 119 are a blend -
+  the sweep's shorter line with main's spelling and words (armor, harbor, experience for XP, a grade for a crafting
+  tier, lesser foes for adds). Where main changed a fact, main's fact stands. Where the sweep cut a clause as
+  over-explaining and main had only re-voiced it, the cut stands. The one hunk with code in it (LAYERED-GEAR's Skin
+  card) keeps main's code whole; no key or ICU argument differed.
+- **Facts checked against the code on the way**: a card pack holds exactly one card of rare or better (`cardSources.js`;
+  the sweep's "at least one" was wrong); a guild's daily chapter cap is for all quests together (main's "each quest" was
+  wrong); Masonry and Alchemy offer two choices at rank 100, so "a choice", never "the choice"; a party's travel vote is
+  called off when its leader moves, and only the leader is told; the market's bid line keeps U13's wording ("the next
+  time you look"), which the sweep had broken.
+- **The sweep's own lines that merged without a conflict** were brought into the same voice, as main did with its own at
+  its last merge: 71 lines changed (the mod settings' descriptions and the credits, which are this game's words now, in
+  American spelling; "stacks" said as a count of times; "reroll" said as what happens - *draw new cards*, *remake*; the
+  Shelf's "adds" as lesser foes) and 18 left - a mod setting's key, a variable read as a word, a label-value dash. Lines
+  neither pass wrote stay as they were, the mods' own words among them (Voice.md: *"the mods' setting names"*, Travel
+  Options' *"travelling"*).
+- **Tests** (270 hunks, 181 files; 52 hunks in 46 mutant files): every expectation follows the settled source; no check
+  dropped. Four of main's checks that could no longer fail (`/not practised/` after the spelling pass) now read
+  *practiced* and guard the line again.
+- **Translations**: the languages took main's tables, then the sweep's rows came back wherever they were drafted for the
+  English the catalog now holds (11,653 rows). A line whose English changed only in spelling kept its row and moved its
+  record (826 rows, VOICE2's own rule); the 50 keys whose meaning moved at the merge were drafted again in every
+  language that holds them.
+- **The relay**: `world225` (the sweep's world224 renumbered past LAYERED-GEAR and VOICE2's), words only.

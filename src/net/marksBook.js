@@ -92,10 +92,10 @@ export const MARKS_TEXT = Object.freeze({
   struck: (n, balance) => `${marksText(n)} added to your account. You now hold ${marksText(balance)}.`,
   // WB12a; WB13b: the record's own line says it is recorded; SILVER: the currency's name; SILVER-WAYS: the day's cap is
   // the gates' and the raids' together - SERPENT-SET: and the serpents' - EG-E1: and the Spire's Redoubts'
-  capped: `No silver for this breach. You can earn at most ${marksText(MARKS_COMBAT.perDay)} a day from breaches, town defences, serpents and Redoubts.`,
-  cappedRaid: `No silver for this town. You can earn at most ${marksText(MARKS_COMBAT.perDay)} a day from breaches, town defences, serpents and Redoubts.`,
-  cappedSerpent: `No silver for this serpent. You can earn at most ${marksText(MARKS_COMBAT.perDay)} a day from breaches, town defences, serpents and Redoubts.`,
-  cappedEg: `No silver for this Redoubt. You can earn at most ${marksText(MARKS_COMBAT.perDay)} a day from breaches, town defences, serpents and Redoubts.`,   // EG-E1: a Redoubt of the Elite Breach
+  capped: `No silver for this breach. You can earn at most ${marksText(MARKS_COMBAT.perDay)} a day from breaches, town defenses, serpents and Redoubts.`,
+  cappedRaid: `No silver for this town. You can earn at most ${marksText(MARKS_COMBAT.perDay)} a day from breaches, town defenses, serpents and Redoubts.`,
+  cappedSerpent: `No silver for this serpent. You can earn at most ${marksText(MARKS_COMBAT.perDay)} a day from breaches, town defenses, serpents and Redoubts.`,
+  cappedEg: `No silver for this Redoubt. You can earn at most ${marksText(MARKS_COMBAT.perDay)} a day from breaches, town defenses, serpents and Redoubts.`,   // EG-E1: a Redoubt of the Elite Breach
   /** SILVER-WAYS: a guild deed this claim completed - three of the guild's accounts on one raid or gate. */
   deed: (n, guild) => `A deed for ${guild?.name ?? 'your guild'}: three of its members fought together. ${marksText(n)} added to its treasury.`,
   /** SILVER-WAYS: a guild contract's pay for a town defended. */

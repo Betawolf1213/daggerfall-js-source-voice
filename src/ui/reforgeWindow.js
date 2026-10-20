@@ -46,7 +46,7 @@ const el = (tag, cls = null, text = null) => {
 
 /** The window's words. */
 export const REFORGE_TITLE = 'The Reforge';
-export const REFORGE_SUB = 'Spend Welkynd Shards and gold to reroll or improve one line · Salvage breaks a piece into shards';   // LOOT17: the hone
+export const REFORGE_SUB = 'Spend Welkynd Shards and gold to remake or improve one line · Salvage breaks a piece into shards';   // LOOT17: the hone
 export const REFORGE_PAGES = Object.freeze({ reforge: 'Reforge', salvage: 'Salvage', imprint: 'Imprint', codex: 'Codex', scry: 'Scry', sockets: 'Sockets', lift: 'Lift Curse' });   // LOOT10: the imprint and the codex; LOOT16: the temple's lifting; LOOT19: scrying; LOOT20: sockets
 /** MENU-ORDER (2026-10-12): each page's picture (ui/menu/menuGlyphs.js). */
 export const REFORGE_PAGE_ICONS = Object.freeze({ reforge: 'anvil', salvage: 'chisel', imprint: 'rune', codex: 'books', scry: 'eye', sockets: 'gem', lift: 'light' });
@@ -82,7 +82,7 @@ export const LIFT_REFUSALS = Object.freeze({
   damned: 'Damned: no temple can lift this curse',   // TRUE-CURSE
 });
 export const CODEX_TITLE = 'The Codex';
-export const CODEX_SUB = 'Every Gilded, Legendary and Aetheric piece you have found, and hints to where the rest are';
+export const CODEX_SUB = 'Every Gilded, Legendary and Aetheric piece you have found, and where the rest are said to be';
 /** LOOT10: the imprint's words. */
 export const IMPRINTED = (name, rec, power) => `Imprinted: ${name} - ${power} (of ${rec}).`;
 export const IMPRINT_NONE = 'Your codex has no Legendary of this kind yet. Find one to unlock its power here.';
@@ -102,7 +102,7 @@ export const REFORGE_REFUSALS = Object.freeze({
   gone: 'No longer in your pack', aetheric: 'Only the Broker can dismantle Aetheric pieces', gilded: "Gilded pieces can't be salvaged", artifact: "Artifacts can't be salvaged",
   quest: "Quest items can't be salvaged", bound: "Bound items can't be salvaged", locked: 'Locked. Unlock it first',
   gems: 'Extract or unset its gem first',   // AUDIT GEM: salvage never breaks a set gem
-  classic: "Classic magic items can't be salvaged. Only loot with a rarity tier gives shards",   // FB1012d SALVAGE-CLASSIC
+  classic: "Classic magic items can't be salvaged. Only pieces with a rarity give shards",   // FB1012d SALVAGE-CLASSIC
 });
 /** A line's press word - "Reforge" (the imprint's "Imprint" - AUDIT LOOT F6: its presses said Reforge), or why not in a
  *  word or two that fits the button. */
@@ -382,8 +382,8 @@ export function mountReforgeWindow(host, deps) {
       ul.append(li);
     });
     card.append(ul);
-    if (Number.isInteger(it.reforged)) card.append(el('p', 'boundline', 'Reforged once. Only that line can be rerolled.'));
-    else if (price) card.append(el('p', 'boundline', `A reforge costs ${reforgePriceText(price)}. Once you reforge a line, only that line can be rerolled.`));
+    if (Number.isInteger(it.reforged)) card.append(el('p', 'boundline', 'Reforged once. Only that line can be reforged again.'));
+    else if (price) card.append(el('p', 'boundline', `A reforge costs ${reforgePriceText(price)}. Once you reforge a line, only that line can be reforged again.`));
     if (hp && hone.length) card.append(el('p', 'boundline hone-note', HONE_NOTE(hp)));   // LOOT17
     body.append(card);
   };
@@ -486,7 +486,7 @@ export function mountReforgeWindow(host, deps) {
   function renderImprint(items, payer, have, picture) {
     const rows = items.filter((it) => it?.rarity === 'rare');
     if (!rows.includes(picked)) picked = rows[0] ?? null;
-    if (!rows.length) list.append(head2('Nothing in your pack to imprint. A Rare piece can take a Legendary\'s power.'));
+    if (!rows.length) list.append(head2('Nothing in your pack can be imprinted. A Rare piece can take a Legendary\'s power.'));
     for (const it of rows) {
       const row = el('li', `broker-offer${it === picked ? ' on' : ''}`);
       row.dataset.rarity = 'rare';

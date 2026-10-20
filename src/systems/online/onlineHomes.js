@@ -343,7 +343,7 @@ export const hallOldGoldLine = (cost) => `The treasury holds less than ${gold(co
 /** AUDIT GUILD1d A6/A7: a hall's cupboard to its members, and a hall's own words for a drop (anyone's) and a spell (a
  *  visitor's - its members cast in it). */
 export const HALL_CHEST_TITLE = "The Guild's Chest";
-export const HALL_DROP_TEXT = "Items dropped in a guild's hall do not stay. Put them in the guild's chest.";
+export const HALL_DROP_TEXT = "Nothing dropped in a guild's hall stays there. Put it in the guild's chest.";
 export const HALL_VISITOR_MAGIC_TEXT = "You cannot cast spells in another guild's hall.";
 /** GUILD1e: THE BOARD IN A HALL - its name to a member, what it says to anyone else, and where it cannot open. */
 export const HALL_BOARD_TITLE = "The Guild's Board";

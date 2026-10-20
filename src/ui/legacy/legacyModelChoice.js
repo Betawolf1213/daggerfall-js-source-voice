@@ -29,7 +29,7 @@ export const LEGACY_MODEL_FACE = Object.freeze({
 export const LEGACY_CHOICE_FACE = Object.freeze({
   eyebrow: 'A new character',
   title: 'Will your line endure?',
-  lead: 'Found a house and choose its way with death, or play without one. It cannot be changed later.',
+  lead: 'Found a house and choose how it meets death, or play without one. It cannot be changed later.',
   pick: 'Choose',
   hint: 'Click one · up/down and Enter · 1, 2 or 3',
 });

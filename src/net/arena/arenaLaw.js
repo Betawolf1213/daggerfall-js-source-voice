@@ -746,10 +746,10 @@ export const ARENA_NO_TEXT = Object.freeze({
   'not here': 'That fighter is not here.',
   'guest fighter': 'A guest can watch, but only a registered account can fight.',
   'same fighter': 'Red and Blue must be two different fighters.',
-  'bout on': 'A bout is in progress. End it first.',
+  'bout on': 'A bout is under way. End it first.',
   'no picks': 'Pick a Red and a Blue first.',
   voided: 'The host ended the bout with no result.',
-  'has result': 'That bout already has a result and will end on its own.',   // AUDIT PRE-MERGE 1003b R8/S1: End bout after the result
+  'has result': 'That bout has its result and will end on its own.',   // AUDIT PRE-MERGE 1003b R8/S1: End bout after the result
   closed: 'The host closed the session.',
   ended: 'The private session has ended.',
 });

@@ -131,7 +131,7 @@ export function saleRefusal({ where, hold = 0, ashore = 0, fighting = false, abo
   if (!atPort) return SHIPYARD_TEXT.notPort;
   if (crossed) return SHIPYARD_TEXT.crossed;
   if (where === 'sailing') return 'Step away from the helm first.';
-  if (where === 'away') return 'Bring the ship to this port first. The shipmaster only buys what he can see.';
+  if (where === 'away') return 'Bring the ship to this port first. The shipmaster buys only what he can see.';
   if (where !== 'here' && where !== 'laidup' && where !== 'packed') return 'No such ship of yours here.';
   if (fighting) return 'Not while the ship is in combat.';
   if (aboard > 0) return 'Another player is aboard.';

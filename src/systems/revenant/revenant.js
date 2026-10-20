@@ -1385,7 +1385,7 @@ export function revenantHuntEntries(here = null, { now = nowMinutes() } = {}) {
     const lines = [`${kind}, rank ${revenantRankNumeral(r.rank)}.`, `Its lair: ${r.lair.name}${way}, marked on your map with a red circle.`,
       r.dread ? t('rvn.unq.hunt.dread', 'The Dread will not come to you again. Go to it.') : 'Find it there before it finds you.'];   // UNQUIET: the Dread waits
     // UNQUIET II (section 47): its trail warm - wounded in its den, for a while
-    if (trailWarm(r, now)) lines.push(t('rvn.unq.hunt.trail', 'Weakened, it went to ground here to recover. Whole again in {hours, plural, one {# hour} other {# hours}}.', { hours: trailHours(r, now) }));
+    if (trailWarm(r, now)) lines.push(t('rvn.unq.hunt.trail', 'Weakened, it went to ground here to recover. It will be whole again in {hours, plural, one {# hour} other {# hours}}.', { hours: trailHours(r, now) }));
     return { id: `${HUNT_QUEST_PREFIX}${r.id}`, name: `Hunt: ${r.name}`, questName: 'HUNT', hunt: true, clockSeconds: null, messages: [lines.map(line)] };
   });
 }

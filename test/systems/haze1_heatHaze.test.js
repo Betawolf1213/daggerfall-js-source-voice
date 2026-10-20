@@ -90,8 +90,8 @@ test('HAZE1 the settings: the mod\'s keys, its own Enabled the port\'s switch (o
   // PLAIN-TEXT (2026-10-19): four of the mod's lines that spoke in engine terms, said plainly for a player - their words, exactly
   const PLAIN = {
     'Intensity': 'How strongly the haze bends the view, in pixels.',
-    'FullStrengthDistance': 'Distance from you, in metres, of the ring of haze.',
-    'RingHeight': 'Height of the haze, in metres.',
+    'FullStrengthDistance': 'Distance from you, in meters, of the ring of haze.',
+    'RingHeight': 'Height of the haze, in meters.',
     'NoiseScale': 'How fine the shimmer’s ripples are.',
   };
   for (const k of ms.Sections[0].Keys) {

@@ -254,7 +254,7 @@ test('TAVERN-TABLES the host: online, the gold table refused before the sit to w
   assert.equal(guest.api.cardSeat, null, 'never seated');
   assert.equal(guest.api.cardGame, null);
   assert.deepEqual(guest.sent, [], 'no sit said to the relay');
-  assert.match(guest.said.at(-1), /plays for gold, and only a realm character can stake at it\. The green table plays for chips\./);
+  assert.match(guest.said.at(-1), /plays for gold, and only a realm character may stake at it\. The green table plays for chips\./);
   guest.api.sitAtCardTable(0);
   assert.equal(guest.api.cardSeat?.table, 0);
   assert.deepEqual(guest.sent.map((w) => [w.op, w.table, 'stake' in w]), [['sit', 0, false]], 'the chips table: a sit with no stake, at once');

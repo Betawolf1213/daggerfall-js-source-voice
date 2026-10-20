@@ -427,7 +427,7 @@ export function drawTreePage(detail, rerender, { el, divider, door = (fn) => fn(
   const tool = (label, title, fn) => { const b = el('button', 'act', label); b.title = title; b.setAttribute('aria-label', title); b.onclick = (e) => { e.stopPropagation?.(); fn(); }; return b; };   // AUDIT LEGACY U10: named for a reader, not by a glyph
   const zoomCentre = (f) => { ensurePan(); const w = view.clientWidth || 520, h = view.clientHeight || 340; const v = zoomAbout({ zoom: _zoom, x: _pan.x, y: _pan.y }, f, w / 2, h / 2); _zoom = v.zoom; _pan = { x: v.x, y: v.y }; apply(); };
   tools.append(tool('+', 'Zoom in', () => zoomCentre(TREE_ZOOM_STEP)), tool('−', 'Zoom out', () => zoomCentre(1 / TREE_ZOOM_STEP)),
-    tool('◎', 'Centre on the one you play', () => { _sel = family.currentId; _pan = null; rerender(); }));
+    tool('◎', 'Center on the one you play', () => { _sel = family.currentId; _pan = null; rerender(); }));
   view.append(tools);
   wrap.append(view, personCard(el, family, personOf(family, _sel), livedNow, rerender, door));
   const page = el('div', 'fam-page');   // AUDIT LEGACY III U3: the pane the stacking reads (FAMILY_CSS's @container)
@@ -499,7 +499,7 @@ function personCard(el, family, p, livedNow, rerender, door) {
   if (isAlive(p) && !played && p.kind === 'member' && p.retired == null) {
     const why = _provider?.switchRefusal?.(p.id) ?? null;
     const key = `switch:${p.id}`;
-    const b = el('button', `act${_armed === key ? ' primary' : ''}`, _armed === key ? `Yes - play as ${p.given}` : `Play as ${p.given}`);
+    const b = el('button', `act${_armed === key ? ' primary' : ''}`, _armed === key ? `Yes, play as ${p.given}` : `Play as ${p.given}`);
     b.setAttribute('data-focus', 'fam-act-switch');   // AUDIT LEGACY II U6: armed, its words change - the keyboard stays on it
     if (why && why !== 'none') { b.disabled = true; b.title = why; }
     b.onclick = () => {
@@ -514,7 +514,7 @@ function personCard(el, family, p, livedNow, rerender, door) {
   }
   if (played && family.model === MODELS.enduring && isElder(p, livedNow) && _provider?.passMantle) {
     const armed = _armed === 'mantle';
-    const b = el('button', `act${armed ? ' primary' : ''}`, armed ? 'Yes - pass the mantle' : 'Pass the mantle');
+    const b = el('button', `act${armed ? ' primary' : ''}`, armed ? 'Yes, pass the mantle' : 'Pass the mantle');
     b.setAttribute('data-focus', 'fam-act-mantle');   // AUDIT LEGACY II U6
     b.title = `${p.given} retires to keep the house, and you choose who carries the line on.`;   // AUDIT LEGACY III F11d: never "to the seat" - where they keep it is the house's (household.js)
     // AUDIT LEGACY U4: why not, said on the card before the press - pressed, the act takes the pause down first
@@ -550,7 +550,7 @@ export function livesLine(family, p) {
 export function deedLine(family, h, holder = personOf(family, h?.by)) {
   if (!holder) return 'A deed of the house';
   const name = fullNameOf(holder.given, holder.surname);
-  if (!isAlive(holder)) return `The late ${name}'s deed, which passes to whoever carries the line`;
+  if (!isAlive(holder)) return `The late ${name}'s deed, which passes to whoever carries on the line`;
   const from = Number.isInteger(h?.from) ? personOf(family, h.from) : null;
   return from ? `${name}'s deed, left by ${fullNameOf(from.given, from.surname)}` : `${name}'s deed`;
 }
@@ -568,7 +568,7 @@ function liveLine(el, said) {
 export const noFamilyLine = (prov) => (!prov ? 'Open this from a game to see your family.'
   : !prov.on?.() ? `Turn on Project Legacy (${optionPath('feat:mod-project-legacy')}) to found a family and carry your line on.`   // ORG2
     : prov.choice?.() === NO_LINEAGE ? 'This character chose to live without a house. Make a new character to found one.'
-      : prov.online?.() ? 'This character has no house. Online, a house can only be founded when a character is made. Make a new character to found one.'
+      : prov.online?.() ? 'This character has no house. Online, a house is founded only when a character is made. Make a new character to found one.'
         : 'Your family is founded when your character is made, or the first time an older character is loaded.');
 
 /**
@@ -590,10 +590,10 @@ export function familyGuide(model, tollShare) {
     // always take a newborn
     ['Who carries on', 'At a final death you choose who carries the line: any grown, living member of the blood who has not retired, or a newborn heir of the fallen if one is born. In a Bloodline house, the tree shows Has an heir on a member who will leave one, and an Elder who passes the mantle can always choose a newborn. Heirs are born in the family seat. With nobody left, the line ends and goes to the Hall of Ancestors.'],
     ['What carries on', `Whoever carries the line on receives the estate: ${ESTATE_SHARE === 0.25 ? 'a quarter' : pct(ESTATE_SHARE)} of the gold the fallen carried, at most ${ESTATE_MAX.toLocaleString('en-US')}. A newborn is also born with the blood (up to +${BLOOD_MAX} on each stat, from the better parent's) and the hearth (up to +${HEARTH_MAX} on each of a parent's primary and major skills).`],
-    ['Heirlooms and remains', `When one of the house dies for good, their best weapon or armour may stay where they fell as an heirloom, with their remains and ${REMAINS_GOLD_SHARE === 0.1 ? 'a tenth' : pct(REMAINS_GOLD_SHARE)} of their purse (at most ${REMAINS_GOLD_MAX.toLocaleString('en-US')}). The next of the line gets a quest to bring them home. An heirloom grows a step each time it is laid to rest beside the remains of the one who carried it (+${HEIRLOOM_DAMAGE_PER_GEN}% damage or +${HEIRLOOM_ARMOR_PER_GEN} armour a step, up to ${HEIRLOOM_GEN_MAX}). Laying the remains to rest also gives +${BLESSING_POINTS} to the fallen's best skill (at most +${BLESSING_SKILL_MAX} on one skill).`],
+    ['Heirlooms and remains', `When one of the house dies for good, their best weapon or armor may stay where they fell as an heirloom, with their remains and ${REMAINS_GOLD_SHARE === 0.1 ? 'a tenth' : pct(REMAINS_GOLD_SHARE)} of their purse (at most ${REMAINS_GOLD_MAX.toLocaleString('en-US')}). The next of the line gets a quest to bring them home. An heirloom grows a step each time it is laid to rest beside the remains of the one who carried it (+${HEIRLOOM_DAMAGE_PER_GEN}% damage or +${HEIRLOOM_ARMOR_PER_GEN} armor a step, up to ${HEIRLOOM_GEN_MAX}). Laying the remains to rest also gives +${BLESSING_POINTS} to the fallen's best skill (at most +${BLESSING_SKILL_MAX} on one skill).`],
     ['Marriage and children', `With the Living World on, befriend someone (a regard of +${FRIEND_AT}), then court them under Tell me about, once a day. At ${AFFECTION_MAX} affection you can propose, and you are wed at the temple in their town. While you both live, there is a ${CHILD_CHANCE === 0.25 ? '1 in 4' : pct(CHILD_CHANCE)} chance of a child every ${CHILD_DAYS} days you play as the married one, up to ${CHILDREN_MAX} children. You can only play a child once the line passes to them.`],
     ['Playing another', 'Click anyone on the Family Tree to see their card. A grown, living member of the blood can be played from it with Play as, but not during a fight or while a Succession waits. An Enduring Elder can Pass the mantle and retire. With the Living World and Family In World on, your family lives in the world, and you can meet one of them there to play them.'],
-    ['The tree', 'Each plate is a person. ◆ marks the one you play, and ✝ with a grey face marks the dead. A dotted line joins a married couple, and a solid line runs from parents to their children. Drag to move, and use the mouse wheel or + and − to zoom.'],
+    ['The tree', 'Each plate is a person. ◆ marks the one you play, and ✝ with a gray face marks the dead. A dotted line joins a married couple, and a solid line runs from parents to their children. Drag to move, and use the mouse wheel or + and − to zoom.'],
   ];
 }
 

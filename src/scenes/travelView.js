@@ -103,7 +103,7 @@ export const TRAVEL_VIEW_TEXT = Object.freeze({
   far: 'That lies beyond what you can see from here.',
   noWay: 'There is no way there by land.',
   mountains: 'The mountains cannot be crossed on foot.',   // OW-MOUNTAINS: a spot among the peaks
-  placesOnly: 'Travel Options only travels to places. Click a town.',   // AUDIT DEEP T2-8: coordinate targeting off
+  placesOnly: 'Travel Options travels only to places. Click a town.',   // AUDIT DEEP T2-8: coordinate targeting off
   spot: 'The marked spot',
   theSpot: 'the marked spot',   // AUDIT OW5 P5: inside a sentence ("L leads the party to the marked spot.")
   partyHalted: 'The party has stopped.',
@@ -116,7 +116,7 @@ export const TRAVEL_VIEW_TEXT = Object.freeze({
   toSpotBySea: 'To the marked spot, by sea',
   needBoat: 'There is no way there by land. You need a boat to cross the water.',
   passenger: 'You are aboard another\'s boat. Its helmsman sets the course.',
-  rider: 'You are riding in another\'s wagon. Its driver sets the course.',   // WAGONS2: seated in the back of another's wagon (scenes/wagon/wagonRiders.js)
+  rider: 'You ride in another\'s wagon. Its driver sets the course.',   // WAGONS2: seated in the back of another's wagon (scenes/wagon/wagonRiders.js)
   climbing: 'You cannot set out from a wall. Climb down first.',   // AUDIT FB1007b C2
   noLaunch: 'There is no water here for your boat to float in.',
   noWayAtSea: 'Your boat can make no way toward its mark.',
@@ -127,7 +127,7 @@ export const TRAVEL_VIEW_TEXT = Object.freeze({
   raidersAlongside: 'Pirates come alongside!',   // OWS3
   enemiesSlow: 'Enemies are near. You slow your pace.',   // OW6: the journey held for an enemy near (systems/travel/travelThreat.js), said once as it begins
   // TV-WASD: the bar's line while the movement keys travel - the speed, and the governor's hold beside it (the land's; OW6: or an enemy's)
-  travelling: (rate, held = null) => (held != null && held < rate ? `Travelling at ×${held} of ×${rate}` : `Travelling at ×${rate}`),   // the travel strip's own sign
+  travelling: (rate, held = null) => (held != null && held < rate ? `Traveling at ×${held} of ×${rate}` : `Traveling at ×${rate}`),   // the travel strip's own sign
   inPlace: (place, region) => (region ? `${place}, ${region}` : place),
   nearPlace: (place, region) => (region ? `Near ${place}, ${region}` : `Near ${place}`),
   wilderness: (region) => (region ? `The wilds of ${region}` : 'The wilds'),

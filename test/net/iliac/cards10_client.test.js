@@ -194,7 +194,7 @@ test('CARDS10 online on two fake pages over the relay\'s table: a look on openin
   assert.equal(R.t.seats.every((s) => !s), true, 'every road off the seat stands at the relay');
   // the words, said
   assert.equal(iliacOnlineLine({ t: 'commit', seat: 1, timeout: true }, ['Ann', 'Bob'], 0), 'Bob runs out of time and passes.');
-  assert.equal(iliacOnlineLine({ t: 'commit', seat: 0, timeout: true }, ['Ann', 'Bob'], 0), 'Your time runs out. You pass.');
+  assert.equal(iliacOnlineLine({ t: 'commit', seat: 0, timeout: true }, ['Ann', 'Bob'], 0), 'Your time runs out and you pass.');
   assert.equal(lastLineOf({ winner: null }), 'The game is drawn.');
   assert.equal(lastLineOf({ winner: 1, how: 'power', names: ['Ann', 'Bob'] }), 'Bob beats Ann on power.');
   assert.equal(ILIAC_ONLINE_REFUSALS['other game'], 'Another game is being played at this table.');   // PIN MOVED (KG5): a cloth's other game may be Hold'em or The King's Gambit

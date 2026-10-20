@@ -186,7 +186,7 @@ export function claimHauls(data, kind = 'gate') {
   if (strike) out.push(strike);
   const deed = data.deed;
   if (deed && Number.isSafeInteger(deed.struck) && deed.struck > 0) {
-    out.push({ key: `deed\u0002${deed.guild?.name ?? ''}`, haul: 'silver', tone: 'treasury', count: deed.struck, source: `Guild deed - to ${deed.guild?.name ?? 'your guild'}`, hold: HAUL_HOLD_MS, adds: ['count'] });
+    out.push({ key: `deed\u0002${deed.guild?.name ?? ''}`, haul: 'silver', tone: 'treasury', count: deed.struck, source: `Guild deed: to ${deed.guild?.name ?? 'your guild'}`, hold: HAUL_HOLD_MS, adds: ['count'] });
   }
   for (const c of Array.isArray(data.contracts) ? data.contracts : []) {
     if (!c || !Number.isSafeInteger(c.pay) || c.pay <= 0) continue;

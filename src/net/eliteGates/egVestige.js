@@ -91,7 +91,7 @@ export const EG_VESTIGES = Object.freeze([
   Object.freeze({ id: 4, key: 'oath', fam: 'stone', name: "Challenger's Oath", v: [1.5, 2, 2.5], by: 'relay', line: (v) => `Your threat x${v}, and lords' blows hurt you less.` }),
   // BLADE
   Object.freeze({ id: 5, key: 'searing', fam: 'blade', name: 'Searing Edge', v: [3, 6, 9], x: [1.04, 1.07, 1.10], by: 'client', line: (v) => `Melee hits deal +${v} fire damage.` }),
-  Object.freeze({ id: 6, key: 'momentum', fam: 'blade', name: 'Momentum', v: [3, 4, 5], x: [1.05, 1.07, 1.09], by: 'client', line: (v) => `Each hit on one target adds ${pc(EG_MOMENTUM_STEP)} damage, up to ${v} stacks.` }),
+  Object.freeze({ id: 6, key: 'momentum', fam: 'blade', name: 'Momentum', v: [3, 4, 5], x: [1.05, 1.07, 1.09], by: 'client', line: (v) => `Each hit on one target adds ${pc(EG_MOMENTUM_STEP)} damage, up to ${v} times.` }),
   Object.freeze({ id: 7, key: 'sweeping', fam: 'blade', name: 'Sweeping Arc', v: [0.20, 0.35, 0.50], by: 'relay', line: (v) => `Melee hits splash ${pc(v)} of their damage onto adds within 3 m.` }),
   Object.freeze({ id: 8, key: 'bloodied', fam: 'blade', name: 'Bloodied Fury', v: [0.10, 0.18, 0.25], x: [1.03, 1.05, 1.07], by: 'client', line: (v) => `+${pc(v)} damage while under half health.` }),
   Object.freeze({ id: 9, key: 'culling', fam: 'blade', name: 'Culling Edge', v: [0.30, 0.45, 0.60], by: 'relay', line: (v) => `+${pc(v)} damage to adds under a quarter health.` }),

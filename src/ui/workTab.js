@@ -195,7 +195,7 @@ export function createWorkTab(w, ui) {
   /** AUDIT 31 U11: Decline pressed once arms it, twice declines - a stray tap never sends a crafter's work away. */
   const declineButton = (c) => {
     const armed = () => st.arm?.id === c.id && nowMs() - st.arm.at < WORK_ARM_MS;
-    const d = button(`work-decline${armed() ? ' armed' : ''}`, armed() ? t('prof.work.declineArmed', 'Decline - press again') : t('prof.work.decline', 'Decline'), () => {
+    const d = button(`work-decline${armed() ? ' armed' : ''}`, armed() ? t('prof.work.declineArmed', 'Decline? Press again') : t('prof.work.decline', 'Decline'), () => {
       if (!armed()) { st.arm = { id: c.id, at: nowMs() }; ui.rerender(); return; }
       st.arm = null;
       return act(() => w.writs.decline(c.id), t('prof.work.declined', 'Declined. Its pay goes back to its poster.'));
@@ -330,7 +330,7 @@ export function createWorkTab(w, ui) {
       const where = here ? t('prof.work.here', 'here') : w.regionNameOf(c.region);
       // AUDIT 31 H6: a filled one of yours comes by the market's deliveries - collected at the Market tab
       const said = c.state === 'open' ? writLeftText(c.expiresAt, ui.nowS())
-        : c.mine && c.state === 'filled' ? t('prof.work.yours.collect', 'filled - collect it at the Market tab')
+        : c.mine && c.state === 'filled' ? t('prof.work.yours.collect', 'filled. Collect it at the Market tab')
           : !c.mine ? commissionSaid(c.state)
             : c.returned ? t('prof.work.yours.silverBack', '{state} - silver back', { state: commissionSaid(c.state) }) : t('prof.work.yours.silverToCome', '{state} - silver to come back', { state: commissionSaid(c.state) });
       li.append(el('span', 'work-what', who), el('span', 'work-where', t('prof.work.yours.where', '{where} · {said}', { where, said })));

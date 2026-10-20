@@ -244,7 +244,7 @@ test('CAP-OFF the Professions page: a gathering profession\'s day is its count -
     book.state.hauls = 41;
     assert.match(page('Fishing'), /Today: 41 hauls \(shared by all your characters\)/);
     const hunting = page('Hunting');
-    assert.match(hunting, /Today: 31 hides, 3 of 3 from tiers 5-6 \(shared by all your characters\)/);
+    assert.match(hunting, /Today: 31 hides, 3 of 3 of grades 5 and 6 \(shared by all your characters\)/);
     assert.doesNotMatch(hunting, /of 30/);
   } finally { root.remove(); }
 });

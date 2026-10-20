@@ -509,11 +509,11 @@ test('PCO1: the seams - the Mods pane entry, the credit, the vendor folder, worl
   // PLAIN-TEXT (2026-10-19): the seven module lines (Title Case, "!!!!", a DFU version number) said plainly for a player - their words, exactly
   const PLAIN = {
     'equipmentDamageEnhanced': 'Your equipment wears out much faster, depending on its material, what hit it and more.',
-    'fadingEnchantedItems': 'Enchanted weapons and armour are destroyed when they break in combat. Needs Equipment Damage Enhanced.',
+    'fadingEnchantedItems': 'Enchanted weapons and armor are destroyed when they break in combat. Needs Equipment Damage Enhanced.',
     'fixedStrengthDamageModifier': 'Strength adds 1 damage per 10 points, as in the classic game, instead of 2.',
-    'armorHitFormulaRedone': 'Armour reduces the damage you take instead of making you harder to hit.',
+    'armorHitFormulaRedone': 'Armor reduces the damage you take instead of making you harder to hit.',
     'criticalStrikesIncreaseDamage': 'Critical strikes raise your damage as well as your chance to hit. Needs Armor Hit Formula Redone.',
-    'conditionBasedEffectiveness': 'Worn weapons and armour work less well. Needs Armor Hit Formula Redone.',
+    'conditionBasedEffectiveness': 'Worn weapons and armor work less well. Needs Armor Hit Formula Redone.',
     'softMaterialRequirements': 'Weapons below the material an enemy needs can still hurt it, at a large damage penalty. Needs Armor Hit Formula Redone.',
   };
   for (const k of shipped) {

@@ -31,7 +31,7 @@ export function updateReadyText(info) {
   // the game the shell's own channel brought, which the page loads at its next start
   return info?.manual
     ? `${name} is out. Download it from the File menu when you are ready. Your saves stay where they are.`
-    : `${name} is ready. It loads the next time you start, or now from File > Restart to Update. Save first.`;
+    : `${name} is ready. It runs the next time you start, or now from File > Restart to Update. Save first.`;
 }
 
 /**

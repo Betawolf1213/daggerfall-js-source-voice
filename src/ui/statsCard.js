@@ -114,7 +114,7 @@ export function buildStatsPage(entity, repaint, opts = {}) {
     : t('stats.damage.sub', 'average {avg}', { avg: one(d.avg) });
   tiles.append(
     tile(t('stats.damage', 'Damage'), d.min === d.max ? String(d.min) : `${d.min}\u2013${d.max}`, dmgSub,
-      t('stats.damage.tip', 'Damage per hit with a sideways swing, before the foe\u2019s armour. The table below shows the other swings.'), 2),
+      t('stats.damage.tip', 'Damage per hit with a sideways swing, before the foe\u2019s armor. The table below shows the other swings.'), 2),
     tile(t('stats.hitChance', 'Hit chance'), pct(head.hit), t('stats.hitChance.vs', 'vs {foe}', { foe: foe.label.toLowerCase() }),
       t('stats.hitChance.tip', 'The chance a swing lands, averaged over where it hits and your chance of a critical.'), 3),
     tile(t('stats.critical', 'Critical'), pct(s.crit.chance), s.crit.kind === 'damage'
@@ -158,7 +158,7 @@ export function buildStatsPage(entity, repaint, opts = {}) {
   if (p.racial) build.append(row(t('stats.breakdown.race', 'Race'), signed(p.racial), t('stats.breakdown.raceTip', 'Your race\u2019s bonus with this kind of attack.')));
   const terms = head.terms;
   build.append(row(t('stats.breakdown.attack', 'Attack (skill, gear, swing)'), signedPct(terms.base), t('stats.breakdown.attackTip', 'Your weapon skill and every bonus to hit, before the foe is counted.')));
-  build.append(row(t('stats.breakdown.foeArmour', 'Foe\u2019s armour'), signedPct(Math.round(terms.armour)), t('stats.breakdown.foeArmourTip', 'Its armour value on the part you strike, averaged over where blows land.')));
+  build.append(row(t('stats.breakdown.foeArmour', 'Foe\u2019s armour'), signedPct(Math.round(terms.armour)), t('stats.breakdown.foeArmourTip', 'Its armor value on the part you strike, averaged over where blows land.')));
   build.append(row(t('stats.breakdown.foeDodging', 'Foe\u2019s dodging'), signedPct(-terms.dodge)));
   build.append(row(t('stats.breakdown.adjustments', 'Attributes & adjustments'), signedPct(terms.other + terms.dodge), t('stats.breakdown.adjustmentsTip', 'Your Agility and Luck (and Speed) against the foe\u2019s, plus enchantments, adrenaline and fixed adjustments.')));
   build.append(row(t('stats.breakdown.total', '= Hit chance'), pct(head.hit), t('stats.breakdown.totalTip', 'The four lines above added together, then kept between 3% and 97%.')));
@@ -167,7 +167,7 @@ export function buildStatsPage(entity, repaint, opts = {}) {
   // defence
   const def = section(t('stats.defence', 'Defence'), 9);
   const parts = dollArmour(entity);
-  def.append(row(t('stats.defence.armour', 'Armour'), one(tenth(overallArmour(parts))), t('stats.defence.armourTip', 'The armour a blow meets on average (the number on the paperdoll).')));
+  def.append(row(t('stats.defence.armour', 'Armour'), one(tenth(overallArmour(parts))), t('stats.defence.armourTip', 'The armor a blow meets on average (the number on the paperdoll).')));
   const pills = el('div', 'sf-pills');
   parts.forEach((v, i) => {
     const pl = el('span', `sf-pill${v ? '' : ' nil'}`);
@@ -236,8 +236,8 @@ export function buildStatsPage(entity, repaint, opts = {}) {
   }
 
   const foot = el('p', 'sf-foot sf-rise', s.core === 'overhaul'
-    ? t('stats.rules.overhaul', 'Rules: Physical Combat And Armor Overhaul. Damage is before the foe\u2019s armour reduces it.')
-    : t('stats.rules.classic', 'Rules: the original game\u2019s combat formulas. Damage is before any armour effects.'));
+    ? t('stats.rules.overhaul', 'Rules: Physical Combat And Armor Overhaul. Damage is before the foe\u2019s armor reduces it.')
+    : t('stats.rules.classic', 'Rules: the original game\u2019s combat formulas. Damage is before any armor effects.'));
   foot.style.setProperty('--i', '15');   // TEMP-UI: after the Temperature and Boons sections
   page.append(foot);
   return page;

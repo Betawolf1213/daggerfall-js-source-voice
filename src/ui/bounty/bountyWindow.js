@@ -41,7 +41,7 @@ const button = (cls, text, onPress) => {
 /** The piece a posting pays, in words: "a worn piece (half condition)", "a piece in full condition, Common or Magic". */
 export function itemHint(rule) {
   const cond = rule.condition >= 1 ? 'in full condition' : rule.condition >= 0.75 ? 'lightly worn (75% condition)' : 'well worn (50% condition)';
-  return rule.magicChance > 0 ? `a weapon or armour piece ${cond}, Common or Magic` : `a Common weapon or armour piece, ${cond}`;
+  return rule.magicChance > 0 ? `a weapon or armor piece ${cond}, Common or Magic` : `a Common weapon or armor piece, ${cond}`;
 }
 /** The row's word for where the hunter stands with a notice. */
 export function stateWord(row) {

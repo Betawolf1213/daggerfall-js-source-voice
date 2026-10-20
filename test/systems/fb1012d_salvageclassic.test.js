@@ -125,7 +125,7 @@ test('SALVAGE-CLASSIC: the class - every DFU magic row whatever its kind, a guil
 
 test('SALVAGE-CLASSIC: the Salvage page lists the classic piece after every piece that breaks - "Classic magic", no shards, why in its title; its press does nothing and the every-Magic sweep passes it by', () => {
   on();
-  assert.equal(REFORGE_REFUSALS.classic, "Classic magic items can't be salvaged. Only loot with a rarity tier gives shards");
+  assert.equal(REFORGE_REFUSALS.classic, "Classic magic items can't be salvaged. Only pieces with a rarity give shards");
   withDom((dom) => {
     const dagger = reported();
     const a = graded('magic', 21);

@@ -388,7 +388,7 @@ export function zoneMapLimits(mask, { paperW, paperH, legendW = ZONE_LEGEND_W })
 export const ZONE_RULES = Object.freeze([
   'Other players can attack you. Only your party and guild are shown on your maps here.',
   'Foes are four times as strong, elites and champions included.',
-  'Two Greater Giants roam every tier, each shown on the map.',
+  'Two Greater Giants roam every reach, each shown on the map.',
   'If you die, what you carry drops and lies there for 10 minutes. Potions, torches and the camp kit are kept.',
   'Carriages run inside the zone every 10 minutes, at higher prices.',
   'No fast travel into or out of the zone except from the Overworld map. Walk or ride.',

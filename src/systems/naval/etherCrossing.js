@@ -54,7 +54,7 @@ export function crossingRows(way, { days = CROSS_DAYS } = {}) {
   const time = `${days} ${days === 1 ? 'day' : 'days'}`;
   return way === 'out'
     ? ['The Abecean runs empty to every horizon, and the stars', 'hang strangely low over the water. Sailors say that past', `here the sea is no longer the sea, but the ${ETHER_WORD}.`, '', `Set a course into the open sea? (${time}. Your ship,`, 'its crew and hold go with you.)']
-    : ['Ahead the Veil thins, and through it, faint as a memory,', 'lie the grey waters of the Iliac Bay.', '', `Set a course for home? (${time})`];
+    : ['Ahead the Veil thins, and through it, faint as a memory,', 'lie the gray waters of the Iliac Bay.', '', `Set a course for home? (${time})`];
 }
 /** What the screen says at the landfall. */
 export const crossingWords = (way) => (way === 'out'

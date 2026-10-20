@@ -127,7 +127,7 @@ test('RVN-GEAR THE REFUSALS: the rank\'s metal and its tier, each saying the ran
   assert.equal(G.gearRefusal(r, { ...blade(120, 0), timeForItemToDisappear: 99 }), 'A summoned piece fades in any hand but yours.');
   assert.equal(G.gearRefusal(r, { ...blade(120, 0), artifact: true }), 'It answers to you alone.');
   const bear = sworn({ mobileType: M.GrizzlyBear });
-  assert.equal(G.gearRefusal(bear, blade(120, 0), { kindName: 'Grizzly Bear' }), 'Grizzly Bear wields no weapon and wears no armour, only a charm.');
+  assert.equal(G.gearRefusal(bear, blade(120, 0), { kindName: 'Grizzly Bear' }), 'Grizzly Bear wields no weapon and wears no armor, only a charm.');
   assert.equal(G.gearRefusal(bear, amulet()), null, 'a charm on a cord');
   assert.equal(G.gearRefusal(r, plate(110, 0)), 'Give it a one-handed weapon first.');
   assert.equal(G.gearRefusal(r, plate(110, 0), { gear: { weapon: blade(122) } }), 'Its weapon needs both hands.');
@@ -353,7 +353,7 @@ test('RVN-GEAR THE PAGE: Gear opens its kit - a well a slot (a beast\'s the char
   d = draw();
   const wells = byClass(d, 'cmp-gslot');
   assert.equal(wells.length, 1, 'a beast: the charm alone');
-  assert.match(d.textContent, /Grizzly Bear can't use weapons or armour, but it can wear a charm\./);
+  assert.match(d.textContent, /Grizzly Bear can't use weapons or armor, but it can wear a charm\./);
   assert.ok(bear.sworn);
 });
 

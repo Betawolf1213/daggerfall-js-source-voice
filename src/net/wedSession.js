@@ -45,7 +45,7 @@ export function wedWhyText(why, name = 'They') {
     case 'temple': return 'Weddings take place in a temple. Both of you must stand inside one.';
     case 'house': return 'Only characters who belong to a house (Project Legacy) can wed in the realm.';
     case 'wed': return `${name} is wed already.`;
-    case 'timeout': return 'No answer came. The proposal lapsed.';
+    case 'timeout': return 'No answer came, and the proposal lapsed.';
     case 'cancelled': return `${name} took the proposal back.`;
     case 'refused': return 'The temple could not record the wedding.';
     default: return 'The wedding did not happen.';
@@ -243,7 +243,7 @@ export function createWedManager({
           if (quiet.size > 64) for (const [p, at] of quiet) if (now() - at >= WED_REASK_MS) quiet.delete(p);
           const fresh = !incoming.has(from);
           incoming.set(from, { s: d.s, at: now(), sub, sc });
-          if (fresh) { say(`${nameOf(from)} asks for your hand. Answer on the prompt or on their Inspect card.`); onPrompt(from); }
+          if (fresh) { say(`${nameOf(from)} asks for your hand. Answer on the prompt, or on their Inspect card.`); onPrompt(from); }
           changed();
           return;
         }

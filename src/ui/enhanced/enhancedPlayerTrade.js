@@ -222,7 +222,7 @@ export function mountEnhancedPlayerTrade(hostEl, { session, deps }) {
     const bar = el('div', 'remoteacts trade-footer');
     const status = session.phase === 'committing' ? 'Exchanging goods...'
       : session.phase === 'done' || session.phase === 'cancelled' ? (session.lastMessage || '')
-        : session.withdrawing ? `Cancelling. Waiting for ${session.peerName} to answer...`   // AUDIT 68: a confirm that left binds until the peer answers
+        : session.withdrawing ? `Canceling. Waiting for ${session.peerName} to answer...`   // AUDIT 68: a confirm that left binds until the peer answers
         : session.bothLocked ? 'Both locked. Press Confirm to finish, or change your offer to reopen.'
           : session.myLock ? `Locked. Waiting for ${session.peerName} to lock...`
             : `Any change to either offer unlocks both sides. Stay within ${TRADE_RANGE_M} m of ${session.peerName}.`;

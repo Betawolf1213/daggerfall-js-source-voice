@@ -104,7 +104,7 @@ export const GUILD_BOARD_EMPTY = Object.freeze({
 /** BOARD-UI: the window's own fixed words, in one place - short, and plain. */
 export const BOARD_WORDS = Object.freeze({
   reading: 'Reading the board...',
-  stale: 'This may be out of date - the server is slow to answer.',
+  stale: 'This may be out of date. The server is slow to answer.',
   closed: 'The Notice Board is closed to you. Only the town\'s news is shown.',
   slow: 'Players\' notes did not load. Only the town\'s news is shown.',
   noNotes: 'No notes from players yet.',

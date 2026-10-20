@@ -148,7 +148,7 @@ const REFUSAL_WORDS = {
   'poi-bad-mesh': () => t('account.refusal.poiBadMesh', 'That model could not be read. Import it again.'),
   'poi-bad-texture': () => t('account.refusal.poiBadTexture', 'A texture must be a PNG, JPEG or WebP image no larger than 4096 pixels on a side.'),
   'poi-quota': () => t('account.refusal.poiQuota', 'You have uploaded all you can today. Try again tomorrow.'),
-  'poi-doc': () => t('account.refusal.poiDoc', 'This POI has problems to fix first. The editor lists them.'),
+  'poi-doc': () => t('account.refusal.poiDoc', 'This place has problems to fix first. The editor lists them.'),
   'poi-state': () => t('account.refusal.poiState', 'That revision has changed since you opened it. Refresh and try again.'),
   'poi-not-live': () => t('account.refusal.poiNotLive', 'That POI is not in the world, so it cannot be retired.'),
   'poi-pending': () => t('account.refusal.poiPending', 'A retirement of that POI is already waiting for approval.'),
@@ -166,7 +166,7 @@ const REFUSAL_WORDS = {
   'no-signing-key': () => t('account.refusal.noSigningKey', 'The account service cannot confirm accounts right now. Try again later.'),
   // EG-PLAY: an Elite Breach's refusals (server-account/src/eg.js)
   rq: () => t('account.refusal.rq', 'The Spire could not read that request. Try again.'),
-  unproven: () => t('account.refusal.unproven', 'The Spire opens only to those who have closed a Dagon\'s Breach. Close one first.'),
+  unproven: () => t('account.refusal.unproven', 'The Spire opens only to those who have closed a Dagon\'s Breach.'),
   live: () => t('account.refusal.live', 'You hold a breach already.'),
   rehearsed: () => t('account.refusal.rehearsed', 'You have rehearsed the Spire today. A Weir Key opens it again.'),
   spent: () => t('account.refusal.spent', 'That breach is spent.'),
@@ -370,7 +370,7 @@ const REFUSAL_WORDS = {
   'escrow-moved': () => t('account.refusal.escrowMoved', 'That piece moved in the meantime. Look again.'),
   'escrow-collected': () => t('account.refusal.escrowCollected', 'That piece has already been collected.'),
   'escrow-returned': () => t('account.refusal.escrowReturned', 'That piece has already gone back to the one who fell.'),
-  'escrow-late': () => t('account.refusal.escrowLate', 'That piece was collected too late, so it goes back to the one who fell.'),
+  'escrow-late': () => t('account.refusal.escrowLate', 'That piece was collected too late and goes back to the one who fell.'),
   'escrow-wait': () => t('account.refusal.escrowWait', 'That piece is still held for its killer. It comes back to you shortly.'),
   // MARKS1: Marks, the server's currency (server-account/src/marks.js)
   'marks-need-account': () => t('account.refusal.marksNeedAccount', 'Silver is kept by registered accounts. Add a username to hold it.'),
@@ -405,7 +405,7 @@ const REFUSAL_WORDS = {
   'seat-not-held': () => t('account.refusal.seatNotHeld', 'Your guild does not hold that Charter.'),
   'seat-held-here': () => t('account.refusal.seatHeldHere', 'Your guild holds a Charter in this region, and is pledged to it.'),
   // SEAT1d: the holder's levers
-  'bad-tithe': () => t('account.refusal.badTithe', 'A Tithe is a whole percent, at most the seat\'s cap: 10% at a palace and 15% at a crown, a point more for each tier of its Market Hall.'),   // AUDIT SEATS-3 C6: the Market Hall raises the cap (fortLaw.js marketHallTitheCap)
+  'bad-tithe': () => t('account.refusal.badTithe', 'A Tithe is a whole percent, no more than the seat allows: 10% at a palace and 15% at a crown, and a point more for each stage of its Market Hall.'),   // AUDIT SEATS-3 C6: the Market Hall raises the cap (fortLaw.js marketHallTitheCap)
   'tithe-this-week': () => t('account.refusal.titheThisWeek', 'The Tithe has been set this week already. It may change again after the Turning.'),
   'bad-edict': () => t('account.refusal.badEdict', 'There is no such Edict.'),
   'edict-twice': () => t('account.refusal.edictTwice', 'That Edict rules this week, and only Market Day may be proclaimed two weeks running.'),
@@ -459,8 +459,8 @@ const REFUSAL_WORDS = {
   // AUDIT 29
   'prof-account-cap': () => t('account.refusal.profAccountCap', 'Your account has gathered all a day allows in this craft, across your characters.'),
   'prof-deep-cap': () => t('account.refusal.profDeepCap', 'Dungeons not yet confirmed by other players give you {max} veins a day.', { max: DEEP_UNCONFIRMED_PER_DAY }),
-  'prof-spec-stale': () => t('account.refusal.profSpecStale', 'Your specialisation changed elsewhere. Look again before you choose.'),
-  'prof-spec-taken': () => t('account.refusal.profSpecTaken', 'A specialisation was chosen there already. Look again.'),
+  'prof-spec-stale': () => t('account.refusal.profSpecStale', 'Your specialization changed elsewhere. Look again before you choose.'),
+  'prof-spec-taken': () => t('account.refusal.profSpecTaken', 'A specialization was chosen there already. Look again.'),
   'stores-full': () => t('account.refusal.storesFull', 'Your Stores hold {max, number} of that already.', { max: STORES_MAX }),
   'stores-short': () => t('account.refusal.storesShort', 'Your Stores do not hold that many.'),
   // BAG1: what is carried - the service's count of it at its bound, or a pack and bag holding fewer than a deposit asks
@@ -471,7 +471,7 @@ const REFUSAL_WORDS = {
   'deposit-kept': () => t('account.refusal.depositKept', 'Your materials are still on their way into your Stores. Try again in a moment.'),   // AUDIT BAG1 B8
   'deposit-busy': () => t('account.refusal.depositBusy', 'Your last deposit is still being counted. Try again in a moment.'),   // AUDIT2 BAG1 K12: one deposit at a time
   'deposit-unsaved': () => t('account.refusal.depositUnsaved', 'Your game could not be saved just now, so nothing went into your Stores. Try again in a moment.'),   // AUDIT2 BAG1 H2: the take saved before the ask
-  'deposit-unsent': () => t('account.refusal.depositUnsent', 'That deposit was never sent, so you still have its materials.'),   // AUDIT2 BAG1 K7: a kept deposit whose take the save never saw (askDeposit)
+  'deposit-unsent': () => t('account.refusal.depositUnsent', 'Those materials were never sent. They are still with you.'),   // AUDIT2 BAG1 K7: a kept deposit whose take the save never saw (askDeposit)
   'bad-deposit-order': () => t('account.refusal.badDepositOrder', 'That cannot be put in the Stores that way.'),
   'node-taken': () => t('account.refusal.nodeTaken', 'You have already gathered here today.'),
   'bad-material': () => t('account.refusal.badMaterial', 'The Stores do not keep that.'),
@@ -498,10 +498,10 @@ const REFUSAL_WORDS = {
   'prof-piece-busy': () => t('account.refusal.profPieceBusy', 'That piece is listed on the market, on its way to you, or placed in a home, so it cannot be disenchanted now.'),
   'prof-piece-gone': () => t('account.refusal.profPieceGone', 'That piece is not loose in your pack, so it cannot be disenchanted.'),   // AUDIT PROF-541 B2
   // CRAFT4: the temper's and the Reforge with Essence's refusals
-  'prof-temper': () => t('account.refusal.profTemper', 'That piece cannot be tempered. Smiths temper weapons and metal armour, and tailors temper leather and cloth.'),
+  'prof-temper': () => t('account.refusal.profTemper', 'That piece cannot be tempered. Smiths temper weapons and metal armor, and tailors temper leather and cloth.'),
   'prof-temper-top': () => t('account.refusal.profTemperTop', 'That piece cannot be tempered any further. Tempering stops at Superior, and a Masterwork cannot be tempered.'),
   'prof-temper-stale': () => t('account.refusal.profTemperStale', 'That piece\'s quality has changed. Check your Stores again.'),
-  'prof-reforge': () => t('account.refusal.profReforge', 'Arcane Essence reforges a line on Magic or Rare pieces only, not on Legendary, Aetheric or artifact pieces.'),
+  'prof-reforge': () => t('account.refusal.profReforge', 'Arcane Essence can reforge a line on a Magic or Rare piece, but never on a Legendary, Aetheric or artifact piece.'),
   'prof-no-essence': () => t('account.refusal.profNoEssence', 'That piece carries too little enchantment to give any Arcane Essence.'),
   'bad-qty': () => t('account.refusal.badQty', 'Take 1 to {max} at a time.', { max: WITHDRAW_MAX }),
   'bad-pixels': () => t('account.refusal.badPixels', 'That land could not be read.'),
@@ -510,8 +510,8 @@ const REFUSAL_WORDS = {
   'writ-taken': () => t('account.refusal.writTaken', 'Someone else has already filled that writ.'),
   'writ-expired': () => t('account.refusal.writExpired', 'That writ has run out.'),
   'writ-cap': () => t('account.refusal.writCap', 'You have filled {max} writs today, the most a day allows.', { max: COURT_WRITS_PER_DAY }),   // CHAP2a: the Court's and the halls' one allowance
-  'prof-spec': () => t('account.refusal.profSpec', 'That specialisation is not one this craft offers.'),
-  'prof-respec-pending': () => t('account.refusal.profRespecPending', 'A change of specialisation is already on its way ({days} days).', { days: RESPEC.days }),
+  'prof-spec': () => t('account.refusal.profSpec', 'That specialization is not one this craft offers.'),
+  'prof-respec-pending': () => t('account.refusal.profRespecPending', 'A change of specialization is already on its way ({days} days).', { days: RESPEC.days }),
   'prof-rate': () => t('account.refusal.profRate', 'You have done too much crafting this hour. Try again later.'),
   // PROF5: the market (server-account/src/market.js)
   'market-closed': () => t('account.refusal.marketClosed', 'The market is not open yet.'),
@@ -588,7 +588,7 @@ const REFUSAL_WORDS = {
   'bad-work': () => t('account.refusal.badWork', 'There is no such work.'),
   'fort-not-here': () => t('account.refusal.fortNotHere', 'That work cannot be raised at this seat.'),
   'fort-building': () => t('account.refusal.fortBuilding', 'That work is being raised already.'),
-  'fort-max': () => t('account.refusal.fortMax', 'That work stands at its last tier.'),
+  'fort-max': () => t('account.refusal.fortMax', 'That work has reached its final stage.'),
   'seat-treasury': () => t('account.refusal.seatTreasury', 'The guild\'s treasury does not hold the silver that project asks.'),
   'bad-rid': () => t('account.refusal.badRid', 'That request could not be read. Try again.'),
   'writ-rate': () => t('account.refusal.writRate', 'You have reached the hourly limit for writs and commissions ({posts} posted, {acts} other actions). Try again later.', { posts: WRIT_POSTS_MAX, acts: WRIT_OPS_MAX }),
@@ -620,9 +620,9 @@ const REFUSAL_WORDS = {
   'guild-seat': () => t('account.refusal.guildSeat', 'Give up the guild\'s Charters first, at each seat\'s Notice Board.'),   // SEAT1c
   'guild-battle': () => t('account.refusal.guildBattle', 'The guild is in a siege or a Tourney this week. It cannot be disbanded until the battle is over.'),   // SEAT1c
   'guild-patron': () => t('account.refusal.guildPatron', 'The guild has bid for a chapter\'s patronage. It cannot be disbanded until the Season opens and the bid is decided.'),   // AUDIT CHAP5 E4
-  'hall-item': () => t('account.refusal.hallItem', 'A guild hall can only hold furniture from the catalogue. Your own things stay with you.'),
+  'hall-item': () => t('account.refusal.hallItem', 'A guild hall can only hold furniture from the catalog. Your own things stay with you.'),
   'hall-yard': () => t('account.refusal.hallYard', 'A palace\'s grounds cannot be furnished, only its Charter Room.'),   // GUILD-YARD: a guild hall's yard is its keepers'; a palace's grounds stand none
-  'bad-heraldry': () => t('account.refusal.badHeraldry', 'Those arms are not allowed. Use a field and a border of different colours (Ash only as the border), one device that stands out from the field, and for a divided field a second colour unlike the first and the border.'),   // AUDIT2 GUILD2 G5: GUILD2c's divisions and device colour
+  'bad-heraldry': () => t('account.refusal.badHeraldry', 'Those arms are not allowed. Use a field and a border of different colors (Ash only as the border), one device that stands out from the field, and for a divided field a second color unlike the first and the border.'),   // AUDIT2 GUILD2 G5: GUILD2c's divisions and device colour
   // GUILD2a (bible/11-Multiplayer/Guild-Overhaul.md): a new name for a price (server-account/src/guilds.js renameGuild)
   'guild-rename-same': () => t('account.refusal.guildRenameSame', 'That is already the guild\'s name and tag.'),
   'guild-name-word': () => t('account.refusal.guildNameWord', 'A guild\'s name and tag cannot contain a word that is not allowed in names.'),
@@ -651,7 +651,7 @@ const REFUSAL_WORDS = {
   'bad-budget': () => t('account.refusal.badBudget', 'A writ budget is 0 to {max, number} silver.', { max: MARKS_MAX }),
   'bad-quality': () => t('account.refusal.badQuality', 'Choose a quality from Crude to Masterwork, or none for a piece without quality.'),
   'bad-pay': () => t('account.refusal.badPay', 'A commission pays 1 to {max, number} silver.', { max: MARKET_PRICE_MAX }),
-  'commission-recipe': () => t('account.refusal.commissionRecipe', 'Only pieces sold on the market can be commissioned, not arrows or siege works.'),
+  'commission-recipe': () => t('account.refusal.commissionRecipe', 'Only pieces the market lists may be commissioned. Arrows and siege works cannot.'),
   'commission-crafter': () => t('account.refusal.commissionCrafter', 'There is no crafter by that name.'),
   'commission-self': () => t('account.refusal.commissionSelf', 'You cannot commission yourself.'),
   'commissions-max': () => t('account.refusal.commissionsMax', 'You may have {max} commissions posted at once.', { max: COMMISSIONS_MAX }),
@@ -692,24 +692,24 @@ const REFUSAL_WORDS = {
   // LEGACY7: Project Legacy online (server-account/src/legacy.js) - a fallen character's tombstone, and a member's birth
   dead: () => t('account.refusal.dead', 'That character has died for good. Their house carries on: play one of its living members.'),
   'no-lineage': () => t('account.refusal.noLineage', 'The realm does not hold that family yet. Save once, then try again.'),
-  'lineage-person': () => t('account.refusal.lineagePerson', 'That member of the family cannot take up the line. They have died, retired, wed into it, or are still a child.'),
+  'lineage-person': () => t('account.refusal.lineagePerson', 'That member of the family cannot take up the line. They have died, retired, married into it, or are still a child.'),
   'lineage-played': () => t('account.refusal.lineagePlayed', 'That member of the family already has a character in the realm.'),
   'lineage-model': () => t('account.refusal.lineageModel', 'A family keeps the way of death it was founded with.'),
   'too-many-lineages': () => t('account.refusal.tooManyLineages', 'You have as many families as an account may hold online.'),
   'lineage-stale': () => t('account.refusal.lineageStale', 'Your family was changed on another device. This one takes those changes in and saves again.'),
   'wed-no-line': () => t('account.refusal.wedNoLine', 'Only a character of a house (Project Legacy) can be wed in the realm.'),
   'wed-already': () => t('account.refusal.wedAlready', 'You are wed already.'),
-  'wed-partner': () => t('account.refusal.wedPartner', 'They cannot be wed now. They are already wed, not of a house, or no longer the one who stood with you.'),   // AUDIT LEGACY III O1
+  'wed-partner': () => t('account.refusal.wedPartner', 'They cannot marry now. They are already married, belong to no house, or are no longer the one who stood with you.'),   // AUDIT LEGACY III O1
   'lineage-too-large': () => t('account.refusal.lineageTooLarge', 'Your family\'s record has grown past what the realm keeps for one family.'),   // AUDIT LEGACY III O2/P1
   'wed-spent': () => t('account.refusal.wedSpent', 'That wedding was not yours to answer.'),
   // REZ-BLOODLINE AUDIT R1 (server-account/src/legacy.js realmRaise): a party's Resurrect the realm will not take back
   'not-dead': () => t('account.refusal.notDead', 'The realm holds no death of that character to take back.'),
-  'raise-late': () => t('account.refusal.raiseLate', 'Too late. That death is permanent now.'),
+  'raise-late': () => t('account.refusal.raiseLate', 'It is too late. That death is final now.'),
   'raise-no-line': () => t('account.refusal.raiseNoLine', 'Only a character of a house (Project Legacy) is held for a Resurrect.'),
   // AUDIT REALM2 S2: the online acts that cost gold are a realm character's
   'realm-only': () => t('account.refusal.realmOnly', 'Only an online character of the realm can do that.'),
   // REALM P2.1: a trade's sid another pair settled (server-account/src/realmTrade.js)
-  'trade-spent': () => t('account.refusal.tradeSpent', 'That trade has already ended. Nothing was traded.'),
+  'trade-spent': () => t('account.refusal.tradeSpent', 'That trade has already ended. Nothing changed hands.'),
   // REALM P2.2: an act that moves a realm character's gold on its record (server-account/src/realm.js)
   'realm-needed': () => t('account.refusal.realmNeeded', 'This online character must be playing in the realm to do that. Rejoin and try again.'),
   'realm-gold': () => t('account.refusal.realmGold', 'The realm holds less gold for this character than that costs.'),
@@ -764,7 +764,7 @@ const REFUSAL_WORDS = {
   'cards-receipt': () => t('account.refusal.cardsReceipt', 'The table\'s cash-out could not be read.'),
   'cards-not-yours': () => t('account.refusal.cardsNotYours', 'That cash-out belongs to another account.'),
   'cards-no-stake': () => t('account.refusal.cardsNoStake', 'The realm holds no stake for that cash-out.'),
-  'cards-other-character': () => t('account.refusal.cardsOtherCharacter', 'That cash-out belongs to another of your characters. It is paid to the one that placed the stake.'),
+  'cards-other-character': () => t('account.refusal.cardsOtherCharacter', 'That cash-out belongs to another of your characters. It is paid to the one who staked it.'),
   'cards-cashout-failed': () => t('account.refusal.cardsCashoutFailed', 'The cash-out could not be paid. Try again.'),
   'cards-held': () => t('account.refusal.cardsHeld', 'This character has gold staked at a card table. Collect it before the character is deleted.'),
   // INT3/INT4 (bible/06-Systems/Integrity-Arc.md): the judge's own (server-account/src/realm.js holdRefusal,

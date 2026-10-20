@@ -135,14 +135,14 @@ export const PORT_TEXT = Object.freeze({
   lightSteal: 'The lightkeeper keeps the beacon\'s oil under lock.',
   shut: 'The shipmaster\'s window will not open here.',
   noSail: SHIPYARD_TEXT.noSail,
-  sailor: 'Looking for a berth. Ask the crewmaster to sign on hands.',
+  sailor: 'Looking for a berth. Ask the crewmaster to sign hands on.',
   worker: 'At work on the hull on the stocks.',
-  lampLit: 'The beacon burns from dusk to dawn. It is lit now.',
+  lampLit: 'The beacon burns from dusk to dawn. It is lit.',
   lampDark: 'The beacon burns from dusk to dawn.',
   hatch: 'Down the tower\'s stair.',
   stair: 'The stair up to the beacon.',
   shutStair: 'The lightkeeper keeps the stair shut just now.',
-  riding: 'No horse can climb a lighthouse stair. Go up on foot.',
+  riding: 'No horse climbs a lighthouse stair. Go up on foot.',
   foes: 'The lightkeeper bars the door while enemies are about.',
 });
 

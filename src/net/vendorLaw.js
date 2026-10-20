@@ -33,7 +33,7 @@ export const VENDOR_BOARD_SHOWN = 300;
 export const VENDOR_QUERY_MAX = 60;
 /** What a trader says where it cannot trade - offline, or the market not this account's: pressed (worldModes.js
  *  openHomeVendor), or made (scenes/decor/decorTool.js setStation - never sold where it cannot work, AUDIT 29 B2's law). */
-export const VENDOR_COLD_LINE = 'The trader only deals with travellers online.';
+export const VENDOR_COLD_LINE = 'The trader only deals with travelers online.';
 
 /** A town's map id, unsigned, as the homes registry keys it (homeLaw.js homeMapIdOk's bound). */
 const mapOk = (v) => Number.isSafeInteger(v) && v > 0 && v <= 0xffffffff;

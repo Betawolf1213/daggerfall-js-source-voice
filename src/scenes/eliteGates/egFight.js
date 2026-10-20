@@ -210,9 +210,9 @@ export const EG_SAY = Object.freeze({
   // FB1018D DUEL-RING: at n = 1 no ring rises nor falls (section 13.3) - the open duel's own words
   challenge: (n, w) => (w === EG_DUEL_OPEN ? t('eg.say.duelOpen', 'A challenge in the open! Deal him a tenth of his health within 15 s.') : 'A challenge! The ring of fire rises.'),
   challengewon: () => 'The challenge is met.', challengeend: (n, w) => (w === EG_DUEL_OPEN ? t('eg.say.duelUnmet', 'The challenge goes unmet.') : 'The ring falls.'),
-  conquest: () => 'Banners claim the floor and set it burning. Two standing ward the lord. Break them!',   // FB1018D WARD-BAR: what they do, said (section 13.4)
+  conquest: () => 'Banners claim the floor, and it burns. Two standing ward the lord. Break them!',   // FB1018D WARD-BAR: what they do, said (section 13.4)
   muster: () => 'The Muster-Call! The balconies fill.', tithe: () => 'The Soul Tithe: lay your soul in a gem!', bare: () => 'The gems are full. The Cairn-Keeper is laid bare!',
-  twinfell: (n) => `${n} falls. Fell the other within 15 seconds!`, twinraised: (n) => `${n} rises again.`, crossing: () => 'The Twins cross the walkway!',
+  twinfell: (n) => `${n} falls. Bring down the other within 15 seconds!`, twinraised: (n) => `${n} rises again.`, crossing: () => 'The Twins cross the walkway!',
   chaining: () => 'Soul-chains bind you. Stay close!', grounded: () => 'The Mother of Dusk is dragged down!', anchors: () => 'The anchors rise again.', vanish: () => 'The Night-Stalker vanishes.',
   tether: () => 'Blood Tether! Stand apart.', tetherbroken: () => 'The tether snaps.', eclipse: () => 'The Eclipse comes. Stand in the light!', mirrors: () => 'Mirror lords rise. Only the true lord casts a mark.',
   relit: () => 'A heart relights!', landed: () => 'The Wyrm lands!', perches: () => t('eg.say.perches', 'The perches rise again, molten!'), broken: (n, t) => `${n || 'Someone'} breaks a ${t || 'ward'}.`, stirs: () => 'Something stirs.', raised: () => 'A Binder raises the fallen.',
@@ -221,11 +221,11 @@ export const EG_SAY = Object.freeze({
   orrerytrue: () => 'The Orrery turns true. A Vestige waits.', chamberdone: () => 'The chamber is cleared. Find the way down.', freed: () => 'The Battlemage is freed. Each of you gains a Cantrip.',
   desertertook: () => 'The Deserter takes the cache.', sapperfed: () => 'A Sapper reaches its lord and heals it.', reopened: () => 'A Sapper tears a rift open again!', cantrip: (n, t) => `${n} uses ${t}.`,
   bargain: (n, t) => `Dagon's Bargain is struck: ${t}.`, respite: (n, t) => `A respite: ${t} seconds.`, ready: () => 'The company is ready.',
-  gateheld: () => 'The march holds the gate. Drive it back, or its Ward-Bearers stay warded.',   // AUDIT EG IV (section 8.3)
+  gateheld: () => 'The march holds the gate. Break it, or the Ward-Bearers stay warded.',   // AUDIT EG IV (section 8.3)
   // EG-FULL LAYER THREE: the fragments' beats
   seam: (n) => `${n || 'Someone'} breaks a false wall. An alcove opens.`, engine: (n, t) => `${n || 'Someone'} works the ${t || 'engine'}!`,
-  horn: (n) => `The Honour Horn calls ${n || 'one of you'} into the ring. Answer alone!`, hornwon: (n) => `${n || 'The challenger'} fought with honour. The crowd throws Reliquaries!`,
-  hornfoul: () => 'Another steps into the ring. The crowd throws fire on the Pit!', niche: (n) => `${n || 'Someone'} rests at the Battlemage's niche.`,
+  horn: (n) => `The Honor Horn calls ${n || 'one of you'} into the ring. Answer alone!`, hornwon: (n) => `${n || 'The challenger'} fought with honor. The crowd throws Reliquaries!`,
+  hornfoul: () => 'Another steps into the ring. The crowd throws fire! Ash falls in the Pit.', niche: (n) => `${n || 'Someone'} rests at the Battlemage's niche.`,
   hcache: (n) => `${n || 'Someone'} takes a Reliquary from the High Road's cache.`, lowroad: () => 'Something stirs on the Low Road.',
 });
 

@@ -105,7 +105,7 @@ export const worldGroundMetres = (a, b) => groundDistance(a, b) / NATIVES_PER_M;
 export const DUEL_REF_LATE_MS = 10_000;
 /** INT8: the referee's words this law says. */
 export const DUEL_REF_TEXT = Object.freeze({
-  refused: 'The duel could not be refereed, so it is off.',
+  refused: 'The duel could not be refereed and is called off.',
   old: 'The server cannot referee a duel yet.',
 });
 /** INT8: a duel I lost, and why - the referee's word (a fall, a yield, my leaving it). */
@@ -127,10 +127,10 @@ export function duelWhyText(why, name = 'They') {
     case 'declined': return `${name} declined the duel.`;
     case 'busy': return `${name} cannot duel right now.`;
     case 'timeout': return 'The duel challenge lapsed.';
-    case 'range': return `You are more than ${DUEL_RANGE_M} m apart. The duel is off.`;
-    case 'outdoors': return 'Duels are fought outdoors. The duel is off.';
-    case 'left': return 'The duel is off: a duellist left the ring.';
-    case 'dead': return 'The duel is off: a duellist was killed by something else.';
+    case 'range': return `You are more than ${DUEL_RANGE_M} m apart. The duel is called off.`;
+    case 'outdoors': return 'A duel must be fought outdoors. The duel is called off.';
+    case 'left': return 'The duel is called off. A duelist left the ring.';
+    case 'dead': return 'The duel is called off. A duelist was killed by something else.';
     case 'draw': return 'Time is up. The duel is a draw.';
     case 'fell': return `${name} has fallen. You won the duel!`;
     case 'yield': return `${name} yields. You won the duel!`;
@@ -475,7 +475,7 @@ export function createDuelManager({
       if (waiting && t - waiting.at > DUEL_START_WAIT_MS) {
         const w = waiting; waiting = null;
         once({ k: 'cancel', to: w.peer, s: w.s, why: 'timeout' });
-        say(`${nameOf(w.peer)} never started the duel. It is off.`);
+        say(`${nameOf(w.peer)} never started the duel. It is called off.`);
         mgr.onChange?.();
       }
       if (starting) {

@@ -65,7 +65,7 @@
   {
     "name": "SALVAGE-CLASSIC-the-page-says-another-reason",
     "file": "src/ui/reforgeWindow.js",
-    "old": "  classic: \"Classic magic items can't be salvaged. Only loot with a rarity tier gives shards\",",
+    "old": "  classic: \"Classic magic items can't be salvaged. Only pieces with a rarity give shards\",",
     "new": "  classic: 'Nothing the Reforge can roll',",
     "tests": [
       "test/systems/fb1012d_salvageclassic.test.js"

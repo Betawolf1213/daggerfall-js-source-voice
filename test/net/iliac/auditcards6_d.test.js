@@ -245,7 +245,7 @@ test('AUDIT CARDS-6 D9 (E17): the host\'s carrier reads a receipt\'s life on the
   assert.equal(c.add(receipt), true, 'kept - its life the relay\'s');
   await c.flush();
   assert.deepEqual(asked, [receipt], 'and carried');
-  assert.match(said[0], /your rating 1016 \(\+16\)/);
+  assert.match(said[0], /Your rating is 1016 \(\+16\)/);
 });
 
 // ═══ D10: A DELETED CHAMPION'S TITLE ═════════════════════════════════════════════════════════════════════════════════

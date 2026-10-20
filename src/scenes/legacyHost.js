@@ -107,7 +107,7 @@ export const LEGACY_TEXT = Object.freeze({
   notBorn: (given) => `${given}'s first day could not be saved here. Reload to start it again. Nothing of the house is lost.`,   // AUDIT LEGACY II A2
   claimed: (name, by) => `${by} has taken up the search for ${name}'s remains.`,   // AUDIT LEGACY II H5
   retiredKin: (given) => `${given} has passed the mantle on, and keeps the house now.`,
-  minor: (given) => `${given} is still a child, and comes of age when the mantle passes to them.`,   // LEGACY5
+  minor: (given) => `${given} is still a child. They come of age when the mantle passes to them.`,   // LEGACY5
   spouseKin: (given) => `${given} married into the house and cannot carry the line.`,   // LEGACY5
   // AUDIT LEGACY III A1: a betrothed townsperson another member wed first - the courtship is over
   wedElsewhere: (name) => `${name} is wed into the house already. Your betrothal is over.`,

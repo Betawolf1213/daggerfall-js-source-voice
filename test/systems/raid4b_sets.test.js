@@ -101,12 +101,12 @@ test('RAID4b the law: three sets after the gate boss\'s own - the Broken Oath (t
   }
   assert.equal(SIGIL_SETS.ruhn.raid, undefined, 'the gate boss\'s own names no party');
   const words = (id, i, st) => { const t = SIGIL_SETS[id].tiers[i]; return t.text(tierValues(t, st)); };
-  assert.equal(words('oath', 0, 0), '+1 armour on every part, +2 Willpower');
+  assert.equal(words('oath', 0, 0), '+1 armor on every part, +2 Willpower');
   assert.equal(words('oath', 1, SET_STAGE_MAX), `When an enemy hits you, your next weapon hit within ${RIPOSTE_SECONDS} s deals 40% more damage`);
   assert.equal(words('oath', 2, 0), 'While you are below half health, you take 10% less damage');
   assert.equal(words('thieftaker', 1, 0), 'Your weapon and arrows deal 8% more damage to enemies below half health');
   assert.equal(words('thieftaker', 2, SET_STAGE_MAX), `A kill marks the nearest other enemy within ${MARK_METRES} m for ${MARK_SECONDS} s. Your weapon deals 40% more damage to it`);
-  assert.equal(words('orcsbane', 1, 0), `Each enemy hit on you gives a stack for ${BLOOD_SECONDS} s, up to ${BLOOD_STACKS}: +3% weapon damage per stack`);
+  assert.equal(words('orcsbane', 1, 0), `Each enemy hit on you adds 3% weapon damage for ${BLOOD_SECONDS} s, up to ${BLOOD_STACKS} times`);
   assert.equal(words('orcsbane', 2, 0), 'A kill gives you a ward that blocks the next 10 damage you take. Recovers in 60 s');
   assert.equal(words('orcsbane', 2, SET_STAGE_MAX), 'A kill gives you a ward that blocks the next 40 damage you take. Recovers in 30 s');
   // the world's rolls: a win's set sigil, a weapon's join, the Broker's shelf - the four alone

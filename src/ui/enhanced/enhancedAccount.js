@@ -487,7 +487,7 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
     const box = el('div', 'acctwear acctpatreon');
     box.append(el('span', 'fieldlabel', 'Patreon'));
     const row = el('div', 'acctwearrow');
-    if (p.linked) row.append(el('span', 'acctpatreonstate', titles.length ? t('account.patreon.linked', 'Linked - {titles}', { titles: titles.map((k) => TITLE_TEXT[k] ?? k).join(', ') }) : t('account.patreon.noTier', 'Linked - no tier yet')));
+    if (p.linked) row.append(el('span', 'acctpatreonstate', titles.length ? t('account.patreon.linked', 'Linked - {titles}', { titles: titles.map((k) => TITLE_TEXT[k] ?? k).join(', ') }) : t('account.patreon.noTier', 'Linked. No rank yet')));
     if (typeof p.link === 'string' && p.link.startsWith('https://')) {
       const a = keyedAs(el('a', 'act', p.linked ? t('account.patreon.refresh', 'Refresh') : t('account.patreon.link', 'Link Patreon')), 'patreon:link');
       a.href = p.link;

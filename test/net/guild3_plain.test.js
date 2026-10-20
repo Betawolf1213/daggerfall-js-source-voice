@@ -50,8 +50,8 @@ test('GUILD3a a chapter\'s rank 9 is its Master\'s CHAIR and its rank 8 a COUNCI
   assert.equal(seatLineOf({ f: FIGHTERS, region: ANTICLERE, seat: 'master' }), 'You hold the Master\'s chair of the Fighters Guild in Anticlere.');
   assert.equal(seatLineOf({ f: MAGES, region: ANTICLERE, seat: 'officer' }, false), 'You no longer hold a council chair of the Mages Guild in Anticlere.');
   assert.deepEqual(seatLinesOf(null, [{ f: FIGHTERS, region: ANTICLERE, seat: 'officer' }]), ['You hold a council chair of the Fighters Guild in Anticlere.']);
-  assert.equal(bookCappedLine([FIGHTERS]), 'The Fighters Guild keeps ranks 8 and 9 for its chapters\' Masters and councils, won by Merit - your rank there is 7.');
-  assert.equal(bookCappedLine([FIGHTERS, MAGES]), 'The Fighters Guild and the Mages Guild keep ranks 8 and 9 for their chapters\' Masters and councils, won by Merit - your rank there is 7.');
+  assert.equal(bookCappedLine([FIGHTERS]), 'The Fighters Guild keeps ranks 8 and 9 for its chapters\' Masters and councils, won by Merit. Your rank there is 7.');
+  assert.equal(bookCappedLine([FIGHTERS, MAGES]), 'The Fighters Guild and the Mages Guild keep ranks 8 and 9 for their chapters\' Masters and councils, won by Merit. Your rank there is 7.');
   assert.deepEqual(chapterRollLines(FIGHTERS, { strength: 50, seats: [{ seat: 'officer', name: 'Bryn' }] }),
     ['The chapter of the Fighters Guild here is Steady (Strength 50).', 'The Master\'s chair stands empty.', 'Its council: Bryn.']);
   assert.deepEqual(chapterRollLines(FIGHTERS, { seats: [{ seat: 'master', name: 'Alda' }, { seat: 'officer', name: 'Bryn' }, { seat: 'officer', name: 'Cael' }] }),
@@ -73,7 +73,7 @@ test('GUILD3a a chapter\'s rank 9 is its Master\'s CHAIR and its rank 8 a COUNCI
 });
 
 test('GUILD3a silver in every sentence a player reads - a siege\'s Honour, a struck Charter\'s refund, the day\'s reset - never "Marks" (mutants: each sentence)', () => {
-  assert.equal(siegeHonourLine({ marks: 50, xp: 2000 }), 'Your Honour: 50 silver, 2,000 Renown, one Spoils of War roll');
+  assert.equal(siegeHonourLine({ marks: 50, xp: 2000 }), 'Your Honor: 50 silver, 2,000 Renown, one Spoils of War roll');
   const seat = { key: 1, name: 'Anticlere', region: ANTICLERE, tier: 'palace' };
   assert.equal(chronicleLine({ kind: 'strike', week: 5, data: { guild: { name: 'The Silver Hand', tag: 'SH' }, refund: 8000 } }, seat),
     'In week 5, Anticlere was struck from the registry, and the Silver Hand <SH>\'s Charter with it - its claim fee of 8,000 silver refunded.');

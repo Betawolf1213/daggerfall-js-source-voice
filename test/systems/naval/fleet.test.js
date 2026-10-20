@@ -578,7 +578,7 @@ test('REFIT-ORES at the Fleet: a metal tier refused under her captain\'s level, 
   row = host.offer(1).rows.find((r) => r.id === 'guns');
   assert.deepEqual(row.next.mats.map((m) => [m.kind, m.n, m.have, m.melt]), [['steel', 4, 4, 0], ['iron', 10, 10, 0]], 'the steel ingots counted as Iron too');
   assert.equal(row.afford, false);
-  assert.equal(host.act(1, 'refit', 'guns').text, 'Not enough materials. One item can\'t count for two requirements.');
+  assert.equal(host.act(1, 'refit', 'guns').text, 'Not enough materials. One item cannot count for two requirements.');
   assert.equal(materialCount([s.pack], 'steel'), 4, 'nothing taken');
   assert.deepEqual(w.paid, [], 'nothing paid');
   s.pack.length = 0;

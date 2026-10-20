@@ -121,7 +121,7 @@ export const SOCIAL_CONFIRM_MS = 4000;
  *  on two machines out of three: F is a rebindable action (systems/inputActions.js SocialInteract, and a player who
  *  had already spent F keeps it and gets the action UNBOUND), and a phone has no F at all. The roster row is the one
  *  door that is always there, so it is named first and the key is named by what it does. */
-export const NO_FRIENDS_TEXT = 'No friends yet. Click a name in the chat roster, or use the interact key on a player.';
+export const NO_FRIENDS_TEXT = 'No friends yet. Click a name in the chat roster, or press the interact key on a player.';
 /** The words for no party. */
 export const NO_PARTY_TEXT = 'You are not in a party.';
 /** The note a rate-gated act leaves (net/online.js sendSocial answered false: the act never left this machine).
@@ -219,14 +219,14 @@ export function armsWhy(h) {
   if (h.field === h.border) return 'a border unlike the field';
   const ink = h.charge ?? h.border;
   if (ink === h.field || (h.division && h.division !== 'plain' && ink === h.field2)) return 'a device that stands out from the field';
-  if (h.division && h.division !== 'plain' && (h.field2 === h.field || h.field2 === HERALDRY_UNHELD)) return 'two different field colours, never Ash';
-  if (h.division && h.division !== 'plain' && h.field2 === h.border) return 'a border unlike either field colour';   // AUDIT GUILD2 G13
+  if (h.division && h.division !== 'plain' && (h.field2 === h.field || h.field2 === HERALDRY_UNHELD)) return 'two different field colors, never Ash';
+  if (h.division && h.division !== 'plain' && h.field2 === h.border) return 'a border unlike either field color';   // AUDIT GUILD2 G13
   return 'arms the rules allow';
 }
 /** AUDIT SILVER-WAYS A3: the day's guild deeds, as the Guild tab says them (marksLaw.js MARKS_FAUCETS.deed). */
 export const guildDeedsText = (n, max) => `Guild deeds today: ${Math.max(0, Number(n) || 0)} of ${max}. When ${MARKS_FAUCETS.deed.members} members who joined at least ${Math.round(MARKS_FAUCETS.deed.tenureS / 86_400)} days ago defend the same town or close the same gate, the treasury earns ${marksText(MARKS_FAUCETS.deed.amount)}.`;
 /** GUILD1d: a treasury ledger line's verb - a deposit and a withdrawal, and the hall's own moves (0043's `moved_kind`). */
-export const GUILD_LEDGER_WORDS = Object.freeze({ deposit: 'put in', withdraw: 'took out', hall: 'bought the hall for', 'hall-sale': 'sold the hall for', 'hall-piece': 'took down a hall piece - back into the treasury:', rename: 'renamed the guild for', grant: 'awarded the guild' });   // AUDIT2 GUILD2: a rename's line read "put in" - a payment out said as one in; GUILD-GRANT: the operator's award (tools/grantGuildGold.mjs)
+export const GUILD_LEDGER_WORDS = Object.freeze({ deposit: 'put in', withdraw: 'took out', hall: 'bought the hall for', 'hall-sale': 'sold the hall for', 'hall-piece': 'took down a hall piece, returned to the treasury:', rename: 'renamed the guild for', grant: 'awarded the guild' });   // AUDIT2 GUILD2: a rename's line read "put in" - a payment out said as one in; GUILD-GRANT: the operator's award (tools/grantGuildGold.mjs)
 /** AUDIT GUILD1d R5: a Drakes ledger line's verb - a heraldry changed is the treasury paying, never a deposit. */
 export const GUILD_MARKS_LEDGER_WORDS = Object.freeze({
   deposit: 'put in', withdraw: 'took out', heraldry: 'changed the guild\'s arms for',   // AUDIT GUILD3 W6: the page is "Arms"
@@ -804,7 +804,7 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
         // gathering cannot mend is said first - an old hub, a held round - before "Gather the party first".
         const why = !st.outdoors ? 'Step outside' : !st.hub ? 'Needs the server\'s next update'
           : st.held ? 'The party is still on its way' : !st.gathered ? 'Gather the party first' : null;
-        r = personRow({ name: 'Travel together', sub: 'Choose a destination on the travel map. Party members gathered with you are asked to come along.' });
+        r = personRow({ name: 'Travel together', sub: 'Choose a destination on the travel map. The party gathered with you is asked to come along.' });
         r.append(btn('Travel map', { enabled: !why, why, run: () => { resumeParty = true; j.openMap?.(); } }));   // PARTY-READY: back to the round once the map closes
       }
     } else if (st.round) {
@@ -1713,11 +1713,11 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
     tiles('Field', 'division', HERALDRY_DIVISIONS, h.division ?? 'plain',
       (x) => shieldSvg(asDrawn(x === 'plain' ? { division: 'plain', field2: null } : { division: x, field2: h.field2 ?? freeColour([h.field, ink(), h.border]) }), { size: 28 }),
       (x) => HERALDRY_DIVISION_NAMES[x], (x) => { h.division = x; h.field2 = x === 'plain' ? null : h.field2 ?? freeColour([h.field, ink(), h.border]); });
-    swatches('Field colour', 'field', h.field, (k, t) => { t.field = k; if (t.field2 === k) t.field2 = freeColour([k, ink(t), t.border]); });
-    if ((h.division ?? 'plain') !== 'plain') swatches('Second colour', 'field2', h.field2, (k, t) => { t.field2 = k; });
+    swatches('Field color', 'field', h.field, (k, t) => { t.field = k; if (t.field2 === k) t.field2 = freeColour([k, ink(t), t.border]); });
+    if ((h.division ?? 'plain') !== 'plain') swatches('Second color', 'field2', h.field2, (k, t) => { t.field2 = k; });
     swatches('Border', 'border', h.border, (k, t) => { t.border = k; });
     tiles('Device', 'device', HERALDRY_DEVICES, h.device, (x) => shieldSvg(asDrawn({ device: x }), { size: 28 }), heraldryDeviceName, (x) => { h.device = x; });
-    swatches('Device colour (matches the border unless chosen)', 'charge', ink(), (k, t) => { t.charge = k === t.border ? null : k; });
+    swatches('Device color (matches the border unless chosen)', 'charge', ink(), (k, t) => { t.charge = k === t.border ? null : k; });
     out.push(el('div', 'dfsocial-empty', v.heraldry ? `A change costs ${marksText(HERALDRY_CHANGE_DRAKES)} from the silver treasury.` : 'The first choice is free.'));
     const acts = el('div', 'dfsocial-acts');
     const raise = liveBtn(v.heraldry ? 'Change it' : 'Raise it', () => {

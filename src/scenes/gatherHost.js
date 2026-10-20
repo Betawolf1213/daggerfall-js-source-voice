@@ -933,7 +933,7 @@ export function createGatherHost(deps) {
         if (crossed.length) {
           const at = crossed[crossed.length - 1];
           hud.banner(`${rankName(at)} ${k?.title(profession) ?? professionName(profession)}`);
-          if (at === 50 || at === 100) hud.toast('You can now choose a specialisation on the Professions page (pause menu > Stats).');
+          if (at === 50 || at === 100) hud.toast('You can now choose a specialization on the Professions page (pause menu > Stats).');
         }
       }
       try { k?.answered?.(d, (t) => hud.toast(t), { hauled }); } catch (e) { console.warn('[gather] an answer', e); }   // PROF8: a trophy into the pack; HAUL-CARDS: `hauled` - its card said the goods (a Motherlode's silver on it)

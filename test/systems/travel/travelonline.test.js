@@ -53,8 +53,8 @@ test('TRAVEL-ONLINE by source: the world loads the mod through modSetting (the r
   assert.match(w, /travelOptions = travelOptionsOn \? createTravelOptions\(\{/);
   const menu = read('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /const ONLINE_TRAVEL_VENDORS = Object\.freeze\(\['travel-options'\]\);/);
-  assert.match(menu, /const ONLINE_TRAVEL_NOTE = 'On for everyone online: every trip over land is travelled, and ships sail only from ports\.[^']*';/);
-  assert.match(menu, /Travel Options is on for everyone, so every trip over land is travelled and ships sail only from ports\./, 'the pane\'s own line names it');
+  assert.match(menu, /const ONLINE_TRAVEL_NOTE = 'On for everyone online: every trip over land is traveled, and ships sail only from ports\.[^']*';/);
+  assert.match(menu, /Travel Options is on for everyone, so every trip over land is traveled and ships sail only from ports\./, 'the pane\'s own line names it');
   // AUDIT TRAVEL-ONLINE T7: the floor under the switches - online a trip over land never reaches fast travel's teleport
   // AUDIT IT1 W3: a driver's trip never meets this floor - openImmersiveMap's own onTravel calls fastTravelTo
   assert.match(w, /if \(isOnlinePage\(\) && !opts\?\.travelShip\) \{ townTalk\.say\(ONLINE_LAND_TRAVEL_REFUSAL\); hudFade\.clearFade\(\); \} else fastTravelTo\(pick, opts, computed\);/);

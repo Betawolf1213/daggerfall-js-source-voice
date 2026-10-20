@@ -412,7 +412,7 @@ test('PROF4 pages: the Workbench at a Furniture Store - the saws for the logs he
   press('Small Table');   // PIN MOVED (CRAFT2): the pattern - in the wood the last craft here was made of, held
   assert.match(text(), /Small Oak Table - rank 10/);
   assert.match(text(), /Quality chances: Crude 20% \| Standard 60% \| Fine 20%\. They get better the further your rank \(10\) is above the recipe's \(10\)\. Draw the plane true to the grain to raise the result one quality\./);   // PLAIN-ODDS
-  assert.match(text(), /Use a Heartwood for a plank: one quality better \(1 stored\)/);
+  assert.match(text(), /Use a Heartwood for a plank one grade better \(1 stored\)/);
   const box = [...root.querySelectorAll('input')].find((i) => i.type === 'checkbox' && /Heartwood/.test(i.parentNode?.textContent ?? ''));
   box.checked = true; box.onchange();
   assert.match(text(), /wood:heartwood 1 \/ 1/, 'the Heartwood in a plank\'s place');
@@ -437,7 +437,7 @@ test('PROF4 pages: the Workbench at a Furniture Store - the saws for the logs he
   } finally { globalThis.performance.now = realPerf; }
   await tick(); await tick();
   assert.deepEqual(crafted.at(-1), ['table-small:oak', true, true], 'drawn true: a clean pass, the Heartwood asked');
-  assert.equal(planeWord({ clean: true, seconds: 2 }), 'A clean pass - true to the grain.');
+  assert.equal(planeWord({ clean: true, seconds: 2 }), 'A clean pass, true to the grain.');
   assert.equal(planeWord({ clean: false, seconds: 0.4 }), 'Too quick. Draw the plane slowly.');
   await press('Quick craft');
   assert.deepEqual(crafted.at(-1).slice(0, 2), ['table-small:oak', false]);
@@ -458,7 +458,7 @@ test('PROF4 pages: the Workbench at a Furniture Store - the saws for the logs he
   smith.onclick();
   root.remove(); root = el('div'); document.body.append(root);
   drawProfessionsPage(root, () => {}, kit);
-  assert.doesNotMatch(root.textContent, /comes later|not practised/);
+  assert.doesNotMatch(root.textContent, /comes later|not practiced/);
   const weaponsmith = [...root.querySelectorAll('button')].find((b) => b.textContent.startsWith('Weaponsmith'));
   assert.equal(weaponsmith.disabled, false, 'at rank 50 the smith chooses');
   assert.match(root.textContent, /Steel; the chain/);

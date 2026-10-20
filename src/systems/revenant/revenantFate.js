@@ -142,7 +142,7 @@ export function beginYield(player, f, { now = Date.now(), rolls = Math.random } 
   const r = revenantYielded(player, f.entity);
   if (!r) return null;
   f.trophy = revenantTrophy(r, { entity: f.entity, level: player?.level ?? 1, rolls });
-  const ev = revenantMomentEvent('yield', r, player?.name, { body: 'Beaten, it awaits your judgement. Go to it to kill it or spare it.', archive: f.archive, rolls });
+  const ev = revenantMomentEvent('yield', r, player?.name, { body: 'Beaten, it awaits your judgment. Go to it to kill it or spare it.', archive: f.archive, rolls });
   f.yieldEvent = ev;
   return ev;
 }

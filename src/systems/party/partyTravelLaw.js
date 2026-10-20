@@ -109,7 +109,7 @@ export const PARTY_TRAVEL_TEXT = Object.freeze({
   called: 'The leader called off the journey.',
   off: 'The journey is off.',
   late: 'The party was not ready in time. The journey is off.',
-  moved: 'Travel vote cancelled: you moved too far from where it started.',
+  moved: 'Travel vote canceled. You moved too far from where it started.',
   stay: 'You stay behind.',
   lost: 'You were too far from the leader to travel with the party.',
   busy: 'Close the open window first.',

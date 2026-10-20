@@ -160,7 +160,7 @@ export function openWaypointMenu(o) {
     box.append(kinds);
   }
   // the colour
-  box.append(el('label', 'wpm-label', 'Flag colour'));
+  box.append(el('label', 'wpm-label', 'Flag color'));
   const sw = el('div', 'wpm-swatches');
   const swatches = {};
   for (const c of WAYPOINT_COLORS) {

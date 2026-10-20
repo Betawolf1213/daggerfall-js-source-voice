@@ -58,8 +58,8 @@ export function createFleetHost(deps) {
   const csa = () => deps.csa?.() ?? null;
   const naval = () => deps.naval?.() ?? null;
   const pack = () => deps.pack?.() ?? [];
-  /** The boats of mine standing, by number. */
-  const placed = () => (csa()?.AllBoats ?? []).filter((b) => b?.uid);
+  /** The boats of mine standing, by number - never a booked ship's (PASSAGE: her master's, no ship of the Fleet's). */
+  const placed = () => (csa()?.AllBoats ?? []).filter((b) => b?.uid && !b.charter);
   const partsOf = (uid) => pack().find((it) => it?.templateIndex === BOAT_PARTS_TEMPLATE && it.UID === uid) ?? null;
   /** A laid-up ship's stand-in: what the sea fight's state and the yard read of a boat - her number, hull, whether she
    *  has hands, and her laid-up hold (Come Sail Away's PackedCargoes under her number, live). */
@@ -341,7 +341,7 @@ export function createFleetHost(deps) {
       if ((deps.gold?.() ?? 0) < row.next.gold) return said(false, `The shipwright asks ${row.next.gold} gold.`);
       const lists = [pack(), at.boat?.Cargo?.Items ?? []];
       for (const m of row.next.mats) if (materialCount(lists, m.kind) < m.n) return said(false, `The shipwright needs ${m.n} ${m.label} (you have ${m.have}).`);
-      if (!materialsFor(lists, row.next.mats)) return said(false, t('naval.refit.short', 'Not enough materials. One item can\'t count for two requirements.'));   // REFIT-ORES: a steel ingot counted for Steel and Iron both
+      if (!materialsFor(lists, row.next.mats)) return said(false, t('naval.refit.short', 'Not enough materials. One item cannot count for two requirements.'));   // REFIT-ORES: a steel ingot counted for Steel and Iron both
       takeAllMaterials(lists, row.next.mats);   // AUDIT 2: as materialsFor tried them
       deps.pay?.(row.next.gold);
       addRefit(uid, row.id);

@@ -150,7 +150,7 @@ function picture(el, cls, r, box, rerender) {
 /** How long yet, in the words a roster uses. */
 export function restWords(until, now) {
   const h = Math.ceil(Math.max(0, until - now) / 60);
-  return h <= 1 ? 'Recovering - within the hour' : `Recovering - ${h} hours`;
+  return h <= 1 ? 'Recovering. Back within the hour' : `Recovering - ${h} hours`;
 }
 
 /** RVN11 (bible/12-Enhanced-AI/Feud-Arc.md 22.4): its loyalty - a bar (the kit's bone tone) and its word, the number on
@@ -189,7 +189,7 @@ function gearSheet(el, r, rerender, kindName) {
   const kind = kindName?.(r.mobileType) ?? t('rvn.gear.itsKind', 'Its kind');
   box.append(el('span', 'cmp-sub', armed
     ? t('rvn.roster.kitCaps', 'At Rank {rank} it can wear up to {metal} and {tier} pieces. An empty slot keeps its own gear.', { rank: ROMAN[rank], metal: metalName(GEAR.METAL_CAP[rank]), tier: tierWord(GEAR.RARITY_CAP[rank]) })
-    : t('rvn.roster.kitCharm', '{kind} can\'t use weapons or armour, but it can wear a charm.', { kind })));
+    : t('rvn.roster.kitCharm', '{kind} can\'t use weapons or armor, but it can wear a charm.', { kind })));
   const grid = el('div', 'cmp-gear');
   const worn = new Set(wornGear(r).map(([, it]) => it));
   for (const s of GEAR_SLOTS) {
@@ -289,7 +289,7 @@ function errandSheet(el, r, rerender, now) {
   box.append(list);
   // AUDIT RVN D13: every number its constant's; F1: online, what carries it on
   box.append(el('span', 'cmp-foot', t('rvn.roster.abroadLaw', 'Danger runs from I to V. Its rank and gear improve its odds. Its haul goes to your purse, your pack and your Materials Bag. A hard-won mission brings back {pct}% of the haul, and it must rest after. Up to {n} can be abroad at once.', { pct: Math.round(ERRAND.HARD_SHARE * 100), n: ERRAND.MAX })));
-  if (sharedClockOn()) box.append(el('span', 'cmp-foot', t('rvn.roster.abroadLived', 'Online, mission time passes only while you play. Resting, waiting or travelling doesn\'t speed it up.')));
+  if (sharedClockOn()) box.append(el('span', 'cmp-foot', t('rvn.roster.abroadLived', 'Online, mission time passes only while you play. Resting, waiting or traveling doesn\'t speed it up.')));
   return box;
 }
 
@@ -356,7 +356,7 @@ function row(el, r, { now, rerender, meter, here, kindName, stars }) {
       call.onclick = () => { const no = callRevenant(r.id, now); _notice = no ? { id: r.id, text: no } : null; rerender(); };
       acts.append(call);
     }
-    for (const [kind, label, tip] of [['gear', t('rvn.roster.gear', 'Gear'), t('rvn.roster.gearTip', 'Give it a weapon, armour or a charm from your pack')], ['errand', t('rvn.roster.mission', 'Mission'), t('rvn.roster.missionTip', 'Send it abroad to bring back loot')]]) {   // RVN-GEAR, RVN-ERRAND
+    for (const [kind, label, tip] of [['gear', t('rvn.roster.gear', 'Gear'), t('rvn.roster.gearTip', 'Give it a weapon, armor or a charm from your pack')], ['errand', t('rvn.roster.mission', 'Mission'), t('rvn.roster.missionTip', 'Send it abroad and it comes back with a haul')]]) {   // RVN-GEAR, RVN-ERRAND
       const open = _sheet?.id === r.id && _sheet.kind === kind;
       const b = keyed(el('button', `act${open ? ' on' : ''}`, label), `cmp-${r.id}-sheet-${kind}`);
       b.setAttribute?.('aria-expanded', open ? 'true' : 'false');   // AUDIT RVN D15
@@ -423,7 +423,7 @@ export function drawCompanionsPage(detail, rerender, { el, divider, meter = null
     detail.append(list);
   }
   if (!withYou.length && !away.length) {
-    detail.append(el('p', 'px-note', 'No revenant is sworn to you. Defeat one of your revenants and spare it when it yields to make it yours.'));
+    detail.append(el('p', 'px-note', 'No revenant is sworn to you. Defeat one of your revenants and it will yield. Spare it, and it is yours.'));
   }
   const n = retinue().length;   // AUDIT (2026-10-02): the release's advice only where it is the way on
   if (n) detail.append(el('p', 'cmp-foot', `Sworn to you: ${n} of ${REVENANT_RETINUE_MAX}.${n >= REVENANT_RETINUE_MAX ? ' Release one to make room for another.' : ''}`));

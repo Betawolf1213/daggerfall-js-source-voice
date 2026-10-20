@@ -117,7 +117,7 @@ test('SD2c the taverns: "Any news?" in the city it stands by, while it has risen
   const s1 = ses();
   assert.equal(sdRumor(r, HOLLOW, T0 + M, here, s1, { rolls: () => 0 }), sdRumorLine('Copperham', sdMarksOf(1)[0]));
   assert.equal(s1.numAnswersGivenTellMeAboutOrRumors, 1, 'the person\'s answer spent');
-  assert.equal(sdRumorLine('Copperham'), 'They say the air goes brass-coloured past the walls of Copperham at dusk, and a bell rings where there is no bell.');   // SD18c: a Hollow with no Ending
+  assert.equal(sdRumorLine('Copperham'), 'They say the air goes brass-colored past the walls of Copperham at dusk, and a bell rings where there is no bell.');   // SD18c: a Hollow with no Ending
   assert.equal(sdRumor(r, HOLLOW, T0 + M, here, ses(), { rolls: () => SD_RUMOR_CHANCE }), null, 'the chance not met');
   assert.equal(sdRumor(r, HOLLOW, T0 + M, { px: 301, py: 200 }, ses(), { rolls: () => 0 }), null, 'not in its city');
   assert.equal(sdRumor(r, HOLLOW, T0 + M, { px: 300, py: 201 }, ses(), { rolls: () => 0 }), null);

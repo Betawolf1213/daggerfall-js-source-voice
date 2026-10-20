@@ -267,7 +267,7 @@ function build(doc, hooks) {
   // dock holds this in its place: no journey, how to set out, and the map.
   const idle = el('div', 'tview-idle');
   const idleText = el('div', 'tview-idle-text');
-  idleText.append(el('span', 'tview-label', 'Journey'), el('span', 'tview-idle-name', 'Not travelling'),
+  idleText.append(el('span', 'tview-label', 'Journey'), el('span', 'tview-idle-name', 'Not traveling'),
     el('span', 'tview-idle-sub', 'Click a town or the land to set out'));
   idle.append(idleText);
   dock.append(idle);

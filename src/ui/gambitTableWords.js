@@ -95,7 +95,7 @@ export function gambitGuide(online = null) {
       ? { head: t('cards.kingsGambit.guide.onlineGold.head', 'Stake gold'), body: t('cards.kingsGambit.guide.onlineGold.body', 'At the gold table both players stake the same amount: {stakes} gold. The winner takes the pot, both stakes. If you lose, forfeit, leave mid-game or let the clock run out, the other player takes it.', { stakes: GAMBIT_ONLINE_STAKES.join(', ') }) }
       : { head: t('cards.kingsGambit.guide.onlineFun.head', 'For fun'), body: t('cards.kingsGambit.guide.onlineFun.body', 'No gold changes hands at this table. A game between two registered accounts counts on the season board.') },
   ] : [
-    { head: t('cards.kingsGambit.guide.regular.head', 'Choose a regular'), body: t('cards.kingsGambit.guide.regular.body', 'Each regular plays at a tier. A higher tier means a bigger army, more potions, fewer blunders and a higher minimum stake.') },
+    { head: t('cards.kingsGambit.guide.regular.head', 'Choose a regular'), body: t('cards.kingsGambit.guide.regular.body', 'Each regular plays at a rank. A higher rank means a bigger army, more potions, fewer blunders and a higher minimum stake.') },
     { head: t('cards.kingsGambit.guide.stake.head', 'Put down your stake'), body: t('cards.kingsGambit.guide.stake.body', 'Stake {a}, {b} or {c} times the regular\'s minimum stake. If you win, you get back {pay} times your stake. If you lose, forfeit or stand up mid-game, the regular keeps it.', { a, b, c, pay: GAMBIT_WIN_PAYS }) },
   ];
   return [
@@ -118,11 +118,11 @@ export function gambitWords(online = false) {
       { term: t('cards.kingsGambit.words.pot.term', 'Pot'), meaning: t('cards.kingsGambit.words.pot.meaning', 'Both stakes, held by the table. The winner takes all of it.') },
       { term: t('cards.kingsGambit.words.season.term', 'Season board'), meaning: t('cards.kingsGambit.words.season.meaning', 'The season\'s ranking of rated games.') },
       { term: t('cards.kingsGambit.words.rated.term', 'Rated game'), meaning: t('cards.kingsGambit.words.rated.meaning', 'A game between two registered accounts. It moves both players\' ratings.') },
-      { term: t('cards.kingsGambit.words.grandmaster.term', 'Grandmaster (the title)'), meaning: t('cards.kingsGambit.words.grandmaster.meaning', 'The title held by the season board\'s top player. It is separate from the regulars\' Grandmaster tier.') },
+      { term: t('cards.kingsGambit.words.grandmaster.term', 'Grandmaster (the title)'), meaning: t('cards.kingsGambit.words.grandmaster.meaning', 'The title held by the season board\'s top player. It is separate from the regulars\' Grandmaster rank.') },
     ] : []),
     { term: t('cards.kingsGambit.words.regular.term', 'Regular'), meaning: t('cards.kingsGambit.words.regular.meaning', 'A tavern local at this table who plays against you.') },
     { term: t('cards.kingsGambit.words.tier.term', 'Tier'), meaning: t('cards.kingsGambit.words.tier.meaning', 'How strong a regular plays: Amateur, Seasoned, Veteran or Grandmaster.') },
-    { term: t('cards.kingsGambit.words.blunder.term', 'Blunder'), meaning: t('cards.kingsGambit.words.blunder.meaning', 'A careless move a regular makes now and then. Lower tiers blunder more often.') },
+    { term: t('cards.kingsGambit.words.blunder.term', 'Blunder'), meaning: t('cards.kingsGambit.words.blunder.meaning', 'A careless move a regular makes now and then. Lower-ranked regulars blunder more often.') },
     { term: t('cards.kingsGambit.words.leastStake.term', 'Minimum stake'), meaning: t('cards.kingsGambit.words.leastStake.meaning', 'The smallest stake a regular will play for.') },
     { term: t('cards.kingsGambit.words.stake.term', 'Stake'), meaning: t('cards.kingsGambit.words.stake.meaning', 'The gold you bet. The table holds it until the game ends.') },
     { term: t('cards.kingsGambit.words.forFun.term', 'For fun'), meaning: t('cards.kingsGambit.words.forFun.meaning', 'A game with no gold at stake: any game against a regular online or one who has paid out all they will tonight, and any game at a no-gold table.') },
@@ -147,7 +147,7 @@ export function gambitWords(online = false) {
     { term: t('cards.kingsGambit.words.reach.term', 'Reach'), meaning: t('cards.kingsGambit.words.reach.meaning', 'The cells a piece can move to now.') },
     { term: t('cards.kingsGambit.words.range.term', 'Range and Target'), meaning: t('cards.kingsGambit.words.range.meaning', 'The cells a piece can strike, and a foe it can strike now.') },
     { term: t('cards.kingsGambit.words.fallen.term', 'Fallen'), meaning: t('cards.kingsGambit.words.fallen.meaning', 'The pieces a side has lost.') },
-    { term: t('cards.kingsGambit.words.forfeit.term', 'Forfeit'), meaning: t('cards.kingsGambit.words.forfeit.meaning', 'Giving up the game. You lose your stake.') },
+    { term: t('cards.kingsGambit.words.forfeit.term', 'Forfeit'), meaning: t('cards.kingsGambit.words.forfeit.meaning', 'You give up the game and lose your stake.') },
   ];
 }
 
@@ -272,8 +272,8 @@ export function pieceInfoLines(/** @type {{name: string, mine: boolean, regular:
 /** The panel's header by its stage (14.5). */
 export function gambitTitle(/** @type {{phase: string, round?: number, mine?: boolean, name?: string}} */ m) {
   if (m.phase === 'battle') return m.mine ? t('cards.kingsGambit.title.mine', 'Round {round} - your turn', { round: m.round }) : t('cards.kingsGambit.title.theirs', 'Round {round} - {name}\'s turn', { round: m.round, name: m.name });
-  if (m.phase === 'army') return t('cards.kingsGambit.title.army', 'The King\'s Gambit - your army');
-  if (m.phase === 'over') return t('cards.kingsGambit.title.over', 'The King\'s Gambit - the result');
+  if (m.phase === 'army') return t('cards.kingsGambit.title.army', 'The King\'s Gambit: your army');
+  if (m.phase === 'over') return t('cards.kingsGambit.title.over', 'The King\'s Gambit: the result');
   return t('cards.kingsGambit.title.setup', 'The King\'s Gambit');
 }
 /** The sections' heads. */
@@ -311,9 +311,9 @@ export const GAMBIT_PRESS = Object.freeze({
   get holdem() { return t('cards.kingsGambit.press.holdem', 'Play Hold\'em instead'); },
   get iliac() { return t('cards.kingsGambit.press.iliac', 'Play Iliac Hand instead'); },
 });
-export const pressStart = (/** @type {number} */ stake) => t('cards.kingsGambit.press.start', 'Start the battle - stake {stake, number} gold', { stake });
+export const pressStart = (/** @type {number} */ stake) => t('cards.kingsGambit.press.start', 'Start the battle and stake {stake, number} gold', { stake });
 export const pressForfeit = (/** @type {number} */ stake) => t('cards.kingsGambit.press.forfeit', 'Forfeit - lose {stake, number} gold', { stake });
-export const pressStandCost = (/** @type {number} */ stake) => t('cards.kingsGambit.press.standCost', 'Stand up - lose {stake, number} gold', { stake });
+export const pressStandCost = (/** @type {number} */ stake) => t('cards.kingsGambit.press.standCost', 'Stand up and lose {stake, number} gold', { stake });
 export const pressDrink = (/** @type {string} */ piece, /** @type {number} */ healed) => t('cards.kingsGambit.press.drink', 'Give {piece} a potion (+{healed})', { piece, healed });
 export const pressStrike = (/** @type {string} */ name) => t('cards.kingsGambit.press.strike', 'Strike {name}', { name });
 /** The press the Hold'em and Iliac Hand panels offer (section 3). */
@@ -406,7 +406,7 @@ export const barkInvite = () => t('cards.kingsGambit.bark.invite', 'Care for a g
 export function barkEnd(/** @type {boolean} */ regularWon, /** @type {number} */ roll) {
   const k = Math.max(0, Math.min(2, Math.floor((Number(roll) || 0) * 3)));
   if (regularWon) {
-    if (k === 0) return t('cards.kingsGambit.bark.won1', 'A fine game, and mine.');
+    if (k === 0) return t('cards.kingsGambit.bark.won1', 'A fine game. And mine.');
     return k === 1 ? t('cards.kingsGambit.bark.won2', 'Better luck next time.') : t('cards.kingsGambit.bark.won3', 'The board is mine tonight.');
   }
   if (k === 0) return t('cards.kingsGambit.bark.lost1', 'Well played.');
@@ -507,7 +507,7 @@ export function onlineEnd(over, name) {
 /** The relay's refusals of the room's own (a sit, a Ready), as the panel says them - the law's are refusalWords'. @param {string} word */
 export function onlineRefusal(word) {
   switch (word) {
-    case 'link': return t('cards.kingsGambit.online.refuse.link', 'Cannot reach the table. Try again in a moment.');
+    case 'link': return t('cards.kingsGambit.online.refuse.link', 'The table could not be reached. Try again in a moment.');
     case 'other game': return t('cards.kingsGambit.online.refuse.otherGame', 'Another game is being played at this table.');
     case 'taken': return t('cards.kingsGambit.online.refuse.taken', 'That seat is taken.');
     case 'full': return t('cards.kingsGambit.online.refuse.full', 'Two players already sit at this board.');
@@ -540,7 +540,7 @@ export const stakePick = (/** @type {number} */ n) => t('cards.kingsGambit.onlin
 /** What a stake wins and loses, said under the picks before it is put down (10.7). @param {number} n */
 export const stakeOnline = (n) => t('cards.kingsGambit.online.stake.what', 'Win, and you take the pot: {pot, number} gold. Lose, forfeit or leave mid-game, and the other player takes it.', { pot: n * 2 });
 /** Why a pick is closed: the purse short of it, or the other player's stake another. */
-export const stakeShort = (/** @type {number} */ gold) => t('cards.kingsGambit.online.stake.short', 'You have {gold, number} gold - too little for this stake.', { gold });
+export const stakeShort = (/** @type {number} */ gold) => t('cards.kingsGambit.online.stake.short', 'You have {gold, number} gold, too little for this stake.', { gold });
 export const stakeDiffers = (/** @type {string} */ name, /** @type {number} */ n) => t('cards.kingsGambit.online.stake.differs', '{name} stakes {n, number} gold. Match it to play.', { name, n });
 /** AUDIT KG II B16: why the realm would not hold a stake, in its own word (net/card/cardStakes.js stake) - nothing held, or
  *  an answer lost (then the stake is settled when the realm answers). @param {{error?: string, unknown?: boolean}|null|undefined} r */
@@ -549,7 +549,7 @@ export function stakeRefusal(r) {
   switch (r?.error) {
     case 'realm-gold': return t('cards.kingsGambit.online.stakeRefuse.purse', 'Your purse cannot cover that stake.');
     case 'cards-closed': return t('cards.kingsGambit.online.stakeRefuse.closed', 'The realm is not holding stakes right now.');
-    case 'offline': return t('cards.kingsGambit.online.stakeRefuse.offline', 'Cannot reach the realm. Try again.');
+    case 'offline': return t('cards.kingsGambit.online.stakeRefuse.offline', 'The realm could not be reached. Try again.');
     case 'busy': return t('cards.kingsGambit.online.stakeRefuse.busy', 'The realm is busy. Try again in a moment.');
     case 'cards-kept-full': return t('cards.kingsGambit.online.stakeRefuse.keptFull', 'You have too many stakes waiting to be settled. Visit the tables where you placed them first.');
     default: return t('cards.kingsGambit.online.stakeRefuse.other', 'The realm could not take your stake. Try again.');
@@ -569,7 +569,7 @@ export const boardChampion = (/** @type {string|null} */ name) => (name
 // AUDIT KG II D10: a guest is signed in and never rated - the words say registered, with the counts' plurals
 export const boardNeeds = (/** @type {number} */ games, /** @type {number} */ foes) => t('cards.kingsGambit.online.board.needs', 'The season\'s top player earns the Grandmaster title after playing {games, plural, one {# rated game} other {# rated games}} against {foes, plural, one {# different player} other {# different players}}. Only games between two registered accounts count.', { games, foes });
 export const boardReading = () => t('cards.kingsGambit.online.board.reading', 'Loading the season board...');
-export const boardFailed = () => t('cards.kingsGambit.online.board.failed', 'Could not load the season board. Try again.');
+export const boardFailed = () => t('cards.kingsGambit.online.board.failed', 'The season board could not be loaded. Try again.');
 /** What the season's claims say, in the town's talk (scenes/world.js gambitClaims). */
 export const seasonCounted = (/** @type {number} */ rating, /** @type {number} */ delta) => t('cards.kingsGambit.season.counted', 'The King\'s Gambit: the game counts on the season board. Your rating is now {rating} ({change}).', { rating, change: `${delta >= 0 ? '+' : ''}${delta}` });
 /** A game kept and not counted - AUDIT KG II D11: by the cap that held it (the service's `cap`), the pair's day or its

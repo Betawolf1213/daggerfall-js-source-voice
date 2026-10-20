@@ -380,7 +380,7 @@ test('CARDS9/10 the house at its card table: a pack bought from the purse at the
   poor.press('Buy a card pack');
   assert.equal(poor.playerEntity.goldPieces, 1, 'nothing taken');
   assert.equal(poor.playerEntity.items.length, 0);
-  assert.match(poor.said.at(-1), /your purse is short\.$/);
+  assert.match(poor.said.at(-1), /Your purse is short\.$/);
   poor.api.standFromCardTable();
   // the other game
   h.press('Play Iliac Hand');

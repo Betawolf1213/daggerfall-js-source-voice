@@ -141,7 +141,7 @@ test('KG3 the army: the 46 units in the law\'s order - a cost\'s ties by the nam
   assert.equal(m.army.unit.cost, '6 points');
   assert.equal(m.army.kingLine, 'Your king: Camaron, King of Sentinel (free). If your king falls, you lose.');
   const start = m.actions.find((a) => a.id === 'start');
-  assert.deepEqual([start.label, start.enabled, start.kind], ['Start the battle - stake 100 gold', true, 'primary']);
+  assert.deepEqual([start.label, start.enabled, start.kind], ['Start the battle and stake 100 gold', true, 'primary']);
   const empty = gambitHudModel({ phase: 'army', army: [], crown: 'sentinel', regulars: REGS, regular: 1, stakeMult: 2, purse: 5000 });
   assert.deepEqual([empty.actions.find((a) => a.id === 'start').enabled, empty.actions.find((a) => a.id === 'start').why, empty.next], [false, refusalWords('empty'), nextStep('addUnit')]);
   const fun = gambitHudModel({ phase: 'army', army, regulars: REGS, regular: 1, friendly: true, purse: 0 });
@@ -173,7 +173,7 @@ test('KG3 the turn: the title by whose turn, the chips (pips and words, both sid
   fell.pieces = fell.pieces.filter((p) => p.id !== mine.id);
   assert.equal(battle(fell, { dealt: dealtCounts }).battle.chips[3].text, 'Your fallen 1', 'a fallen piece counted against the deal');
   const forfeit = m.actions.find((a) => a.id === 'forfeit'), stand = m.actions.find((a) => a.id === 'stand');
-  assert.deepEqual([forfeit.label, forfeit.kind, stand.label, stand.kind], ['Forfeit - lose 100 gold', 'warn', 'Stand up - lose 100 gold', 'warn']);
+  assert.deepEqual([forfeit.label, forfeit.kind, stand.label, stand.kind], ['Forfeit - lose 100 gold', 'warn', 'Stand up and lose 100 gold', 'warn']);
   assert.equal(battle(st, { armed: 'forfeit' }).actions.find((a) => a.id === 'forfeit').label, 'Press again to confirm');
   // the regular's turn
   const out = gambitAct(st, 0, { type: 'end' });
@@ -330,7 +330,7 @@ test('KG3 THE LOG: a line for every event the law and the session say - the play
   for (const [e, line] of lines) assert.equal(logLine(e, x), line, e.t);
   for (const t of ['over', 'result']) assert.equal(logLine({ t }, x), null, `${t}: the log keeps the decision's own line`);
   for (const [e] of lines) assert.ok(logLine(e, x).length <= 64, `one line of the panel: ${logLine(e, x)}`);
-  assert.equal(barkEnd(true, 0), 'A fine game, and mine.');
+  assert.equal(barkEnd(true, 0), 'A fine game. And mine.');
   assert.equal(barkEnd(false, 0.99), 'Again, and I will have you.');
 });
 
