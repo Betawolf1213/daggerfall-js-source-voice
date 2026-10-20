@@ -240,21 +240,36 @@ anywhere, the zone included - a pack stored there from inside the zone is outsid
 boat placed on the zone's water keeps her hold through a death there, where CART-AWAY drops a cart parked on the zone's
 ground.
 
-- **Pinned**: `test/systems/fb1019f_companiondrop.test.js` (5: who is at the side on the real naval host's party and the
-  real feud's sworn - the zone's party the same one; the law over the record - each pack's pieces by worth and by name,
+- **Pinned**: `test/systems/fb1019f_companiondrop.test.js` (7: who is at the side on the real naval host's party and the
+  real feud's sworn, a hostile record listed ahead of them never at her side (AUDIT FB1019f B3) - the zone's party the same one; the law over the record - each pack's pieces by worth and by name,
   what never changes hands kept, the coin's share, the kept piece, the full remains, the twin record by default; through
   the real account service and back into the live lists; no send-off - the boat's picker, send away, an errand, a gift
   outside the zone, the one waiting outside free to go, all as before outside the zone; carried off in the zone - the
-  hand's pack into mine, the sworn one's pack and kit handed over and said once, neither outside it). PIN MOVED:
+  hand's pack into mine, the sworn one's pack and kit handed over and said once, neither outside it, and one carried off empty-handed saying nothing
+  (B4); a tab from before the word refused a take of the packs, a seizure taking it whole, a fall with no pack's piece taken
+  as before, and a companion's coin alone said to the risen (B2, B5)). PIN MOVED:
   `test/net/int9_wild_ref.test.js` (the game's take names its companions' packs), `test/systems/revenant/revenant_audit.test.js`
-  (the slots' hold never the one at my side in the zone). `tools/mutants/fb1019f_companiondrop.json` (46: 45 dead, 1
+  (the slots' hold never the one at my side in the zone), `int9_wild_ref`, `fb1014_pvpescrow` and `fb1015_cartaway` (the call
+  read through `wildFallWords`, B2). `tools/mutants/fb1019f_companiondrop.json` (59: 58 dead, 1
   equivalent - a pack's coin put back, as the cart's, never runs: the gold is the second record and always fits).
   Re-aimed by content (each re-judged: dead): `fb1015_cartaway.json`'s CART-AWAY-the-gold-share-still-taken (onto
   `takeWildGold(entity, { cart: withCart, packs })`), `revenantaudit.json`'s AUDIT-A5-the-pack-destroyed (the release's
   hand-back, now `handBack`), `rvngear.json`'s RVN-GEAR-release-forgets (the release's own line - the knock's hand-over
-  reads the same pack and kit), `auditwatchkit_net.json`'s LD-H-stow-empty-said (`stowPack`'s boat line).
-  ACCOUNT DEPLOY: the law is the Worker's leaf (already on `account-deploy.yml`'s list) and its answer one field
-  (`gold.packs`) - no relay frame, no migration; the site and the service deploy together on the merge.
+  reads the same pack and kit), `auditwatchkit_net.json`'s LD-H-stow-empty-said (`stowPack`'s boat line); for B2, `fb1014_pvpescrow.json`'s
+  ESCROW-the-escrow-asked-of-any-room and `fb1015_cartaway.json`'s CART-AWAY-the-host-says-nothing (both dead).
+  ACCOUNT DEPLOY (acct163, with PURSE-MEND - AUDIT FB1019f A1): the Worker's leaf, one field of its answer (`gold.packs`)
+  and one of the fallen's ask (`packs` 1) - no relay frame, no migration; the two deploy in either order.
+
+A TAB FROM BEFORE IT (AUDIT FB1019f B2). The fallen's own ask says its game reads the packs (`packs` 1, `wildDropLaw.js`
+WILD_FALL_PACKS, said beside the wagon's word by `wildDeath.js` wildFallWords). A game from before the word read every
+piece not the cart's as the bag's and no pack's coin: handed a take of a pack, it stripped a piece of the bag (a worn one
+too) that matched the companion's, and left his piece and his coin in his pack after the record had dropped them - his
+coin back twice at its next checkpoint. A take of a pack (a piece or a coin share, `wildTakesPacks`) asked without the
+word is refused (`not-found`, the old build's word every shipped game shows as "The game may need updating"), and nothing
+moves. The take is never made smaller: a missing word that shrank the drop would let any tab keep its companions' packs by
+leaving it out. A fall at another's hand so refused is taken whole by the killer's seizure after the grace; a death to a
+foe drops nothing until the tab says the word, as a game that never asks keeps already. A risen player whose take was a
+companion's coin alone is told so (`wildDeath.js` wildTookAny, B5).
 
 THE ZONE'S WORDS A LEAF OF THEIR OWN (found at the integration). The fix first had the companions read
 `WILD_REVENANTS_MAX` and `wildSwornAtSide` from `wildDropLaw.js`, and STEED-KEPT had a revenant's take read
@@ -1288,15 +1303,18 @@ needs a faction's flag. An offline character's purse is its own device's save, w
 reaches. And an online lot the old arithmetic overpaid left a purse above nothing, with no finding; the budget's measure
 (`realmReview.mjs gains`) shows the gain, and the mend is not for it.
 
-- **Pinned**: `test/net/fb1019f_pursemend.test.js` (6), over the real Worker and migrations (`test/accountDb.mjs`). Its
+- **Pinned**: `test/net/fb1019f_pursemend.test.js` (8), over the real Worker and migrations (`test/accountDb.mjs`). Its
   record is a made character's save (`save.js snapshotPlayer`) after the field's sale as 0.0.235 paid it (150 Daedric
   claymores, -7,489,216 into the purse), checkpointed so the judge holds it. It pins the mend (the purse and the letter,
   the record, the row, the hold lifted and the strike kept, the faucet, the finding, the next checkpoint clean); the holds
   that stand (the purse beside a ring no craft made, the third strike's timed hold, staff's own); the refusals (403 and
   401, eight bodies 400, `mend-moved`, `mend-not-negative`, 404, the dead); once a ticket, twice at once, and a ticket of
   either kind; the command and `findings`' purse; and the leftovers (the bands past 2^31 against the halves and below
-  it against DFU's shifts; the Reforge's purse on both pages). PIN MOVED: none.
-  `tools/mutants/fb1019f_pursemend.json` (24, all dead). Re-aimed by content: `fb1014_summonrepair.json`'s
+  it against DFU's shifts; the Reforge's purse on both pages); the lift guarded on the judgement it read (staff's hold laid while a mend is in
+  flight moves nothing, `seq`, and asked again it mends under staff's hold - AUDIT FB1019f A2); a mend of 0 gold giving no
+  letter and no faucet row and lifting the hold (A3). PIN MOVED: none.
+  `tools/mutants/fb1019f_pursemend.json` (28, all dead). ACCOUNT DEPLOY: acct163, with COMPANION-DROP; no migration
+  (AUDIT FB1019f A1). Re-aimed by content: `fb1014_summonrepair.json`'s
   SUMMON-REPAIR-no-finding, -the-row-out-of-the-batch and -the-ticket-unread onto the shared `staffMend` and the repair's
   `steps(seq)`; -the-gold-as-coin and -the-gold-unchecked-by-the-tool onto their own copies (the mend's law and door
   carry the same text now). That list re-run: 16, all dead.

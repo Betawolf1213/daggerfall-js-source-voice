@@ -405,7 +405,7 @@ none: either way the cart is taken as it was, so the two deploy in either order.
 
 COMPANION-DROP (2026-10-19, section 4) is the Worker's leaf (`src/systems/wild/wildDropLaw.js`, already on
 `account-deploy.yml`'s list), one field of its answer, `gold.packs`, and one of the fallen's ask, `packs` (1: its game
-reads the packs - AUDIT FB1019f B2) - no relay frame, no migration: an ACCOUNT DEPLOY (acct162), which the merge runs.
+reads the packs - AUDIT FB1019f B2) - no relay frame, no migration: an ACCOUNT DEPLOY (acct163), which the merge runs.
 A tab from before it - one left open across the deploy, or the desktop app's own bundled game until it updates - says
 no `packs`, and its take read every `took` piece not the cart's as the bag's and no pack's coin: handed a take of a
 companion's pack, it stripped a piece of the bag bearing his piece's marks and kept his piece and his coin where the
