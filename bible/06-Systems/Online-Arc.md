@@ -9681,7 +9681,8 @@ DECOR1d's panel).
   push out the lamps nearest the player. A TEXTURE.210 light hangs where the room's own light of that record hangs
   (the flame, not the foot); any other flat's light hangs at its middle, a model's at its origin. A move or a
   removal takes the old bucket, batch, animation and light with it at once. A piece moved or removed while it was
-  still loading never stands.
+  still loading never stands. A model landing round the player is solid only once they are clear of it (DECOR-CLEAR,
+  below).
 - **Whose pieces stand.** An online home's are the account service's. They are asked for once a visit, after the
   room is restored, and every visitor sees the room its owner furnished; an answer that lands after the visit ended
   stands nothing. The offline house's and ship's are the save's. They are written into the room's scene (in the
@@ -10022,6 +10023,52 @@ four real interiors crossed no face. Pinned in `test/scenes/decor/decorshell.tes
 
 Not done: the first push off a face near a triangle's diagonal nudges the eye sideways (2.2 cm in the audit's probe
 flying forward 0.1 m under a ceiling) - cosmetic.
+
+**DECOR-CLEAR (FIELD BUGS 2026-10-19f) - a piece never closes on the player.** Two players' private reports: walking
+into an online home, its furniture moved and boxed them in; inside one, talking to its hired trader, a table stood round
+them and held them. Daggerfall Unity lays an interior out before the body stands in it
+(`PlayerEnterExit.TransitionInterior`: `interior.DoLayout`, "This needs to be done first", then the landing and
+`SetStanding`), so no solid ever lands on it. An online home is our own departure from that: it stands as Daggerfall
+furnished it, its owner's pieces are asked of the account service after the entry (askDecorList's retries reach 30 s,
+and the homes' layouts landing ask again later still), each is solid only once its model loads, and the owner's
+taken-out list hides the room's own pieces when it lands - while a hired trader, a flat, stands before any model.
+Nothing asked where the player stood, and the collider holds both faces of every triangle: a body a wardrobe lands round
+is held by its inner walls (on the real motor, four seconds of walking and jumping every way moved it 0 to 0.12 m), and
+a body under a piece 0.9 m tall or lower is thrown onto its top. The same for a piece of the room's own put back
+(`decorBase.js` show - the service's list, the owner's Put back) and for a yard's piece landing round a passer-by.
+- **The gate** (`player/lateSolid.js`, one a collider - `lateSolidsOf`; `03-World/Player-Arc.md` DECOR-CLEAR): a
+  placed model's triangles and a room's own put back go into the collider through it. One that would CLOSE ON THE BODY
+  (`lateSolidCloses`: its box meeting the capsule's, and a face deeper in the capsule than the resolve's skin or the
+  body's feet or head inside a closed part of it, at the body's own height) is WITHHELD - drawn, met by the eye at its
+  box, not solid: the body walks out of it as out of air. The room's draw (`decorRoom.js` draw - the host's per-frame decor call) hands the gate the body
+  every frame, and the first frame the body is clear of it, it stands, solid behind them. A body resting on a piece or
+  leaning on it stands at its radius, inside the skin, so a piece stood again under the feet (the room's list again, a
+  recentre) stands at once. A withheld piece stays withheld through a recentre, moved with it; one taken down or taken
+  out while withheld is forgotten with it.
+- **The body** is the motor itself (`body: player` - never the eye's low-passed feet), handed by the hosts to the
+  room's placed pieces (`worldModes.js`). A yard's pool hands none since ROCK-CLEAR (`03-World/Player-Arc.md`): it goes by
+  the world collider's gate, which the world frame settles with the walking body. The room's own furniture takes
+  none: the gate guards the body the placed pieces' draw last handed it, over the same collider - so `decorBase.js`
+  and `interiorContext.js` are unchanged in their wiring, and createWorldModes grew by one entry, its last line of room.
+  A gate no body has settled yet, and a host that hands none (a bench, a test), stand every piece at once, as before.
+  Another player in the home walks on their own client, whose own gate holds the piece back from them; this collider
+  moves this client's body alone. A placed door (HOME-DOORS) hangs through the action system, as the room's movers
+  do, and is not this gate's. The decorator's flying eye keeps its own rule (AUDIT2 DECOR-SHELL 8, above).
+- Four hosts: `worldModes.js` WIRED (a home's placed pieces, and through their draw its own furniture); `world.js` WIRED
+  (the yards, through ROCK-CLEAR's frame settle); `exterior.js` (the bench) and `dungeonContext.js` stand no placed piece - nothing late to gate.
+- **Why not hold the entry until the list answers.** The list can answer 30 s on, or after the homes' layouts land;
+  every model then loads on its own; the owner puts a piece back, and a yard stands, with no entry at all. A held
+  fade would bound one arrival of the five, and keep every visitor at the door for the service's round trip. The gate
+  stands where every late solid passes.
+
+Pinned: `test/scenes/decor/fb1019f_decorclear.test.js` (7, on the real motor and collider: out of a wardrobe and solid
+behind; a low piece round the feet and a piece stood again under them; a piece too big for any face to be near, and the
+crouched body's height, a canopy over the head; a recentre and a removal while withheld; the room's own put back; the
+gate's body laws; the hosts' wiring). PIN MOVED: `test/server/decor1.test.js` (the room's host's createDecorRoom call, and
+its `body: player`). `tools/mutants/decorclear.json` (26 since ROCK-CLEAR re-aimed it: 22 dead, 4 equivalent as recorded
+- the gate's box test first, which spares the probe's build alone, and three forgettings the collider's own hook now
+makes); re-aimed by content: `basehide.json`'s two show/hide records,
+`fb1001_yard.json`'s three recentre records, `unstuckout.json`'s UO-held-by-the-head-unasked.
 
 ### BASE-HIDE (2026-09-26, Mac: "Remove bought houses decor - the base game decor isnt easy to decorate around when u want more in depth house") - the room's own furniture, taken out
 

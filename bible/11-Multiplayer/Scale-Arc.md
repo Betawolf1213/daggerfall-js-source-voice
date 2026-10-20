@@ -3284,7 +3284,7 @@ all dead (+14: the mint before the ban, off a replica, binding-only, the first-p
 unminted and unread, the save's and the beat's session and ban unread or unsent, a timeout forgetting, a registration
 keeping, the realm's offline keep).
 
-## THE OVERLOAD OF 2026-10-19: LEAN-READS (2026-10-19, this branch - acct163, migrations 0135-0139, no drop; acct159, acct160, acct161 then acct162 and 0133-0137 then 0134-0138 on its branch, renumbered past QL12, WB14, JUNGLE-WOODS and NAME-WORDS (HANDLE-RENAME's 0134) at the merges)
+## THE OVERLOAD OF 2026-10-19: LEAN-READS (2026-10-19, this branch - acct164, migrations 0135-0139, no drop; acct159, acct160, acct161, acct162 then acct163 and 0133-0137 then 0134-0138 on its branch, renumbered past QL12, WB14, JUNGLE-WOODS, NAME-WORDS (HANDLE-RENAME's 0134) and PURSE-MEND at the merges)
 
 The owner: "Can you check the server. I think certain actions like gathering and menus are having issues", then, handed
 the Cloudflare token: "Use it", then "Do everything. No band aids. No short fixes."
@@ -3426,17 +3426,17 @@ the Cloudflare token: "Use it", then "Do everything. No band aids. No short fixe
 
 ### Deploying it
 
-- The migrations run before the new Worker; the old Worker (main's: acct160 when the audit read it, acct161 - JUNGLE-WOODS - and
-  acct162 - NAME-WORDS - since, the same witness and strike code; AUDIT LEAN-READS 2 C7/D6) works on the new schema - it reads none of the new columns, and the triggers keep every new table through its writes,
+- The migrations run before the new Worker; the old Worker (main's: acct160 when the audit read it, acct161 - JUNGLE-WOODS -,
+  acct162 - NAME-WORDS - and acct163 - PURSE-MEND - since, the same witness and strike code; AUDIT LEAN-READS 2 C7/D6) works on the new schema - it reads none of the new columns, and the triggers keep every new table through its writes,
   its strikes among them. One thing it must not do there: STRIKE A DISPUTED OR SPLIT KEY - its strike is one DELETE,
   which turns such a key's confirmation over at each confirmer (2 A1/D1: 1,516 rows some 13-20 s on D1); a key whose
   answers agree costs 28 ms. No strike between the migrations and the Worker, nor after a rollback. Rollback is
-  Worker-first: acct162 may stand on these migrations for as long as it must, the triggers moving every version; acct163
-  reads what it finds there as stale when it returns. The reverse is not safe - dropping the triggers while acct163 runs
+  Worker-first: acct163 may stand on these migrations for as long as it must, the triggers moving every version; acct164
+  reads what it finds there as stale when it returns. The reverse is not safe - dropping the triggers while acct164 runs
   leaves `late`, the confirmations and the three boards stale. A Time Travel restore to the bookmark the deploy prints
   takes away every player's write since it, not the migrations alone: once the old Worker is live again, a forward migration
   that drops the new triggers, tables and column undoes them and loses nothing (these migrations only add). And with
-  acct163 still live a restore takes away tables it reads (500s): put the code back first, then restore, then redeploy -
+  acct164 still live a restore takes away tables it reads (500s): put the code back first, then restore, then redeploy -
   from the reverted tree, or the deploy applies 0135-0139 again (D6). A migration recorded in `d1_migrations` is never
   applied again: a fix to one of these files once it has run is a new migration.
 - The migrations hold the primary in separate requests (2 D3, measured on a production-shaped copy of every table they
@@ -3555,7 +3555,7 @@ pinned, or answered with its reason.
 | C4 | A lone slow window opens the shed | answered, measured: the service's own 30 s windows over three days - 342 of 8,640 over the line, 266 of them in 12 slowdowns of 2.5 minutes or more (10-18 01:49 for 15 minutes, up to 5,216 ms a statement; 14:18 for 31; each night's 00:00, below); the 41 lone windows some 0.6% of the time, each at some 1 s a statement where the healthy median is 89 ms | - |
 | C5 | The pin's clock was the machine's | the pin's own | `slow_shed` |
 | C6 | A read sent while a hold ran, timing out after it, doubled the hold again | a read counts only where it was sent after the hold | SLOWSHED-client-late-read-counted |
-| C7 | Deploying it named acct158 as the old Worker | the Worker live before this one: acct160 at the audit, acct161 and acct162 since JUNGLE-WOODS and NAME-WORDS merged | - |
+| C7 | Deploying it named acct158 as the old Worker | the Worker live before this one: acct160 at the audit, acct161, acct162 and acct163 since JUNGLE-WOODS, NAME-WORDS and PURSE-MEND merged | - |
 | C8 | A trip that threw was never counted | counted as it ends, whatever it answered | SLOWSHED-trip-only-where-answered |
 | C9 | An invocation the platform cancels never reaches the shed's ear | answered: the requests that finish open it - an overload's are slow, not cancelled alone | - |
 | C10 | The window was summed again on every request | running sums | SLOWSHED-sums-keep-the-gone |
@@ -3611,9 +3611,10 @@ the traders' and the yards' kept rows.
   refused bookmark refuses any first statement - and `scale4d`: the town's built row); the clock's quiet minute
   (`auditscale` D7: eleven statements a minute and thirty-four an hour); a heartbeat timed out holds the reads
   (`sessionsign_client`); the deploy's smoke calls (`home2`: twelve, the kept rows asked of D1, a shed read passed);
-  ACCOUNT_VERSION acct163 (acct159, acct160, acct161 then acct162 on its branch, renumbered past QL12, WB14, JUNGLE-WOODS
-  and NAME-WORDS at the merges; its migrations 0133-0137 then 0134-0138, past QL12's 0133 and HANDLE-RENAME's 0134) and every pin and mutant record on the version before it
-  (acct158 at the branch; acct159, acct160, acct161 and acct162 at the merges), each pin's PIN MOVED history kept; AUDIT LEAN-READS 2: the schema's tables (`accountworker`), the
+  ACCOUNT_VERSION acct164 (acct159, acct160, acct161, acct162 then acct163 on its branch, renumbered past QL12, WB14,
+  JUNGLE-WOODS, NAME-WORDS and PURSE-MEND at the merges; its migrations 0133-0137 then 0134-0138, past QL12's 0133 and
+  HANDLE-RENAME's 0134) and every pin and mutant record on the version before it (acct158 at the branch; acct159, acct160,
+  acct161, acct162 and acct163 at the merges), each pin's PIN MOVED history kept; AUDIT LEAN-READS 2: the schema's tables (`accountworker`), the
   yards' read (`primary_trips`, `scale4d`: the town's version and row). Records of earlier slices re-aimed by content at the code this
   one moved (audit_chap2, audit_chap3, auditlwii2_service, chap3a, d1load, homevendor, lw15, seat_replica, busy_gate,
   scale4f), all dead.
