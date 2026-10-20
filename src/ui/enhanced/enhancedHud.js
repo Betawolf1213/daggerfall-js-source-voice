@@ -861,8 +861,12 @@ function build(doc) {
   // and grows up from the caption (the block is anchored by its bottom), never down into the diamond
   const stat = el('div', 'hud-stat');
   bindStatEnding(stat);   // BUFF-END
+  // DIAMOND-HB: where the hotbar goes when Quick slots is set to Diamond (ui/enhanced/enhancedHotbar.js mountHotbarDock).
+  // `display: contents`, like the hotDock.
+  const gemDock = el('div', 'hud-gemdock');
   quick.append(stat, cap, diamond);
   root.append(quick);
+  quick.append(gemDock);
   // DEPARTURE 2 (see the header): the only listeners this readout owns.
   // Bound once, reading the LIVE options bag - a frame binds nothing.
   // AUDIT QS F8: a FINGER, not a mouse that happens to live on a
@@ -937,7 +941,7 @@ function build(doc) {
     stat, quickCap: cap, quickDiamond: diamond, top,   // UI3: the status widget, the caption it stands on, the diamond it may stand beside and the top block over it (its band is measured from them)
     renown, renownBox, renownFill, renownGhost, renownNum,
     breath, breathFill, grip, gripFill, gripLabel, readied, reticle, cross, centreWord, cornerWord,
-    quick, quickCells: cells, quickTags: tags, hotDock,
+    quick, quickCells: cells, quickTags: tags, hotDock, gemDock,
     spellChip: { chip: spellChip, tag: spellTag, img: spellGlyph, text: spellText, name: spellName, icon: spellIcon } };
 }
 
@@ -1026,10 +1030,31 @@ function wearUiPillar(doc, root) {
   else doc.documentElement?.style?.removeProperty?.('--ui-pillar');
 }
 
+/**
+ * FB1018f DUNGEON-DIGITS (Discord #bug-reports, Aspidichelon: "Usable items hotkeys do not function in dungeons - 1-9
+ * works outside, but not in dungeons"): THE HUD'S WORD UNDER A WINDOW, for a frame that never reaches drawHud.
+ *
+ * Under a window drawHud tells this HUD `hidden` and `paused` (ui/hud/hud.js's `paused: !!cursorActive`), and the
+ * hotbar keeps its keys off that word - its listener stands on the window's capture phase, ahead of every host's
+ * ladder, and stands down only while the frame last said the game is paused (AUDIT CONTRIB H1). Both dungeon hosts
+ * return above `drawFoes` while a window pauses the game, and `drawFoes` is the only place either reaches drawHud: so
+ * underground the bar heard the last frame of play for as long as the window stood, took every digit (the ten slots,
+ * 1-0) before the window could read one, and pressed its own slot behind it - the use-magic-item list's rows 1-9, and
+ * every other window's digits, dead, and slot 1's potion drunk through a paused game. The hosts' overlay branch
+ * already calls the HUD's hide door (`hideHudTextSurfaces`); it says this too now. The same word drawHud gives, by
+ * the same call: the HUD and its bar hidden, the bar's keys the window's. A HUD never built has nothing painted and
+ * no bar to hold a key. AUDIT FB1018f L2-5: the bar's keys now ask the host's own pause at the press
+ * (enhancedHotbar.js keysPaused) - this word hides the HUD, and holds the keys only on a page whose host handed none.
+ */
+export function hideEnhancedHud() {
+  if (!host) return;
+  drawEnhancedHud(null, 0, 0, { hidden: true, paused: true });
+}
+
 export function drawEnhancedHud(vitals, heading01, dt = 0, opts = {}) {
   const { hidden = false } = opts;
   if (typeof document === 'undefined') return;
-  if (!host) { parts = build(document); host = parts.root; mountHotbarDock(parts.hotDock); }
+  if (!host) { parts = build(document); host = parts.root; mountHotbarDock(parts.hotDock, parts.gemDock); }   // DIAMOND-HB: and the diamond's corner
   tickHudLayout(document);   // HUD-MOVE: starts once - the player's layout and the lock; its sweeps are its own interval's (PERF-HUD1)
   wearUiPillar(document, host);   // RETRO-UI: inside retro mode's pillarbox, as the held map stands (DISC25-B)
   tickFoeTarget(dt);

@@ -66,6 +66,7 @@ import { regenBarred } from './courtRules.js';   // WBX6: the Burning Court keep
 import { ITEM_TEMPLATES, templateByIndex, mendOrder, mintCondition, TRANSPORT_HORSE, TRANSPORT_SMALL_CART } from './item/itemTemplates.js';   // MEND-WORN: the mend order's one home, and the smith's refusal
 import { WEAPONS } from '../characters/weapons.js';   // MEND-WORN / MEND-ARMOUR: a tick is the classic Dagger's share
 import { repoolWeapon } from './conditionRepair.js';   // MEND-WORN: a weapon on its row's pool moves before a mend on the pool, as before a wear
+import { creditOwnMend } from './item/foundMark.js';   // MEND-THIRD: the ring's mend credited past a found piece's mark
 export { ENCHANTMENT_TYPES };
 
 /** EnchantmentSettings.ClassicType (DaggerfallUnityItem.cs:1316-1320).
@@ -500,7 +501,10 @@ const REGISTRY = new Map([
   [T.CastWhenStrikes, {
     flags: PAYLOAD.Strikes,
     strikes({ param, entity, target, damage, ctx }) {
-      if (!target || damage === 0) return null;
+      // AUDIT FB1018f L3-2: a blow its referee turns whole (a stand-in `warded` - the Warden's ward, the Remnant shut, the
+      // Spire's turned blows) DEALT nothing, and the class's own sourceDamage == 0 guard casts nothing and wears nothing for
+      // it (VAMPIRIC-WARD's reading, below) - its spell met the same turned body and landed nothing either
+      if (!target || damage === 0 || target.warded) return null;
       const record = ctx?.spellsByIndex?.()?.get?.(param);
       if (record) ctx?.applySpellToTarget?.(record, entity, target);
       return { durabilityLoss: DURABILITY_LOSS_ON_STRIKE };
@@ -555,8 +559,13 @@ const REGISTRY = new Map([
         entity.health = Math.min(entity.maxHealth, entity.health + 1);
       }
     },
-    strikes({ param, entity, damage }) {
-      if (param !== 1) return null;
+    strikes({ param, entity, damage, target }) {
+      // FIELD BUGS 2026-10-18f VAMPIRIC-WARD (Low_Poly_Gaming: "an exploit for heals if you have a vampiric weapon"): the damage
+      // DEALT - a blow a referee's ward turns whole (a stand-in `warded`: the Warden's ward, the Remnant shut, the Spire's turned
+      // blows - scenes/eliteGates/egFight.js turnStandIn) dealt nothing, and heals nothing, as the leech's own rule says
+      // (systems/loot/lootPowers.js lootStrike, AUDIT WORLD-REWARDS B3). DFU never meets one - its target is always the entity
+      // whose health the blow then takes - so this is VampiricEffect.cs's own law told what the blow dealt, no departure.
+      if (param !== 1 || target?.warded) return null;
       entity.health = Math.min(entity.maxHealth, entity.health + damage);
       return null;
     },
@@ -582,7 +591,9 @@ const REGISTRY = new Map([
       const it = repairsObjectsTarget(entity.items, { allowMagicRepairs: ctx?.allowMagicRepairs ?? false });
       if (!it) return;
       repoolWeapon(it);
+      const was = it.currentCondition;
       it.currentCondition = Math.min(it.maxCondition, it.currentCondition + repairsObjectsMend(it));
+      creditOwnMend(it, was);   // MEND-THIRD: the ring is its wearer's own mend - a third of it past a found piece's mark sells
     },
   }],
   /** AbsorbsSpells.cs - Held constant: IsAbsorbingSpells. */
@@ -779,6 +790,16 @@ const REGISTRY = new Map([
     unequipped: artifactHook('unequipped'),   // MACE-MAX: the Held bundle's removal (UnequipHeldItem) - ungated by the flags, as the dispatcher runs every row's
   }],
 ]);
+
+/** HELD-BASE (FIELD BUGS 2026-10-18f): WHETHER A POWER WORKS OFF THE BODY - its row answers the Used payload, the one a
+ *  piece in the pack fires (useItem.js's doItemEnchantmentPayloads(PAYLOAD.Used)). The rest are read on a worn piece
+ *  (Equipped, Held: computeEnchantmentMods walks equippedEnchantedItems) or on the blow it strikes - save the two that
+ *  weigh the piece itself (Feather Weight, Extra Weight: Enchanted, read wherever it lies), and Health Leech answers
+ *  Used as a cost, not a power (AUDIT FB1018f L1-4: latent - every regular MAGIC.DEF row is one power of six kinds, Cast
+ *  When Used, Held or Strikes, Vampiric, Absorbs Spells, Enhances Skill; a piece with ANY row this answers false for
+ *  takes a base a slot takes - loot.js powersNeedWearing). A piece no slot takes carries a worn power for nothing
+ *  (loot.js createRegularMagicItem). */
+export const worksUnworn = (e) => ((REGISTRY.get(e?.type)?.flags ?? 0) & PAYLOAD.Used) !== 0;
 
 function applyRepMod(entity, param, amount) {
   if (!entity.isPlayer) return;

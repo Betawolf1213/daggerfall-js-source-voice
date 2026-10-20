@@ -630,7 +630,8 @@ test('IF1: the four stride hosts ask ownsStride before the classic play and driv
   }
   // the exterior hosts hand the exterior arm's reads; the inside hosts the water arm's
   for (const src of [world, ext]) {
-    assert.match(src, /inside: false, inDungeon: false,\s*season, climateIndex: [^\n]*, tileMapIndex: _surf\.tileIndex \?\? -1,[^\n]*\n\s*waterWalking: _surf\.water === ON_EXTERIOR_WATER\.WaterWalking,/, 'AUDIT-IF F2: off terrain is -1, never the water tile');
+    // AUDIT PRECIP (PIN MOVED): the world host's season is the snow's under the feet on the snow lane (snowCoverHost.js footSeason)
+    assert.match(src, /inside: false, inDungeon: false,\s*season(?:: snowCover\.footSeason\(player\.pos, season\))?, climateIndex: [^\n]*, tileMapIndex: _surf\.tileIndex \?\? -1,[^\n]*\n\s*waterWalking: _surf\.water === ON_EXTERIOR_WATER\.WaterWalking,/, 'AUDIT-IF F2: off terrain is -1, never the water tile');
     assert.match(src, /swimming: !!player\.isPlayerSwimming, pos: player\.pos,/, 'PlayerEnterExit.IsPlayerSwimming, not the motor flag');
   }
   assert.match(wm, /inside: true, inDungeon: mode === 'dungeon',\s*centreY: player\.pos\[1\] \+ player\.height \/ 2, waterSurfaceY: mode === 'dungeon' \? \(_surf \?\? null\) : null,/);
@@ -658,7 +659,7 @@ test('IF1: the four stride hosts ask ownsStride before the classic play and driv
   assert.ok(existsSync(join(root, 'bible/06-Systems/Immersive-Footsteps.md')));
   assert.match(rd('bible/01-Overview/Active-Arcs.md'), /06-Systems\/Immersive-Footsteps\.md/);
   assert.match(rd('bible/01-Overview/Page-Index.md'), /06-Systems\/Immersive-Footsteps\.md/);   // PIN MOVED (WALLET1's merge of main, 2026-10-05): Home.md's page index moved, byte for byte, to its own page
-  assert.match(rd('bible/09-Testing/Testing.md'), /if1_immersivefootsteps\.test\.js/);
+  assert.match(rd('bible/09-Testing/Testing-Rows-2026-10-19.md'), /if1_immersivefootsteps\.test\.js/);
   const m = /(\d+) modules\s*\n?\s*live under\s*\n?\s*`src\/systems\/`/.exec(rd('bible/06-Systems/Systems.md'));
   assert.equal(Number(m[1]), readdirSync(join(root, 'src/systems'), { recursive: true }).filter((f) => f.endsWith('.js')).length, 'Systems.md counts src/systems/ live - IF1 put immersiveFootsteps.js in that count');
 });

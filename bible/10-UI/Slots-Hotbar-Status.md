@@ -377,3 +377,76 @@ save. A player who had chosen Diamond left no trace and moves to the hotbar with
 
 Pinned: `test/systems/hb_lycfree.test.js` (8). The diamond's own suites choose the diamond now that it is not the default
 (Testing.md's row names them).
+
+## DUNGEON-DIGITS - a dungeon window gets its digits (FIELD BUGS 2026-10-18f)
+
+> "Usable items hotkeys do not function in dungeons. 1-9 works outside, but not in dungeons for some reason." -
+> Aspidichelon, #bug-reports, over the use-magic-item list (each row numbered on the right)
+
+**The bar took them.** The hotbar listens on the window's capture phase, ahead of every host's ladder, and takes a key
+whose action is one of its ten slots (Digit1-Digit0 by default) - stopped, so nothing after it hears the key
+(`enhancedHotbar.js:"function onKey(e) {"`). It stands down while the HUD's last frame said the game is paused: drawHud
+hands it `paused: !!cursorActive` (AUDIT CONTRIB H1), and nothing else writes that word. The street, the fixed city and
+a building draw the HUD on every frame, a window up or not. Both dungeon hosts return above `drawFoes` while a window
+pauses the game, and `drawFoes` is their only drawHud, so underground the bar heard the last frame of play for the whole
+life of a window: it took every digit, and pressed its own slot behind the window through the doors that frame had
+handed it (the dungeon's quick use - a potion on slot 1 drunk). The list's own digits (`ui/listPicker.js` input) were
+never it. With the diamond the digits go through the host's key route, which a window owns.
+
+**The fix.** The HUD's hide door both dungeon branches already call (`ui/hud/hud.js` hideHudTextSurfaces, the context's
+`hideHudText`) says to the enhanced HUD what drawHud says under a window: `hideEnhancedHud` (`ui/enhanced/enhancedHud.js`)
+runs its frame with `hidden` and `paused`, so the HUD and its bar hide and the keys are the window's - the pad's
+crossbar too (its `inForce` reads the same word). The window gone, the next frame of play gives them back. A HUD never
+built answers nothing. No host gained a line.
+
+Left, said so: between a key that opens a window and the next frame the bar still holds the last frame's word, in every
+host. And the dungeon context's own drawHud reads its own slot alone (`cursorActive: !!activeOverlay`), so a street-slot
+window standing over ?world's dungeon arm (Recall's prompt) leaves the bar its keys - not proven to meet a window that
+reads digits.
+
+Pinned: `test/ui/hud/fb1018f_dungeondigits.test.js` (3). Mutants: `tools/mutants/fb1018f_dungeondigits.json` (11, all
+dead).
+
+## DIAMOND-HB - the diamond as part of the hotbar, Diamonds, hover + key (2026-10-18)
+
+> "fix the 4 style hotbar. And to make it so clicking an item and pressing a hotbar key adds it to that hotbar" -
+> LostMyLeg, Discord. RookieG asked for diamond-shaped slots on the ten-slot bar; LostMyLeg: "i prefer the squares tbh
+> but i can make it an option".
+
+**Diamond.** The Quick slots tile's Diamond now writes `quickbarStyle: 'diamond'`. That style is the hotbar
+(`systems/uiSkin.js` HOTBAR_STYLES, so `hotbarInForce` is true), showing only slots 1-4. They are laid out in d-pad
+order (1 top, 2 bottom, 3 left, 4 right) where the old diamond was, inside `.hud-quick`, at its size (`--qs-cell`,
+`--qs-box`). Filling, dragging, clearing, the keys and the press are the ten-slot bar's code
+(`src/ui/enhanced/enhancedHotbar.js`), so the two behave the same. The diamond is never a crossbar. Keys 5-0 are not
+taken while it is shown. Under a window it keeps its diamond shape at the phone size (the bar only shows there while
+something is dragged, PADPLUS5). The layout follows the tile and nothing else. The old QS diamond (hands from the equip table, two consumables, the cycling
+hold) is still there for Off, which keeps `quickbarStyle: 'quickbar'` and `quickslots: false`.
+
+An old save with `quickbarStyle: 'quickbar'` and the switch on had chosen Diamond. `systems/uiPrefs.js` loadPrefs
+moves it to `'diamond'`. Off saves are not touched, and neither is the HB-LYCFREE rev-1 migration.
+
+**Diamonds.** A fourth state on the tile: the ten-slot bar with diamond-shaped slots (`hotbarShape: 'diamond'`, declared
+on the Quick slots row). Hotbar sets it back to `'square'`, which is the default. As with the old diamond, slots are not
+rotated: the slot is clipped to a diamond with clip-path, which also limits the click area, and the frame is a clipped
+ring coloured through its background. The key sits at the top point and the count at the bottom point.
+
+**Dresses.** The rim colours are variables a dress sets on `.hb` (`--gem-rim`, `--gem-rim-empty`, `--gem-rim-active`,
+`--gem-rim-strike`), copied from how each dress coloured the old diamond's rim: the Plus kit's stone bevel with brass in
+hand (`src/ui/enhanced/enhancedFrame.js`), DFO Grimoire's gilded rim with yellow gold in hand
+(`src/ui/grimoireDress.js`). Under Grimoire a diamond slot drops the shelf box's border-image, which a diamond clip would
+cut at the corners, and takes the old diamond's wood ground. The Plus themes colour the slot ground as they colour the
+square slots (chip colour, Stone's marble). A rarity tier is the old diamond's tier gradient. Checked by rendering the
+square bar, Diamond and Diamonds with the real sheets under Slate, Stone, Ember and Grimoire.
+
+**Hover + key.** With the pack or the spellbook open, pressing a slot key puts the item or spell under the mouse on that
+slot. Pack rows (local only, not loot), worn panels and worn sockets carry `_hotbarItem`; spellbook rows carry
+`_hotbarSpell`. If nothing is under the mouse, the window's selection is used (`setHotbarPick`: the pack's selected item,
+the spellbook's selected spell). If there is neither, the key goes to the window as before. Text fields keep their keys.
+
+`hotbarShownSlotOf` replaces `hotbarSlotOf` in the pack's row chip, the item card button and the spellbook button, so
+something on slot 7 counts as not on the bar while the diamond shows four slots. "Add to hotbar" fills the first free
+shown slot.
+
+Pins moved: `test/systems/ft18_features.test.js` (four tiers), `test/systems/hb_lycfree.test.js` (Diamond stores
+`'diamond'`), `test/systems/qs2_tooltip.test.js` (the pack's import), `test/ui/enhanced/qs3_hud.test.js` (the row's
+covered prefs), `test/ui/enhanced/ui3_status.test.js` (the quickslot block's children include the diamond dock). New: `test/ui/enhanced/diamondhb_hotbar.test.js` (6).

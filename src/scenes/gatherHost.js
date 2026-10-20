@@ -185,7 +185,7 @@ export function leftWords(d) {
 export const storesWhereLine = (key, carrying = false) => (carrying ? BAG_WORDS.where   // BAG1: into the bag, then the pack
   : `Gathered goods go to your Stores, not your pack: the pause menu's Holdings > Stores${key ? ` (${key} opens your Professions)` : ''}.`);
 /** GATHER-SAID: an act that ended before its end - let go, walked off, a window over it, the dungeon left - nothing asked. */
-export const ACT_STOPPED_LINE = 'The gathering stopped before its end - nothing was taken.';
+export const ACT_STOPPED_LINE = 'The gathering stopped before its end. Nothing was taken.';
 /** A harvest the service did not answer, kept and asked again (net/profBook.js PROF_QUEUE_MS: ten minutes). */
 /** AUDIT PACK-OVER C: the over-weight line, said at most once in this long (ms). */
 export const OVER_SAID_MS = 10_000;
@@ -193,7 +193,7 @@ export const KEPT_LINE = 'The counting-house is slow to answer. Your gathering i
 /** GATHER-SAID: kept because the account is signed out ('auth', 'no-session') - asked again once there is a session. */
 export const KEPT_SIGNED_OUT_LINE = 'You are signed out. Your gathering is kept for ten minutes, and counted once you sign in.';
 /** A kept harvest let go unanswered: its ten minutes out, or the UTC day turned under it. */
-export const LAPSED_LINE = 'A gathering the counting-house never answered has lapsed - it was not counted.';
+export const LAPSED_LINE = 'A gathering the counting-house never answered has lapsed. It was not counted.';
 
 /** The shortest signed angle a - b, degrees in (-180, 180]. */
 export const wrapDeg = (d) => { let x = d % 360; if (x > 180) x -= 360; if (x <= -180) x += 360; return x; };
@@ -933,7 +933,7 @@ export function createGatherHost(deps) {
         if (crossed.length) {
           const at = crossed[crossed.length - 1];
           hud.banner(`${rankName(at)} ${k?.title(profession) ?? professionName(profession)}`);
-          if (at === 50 || at === 100) hud.toast('A specialisation may be chosen on the Professions page (the pause menu\'s Stats).');
+          if (at === 50 || at === 100) hud.toast('A specialization may be chosen on the Professions page (the pause menu\'s Stats).');
         }
       }
       try { k?.answered?.(d, (t) => hud.toast(t), { hauled }); } catch (e) { console.warn('[gather] an answer', e); }   // PROF8: a trophy into the pack; HAUL-CARDS: `hauled` - its card said the goods (a Motherlode's silver on it)
@@ -1087,7 +1087,7 @@ export function createGatherHost(deps) {
       if (act) return !click;   // AUDIT 29 D3: E during an act is the act's - never a door's or a loot's behind it (a click is clickTaken's)
       if (!target || !live() || book.state.open !== true) return false;
       const t = target;
-      noteFirstUse('foraging'); noteFirstUse('professions');   // TUT1: the first gather, and the trades it feeds
+      noteFirstUse('foraging'); noteFirstUse('professions'); noteFirstUse('crafting');   // TUT1: the first gather, and the trades it feeds - FB1018D CRAFT-HOWTO: and where its goods are worked
       const rows = rowsFor(t);
       const lit = deps.lit?.(menuKey(t)) ?? null;
       const chosen = lit != null ? rows.find((r) => r.id === lit) ?? null : null;
@@ -1339,9 +1339,9 @@ export function createGatherHost(deps) {
         const reach = m.reach ?? NODE_MARK_M;
         const d = Math.hypot(x - pos[0], z - pos[2]);
         if (!(d <= reach)) return;
-        const r = _markPool[used] ??= { key: '', profession: '', at: [0, 0, 0], w: 0, h: 0, d: 0, reach: 0 };
+        const r = _markPool[used] ??= { key: '', profession: '', at: [0, 0, 0], w: 0, h: 0, d: 0, reach: 0, pull: null };
         used++;
-        r.key = n.key; r.profession = k.professions[0]; r.at[0] = x; r.at[1] = y; r.at[2] = z; r.w = m.w; r.h = m.h; r.d = d; r.reach = reach;
+        r.key = n.key; r.profession = k.professions[0]; r.at[0] = x; r.at[1] = y; r.at[2] = z; r.w = m.w; r.h = m.h; r.d = d; r.reach = reach; r.pull = m.pull ?? null;   // AUDIT BANTHA1 TREE-3: a mark's own pull
         out.push(r);
       };
       const under = !!dungeon;

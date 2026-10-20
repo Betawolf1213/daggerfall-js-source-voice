@@ -632,6 +632,10 @@ export function egLordsWake(F, spec, now, out, ctx) {
     if (L.up2) continue;
     woke++;
     L.up2 = true; L.nextAt = now + EG_LORD_WAKE_MS; L.wokeAt = now; egSaid(L, L.ph, now);   // EG-ZJ: awake - its phase on the wire (0 asleep)
+    // AUDIT FB1018f L3-1: and said at once (`eph`, its first) - a screen holds a lord asleep until it hears a phase
+    // (net/eliteGates/egBodies.js egLordAsleep), and the whole fight's word that carried it came up to EG_STATE_EVERY_MS
+    // later: every blow the relay lands meanwhile, the screen turned
+    out.push({ k: 'eph', i: L.i, ph: L.ph });
     KITS[L.key]?.wake?.(F, spec, L, now, out, ctx);
   }
   if (!woke) return;
@@ -882,7 +886,7 @@ export function egLordHit(F, spec, L, sub, name, got, pose, now, here, out, ctx 
   L.hp = 0;
   if (egHas(L, EG_FL.mirror)) { egGone(F, [L], EG_GONE.slain, name, now, out); KITS[L.key]?.mirrorDown?.(F, L, now, out); return; }
   L.fellAt = now; egSaid(L, L.ph, now);   // EG-ZJ: its fall's instant on the wire (AUDIT EG V, lane1 #6: and the Twins' "Together" reads it)
-  endChallenge(F, L, now, out, false);   // AUDIT EG V (lane1 #1): a fallen lord's duel ends with it - its ring never stands ownerless
+  endChallenge(F, L, now, out, false, true);   // AUDIT EG V (lane1 #1): a fallen lord's duel ends with it - its ring never stands ownerless
   egSetFl(F, L, EG_FL.fell, true, out);
   // AUDIT EG IV (lane1 #1; sections 13.3 and 18): the fight falls when EVERY lord of it has - Clan Feud's champion beside the Court's
   // lord, the Twin Court's two, the Old Masters - and a pair under the Twins' law (egLordsPair) opens its window at the first fall
@@ -939,7 +943,7 @@ export const EG_LORD_PHASES = Object.freeze({
   seyth: Object.freeze([['The Mirrorcourt', 'Strike the true lord.'], ['The Long Night', 'Keep to the moon-shafts.']]),
   colossus: Object.freeze([['Paired Hearts', 'Break each pair together.'], ['Breakdown', 'It kneels. Strike now.']]),
   wyrm: Object.freeze([['Burning Perches', 'Clear the perch it leaves.'], ['Grounded', 'Beware its sweeping breath.']]),
-  garoth: Object.freeze([['The Clan Muster', 'Answer the honour duel.']]),
+  garoth: Object.freeze([['The Clan Muster', 'Answer the honor duel.']]),
 });
 /** Garoth's borrowed signature's order, by the signature (its name EG_GAROTH_SIG_CARDS'). */
 export const EG_GAROTH_SIG_ORDERS = Object.freeze({ ilthys: 'Break his banners.', morvayn: 'Stay close to your chain.', seyth: 'Strike the true lord.' });
@@ -1689,6 +1693,10 @@ function errandTick(F, spec, L, now, here, rng, out) {
     }
   }
 }
+/** FB1018D DUEL-RING (section 13.3, "n = 1: no ring and no braziers"): the word a Challenge met in the open adds to its
+ *  `challenge` and its `challengeend` (`t`) - every screen says that duel, never a ring of fire that does not rise or fall
+ *  (scenes/eliteGates/egFight.js EG_SAY). */
+export const EG_DUEL_OPEN = 'open';
 /** THE CHALLENGE (the Armsmaster's, Garoth's honour duel): a member marked, a ring of fire about the two; lasted 15 s or a
  *  tenth of his health dealt inside, or the company's braziers broken, and it ends.
  *  AUDIT EG V (lane1 #1; sections 13.2, 13.3 and 18) - A DUEL IS ITS LORD'S: each lord keeps its own clock (`L.duelAt`), and the
@@ -1714,7 +1722,7 @@ function challengeTick(F, spec, L, now, here, rng, out, ctx, ms, garoth = false)
     for (let j = 0; j < need; j++) { const a = (j / need) * Math.PI * 2; const [x, z, y] = egKeepOnFight(spec, cx + Math.sin(a) * 9, cz + Math.cos(a) * 9, 1, L.y); obj(F, 'brazier', x, z, egHpTeam(F, 4), now, out, { r: 0.8, y }); }
     if (!open) { kitPlace(F, L, cx + 2, cz, now); F.pg.ring = [cx, cz, 6]; }
     F.mem.mkDirty = 1;
-    say(out, 'challenge', { s: picks.map((m) => m.sub) });
+    say(out, 'challenge', { s: picks.map((m) => m.sub), ...(open ? { t: EG_DUEL_OPEN } : {}) });   // FB1018D DUEL-RING: the open duel said as one - no ring rises
     return;
   }
   // another lord's ring stands: Garoth's due duel waits for it under his ward (the errand not yet called)
@@ -1725,7 +1733,7 @@ function challengeTick(F, spec, L, now, here, rng, out, ctx, ms, garoth = false)
 }
 /** A duel ended - only by the lord that called it (AUDIT EG V, lane1 #1): its marks off, its ring and braziers gone, its lord's
  *  next one due (the Armsmaster's 30 s on; Garoth's at his next turn) and its held threshold freed. */
-function endChallenge(F, L, now, out, early) {
+function endChallenge(F, L, now, out, early, fell = false) {
   const ch = F.mem.challenge;
   if (!ch || ch.by !== L.i) return;
   for (const s of ch.subs) egUnmark(F, s, 6);
@@ -1733,7 +1741,8 @@ function endChallenge(F, L, now, out, early) {
   L.duelAt = L.key === 'garoth' ? Infinity : now + 30_000;
   if (L.key === 'garoth') L.hpFloor = null;   // AUDIT EG IV (lane1 #21): the duel over, the threshold it held is free
   egGone(F, egObjsOf(F, 'brazier'), EG_GONE.crumbled, '', now, out);
-  out.push({ k: 'esay', w: early ? 'challengewon' : 'challengeend' });
+  if (fell && !(ch.r > 0)) return;   // FB1018D DUEL-RING (AUDIT FB1018D L3-1): an open duel the lord's fall ends says nothing of its own - the fall is told, and 'unmet' was false at the killing blow
+  out.push({ k: 'esay', w: early ? 'challengewon' : 'challengeend', ...(ch.r > 0 ? {} : { t: EG_DUEL_OPEN }) });   // FB1018D DUEL-RING: an open duel's end, no ring to fall
 }
 /** A blow on lord `L` by a member its own duel challenged (`sub`), `got` landed: counted toward the tenth that meets it. */
 function duelHit(F, L, sub, got, now, out) {

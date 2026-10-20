@@ -5766,6 +5766,27 @@ and Herald pledges grant theirs.
   (dead). PL-a-tier-mapped-mac-did-not-name was the Hierophant's mapping until now; it is re-aimed to Supporter mapped
   to the Disciple (dead). PL-secret-as-var and `herald.json` HERALD-the-tier-unmapped are re-aimed by content (dead).
 
+## SHADOW-FANG-MOD — the Shadow Fang title moderates (2026-10-19)
+
+Mac: "Give the shadow fang title mod perms including ban". The rights ride the TITLE, not the person: `server-account/src/
+titles.js` names the titles that moderate (`MOD_TIERS = ['shadowfang']`) and `canModerate` reads it beside the moderator
+and developer lists - a holder of Shadow Fang (`holdsTier`, off `SHADOW_FANG_HANDLES`, today SirMcMobdon) may moderate.
+So everything `canModerate` opens reaches them: MOD1's /mute and /unmute, SAFE4's /ban, /unban and /strikes, the reports'
+queue in the game (/cases, /case, /dismiss) and in Discord (once `DISCORD_MODERATORS` pairs their Discord id with the
+handle), a note's removal on the board, the market's moderator acts and a siege's void. And the protection with them: a
+Shadow Fang holder is neither banned nor muted by a moderator (`protected`) nor by the reports' automatic mute
+(`autoMutable`). The service decides, as it always has; the client and the relay change nothing.
+
+- **No shield.** `glyphsOf` is untouched: the blue `mod` glyph stays the moderator list's alone, as for a developer -
+  Shadow Fang's wolf is the mark. `isModerator` stays the list's alone too.
+- **Off the list, off the rights** - read fresh at every call, as every list is; no column, no migration, no version.
+  The other made-for-one titles (Penitent, Aegis, Primarch, Crystal Fist, WikiMaid) and the Patreon tiers do not moderate.
+- **Not DFU** - DFU has no moderation; Ledger A's ONLINE row covers it.
+- Pins: `test/net/shadowfangmod.test.js` (the grant - the list, any case, no shield, off the list, a guest, near names,
+  the other titles; the service end to end - mute, ban, strikes, unban by the holder, a moderator refused the holder as
+  `protected`, the holder refused once off the list); `tools/mutants/shadowfangmod.json` (3, all dead - `canModerate`
+  not reading `MOD_TIERS`, the list emptied, every title moderating).
+
 ## WIKIMAID — SylviaBun's own: the WikiMaid, its glyph and the Lilac Warren (2026-10-17, world214, acct150)
 
 For the in-game account SylviaBun: "Honestly as dumb as this is gonna sound the WikiMaid title and a purple aura with
