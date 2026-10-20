@@ -454,7 +454,7 @@ export function validHomeFrame(m) {
  * the relay carries one of these names and nothing a stager could shape into anything else. Appended, never
  * reordered or renamed - a client that does not know a word shows no event, so a new one is safe against an old build.
  */
-export const LIVE_EVENTS = Object.freeze(['dread', 'sunbaby']);   // SUNBABY1: the sun baby's sky of flowers (world/sunbabySky.js), world163
+export const LIVE_EVENTS = Object.freeze(['dread', 'sunbaby', 'witchfest']);   // SUNBABY1: the sun baby's sky of flowers (world/sunbabySky.js), world163; STAR3: the Witches' Festival, the Starfall's own (bible/11-Multiplayer/Starfall.md section 12), world233
 /** EVENT1: stages a second - a dev's deliberate act, and tokenGate cannot go lower (RED_HZ_MAX's reason). */
 export const EVENT_HZ_MAX = 1;
 /** EVENT1: the hub's storage key for the event staged now - its own prefix, apart from every one a drain or the hub's
@@ -1520,7 +1520,7 @@ export const KEEPALIVE_FAN_MS = HEARTBEAT_MS / 2;
  *  is deployed by CI and the relay by hand, so a skew between them is the ordinary state of a release day, and until
  *  now nothing on either end could see it. */
 // Integrated Arena spectator visibility with staff teleport, stable boat identity and private ownership; deploy relay before clients.
-export const RELAY_VERSION = 'world232';   // FIELD BUGS 2026-10-19f GAUNTLET-PLATES (2026-10-19, a player's private report; world224 on its branch, renumbered past main's world224 (LAYERED-GEAR and VOICE2), world225 (GAUNTLET-SLAIN), world226 (LORD-SHARES), world227 (PLAIN-SWEEP), world228 (QL12), world229 (WB14b), world230 (OW-CHASE-RANGE) and world231 (NAME-WORDS) at the merges; bible/01-Overview/bugs/Field-Bugs-2026-10-19f.md, bible/11-Multiplayer/Elite-Gates.md section 8.3; world231 before it; NOT YET DEPLOYED): a Gauntlet's progress word says each plate's state - `silenced`, plate by plate in `spots.pillar`'s order, 1 once its Caster is silenced (net/eliteGates/egBrain.js trialStep, from the wake), so every screen marks the plates still to hold and dims a held one; no hall's bytes move (the objective naming the plates is the screen's own, ui/eliteGates/egHud.js egObjectiveText - net/eliteGates/egLaw.js EG_OBJECTIVES keeps the spec's word). Either end may deploy first: an older client passes the word through egProgress (a short list) and reads nothing from it, and a client facing world231 or older draws every plate the hall lays while a Caster is left
+export const RELAY_VERSION = 'world233';   // STAR3 (2026-10-20, the owner: "something coming from the sky and crashing into the ground, where people need to defend the objective in a wave based format with a boss topping off the encounter at the end"; bible/11-Multiplayer/Starfall.md sections 5, 9 and 13; world232 before it; NOT YET DEPLOYED): THE STARFALL - a word at a fallen star (`star`) to its cell, which keeps the star's ledger (net/starfall/starfallLaw.js - the gathering, the waves and their breath, the master, the light, who defended), says it to the cell (`st`), mints each earner's receipt at the master's fall (`j1`, net/starfall/starReceipt.js - the gate's one key) and tells the hub (STAR_INTERNAL_HELD), which says the hold to everyone online (`hd`) and keeps the night's held stars (`hds`) and each account's receipts for a hello; LIVE_EVENTS gains `witchfest`. Deploy the relay first: a client says no star word to a relay older than STAR_RELAY_MIN (one would close the socket on it), and an older client drops the `star` frame
 // world231: NAME-WORDS (2026-10-19, world224 on its branch, renumbered past OW-CHASE-RANGE's world230 at the merge; Mac: "Not sure how the filter didnt catch this", over the handle PROSTITUTE_STRANGLER, then "Yes"; NOT YET DEPLOYED): net/nameFilter.js reads `prostitute` and `strangler` ANYWHERE - a name holding either is refused, a line stars them. world230: OW-CHASE-RANGE (2026-10-19, the owner, of the Overworld's gaps: "4. Fix it"; bible/06-Systems/Travel-View.md OW-CHASE-RANGE; world224 on its branch, renumbered past LAYERED-GEAR's world224 at one merge, then world225 past GAUNTLET-SLAIN's world225, LORD-SHARES's world226, PLAIN-SWEEP's world227, QL12's world228 and WB14b's world229 at the next; NOT YET DEPLOYED; AUDIT OW-REVISITED L4-1, re-hashed in place): a traveller's trav frame carries its chase words BESIDE its mark - `bd` the bands', `sr` the raiders' (TV7b's and OW6's shapes: [[id, x, z, 1|2]], at most TRAV_BANDS_MAX each, a chase within TRAV_CHASE_NEAR_PX of the mark) - checked whole by validTravWords at the door, kept on the attachment with the mark and fanned and welcomed with it; an older relay reads the mark and drops the words (nothing refused), an older client reads the mark and never the words
 // world230: OW-CHASE-RANGE (2026-10-19, the owner, of the Overworld's gaps: "4. Fix it"; bible/06-Systems/Travel-View.md OW-CHASE-RANGE; world224 on its branch, renumbered past LAYERED-GEAR's world224 at one merge, then world225 past GAUNTLET-SLAIN's world225, LORD-SHARES's world226, PLAIN-SWEEP's world227, QL12's world228 and WB14b's world229 at the next; NOT YET DEPLOYED; AUDIT OW-REVISITED L4-1, re-hashed in place): a traveller's trav frame carries its chase words BESIDE its mark - `bd` the bands', `sr` the raiders' (TV7b's and OW6's shapes: [[id, x, z, 1|2]], at most TRAV_BANDS_MAX each, a chase within TRAV_CHASE_NEAR_PX of the mark) - checked whole by validTravWords at the door, kept on the attachment with the mark and fanned and welcomed with it; an older relay reads the mark and drops the words (nothing refused), an older client reads the mark and never the words
 // world229: WB14b (2026-10-19, bible/11-Multiplayer/Breach-Portents.md sections 1, 2 and 10; world222 on its branch, renumbered past GATE-DOOR and COURT-WATCH's world222, then world223 past FOE-BOUNDS and GRANT-DOOR's world223, then world224 past LAYERED-GEAR and VOICE2's world224, then world225 past GAUNTLET-SLAIN's world225, then world226 past LORD-SHARES's world226, then world227 past PLAIN-SWEEP's world227, then world228 past QL12's world228 at the merges; NOT YET DEPLOYED): THE BREACH'S PORTENTS - the relay draws a night's portents with its fight (net/gate/gateLaw.js gatePortentsOf) and says them in every state (`pt`), the crossings by walkway (`xa`, six, a walkway not laid null), GATE_BRAIN_V and GATE_BRAIN_MIN 6 (a game from before is told to reload); WB14a: the Warden's new arsenal - an atk word names its marked by peer id (`pk`), attack ids to GATE_ATK_ID_MAX (31), the relay's judge counts the Wheel down its turn and never a marked blow or the Gaze; WB14c: the Vanguard - its stages in the state (`vg`) and in words (`vgw`), three host kinds more (GATE_HOST_KINDS 6), a blow on one taken from the floor its body stands on, GATE_HZ_MAX 28; WB14d: the Sundering - its halves in the state (`sd`) and in words (`sdh`, `kn`, `kr`, `rj`), the half a blow lands on (`hit`'s `b`) and the Flame's own words (`atk`, `mv`, `ph` with `b` 1), the Sundering and the Rejoining (attacks 17 and 18). WB14e: the Tithe-Imp - a host kind more (GATE_HOST_KINDS 7), its flight (`adie`'s `w` 3, GATE_HOST_GONE 4), and its tithe to its catcher alone (`tithe`). WB14f: the Captive - his gaolers a host kind more (GATE_HOST_KINDS 8), the state's `cp`, his freeing (`cpf`) and the Reckoning his ward takes (`cpw`, the relay's judge sparing it). WB14g: a kill receipt says the night's portents (`p`, net/gate/gateReceipt.js). AUDIT WB14 (bible/01-Overview/audits/Audit-Breach-Portents.md): the brain's fixes, and a Tithe-Imp's tithe paid at its catch, the fight kept before it is said. Deploy the relay with the client.
@@ -2075,7 +2075,7 @@ export function inRangeOf(roomKey, from) {
   return (to) => !!to && Math.max(Math.abs(fx - Math.floor(to.x / PIXEL_UNITS)), Math.abs(fy - Math.floor(to.z / PIXEL_UNITS))) <= RANGE_PIXELS;
 }
 
-/** One client frame, parsed and checked: {t:'hello'|'pose'|'ping'|'chat'|'roll'|'say'|'narrate'|'stage'|'mute'|'ban'|'renown'|'guild'|'guildout'|'home'|'world'|'foes'|'own'|'hit'|'act'|'who'|'quest'|'social'|'party'|'trade'|'cast'|'card'|'page'|'duel'|'wed'|'park'|'caravan'|'look'|'gate'|'grant'|'siege'|'arena'|'raid'|'raidtowns'|'rite'|'ow'|'trav'|'amap'|'stp'|'cfg'|'find'|'serpent'|'sd'|'eg'|'wild'|'wdun'|'holdem'|'iliac'|'gambit', ...}
+/** One client frame, parsed and checked: {t:'hello'|'pose'|'ping'|'chat'|'roll'|'say'|'narrate'|'stage'|'mute'|'ban'|'renown'|'guild'|'guildout'|'home'|'world'|'foes'|'own'|'hit'|'act'|'who'|'quest'|'social'|'party'|'trade'|'cast'|'card'|'page'|'duel'|'wed'|'park'|'caravan'|'look'|'gate'|'grant'|'siege'|'arena'|'raid'|'raidtowns'|'rite'|'star'|'ow'|'trav'|'amap'|'stp'|'cfg'|'find'|'serpent'|'sd'|'eg'|'wild'|'wdun'|'holdem'|'iliac'|'gambit', ...}
  *  or {error} - the caller closes on an error. INSPECT1: every arm below, named - this line had fallen seven behind
  *  (test/net/auditworld2.test.js derives the list from the arms now, so it cannot fall behind again - the merge with
  *  main's HCC-PARK was its first catch: the park arm, unnamed). */
@@ -2197,6 +2197,11 @@ export function parseClient(text, { hasHello = false } = {}) {
     if (!hasHello) return { error: 'rite before hello' };
     const r = validRiteIn(m);
     return r ? { t: 'rite', ...r } : { error: 'bad rite' };
+  }
+  if (m.t === 'star') {   // STAR3: a word at a fallen star, to its cell - projected by validStarIn; the cell's ledger (net/starfall/starfallLaw.js) judges where and when
+    if (!hasHello) return { error: 'star before hello' };
+    const r = validStarIn(m);
+    return r ? { t: 'star', ...r } : { error: 'bad star' };
   }
   if (m.t === 'eg') {   // EG-PLAY: a word on an Elite Breach - the open to the hub, a member's admission, door and blows to its room - projected by validEgIn; the hub and the room's director (net/eliteGates/egBrain.js) judge it
     if (!hasHello) return { error: 'eg before hello' };
@@ -3449,7 +3454,7 @@ export const relaySupportsEvent = (v) => { const m = /^world(\d+)$/.exec(typeof 
 /** SUNBABY1: THE FIRST RELAY THAT KNOWS EACH LIVE EVENT'S WORD. A relay's parseClient answers a word it does not know
  *  with 'bad stage' and CLOSES the socket, so knowing the frame (EVENT_RELAY_MIN) is not knowing every word on it: a
  *  word is staged only on a relay at or past its own row. One row a word of LIVE_EVENTS, appended with it. */
-export const LIVE_EVENT_RELAY_MIN = Object.freeze({ dread: EVENT_RELAY_MIN, sunbaby: 163 });
+export const LIVE_EVENT_RELAY_MIN = Object.freeze({ dread: EVENT_RELAY_MIN, sunbaby: 163, witchfest: 233 });
 export const relayKnowsLiveEvent = (v, kind) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Object.hasOwn(LIVE_EVENT_RELAY_MIN, kind) && Number(m[1]) >= LIVE_EVENT_RELAY_MIN[kind]; };
 export const relaySupportsPark = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= PARK_RELAY_MIN; };
 export const relaySupportsCast = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= CAST_RELAY_MIN; };
@@ -5232,6 +5237,115 @@ export const RITE_HUB_CIRCLES_MAX = 8;
  *  this long for the answer at the kill (the last answer stands when it does not come). */
 export const RITE_ASK_EVERY_MS = 15_000;
 export const RITE_ASK_TIMEOUT_MS = 2_000;
+
+// ═══ STAR3: THE STARFALL ═════════════════════════════════════════════════════════════════════════════════════════════
+//
+// (2026-10-20, the owner: "something coming from the sky and crashing into the ground, where people need to defend the
+// objective in a wave based format with a boss topping off the encounter at the end" - bible/11-Multiplayer/Starfall.md
+// sections 5 and 9.) A player at a fallen star says the star's word (`star`) to the star's CELL - the raid's and the
+// rite's law: on its own bucket, believed from a pose at the star (net/starfall/starfallLaw.js starNear) inside the
+// star's life. The cell keeps the star's ledger (the gathering, the waves and their breath, the master, the light, who
+// defended - starfallLaw.js foldStarWord), says it to the cell as it moves (`st`), and at the master's fall mints each
+// earner's receipt (`j1`, net/starfall/starReceipt.js), says the star held (`hd`), hands the receipts (`rc`) and tells the
+// hub, which says it to everyone online and keeps the night's held stars (`hds`) and each account's receipts for a hello.
+// This module imports no law (the law imports it), so the law's bounds below are written again and pinned equal.
+/** The first relay that keeps a star. An older one CLOSES the socket on the frame, so a client says none to it. */
+export const STAR_RELAY_MIN = 233;
+export const relaySupportsStar = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= STAR_RELAY_MIN; };
+/** The star's own bucket: a word every STAR_WORD_MS (2 s), one at a change, and a second's slack. */
+export const STAR_HZ_MAX = 2;
+export const starGate = (bucket, nowMs) => tokenGate(bucket, nowMs, STAR_HZ_MAX);
+/** The relay's bucket is DEEPER than the client's - the same rate, twice the burst (the rite's AUDIT WB12d L4). */
+export const STAR_RELAY_BURST = 4;
+export const starRelayGate = (bucket, nowMs) => tokenGate(bucket, nowMs, STAR_HZ_MAX, STAR_RELAY_BURST);
+/** The law's bounds, pinned equal (starfallLaw.js STAR_PER_NIGHT, STAR_WAVES, STAR_LEVEL_MAX, STAR_KILLS_WIRE_MAX,
+ *  STAR_BLOWS_WIRE_MAX, STAR_TOP_MAX, STAR_ACCOUNTS_MAX, STAR_LIGHT and the phases' count). */
+export const STAR_STARS_MAX = 3;
+export const STAR_WAVES_MAX = 4;
+export const STAR_LEVEL_WIRE_MAX = 60;
+export const STAR_KILLS_MAX = 99;
+export const STAR_BLOWS_MAX = 9999;
+export const STAR_TOP_WIRE_MAX = 3;
+export const STAR_COUNT_MAX = 64;
+export const STAR_LIGHT_MAX = 100;
+export const STAR_PHASE_MAX = 6;
+/** A night's bound: an hour's index of the relay's clock - far past any date this game will see. */
+const STAR_NIGHT_MAX = 2 ** 31;
+const nightOk = (n) => Number.isSafeInteger(n) && n > 0 && n < STAR_NIGHT_MAX;
+const flag = (v) => v === 0 || v === 1;
+/**
+ * A client's star word, projected: `{n, k, px, py, lv, s, o, kn, wc, hb, mf}` - the night and the star, its pixel, the
+ * speaker's level, 1 once it struck one of the star's foes, 1 while it owns them, the deaths it saw of this wave, the
+ * wave it saw cleared (0 none), the blows its foes have landed on the star, 1 once it saw the master fall - or null.
+ */
+export function validStarIn(m) {
+  if (!m || typeof m !== 'object' || !nightOk(m.n) || !intIn(m.k, 0, STAR_STARS_MAX - 1)) return null;
+  if (!intIn(m.px, 0, 999) || !intIn(m.py, 0, 499) || !intIn(m.lv, 1, STAR_LEVEL_WIRE_MAX)) return null;
+  if (!flag(m.s) || !flag(m.o) || !flag(m.mf) || !intIn(m.kn, 0, STAR_KILLS_MAX) || !intIn(m.wc, 0, STAR_WAVES_MAX) || !intIn(m.hb, 0, STAR_BLOWS_MAX)) return null;
+  return { n: m.n, k: m.k, px: m.px, py: m.py, lv: m.lv, s: m.s, o: m.o, kn: m.kn, wc: m.wc, hb: m.hb, mf: m.mf };
+}
+/** What a cell or the hub says of a star: `st` its ledger, `hd` held, `rc` an earner's receipt, `hds` the night's held. */
+export const STAR_OUT_KINDS = Object.freeze(['st', 'hd', 'rc', 'hds']);
+/** A receipt's bound on the wire and its shape (net/starfall/starReceipt.js STAR_RECEIPT_MAX, STAR_RECEIPT_V - pinned equal). */
+export const STAR_RECEIPT_WIRE_MAX = 400;
+const STAR_RECEIPT_RE = /^j1\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*$/;
+/** The held stars the hub keeps and says at a hello - a night's and the night before's, three each, and room. */
+export const STAR_HELD_MAX = 12;
+const starWhere = (m) => nightOk(m.n) && intIn(m.s, 0, STAR_STARS_MAX - 1) && intIn(m.px, 0, 999) && intIn(m.py, 0, 499);
+const msOk = (v) => Number.isSafeInteger(v) && v >= 0;
+/** The names a held star carries, junk never hiding one (the rite's AUDIT WB12d L8). */
+const starTopOf = (top) => (Array.isArray(top) ? top.filter((x) => typeof x === 'string' && x).slice(0, STAR_TOP_WIRE_MAX).map(sanitizeName) : []);
+/**
+ * A cell's or the hub's star word, projected for the client - or null:
+ *   `{k:'st', n, s, px, py, p, w, wz, kn, wl, lt, nd, b, ow, hc, hd, lo, why}` the ledger (starfallLaw.js starLedgerState);
+ *   `{k:'hd', n, s, px, py, at, top, c}` held, by whom (the first few named, `c` how many);
+ *   `{k:'rc', r}` an earner's receipt; `{k:'hds', l: [[n, s, px, py, at], ...]}` the held stars the hub keeps.
+ */
+export function validStarOut(m) {
+  if (!m || typeof m !== 'object' || !STAR_OUT_KINDS.includes(m.k)) return null;
+  if (m.k === 'rc') return typeof m.r === 'string' && m.r.length <= STAR_RECEIPT_WIRE_MAX && STAR_RECEIPT_RE.test(m.r) ? { k: 'rc', r: m.r } : null;
+  if (m.k === 'hds') {
+    if (!Array.isArray(m.l)) return null;
+    const l = m.l.slice(0, STAR_HELD_MAX).filter((e) => Array.isArray(e) && e.length === 5 && starWhere({ n: e[0], s: e[1], px: e[2], py: e[3] }) && msOk(e[4]) && e[4] > 0);
+    return { k: 'hds', l: l.map((e) => [e[0], e[1], e[2], e[3], e[4]]) };
+  }
+  if (!starWhere(m)) return null;
+  if (m.k === 'hd') {
+    if (!msOk(m.at) || m.at <= 0) return null;
+    const top = starTopOf(m.top);
+    return { k: 'hd', n: m.n, s: m.s, px: m.px, py: m.py, at: m.at, top, c: intIn(m.c, top.length, STAR_COUNT_MAX) ? m.c : top.length };
+  }
+  if (!intIn(m.p, 0, STAR_PHASE_MAX) || !intIn(m.w, 0, STAR_WAVES_MAX) || !intIn(m.wz, 0, 9) || !intIn(m.kn, 0, STAR_KILLS_MAX)) return null;
+  if (!(Number.isSafeInteger(m.wl) && m.wl >= -1) || !intIn(m.lt, 0, STAR_LIGHT_MAX) || !intIn(m.nd, 0, STAR_COUNT_MAX) || !intIn(m.b, 1, 3)) return null;
+  if (!flag(m.ow) || !intIn(m.hc, 0, STAR_BLOWS_MAX) || !msOk(m.hd) || !msOk(m.lo) || !intIn(m.why, 0, 2)) return null;
+  return { k: 'st', n: m.n, s: m.s, px: m.px, py: m.py, p: m.p, w: m.w, wz: m.wz, kn: m.kn, wl: m.wl, lt: m.lt, nd: m.nd, b: m.b, ow: m.ow, hc: m.hc, hd: m.hd, lo: m.lo, why: m.why };
+}
+/** The door from a star's cell to the hub: a star held, its earners' receipts riding it (the raid's door). */
+export const STAR_INTERNAL_HELD = '/internal/star/held';
+/** How soon a cell whose hub did not answer tells it again (the raid's number). */
+export const STAR_TELL_RETRY_MS = 5000;
+/** Where a cell keeps its stars' ledgers (never `world:` or `raid:` - those prefixes are swept), and how many at once:
+ *  a cell is sixteen pixels square, and a night's three stars may fall in one. */
+export const STAR_LEDGER_PREFIX = 'star:';
+export const starLedgerKey = (id) => `${STAR_LEDGER_PREFIX}${id}`;
+export const STAR_LEDGERS_MAX = 4;
+/** One account makes at most this many of a cell's ledgers at once (the raid's RAID_LEDGERS_BY_MAX): the star it stands
+ *  at and the next, never every place a cell has. */
+export const STAR_LEDGERS_BY_MAX = 2;
+/** A full cell gives a new ledger the place of one nobody has stood at for this long and that is not over. A star held
+ *  or lost keeps its place to its end: its receipts are never minted twice, nor its fight run again. */
+export const STAR_IDLE_MS = 60_000;
+/** A word that moves nothing but its speaker's moment is written at most this often (the raid's RAID_SAVE_MS). */
+export const STAR_SAVE_MS = 5_000;
+/** A ledger outlives its star this long past its deadline - its receipts handed again to an account that comes back. */
+export const STAR_KEEP_MS = 10 * 60 * 1000;
+/** Where the hub keeps the held stars, and each account's star receipts - the newest STAR_RC_KEEP, each for
+ *  STAR_RC_KEEP_MS (the raid's law: an earner whose link dropped at the hold is handed them at its next hello). */
+export const STAR_HELD_KEY = 'starheld';
+export const STAR_RC_PREFIX = 'starrc:';
+export const starReceiptKeyOf = (acct) => `${STAR_RC_PREFIX}${acct}`;
+export const STAR_RC_KEEP = 9;
+export const STAR_RC_KEEP_MS = 24 * 60 * 60 * 1000;
 
 // ═══ OW6L: THE OVERWORLD'S LEDGER, KEPT BY THE RELAY ═════════════════════════════════════════════
 //

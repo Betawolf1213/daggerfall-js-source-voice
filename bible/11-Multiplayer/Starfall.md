@@ -237,9 +237,12 @@ Pure law, both ends: `net/starfall/starfallLaw.js` (no imports but the wire's, s
 relay's half is `server/src/index.js` - one line in `_message` (`if (m.t === 'star') return this._starFrame(ws, a, m);`)
 and Room methods of its own, the raid's and the rite's shape:
 
-- **Where.** A star's ledger lives in the CELL its pixel stands in (`worldRoom(px, py)`), in storage `star:<N>.<k>`,
-  from its omen to its deadline and `STAR_KEEP_MS` (10 min) past it. A cell keeps `STAR_LEDGERS_MAX` (4). A layer keeps
-  none (SCALE5d's law).
+- **Where.** A star's ledger lives in the CELL its pixel stands in (`worldRoom(px, py)`), in storage
+  `star:<N>.<k>@<px>,<py>` (its whole tuple, `starLedgerId`), from the first word at it to its deadline and
+  `STAR_KEEP_MS` (10 min) past it. A cell keeps `STAR_LEDGERS_MAX` (4), and one account makes `STAR_LEDGERS_BY_MAX` (2)
+  of them. Full, a new star takes the place of the one stood at least lately, nobody at it for `STAR_IDLE_MS` (60 s);
+  a star held or lost keeps its place to its end, so its receipts are never minted twice nor its fight run again. A
+  layer keeps none (SCALE5d's law).
 - **The word** (client to cell, every `STAR_WORD_MS` (2 s) within `STAR_SAY_M` (55 m), at once on a change):
   `{t:'star', n, k, px, py, lv, s, o, kn, wc, hb, mf}` - the night and the star, its pixel, my level, whether I struck
   one of its foes, whether I own them, the deaths I saw of this wave, the wave I saw cleared, the blows I saw land on
@@ -253,19 +256,28 @@ and Room methods of its own, the raid's and the rite's shape:
 - **The machine.** `stepStar(led, now)` moves the ledger on every word: the gathering, each wave and its breath, the
   master. The light falls by the owner's blow count, credited no faster than `STAR_BLOWS_BURST` (6) and
   `STAR_BLOWS_HZ` (9) a second; the breath's light is added once a breath. The wave's size is fixed when it starts.
-- **The fan.** A ledger that moved says `{t:'star', k:'st', ...}` to the cell: the phase, the wave and its size and
-  start, the light, the defenders, the band, the master's moment, held or lost.
+- **The fan.** A ledger that moved says `{t:'star', k:'st', ...}` to the cell (`starLedgerState`): the phase, the wave,
+  its size and the deaths said of it, the time left in the phase on the encounter clock, the light, the defenders and
+  their band, whether an owner holds the foes and the blows credited to it (an owner whose page reloads counts on from
+  them), held or lost and why. A word that moved nothing is answered with the same, to its speaker alone.
+- **Dawn.** The cell's alarm is armed for the deadline: a star unheld by then is lost with nobody there to step it, and
+  said to the cell. A cell keeping a star forgets nothing else until the star is forgotten.
 - **Held, said once.** The master's fall mints a receipt for each account that EARNED it - struck one of the star's
   foes and said so from the star within `STAR_PRESENT_MS` (15 s) of the fall - writes the ledger with them (kept before
   it is said, AUDIT WB A10), fans `hd` to the cell, hands each earner's receipt to its account's newest socket there,
-  and tells the hub (`STAR_INTERNAL_HELD`) until it answers. The hub says it to everyone online and keeps the night's
-  held stars and each account's receipts for a hello.
+  and tells the hub (`STAR_INTERNAL_HELD`) until it answers. The alarm's sweep that meets a star mid-mint leaves it to
+  the word minting it. The hub keeps the receipts (checked for their account and star, signed; the newest
+  `STAR_RC_KEEP` an account, each a day) and hands each to its account wherever it stands, then says the hold to
+  everyone online once and keeps the night's held stars (`STAR_HELD_KEY`) until its last star is gone
+  (`starNightGoneAt`). A hello is handed both.
 
 ## 6. The receipts and the rewards
 
-**The receipt** (`net/starfall/starReceipt.js`): `j1.<base64url({ n, k, s, c, h, l, i, e })>.<signature>` - the night and
-the star, the account, a seed from the relay's CSPRNG, the Heart-Star, the band's level, issued and expiry (a week).
-Signed by the relay's one key (`GATE_SIGNING_KEY`), the version inside the signed bytes.
+**The receipt** (`net/starfall/starReceipt.js`): `j1.<base64url({ sf, s, c, l, i, e })>.<signature>` - `sf` the night
+and the star, the account, a seed from the relay's CSPRNG, the level its last word at the star said, issued and expiry
+(a week). Signed by the relay's one key (`GATE_SIGNING_KEY`), the version inside the signed bytes; its six fields and no
+other, so no other signed shape reads as one. The Heart-Star is not in it: it is the sky's (section 1), and every
+device reads it off the receipt's night and star alike.
 
 **The account service** (`server-account/src/stars.js`, `/v1/star/claim`, migration `stars_held`): verified with the
 relay's public half, counted once a (night, star, account), at most `STAR_CLAIMS_DAY_MAX` (9) a UTC day; pays the
@@ -303,7 +315,7 @@ service witnesses it (`QL_SERVICE_LINES`, `QL_WITNESS_SQL` over `stars_held`).
 
 The words keep WB13b's rules (`World-Bosses.md` section 20, WB13b): the event, then what to do, and stop; no "X, not Y";
 no dash asides; numbers as numerals; at most one exclamation; times in the player's own local time.
-`test/systems/starfall/star6_words.test.js` holds every line.
+STAR6's words test holds every line.
 
 | moment | who | line |
 |---|---|---|
@@ -339,8 +351,8 @@ burning, the dark.
 | frame | way | what |
 |---|---|---|
 | `{t:'star', n, k, px, py, lv, s, o, kn, wc, hb, mf}` | client -> cell | the star's word (section 5) |
-| `{t:'star', k:'st', n, s, px, py, p, w, wz, ws, lt, nd, b, ma, hd, lo}` | cell -> cell | the ledger: phase, wave, its size and start, light, defenders, band, the master's moment, held, lost |
-| `{t:'star', k:'hd', n, s, px, py, at, top, c, h}` | cell -> cell, hub -> everyone | held, by whom |
+| `{t:'star', k:'st', n, s, px, py, p, w, wz, kn, wl, lt, nd, b, ow, hc, hd, lo, why}` | cell -> cell, cell -> a speaker | the ledger: phase, wave, its size and deaths, the time left in the phase, light, defenders, band, an owner and its credited blows, held, lost and why |
+| `{t:'star', k:'hd', n, s, px, py, at, top, c}` | cell -> cell, hub -> everyone | held, by whom (the first `STAR_TOP_MAX` named, `c` how many) |
 | `{t:'star', k:'rc', r}` | cell or hub -> one | an earner's receipt |
 | `{t:'star', k:'hds', l: [...]}` | hub -> a hello | the night's held stars |
 

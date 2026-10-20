@@ -191,23 +191,30 @@ export const STAR_LOST_DARK = 1, STAR_LOST_DAWN = 2;
  *   p: number, ec: number, stepAt: number, gatherAt: number, w: number, wz: number, ws: number, bs: number, ma: number,
  *   kn: number, lt: number, bt: number, btAt: number, own: string, ownAt: number, nearAt: number,
  *   hd: number, lo: number, why: number, b: number, nd: number,
- *   a: Record<string, StarAccount>, rc: Record<string, string>, told: boolean, top: string[], hn: number }} StarLedger
+ *   a: Record<string, StarAccount>, rc: Record<string, string>, told: boolean, top: string[], hn: number,
+ *   by: string, said: boolean }} StarLedger
  *   ec the encounter clock (ms, runs while someone stands at the star); stepAt the wall ms it was last stepped; nearAt
  *   the wall ms of the last word from the star; gatherAt, ws, bs, ma on the encounter clock; kn the deaths the owner said
  *   of this wave; lt the light; bt/btAt the blow bucket; hd/lo the wall ms it was held or lost; b the band of the wave or
- *   the master standing (fixed as it starts); nd the defenders standing; top/hn who held it, and how many
+ *   the master standing (fixed as it starts); nd the defenders standing; top/hn who held it, and how many; by the account
+ *   whose word made it (a cell's place for it - server/src/index.js _starMakeRoom); said once its receipts are minted and
+ *   kept (the hold said, AUDIT WB A10's order); rc the receipts by account; told once the hub has answered
  */
 
-/** A star's ledger, off the first word from it: nothing moved, the light full. Pure. */
-export function newStarLedger(w, nowMs) {
+/** A star's ledger, off the first word from it (`by` the account that said it): nothing moved, the light full. Pure. */
+export function newStarLedger(w, nowMs, by = '') {
   return {
     n: w.n, k: w.k, px: w.px, py: w.py, first: nowMs,
     p: P_FALLEN, ec: 0, stepAt: nowMs, gatherAt: 0, w: 0, wz: 0, ws: 0, bs: 0, ma: 0,
     kn: 0, lt: STAR_LIGHT, bt: STAR_BLOWS_BURST, btAt: nowMs, own: '', ownAt: 0, nearAt: -Infinity,
     hd: 0, lo: 0, why: 0, b: 1, nd: 0,
-    a: {}, rc: {}, told: false, top: [], hn: 0,
+    a: {}, rc: {}, told: false, top: [], hn: 0, by, said: false,
   };
 }
+/** Whether a stored value is a ledger this law made (a cell's storage read back): its star, its pixel, its phase, its
+ *  accounts and receipts. */
+export const starLedgerSane = (v) => !!v && typeof v === 'object' && starOk(v.n, v.k) && Number.isInteger(v.px) && Number.isInteger(v.py)
+  && Number.isInteger(v.p) && v.p >= P_FALLEN && v.p <= P_LOST && !!v.a && typeof v.a === 'object' && !!v.rc && typeof v.rc === 'object';
 /** A ledger's identity in its cell: the star and its pixel (a forged pixel is a ledger of its own - section 10). */
 export const starLedgerId = (w) => `${w.n}.${w.k}@${w.px},${w.py}`;
 /** Whether a ledger is over: held or lost. */
@@ -344,3 +351,8 @@ export const starLedgerState = (led) => ({
   k: 'st', n: led.n, s: led.k, px: led.px, py: led.py, p: led.p, w: led.w, wz: led.wz, kn: led.kn, wl: starPhaseLeft(led),
   lt: Math.ceil(led.lt), nd: led.nd, b: led.b, ow: led.own ? 1 : 0, hc: starOwnerBlows(led), hd: led.hd, lo: led.lo, why: led.why,
 });
+/** A held star as the cell and the hub say it (net/wire.js validStarOut `hd`): the star, the moment, its earners' first
+ *  names and how many earned it. */
+export const starHeldWord = (led) => ({ k: 'hd', n: led.n, s: led.k, px: led.px, py: led.py, at: led.hd, top: led.top, c: led.hn });
+/** When the last of night `n`'s stars is gone: the hub keeps a night's held stars until then. */
+export const starNightGoneAt = (n) => starTimes(n, STAR_PER_NIGHT - 1).goneAt;

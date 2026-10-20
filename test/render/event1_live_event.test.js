@@ -41,7 +41,7 @@ const stage = (kind) => JSON.stringify({ t: 'stage', kind });
 // ── THE WIRE ─────────────────────────────────────────────────────────
 
 test('EVENT1 wire: `stage` is a known event word or "" (the end), after a hello - its SHAPE alone; whether the socket may is the relay\'s question (mutants: an unknown word taken; "" refused; before a hello taken)', () => {
-  assert.deepEqual(LIVE_EVENTS, ['dread', 'sunbaby']);   // SUNBABY1 appended the sun baby (PIN MOVED; its own pins: sunbaby1_event.test.js)
+  assert.deepEqual(LIVE_EVENTS, ['dread', 'sunbaby', 'witchfest']);   // SUNBABY1 appended the sun baby (PIN MOVED; its own pins: sunbaby1_event.test.js); STAR3 the Witches' Festival (PIN MOVED; its own pins: test/net/starfall/star3_relay.test.js)
   assert.equal(DREAD_EVENT, 'dread', 'the look draws the word the relay carries');
   assert.deepEqual(parseClient(stage('dread'), { hasHello: true }), { t: 'stage', kind: 'dread' });
   assert.deepEqual(parseClient(stage(''), { hasHello: true }), { t: 'stage', kind: '' }, 'the end of an event');
