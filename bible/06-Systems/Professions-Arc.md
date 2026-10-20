@@ -3101,8 +3101,9 @@ and nothing in the world set a node apart from the ground about it. DECIDED here
   view's focus when one is set, every rate a whole number of cycles over its 60 s clock. Drawn after each mode's
   opaque world through the veiled bodies' hook, as the auras are (the street's pass, the dungeon's `lateWorldDraw`);
   never under the travel view; built at idle once a node is first marked; a glow that will not build costs the glow,
-  never the game (`createNodeGlowPass`, the world host's one door to it). NODE-OUTLINE (section 46, 2026-10-19): a node with a
-  picture is ringed along its own picture instead; the glow lights a node with none (a body drawn as a 3D character).
+  never the game (`createNodeGlowPass`, the world host's one door to it). NODE-OUTLINE (section 46, 2026-10-19) ringed a node with a
+  picture along its own picture instead, and NODE-GLINT (section 47, 2026-10-20) lights it ON that picture now - glints and a
+  sheen, the ring retired; the glow lights a node with none (a body drawn as a 3D character).
 - **Not built, named**: the held map's node marks (section 21's "the held map marks the patches and veins a character
   has worked before" - still as PROF1 and PROF2 left it); no setting turns the glow or the marks off (the professions'
   own switch does).
@@ -4749,12 +4750,15 @@ the slice wires a line into (`scenes/world.js`, `scenes/dungeonContext.js`, `net
 (`test/tooling/mutantdrift.test.js`), and those on the lines the slice moved were re-aimed and judged above.
 Ledger A (PROFESSIONS, GATHER-FEEL II).
 
-## 46. NODE-OUTLINE - a node ringed along its own picture (BUILT 2026-10-19)
+## 46. NODE-OUTLINE - a node ringed along its own picture (BUILT 2026-10-19; the ring RETIRED 2026-10-20 by NODE-GLINT, section 47)
+
+NODE-GLINT (section 47) took the ring away and kept the rest - the pictures, the mask and the pass's seams. Its module, test, probe
+and mutants moved to NODE-GLINT's names, and the addresses below lead to them; the words and the measurements are the ring's.
 
 The owner: **"Overhaul gathering material visuals. Actually outline the sprite itself instead of a faint sparkle like it
 is now."** FACT: NODE-MARKS' glow (section 31) is a card stood before the node - a halo, a shimmer and motes, slight by
 intent - so the eye found a sparkle near a node, never the node's own shape; a tree's glow was a 2.6 x 3.4 m patch about
-its root under a 20 m crown. DECIDED and BUILT (`render/nodeOutline.js`):
+its root under a 20 m crown. DECIDED and BUILT (`render/nodeGlint.js`):
 
 - **Its own picture.** The gathering host's marks carry each node's PICTURES (`scenes/gatherHost.js`, `pictures` on a
   mark): the flats it stood for the node - which batch, which of its flats (`first`, `count` - nodes share a batch by
@@ -4771,7 +4775,7 @@ its root under a 20 m crown. DECIDED and BUILT (`render/nodeOutline.js`):
   the width and half of it) is the ring, in the profession's colour (`ui/nodeMarks.js`, the compass's) at the depth of
   the silhouette it borders, stood `OUTLINE_RING_BACK` behind it - so a wall before the node hides it, the ground or a
   tree behind it shows it, and it never draws over the node itself. **Why not shifted copies** (WEAPON-GLOW1's law): the
-  copies of a 3D tree's front cards drew over its own back cards - lines through the canopy (`tools/nodeOutlineProbe.mjs`,
+  copies of a 3D tree's front cards drew over its own back cards - lines through the canopy (`tools/nodeGlintProbe.mjs`,
   2026-10-19: 18% of the ring over the tree); pushing the copies behind the whole tree hid the ring wherever another tree
   stood close behind, which in the jungle is everywhere.
 - **Its measure.** `OUTLINE_PX` 2.5 pixels at 1080 rows, with the image, never under 1.5 (a retro image's pixels are
@@ -4785,12 +4789,67 @@ its root under a 20 m crown. DECIDED and BUILT (`render/nodeOutline.js`):
   `lateWorldDraw`); never in a building nor under the travel view. One draw a picture into the atlas and one quad a node
   on screen; the frame's target, its viewport and the world's baseline handed back (blend off, depth LESS and written,
   faces culled, a scissor where one stood).
-- **Pinned**: `test/scenes/nodeoutline.test.js` (9); `tools/nodeOutlineProbe.mjs` compiles and links both programs in a
+- **Pinned**: `test/scenes/nodeglint.test.js` (9); `tools/nodeGlintProbe.mjs` compiles and links both programs in a
   real WebGL2 context, draws a herb flat of a two-flat batch and a 3D tree of crossed cards through the pass, and reads
   the frame back (15 checks: the ring outside every picture and within its width, the neighbour flat unringed, the
-  colours, one even ring at half kindling, a wall hiding it, the baseline back). Mutants: `tools/mutants/nodeoutline.json`
+  colours, one even ring at half kindling, a wall hiding it, the baseline back). Mutants: `tools/mutants/nodeglint.json`
   (26, all dead). PIN MOVED: NODE-MARKS' and WB9g's hook pins (`nodemarks.test.js`, `invislook.test.js`,
   `wb9g_insignia.test.js`, `nodemarks.json`, `wb9g.json`) read `nodeOutlinePass`.
+
+## 47. NODE-GLINT - a node catching the light on its own picture (BUILT 2026-10-20)
+
+The owner, of NODE-OUTLINE's ring (section 46), after "a lot of players dont like how its not immersive": **"Lets just
+bring the glint back but better."** FACT: the ring was a 2.5-pixel line in the profession's compass colour at 95%,
+breathing, round every node within 120 m, sixteen at once - a mark painted on the world. NODE-MARKS' glow before it
+(section 31) was a card stood before the node - a halo, a shimmer and six motes, slight by intent - so the eye found a
+sparkle NEAR a node and never its shape; a tree's was a 2.6 x 3.4 m patch at its root under a 20 m crown. A herb's and a
+vein's pictures are their own (the herb's item picture, the ore's washed flat), but a node tree is the forest's own flat
+(`scenes/treeHost.js` treeKind's `flatsOf`: none of its own), so whatever marks a node is the only tell a tree has.
+DECIDED and BUILT (`render/nodeGlint.js` - section 46's module, moved; its pictures, its mask and its seams unchanged):
+
+- **The glow's parts, moved onto the picture.** The halo is gone (it was the patch at the root); the motes are GLINTS
+  on the picture; the shimmer is a SHEEN across it. Drawn over the node's rectangle, one quad a node, ADDED (ONE, ONE) as
+  the glow was - it only ever brightens - at the depth of the picture where it stands, `GLINT_PULL` (0.3 m) toward the
+  eye and never past half its way: a wall before the node hides it, the node never does.
+- **The glints.** `GLINT_COUNT` (6) a node, each living its own short life - `GLINT_RATE` 0.35 a second, each next one
+  `GLINT_RATE_STEP` 0.05 faster (21 to 36 lives a minute, whole over the glow's 60 s clock) - its light sin(pi x life)
+  cubed (`GLINT_FLASH`): born, brightest mid-life, gone dark. Each life stands at a spot of the picture chosen afresh: the
+  first of `GLINT_TRIES` (3) spots in the picture's own box on screen (`innerShare` - never the room round it) that the
+  silhouette holds; none, and that life is dark. A white-hot core (`GLINT_CORE_WHITE`, 0.6 of the way to white) in a
+  soft bloom, and four thin rays turned a little (each life its own turn, within 17 degrees), reaching `GLINT_SHARE`
+  (0.35) of the picture's longer side on screen, between `GLINT_PX_MIN` (4) and `GLINT_PX` (14) pixels at 1080 rows, both
+  with the image, never under 1.5 (`glintPx`) - so a far herb, a speck, still glints, and a tree filling the screen
+  glints no larger than a near herb.
+- **The sheen.** A soft band of light rising a little aslant across the picture's own box and lit only where the
+  silhouette is - the picture's own shape catching the light - once every 6.7 s (`GLINT_SHEEN_HZ` 0.15), crossing in the
+  first half of the period (`GLINT_SHEEN_SHARE`) and dark the rest, at `GLINT_GAIN.sheen` (0.14) at most; none within
+  `GLINT_SHEEN_NEAR_M` (6 m), whole from `GLINT_SHEEN_FULL_M` (18 m) (`glintSheen`): the tree under the axe and the herb
+  under the sickle never flash.
+- **The light.** A warm daylight (`GLINT_LIGHT`: 1, 0.95, 0.84) carrying `GLINT_TINT` (35%) of the profession's compass
+  colour (`glintTint`, `ui/nodeMarks.js`) - the professions still told apart, none painted in its colour whole.
+- **Kept.** NODE-MARKS' law for who is lit and how much (`nodeGlows`: kindled over 0.6 s, faded from 80 to 120 m, 16 at
+  most - the atlas's tiles); the frame's fog and the jungle's haze where its depth stands; the glow for a node with no
+  picture (a body drawn as a 3D character) and for SENSE1's look round; the build at idle, and a glint that will not
+  build handing every mark to the glow. Under reduced motion every glint stands at its first life's place at
+  `GLINT_STILL` (0.6) and no sheen crosses.
+- **Where** (THE FOUR HOSTS RULE), as section 46 left it: `scenes/world.js` wires it (`nodeGlintPass`, in the hook after
+  each mode's opaque world - the street's, and a dungeon's through its `lateWorldDraw`); `scenes/dungeonContext.js` holds
+  no pass of its own (its glow is SENSE1's); `scenes/worldModes.js` lights none in a building (`nodeMarksAt` answers none
+  there); `scenes/exterior.js`, the fixed-city bench, stands no gathering host and no node. Never under the travel view.
+- **Not a setting.** The owner's word was the glint itself; section 31's "no setting turns the glow or the marks off"
+  stands.
+- **Pinned**: `test/scenes/nodeglint.test.js` (11 - section 46's three on the pictures carried); `tools/nodeGlintProbe.mjs`
+  compiles and links both programs in a real WebGL2 context, draws a herb flat of a two-flat batch and a 3D tree of
+  crossed cards through the pass and reads the frames back (21 checks: over 24 moments of the glints' lives the herb and
+  the tree glint; light only added; every lit pixel within a glint's reach of the picture, and every glint's heart within
+  3 px of it; the neighbour flat unlit; near, no sheen; half kindled, half the light; still under reduced motion and
+  moving without it; a wall hiding it; through a long lens at 25 m the herb's sheen crossing it from its foot to its
+  crown, dark between crossings; the baseline back). Mutants: `tools/mutants/nodeglint.json` (52, all dead - section
+  46's 19 on the pictures, the mask and the pass carried and re-aimed, its 8 on the ring retired with it, the screen's
+  clamp and the host's wiring made again as NODE-GLINT's). PIN MOVED: the world host's hook pins (`nodemarks.test.js`,
+  `invislook.test.js`, `wb9g_insignia.test.js`, `nodemarks.json`, `wb9g.json`) read `nodeGlintPass`;
+  `tv4_weather_above.test.js` names `nodeGlint.js` among the fogged passes never drawn under the travel view;
+  `l10n4_hardcoded.test.js` counts its three words under its new name.
 
 ## Appendix A - a day of a gatherer
 

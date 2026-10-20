@@ -1,19 +1,21 @@
-// NODE-OUTLINE - A GATHERING NODE'S OUTLINE, COMPILED, LINKED AND DRAWN IN A REAL BROWSER.
+// NODE-GLINT - A GATHERING NODE'S GLINT, COMPILED, LINKED AND DRAWN IN A REAL BROWSER.
 //
-// node holds the outline's law (test/scenes/nodeoutline.test.js: who is ringed and how, the pictures the host hands it, the
+// node holds the glint's law (test/scenes/nodeglint.test.js: who is lit and how, the pictures the host hands it, the
 // rectangles, the pass over a fake GL); what node cannot answer is whether the two programs - the mask's (the billboard
-// program's own vertex stage, the node's rectangle stretched over its tile of a depth-only atlas) and the ring's -
-// COMPILE and LINK in a real WebGL2 context, and whether what they draw is the outline they say: a ring of the
-// profession's colour just outside the picture's own cut silhouette and never over it (a 3D tree's crossed cards ring
-// nothing over each other), a couple of pixels wide, one flat of a batch and not its neighbour, a 3D tree ringed through
-// the door's own buffers, hidden by a wall in front, one even ring, and the frame's target and GL baseline handed back.
-// So: the repo's own modules served as they are (no bundler), a floor, the node's own picture drawn by a stand-in of the
-// billboard placement (depth written, cut at a half), the pass drawn by its own class over them, and the frame read back.
+// program's own vertex stage, the node's rectangle stretched over its tile of a depth-only atlas) and the light's -
+// COMPILE and LINK in a real WebGL2 context, and whether what they draw is the glint they say: light added onto the
+// picture (never darkening a pixel), its glints' cores on the picture's own cut silhouette and their rays no further
+// than a glint's reach from it, one flat of a batch and not its neighbour, a 3D tree lit through the door's own buffers,
+// hidden by a wall in front, half as bright half kindled, held still under reduced motion and moving without it, and
+// the sheen crossing a far picture from its foot to its crown but never a near one; and the frame's target and GL
+// baseline handed back. So: the repo's own modules served as they are (no bundler), a floor, the node's own picture
+// drawn by a stand-in of the billboard placement (depth written, cut at a half), the pass drawn by its own class over
+// them, and the frame read back.
 //
-//     node tools/nodeOutlineProbe.mjs [--shots <dir>]     (writes node_outline.png there when given)
+//     node tools/nodeGlintProbe.mjs [--shots <dir>]     (writes node_glint_near.png and node_glint_far.png there when given)
 import { chromium } from 'playwright';
 import http from 'node:http';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, writeFileSync } from 'node:fs';
 import { join, extname, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -23,7 +25,7 @@ const shotsAt = process.argv.includes('--shots') ? process.argv[process.argv.ind
 const out = []; const check = (n, ok, d = '') => { out.push(ok); console.log(`${ok ? 'ok  ' : 'FAIL'} ${n}${d ? ` - ${d}` : ''}`); };
 
 const PAGE = `<!doctype html><html><body style="margin:0;background:#000"><canvas id=c width=640 height=480></canvas><script type=module>
-import { NodeOutlineRenderer, outlinePx } from '/src/render/nodeOutline.js';
+import { NodeGlintRenderer, glintPx, glintPxMax, GLINT_SHEEN_HZ } from '/src/render/nodeGlint.js';
 import { nodeMarkRgb } from '/src/ui/nodeMarks.js';
 const W = 640, H = 480;
 const gl = document.getElementById('c').getContext('webgl2', { alpha: false, preserveDrawingBuffer: true, antialias: false });
@@ -48,7 +50,7 @@ precision highp float; in vec2 vUV; uniform sampler2D t; out vec4 o;
 void main(){ vec4 c = texture(t, vUV); if (c.a < 0.5) discard; o = vec4(0.25, 0.55, 0.2, 1.0); }\`);
 const vao = (data, layout, idx) => { const v = gl.createVertexArray(); gl.bindVertexArray(v); const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW); for (const [loc, n, stride, off] of layout) { gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, n, gl.FLOAT, false, stride, off); } let ib = null; if (idx) { ib = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(idx), gl.STATIC_DRAW); } gl.bindVertexArray(null); return { v, b, ib, n: data.length / 3 }; };
 const quad = (a, b, c, d) => [...a, ...b, ...c, ...a, ...c, ...d];
-const floor = vao(quad([-20, 0, -20], [20, 0, -20], [20, 0, 20], [-20, 0, 20]), [[0, 3, 12, 0]]);
+const floor = vao(quad([-40, 0, -40], [40, 0, -40], [40, 0, 40], [-40, 0, 40]), [[0, 3, 12, 0]]);
 const wall = vao(quad([0.15, 0, 2.6], [2.8, 0, 2.6], [2.8, 2.5, 2.6], [0.15, 2.5, 2.6]), [[0, 3, 12, 0]]);   // the tree wholly behind it, the herb wholly beside it
 // the sprite: a disc on a clear square (every texel 0 or 255, as a classic record's)
 const S = 32, px = new Uint8Array(S * S * 4);
@@ -74,16 +76,18 @@ const handle = { proto: 'a tree' }, root = [1.4, 0, 0];
 const tset = { trees: new Float32Array([0, ...root, 1, 0.35]), centers: [root], handles: [handle], ox: 0, oy: 0, oz: 0 };
 const frame = { eye: [0, 0, 0], radius: 140, band: 20, gpu, cut: new Set([handle]), runs: [{ run: { handle }, scale: [1, 1, 1], size: [1.6, 2], sway: 0, subs: [{ offset: 0, count: ti.length, tex, alpha: 1, color: [1, 1, 1], cull: 0 }] }] };
 let pass = null, err = null;
-try { pass = new NodeOutlineRenderer(gl); } catch (e) { err = String(e.message ?? e); }
+try { pass = new NodeGlintRenderer(gl); } catch (e) { err = String(e.message ?? e); }
 const persp = (f, a, n, fa) => { const t = 1 / Math.tan(f / 2); return new Float32Array([t / a, 0, 0, 0, 0, t, 0, 0, 0, 0, (fa + n) / (n - fa), -1, 0, 0, 2 * fa * n / (n - fa), 0]); };
 const look = (e, c) => { const u = [0, 1, 0]; const z = [e[0] - c[0], e[1] - c[1], e[2] - c[2]]; let l = Math.hypot(...z); z.forEach((v, i) => { z[i] = v / l; }); const x = [u[1] * z[2] - u[2] * z[1], u[2] * z[0] - u[0] * z[2], u[0] * z[1] - u[1] * z[0]]; l = Math.hypot(...x); x.forEach((v, i) => { x[i] = v / l; }); const y = [z[1] * x[2] - z[2] * x[1], z[2] * x[0] - z[0] * x[2], z[0] * x[1] - z[1] * x[0]]; return new Float32Array([x[0], y[0], z[0], 0, x[1], y[1], z[1], 0, x[2], y[2], z[2], 0, -(x[0] * e[0] + x[1] * e[1] + x[2] * e[2]), -(y[0] * e[0] + y[1] * e[1] + y[2] * e[2]), -(z[0] * e[0] + z[1] * e[1] + z[2] * e[2]), 1]); };
 const mul = (a, b) => { const o = new Float32Array(16); for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++) for (let k = 0; k < 4; k++) o[c * 4 + r] += a[k * 4 + r] * b[c * 4 + k]; return o; };
-window.probe = { err, linked: pass ? gl.getProgramParameter(pass.mask, gl.LINK_STATUS) && gl.getProgramParameter(pass.ring, gl.LINK_STATUS) : false, atlas: pass ? (gl.bindFramebuffer(gl.FRAMEBUFFER, pass.fb), gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE) : false, ringPx: outlinePx(H), orchid: nodeMarkRgb('herbalism'), sap: nodeMarkRgb('logging') };
+window.probe = { err, linked: pass ? gl.getProgramParameter(pass.mask, gl.LINK_STATUS) && gl.getProgramParameter(pass.light, gl.LINK_STATUS) : false, atlas: pass ? (gl.bindFramebuffer(gl.FRAMEBUFFER, pass.fb), gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE) : false, reachMax: glintPxMax(H), sheenPeriod: 1 / GLINT_SHEEN_HZ };
 gl.bindFramebuffer(gl.FRAMEBUFFER, null);   // the atlas's status asked: the canvas back
-/** The floor, the node's own pictures (and \`walled\` the wall), then (\`ring\`) the pass over them at \`alpha\`; the whole
- *  frame read back, row 0 at the bottom, with the pass's count and the GL state it left. */
-window.draw = ({ walled = false, ring = true, alpha = 1, lpt = true } = {}) => {
-  const eye = [0, 1.0, 5.5], proj = persp(0.9, W / H, 0.05, 100), view = look(eye, [0, 0.8, 0]), vp = mul(proj, view);
+/** The floor, the node's own pictures (and \`walled\` the wall), then (\`lit\`) the pass over them at \`alpha\`, its clock
+ *  \`seconds\` (\`still\` reduced motion), seen from \`far\` (25 m off, a long lens on the herb) or near; the whole frame read
+ *  back, row 0 at the bottom, with the pass's count, the glints' reach on the herb and the GL state it left. */
+window.draw = ({ walled = false, lit = true, alpha = 1, lpt = true, seconds = 0, still = false, far = false } = {}) => {
+  const eye = far ? [-0.4, 1.0, 25] : [0, 1.0, 5.5];
+  const proj = persp(far ? 0.1 : 0.9, W / H, 0.05, 100), view = look(eye, far ? [-0.4, 0.5, 0] : [0, 0.8, 0]), vp = mul(proj, view);
   const right = new Float32Array([view[0], view[4], view[8]]);
   gl.viewport(0, 0, W, H);
   gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LESS); gl.depthMask(true); gl.disable(gl.BLEND); gl.enable(gl.CULL_FACE);
@@ -99,20 +103,21 @@ window.draw = ({ walled = false, ring = true, alpha = 1, lpt = true } = {}) => {
   if (walled) { gl.useProgram(flat); gl.uniform3f(gl.getUniformLocation(flat, 'c'), 0.12, 0.12, 0.12); gl.bindVertexArray(wall.v); gl.drawArrays(gl.TRIANGLES, 0, wall.n); }
   gl.bindVertexArray(null);
   gl.enable(gl.CULL_FACE);
-  let drawn = 0, trees = 0;
-  if (ring) {
+  let drawn = 0, trees = 0, reach = 0;
+  if (lit) {
     frame.eye = eye;
     const r = { gl, _proj: proj, _view: view, _camPos: new Float32Array(eye), _bbRight: right, _bbUp: new Float32Array([0, 1, 0]), _fogMode: 0, _fogDensity: 0, _haze: new Float32Array(8),
       _fogRange: new Float32Array([0, 1]), textures: new Map([['500_9', tex]]), lptDrawnFrames: () => (lpt ? [frame, null] : []) };
     drawn = pass.draw([
-      { alpha, rgb: nodeMarkRgb('herbalism'), mark: { pictures: [{ batch, first: 1, count: 1, centers: [centers[1]] }] } },
-      { alpha, rgb: nodeMarkRgb('logging'), mark: { pictures: [{ batch: { ...batch, vao: null }, first: 0, count: 0, center: root, entry: { lowPolyTrees: tset } }] } },
-    ], r, 0, false);
+      { alpha, seed: 0.37, at: centers[1], rgb: nodeMarkRgb('herbalism'), mark: { pictures: [{ batch, first: 1, count: 1, centers: [centers[1]] }] } },
+      { alpha, seed: 0.61, at: root, rgb: nodeMarkRgb('logging'), mark: { pictures: [{ batch: { ...batch, vao: null }, first: 0, count: 0, center: root, entry: { lowPolyTrees: tset } }] } },
+    ], r, seconds, still);
     trees = pass.trees;
+    reach = pass._nodes?.[0] ? Math.max(...pass._nodes.slice(0, 2).map((s) => s.glint)) : 0;
   }
   const state = { depthFunc: gl.getParameter(gl.DEPTH_FUNC) === gl.LESS, depthMask: gl.getParameter(gl.DEPTH_WRITEMASK) === true, blend: gl.isEnabled(gl.BLEND), cull: gl.isEnabled(gl.CULL_FACE) };
   const pix = new Uint8Array(W * H * 4); gl.readPixels(0, 0, W, H, gl.RGBA, gl.UNSIGNED_BYTE, pix);
-  return { error: gl.getError(), drawn, trees, state, pix: Array.from(pix) };
+  return { error: gl.getError(), drawn, trees, reach, state, pix: Array.from(pix) };
 };
 window.ready = true;
 </script></body></html>`;
@@ -138,64 +143,112 @@ try {
   check('the pass builds', !p.err, p.err ?? '');
   check('its programs link in a real WebGL2', p.linked === true);
   check('its depth atlas is a complete framebuffer', p.atlas === true);
-  const bare = await page.evaluate(() => window.draw({ ring: false }));
-  const lit = await page.evaluate(() => window.draw());
-  if (shotsAt) await page.locator('#c').screenshot({ path: join(shotsAt, 'node_outline.png') });
-  check('no GL error drawing it; both nodes ringed, one as its 3D tree', lit.error === 0 && lit.drawn === 2 && lit.trees === 1, `error ${lit.error}, drawn ${lit.drawn}, trees ${lit.trees}`);
-  check('the GL baseline handed back: depth LESS and written, blend off, faces culled', lit.state.depthFunc && lit.state.depthMask && !lit.state.blend && lit.state.cull, JSON.stringify(lit.state));
-  // the frame read as masks: what the pass changed, the pictures' own pixels (the stand-ins' green), by column halves
+  const draw = (o) => page.evaluate((a) => window.draw(a), o);
   const at = (a, x, y) => { const i = (y * W + x) * 4; return [a[i], a[i + 1], a[i + 2]]; };
-  const changed = (x, y) => { const a = at(bare.pix, x, y), b = at(lit.pix, x, y); return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]) > 30; };
-  const isPicture = (x, y) => { const c = at(bare.pix, x, y); return c[1] > 100 && c[1] > c[0] + 40; };
-  const near = (x, y, r, f) => { for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < W && yy < H && f(xx, yy)) return true; } return false; };
-  const reach = Math.ceil(p.ringPx) + 1;
-  let ring = 0, overPicture = 0, far = 0, flat0 = 0, flat1 = 0, tree = 0;
+  const rise = (a, b, x, y) => { const u = at(a, x, y), v = at(b, x, y); return v[0] - u[0] + v[1] - u[1] + v[2] - u[2]; };
+  const isPicture = (bare) => (x, y) => { const c = at(bare.pix, x, y); return c[1] > 100 && c[1] > c[0] + 40; };
+  const nearOf = (f) => (x, y, r) => { for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < W && yy < H && f(xx, yy)) return true; } return false; };
+  const herbCol = (x) => x >= W * 0.33 && x < W * 0.56, treeCol = (x) => x >= W * 0.56, flat0Col = (x) => x < W * 0.33;   // the herb reaches past the middle; the tree starts past 0.56
+
+  // NEAR: a run of moments over the glints' lives - every pixel the light touched, read against the bare frame
+  const bare = await draw({ lit: false });
+  const onPic = isPicture(bare), nearPic = nearOf(onPic);
+  const first = await draw({ seconds: 0 });
+  check('no GL error drawing it; both nodes lit, one as its 3D tree', first.error === 0 && first.drawn === 2 && first.trees === 1, `error ${first.error}, drawn ${first.drawn}, trees ${first.trees}`);
+  check('the GL baseline handed back: depth LESS and written, blend off, faces culled', first.state.depthFunc && first.state.depthMask && !first.state.blend && first.state.cull, JSON.stringify(first.state));
+  const reach = Math.ceil(first.reach) + 1;
+  check('a glint\'s reach on screen is its law\'s (a few pixels, never past the image\'s most)', first.reach > 1 && first.reach <= p.reachMax, `${first.reach.toFixed(2)} px of ${p.reachMax.toFixed(2)}`);
+  let herb = 0, tree = 0, flat0 = 0, darker = 0, farOff = 0, strongOff = 0, touched = 0, frames = 0;
+  for (let t = 0; t < 6; t += 0.25) {
+    const f = await draw({ seconds: t });
+    frames++;
+    if (shotsAt && Math.abs(t - 1.5) < 1e-9) await page.locator('#c').screenshot({ path: join(shotsAt, 'node_glint_near.png') });
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const d = rise(bare.pix, f.pix, x, y);
+      if (d < -6) darker++;
+      if (d <= 24) continue;
+      touched++;
+      if (herbCol(x)) herb++; else if (treeCol(x)) tree++; else if (flat0Col(x)) flat0++;
+      if (!nearPic(x, y, reach)) farOff++;
+      if (d >= 300 && !nearPic(x, y, 3)) strongOff++;
+    }
+  }
+  check('over the glints\' lives the herb glints, and the tree', herb > 40 && tree > 40, `herb ${herb} px, tree ${tree} px over ${frames} frames`);
+  check('light only added: no pixel darker', darker === 0, `${darker} px`);
+  check(`within a glint's reach (${reach} px) of the picture: a glint, not a halo`, farOff === 0, `${farOff} of ${touched} past it`);
+  check('every glint\'s heart on the picture (its brightest pixels within 3 px of it)', strongOff === 0, `${strongOff} px`);
+  check('one flat of the batch: its neighbour (flat 0) unlit', flat0 === 0, `${flat0} px`);
+  // near, no sheen: the light on the picture is the glints' alone - few of its pixels at any moment
+  let maxShare = 0, picPx = 0;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (herbCol(x) && onPic(x, y)) picPx++;
+  for (let t = 0; t < p.sheenPeriod; t += 0.5) {
+    const f = await draw({ seconds: t });
+    let lit = 0;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (herbCol(x) && onPic(x, y) && rise(bare.pix, f.pix, x, y) > 24) lit++;
+    maxShare = Math.max(maxShare, lit / picPx);
+  }
+  check('near, no sheen crosses the picture (the tree under the axe never flashes)', maxShare < 0.12, `at most ${(maxShare * 100).toFixed(1)}% of the herb's ${picPx} px lit at once`);
+  // half kindled: half the light, near enough (a saturated pixel holds a little more back)
+  const full = await draw({ seconds: 1.5 }), half = await draw({ seconds: 1.5, alpha: 0.5 });
+  let sumFull = 0, sumHalf = 0;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { sumFull += Math.max(0, rise(bare.pix, full.pix, x, y)); sumHalf += Math.max(0, rise(bare.pix, half.pix, x, y)); }
+  check('half kindled, half the light', sumFull > 0 && sumHalf / sumFull > 0.4 && sumHalf / sumFull < 0.65, `${sumHalf} of ${sumFull} (${(sumHalf / sumFull).toFixed(3)})`);
+  // reduced motion: still - the same frame at any moment, and a lit one; without it, the glints move
+  const s0 = await draw({ seconds: 0.5, still: true }), s1 = await draw({ seconds: 3.75, still: true });
+  const m0 = await draw({ seconds: 0.5 }), m1 = await draw({ seconds: 3.75 });
+  let stillDiff = 0, stillLit = 0, moveDiff = 0;
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-    if (!changed(x, y)) continue;
-    ring++;
-    if (isPicture(x, y)) { overPicture++; if (process.env.DEBUG) console.log('over the picture at', x, y, at(bare.pix, x, y), at(lit.pix, x, y)); }
-    if (!near(x, y, reach, isPicture)) far++;
-    if (x < W * 0.33) flat0++; else if (x < W * 0.56) flat1++; else tree++;   // the herb reaches past the middle; the tree starts past 0.56
+    if (Math.abs(rise(s0.pix, s1.pix, x, y)) > 6) stillDiff++;
+    if (rise(bare.pix, s0.pix, x, y) > 24) stillLit++;
+    if (Math.abs(rise(m0.pix, m1.pix, x, y)) > 24) moveDiff++;
   }
-  check('a ring stands round the herb and round the tree', flat1 > 40 && tree > 60, `herb ${flat1} px, tree ${tree} px`);
-  // a pixel or two where the stand-in's own program and the mask's rasterise one sliver of an edge apart is rounding; the
-  // shifted copies' 18% (a 3D tree's front cards ringed over its back ones) and the unsnapped tile's 6% are not
-  check('never over the picture itself (its silhouette\'s mask, not its depth)', overPicture <= ring * 0.005, `${overPicture} of ${ring}`);
-  check(`within ${reach} px of the picture: an outline, not a halo`, far === 0, `${far} of ${ring} past it`);
-  check('one flat of the batch: its neighbour (flat 0) unringed', flat0 === 0, `${flat0} px`);
-  // the ring's colour: Herbalism's orchid over the herb, Logging's sap green over the tree, nearly whole
-  let orchid = null, sap = null;
-  for (let y = 0; y < H && (!orchid || !sap); y++) for (let x = 0; x < W; x++) {
-    if (!changed(x, y)) continue;
-    if (!orchid && x >= W * 0.33 && x < W * 0.56) orchid = at(lit.pix, x, y);
-    if (!sap && x >= W * 0.56) sap = at(lit.pix, x, y);
-  }
-  const near255 = (c, rgb) => c && c.every((v, i) => Math.abs(v - rgb[i] * 255) < 26);
-  check('in Herbalism\'s orchid round the herb', near255(orchid, p.orchid), JSON.stringify(orchid));
-  check('in Logging\'s green round the tree', near255(sap, p.sap), JSON.stringify(sap));
-  // half kindled: every ring pixel the same - a pixel two copies cover is lit once, never twice
-  const half = await page.evaluate(() => window.draw({ alpha: 0.5 }));
-  const lums = [];
-  for (let y = 0; y < H; y++) for (let x = Math.floor(W * 0.33); x < W * 0.56; x++) {
-    const a = at(bare.pix, x, y), b = at(half.pix, x, y);
-    if (Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]) > 30 && !isPicture(x, y)) lums.push(b[0] + b[1] + b[2]);
-  }
-  const spread = Math.max(...lums) - Math.min(...lums);
-  check('half kindled, one even ring (a pixel lit once)', lums.length > 20 && spread < 40, `${lums.length} px, spread ${spread}`);
-  // a wall in front hides the tree's ring; the herb's (left of the wall) stands
-  const wb = await page.evaluate(() => window.draw({ walled: true, ring: false }));
-  const wl = await page.evaluate(() => window.draw({ walled: true }));
+  check('under reduced motion it stands still, and still glints', stillDiff === 0 && stillLit > 20, `${stillDiff} px moved, ${stillLit} px lit`);
+  check('without it the glints live and die', moveDiff > 20, `${moveDiff} px changed between two moments`);
+  // a wall in front hides the tree's light; the herb's (left of the wall) stands
+  const wb = await draw({ walled: true, lit: false });
   let behind = 0, herbStill = 0;
-  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-    const a = at(wb.pix, x, y), b = at(wl.pix, x, y);
-    if (Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]) <= 30) continue;
-    if (x >= W * 0.56) behind++; else herbStill++;
+  for (let t = 0; t < 4; t += 0.5) {
+    const wl = await draw({ walled: true, seconds: t });
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      if (Math.abs(rise(wb.pix, wl.pix, x, y)) <= 24) continue;
+      if (treeCol(x)) behind++; else herbStill++;
+    }
   }
   check('a wall in front hides it', behind === 0 && herbStill > 40, `behind the wall ${behind} px, the herb's ${herbStill} px`);
-  // a far picture inside its 3D tree's radius gives way: the flat of a tree's handle draws no ring of its own there
-  const nolpt = await page.evaluate(() => window.draw({ lpt: false }));
-  check('no 3D tree drawn this frame: no tree ring (the frame\'s, never a stale one)', nolpt.trees === 0, `trees ${nolpt.trees}`);
+  // a far picture inside its 3D tree's radius gives way: no tree drawn this frame, no tree lit
+  const nolpt = await draw({ lpt: false });
+  check('no 3D tree drawn this frame: no tree lit (the frame\'s, never a stale one)', nolpt.trees === 0, `trees ${nolpt.trees}`);
+
+  // FAR: the herb 25 m off through a long lens - the sheen crosses it, rising: each moment the row of its picture most lit
+  // (by the row's median - a glint is a few pixels of a row, the sheen the whole of it)
+  const fbare = await draw({ lit: false, far: true });
+  const fPic = isPicture(fbare), herbFar = (x) => x >= W * 0.3 && x < W * 0.7;   // the herb the lens is on, its neighbours apart
+  const rows = [];
+  for (let y = 0; y < H; y++) { let n = 0; for (let x = 0; x < W; x++) if (herbFar(x) && fPic(x, y)) n++; if (n > 20) rows.push(y); }
+  const peaks = [];
+  let wrote = false;
+  for (let t = 0; t < p.sheenPeriod; t += 0.25) {
+    const f = await draw({ seconds: t, far: true });
+    let best = 0, bestY = -1;
+    for (const y of rows) {
+      const v = [];
+      for (let x = 0; x < W; x++) if (herbFar(x) && fPic(x, y)) v.push(rise(fbare.pix, f.pix, x, y));
+      v.sort((a, b) => a - b);
+      const med = v[v.length >> 1];
+      if (med > best) { best = med; bestY = y; }
+    }
+    peaks.push({ t, best, y: bestY });
+    if (shotsAt && !wrote && best > 60 && bestY > rows[0] + (rows.at(-1) - rows[0]) * 0.4) { await page.locator('#c').screenshot({ path: join(shotsAt, 'node_glint_far.png') }); wrote = true; }
+  }
+  const crossing = peaks.filter((k) => k.best > 30);
+  check('far, a sheen crosses the picture', rows.length > 60 && crossing.length >= 4, `${crossing.length} of ${peaks.length} moments lit across a row (${rows.length} rows of picture)`);
+  let up = 0, down = 0;
+  for (let i = 1; i < crossing.length; i++) if (crossing[i].t - crossing[i - 1].t < 0.3) { if (crossing[i].y > crossing[i - 1].y) up++; else if (crossing[i].y < crossing[i - 1].y) down++; }
+  check('rising, from its foot toward its crown', up >= 3 && down <= 1, `${up} steps up, ${down} down`);
+  const dark = peaks.filter((k) => k.best <= 8).length;
+  check('and dark between crossings', dark >= peaks.length * 0.3, `${dark} of ${peaks.length} moments unlit`);
   check('no page error', errs.length === 0, errs.join('; '));
+  if (process.env.DEBUG) writeFileSync('/dev/stderr', JSON.stringify(peaks) + '\n');
 } finally {
   await browser.close();
   server.close();

@@ -1,0 +1,470 @@
+[
+  {
+    "name": "NODE-OUTLINE-the-owners-unrecorded",
+    "file": "src/scenes/gatherHost.js",
+    "old": "        grp.owners.push(n.key, grp.centers.length, f.centers);   // NODE-OUTLINE: whose flats these are, and where in the batch\n",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-the-range-off-by-one",
+    "file": "src/scenes/gatherHost.js",
+    "old": "first: owners[i + 1], count: owners[i + 2].length",
+    "new": "first: owners[i + 1] + 1, count: owners[i + 2].length",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-the-pictures-never-handed",
+    "file": "src/scenes/gatherHost.js",
+    "old": "      for (const r of out) r.pictures = r.kind.picturesOf?.(r.node, r.src?.entry ?? null) ?? r.src?.pictures?.get(r.key) ?? null;\n",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-a-tree-flat-s-index-not-its-own",
+    "file": "src/scenes/treeHost.js",
+    "old": "[{ batch: g.batch, first: n.flat.i, count: 1,",
+    "new": "[{ batch: g.batch, first: 0, count: 1,",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-a-tree-s-pictures-made-every-call",
+    "file": "src/scenes/treeHost.js",
+    "old": "if (!p || p[0].batch !== g.batch || p[0].center !== c) pictured.set(",
+    "new": "if (true) pictured.set(",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-the-translation-forgotten",
+    "file": "src/render/nodeGlint.js",
+    "old": "out[0] = set.trees[o + 1] + set.ox;",
+    "new": "out[0] = set.trees[o + 1];",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-a-stale-frame-trusted",
+    "file": "src/render/nodeGlint.js",
+    "old": "      if (!f?.cut?.has(handle)) continue;\n      const run",
+    "new": "      if (!f) continue;\n      const run",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-a-corner-s-x-unread",
+    "file": "src/render/nodeGlint.js",
+    "old": "const x = c & 1 ? b[3] : b[0],",
+    "new": "const x = b[0],",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-the-snap-rounding-in",
+    "file": "src/render/nodeGlint.js",
+    "old": "const x0 = Math.floor((rect[0] - rect[2] + 1) * 0.5 * vw)",
+    "new": "const x0 = Math.ceil((rect[0] - rect[2] + 1) * 0.5 * vw)",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-the-remap-moving-a-gone-vertex",
+    "file": "src/render/nodeGlint.js",
+    "old": "main: '  if (!gone) gl_Position.xy = ",
+    "new": "main: '  gl_Position.xy = ",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-the-target-not-given-back",
+    "file": "src/render/nodeGlint.js",
+    "old": "    gl.bindFramebuffer(gl.FRAMEBUFFER, target);\n",
+    "new": "    gl.bindFramebuffer(gl.FRAMEBUFFER, null);\n",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-the-viewport-not-given-back",
+    "file": "src/render/nodeGlint.js",
+    "old": "    gl.viewport(view[0], view[1], view[2], view[3]);\n",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-the-build-on-the-frame",
+    "file": "src/render/nodeGlint.js",
+    "old": "{ asked = true; idle(make); }",
+    "new": "{ asked = true; make(); }",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-no-glow-of-its-own",
+    "file": "src/render/nodeGlint.js",
+    "old": "{ glow = createNodeGlowPass(renderer), now",
+    "new": "{ glow = null, now",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-the-tile-shared",
+    "file": "src/render/nodeGlint.js",
+    "old": "s.tile[0] = (n % GLINT_GRID) * GLINT_TILE;",
+    "new": "s.tile[0] = 0;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-the-offset-its-batch-s-first-flat",
+    "file": "src/render/nodeGlint.js",
+    "old": "(b._ibOff | 0) + pic.first * GLINT_QUAD_INDEX_BYTES",
+    "new": "(b._ibOff | 0)",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-every-mark-to-the-glow",
+    "file": "src/render/nodeGlint.js",
+    "old": "(failed || !m?.pictures?.length ? bare : pictured).push(m)",
+    "new": "bare.push(m)",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-the-drawn-trees-never-forgotten",
+    "file": "src/render/renderer.js",
+    "old": "    this._lptDrawn?.fill(null);   // NODE-OUTLINE: and the 3D trees a frame drew\n",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-the-drawn-trees-never-kept",
+    "file": "src/render/renderer.js",
+    "old": "drawn[i] = slots[i]?.runs.length ? slots[i] : null;",
+    "new": "drawn[i] = null;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-glint-unwired",
+    "file": "src/scenes/world.js",
+    "old": "const nodeGlintPass = createNodeGlintPass(renderer);",
+    "new": "const nodeGlintPass = { draw: () => 0 };",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-clamp-gone",
+    "file": "src/render/nodeGlint.js",
+    "old": "x1 = Math.min(1, x1);",
+    "new": "x1 = x1;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-widening-unapplied",
+    "file": "src/render/nodeGlint.js",
+    "old": "Math.max(-1, rect[0] - rect[2] - pad[0])",
+    "new": "Math.max(-1, rect[0] - rect[2])",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-widening-unheld",
+    "file": "src/render/nodeGlint.js",
+    "old": "Math.min(1, rect[0] + rect[2] + pad[0])",
+    "new": "rect[0] + rect[2] + pad[0]",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-share-off-its-corner",
+    "file": "src/render/nodeGlint.js",
+    "old": "out[0] = (inner[0] - inner[2] - rx0) / rw;",
+    "new": "out[0] = (inner[0] - inner[2]) / rw;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-cap-unscaled",
+    "file": "src/render/nodeGlint.js",
+    "old": "Math.min(GLINT_PX * scale, ",
+    "new": "Math.min(GLINT_PX, ",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-share-unread",
+    "file": "src/render/nodeGlint.js",
+    "old": "Math.max(GLINT_PX_MIN * scale, GLINT_SHARE * sidePx)",
+    "new": "GLINT_PX_MIN * scale",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-least-unscaled",
+    "file": "src/render/nodeGlint.js",
+    "old": "Math.max(GLINT_PX_MIN * scale, ",
+    "new": "Math.max(GLINT_PX_MIN, ",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-floor-gone",
+    "file": "src/render/nodeGlint.js",
+    "old": "return Math.max(GLINT_PX_FLOOR, Math.min(",
+    "new": "return (0, Math.min(",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-tint-whole",
+    "file": "src/render/nodeGlint.js",
+    "old": "out[i] = GLINT_LIGHT[i] + (rgb[i] - GLINT_LIGHT[i]) * GLINT_TINT;",
+    "new": "out[i] = rgb[i];",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-light-white",
+    "file": "src/render/nodeGlint.js",
+    "old": "GLINT_LIGHT = Object.freeze([1, 0.95, 0.84]);",
+    "new": "GLINT_LIGHT = Object.freeze([1, 1, 1]);",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-near-fade-gone",
+    "file": "src/render/nodeGlint.js",
+    "old": "GLINT_GAIN.sheen * smooth(GLINT_SHEEN_NEAR_M, GLINT_SHEEN_FULL_M, d)",
+    "new": "GLINT_GAIN.sheen",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-far-gain-short",
+    "file": "src/render/nodeGlint.js",
+    "old": "smooth(GLINT_SHEEN_NEAR_M, GLINT_SHEEN_FULL_M, d)",
+    "new": "smooth(GLINT_SHEEN_NEAR_M, GLINT_SHEEN_FULL_M * 2, d)",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-sheen-outside-the-picture",
+    "file": "src/render/nodeGlint.js",
+    "old": "  if (here < 1.0 && uStill < 0.5) {",
+    "new": "  if (uStill < 0.5) {",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-sheen-under-reduced-motion",
+    "file": "src/render/nodeGlint.js",
+    "old": "  if (here < 1.0 && uStill < 0.5) {",
+    "new": "  if (here < 1.0) {",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-first-try-taken",
+    "file": "src/render/nodeGlint.js",
+    "old": "      if (d < 1.0) { p = spot; pd = d; break; }",
+    "new": "      { p = spot; pd = d; break; }",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-a-dark-life-lit",
+    "file": "src/render/nodeGlint.js",
+    "old": "    if (pd >= 1.0) continue;   // no try fell on the picture: this life is dark\n",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-a-glint-off-the-picture-s-box",
+    "file": "src/render/nodeGlint.js",
+    "old": "      vec2 spot = mix(uInner.xy, uInner.zw, ",
+    "new": "      vec2 spot = mix(vec2(0.0), vec2(1.0), ",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-still-glints-moving",
+    "file": "src/render/nodeGlint.js",
+    "old": "  float tm = uTime * (1.0 - uStill);",
+    "new": "  float tm = uTime;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-a-life-never-dark",
+    "file": "src/render/nodeGlint.js",
+    "old": ": pow(sin(PI * (cyc - c)), ${f(GLINT_FLASH)});",
+    "new": ": 1.0;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-every-glint-one-pace",
+    "file": "src/render/nodeGlint.js",
+    "old": "+ float(i) * ${f(GLINT_RATE_STEP)})",
+    "new": "+ float(i) * 0.0)",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-light-behind-its-node",
+    "file": "src/render/nodeGlint.js",
+    "old": "vec4(at3 - away * (min(",
+    "new": "vec4(at3 + away * (min(",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-pull-past-the-eye",
+    "file": "src/render/nodeGlint.js",
+    "old": "min(${f(GLINT_PULL)}, 0.5 * far)",
+    "new": "${f(GLINT_PULL)}",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-light-unfogged",
+    "file": "src/render/nodeGlint.js",
+    "old": "  o = vec4(light * uAlpha * fogFactorAt(at3), 1.0);",
+    "new": "  o = vec4(light * uAlpha, 1.0);",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-nothing-lit-drawn",
+    "file": "src/render/nodeGlint.js",
+    "old": "  if (lit * uAlpha < 0.002) discard;   // nothing lit here\n",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-light-not-added",
+    "file": "src/render/nodeGlint.js",
+    "old": "gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE);",
+    "new": "gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ZERO);",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-colour-whole",
+    "file": "src/render/nodeGlint.js",
+    "old": "const tint = glintTint(g.rgb, this._tint);",
+    "new": "const tint = g.rgb;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-sheen-by-no-distance",
+    "file": "src/render/nodeGlint.js",
+    "old": "isVec3(g.at) ? glintSheen(Math.hypot(g.at[0] - eye[0], g.at[1] - eye[1], g.at[2] - eye[2])) : 0",
+    "new": "GLINT_GAIN.sheen",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-reach-by-the-room",
+    "file": "src/render/nodeGlint.js",
+    "old": "s.glint = glintPx(vh, Math.max(s.inner[2] * vw, s.inner[3] * vh));",
+    "new": "s.glint = glintPx(vh, Math.max(s.rect[2] * vw, s.rect[3] * vh));",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-seed-lost",
+    "file": "src/render/nodeGlint.js",
+    "old": "gl.uniform1f(L.uSeed, Number.isFinite(g.seed) ? g.seed : 0);",
+    "new": "gl.uniform1f(L.uSeed, 0);",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-clock-unhanded",
+    "file": "src/render/nodeGlint.js",
+    "old": "gl.uniform1f(L.uTime, seconds);",
+    "new": "gl.uniform1f(L.uTime, 0);",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-the-clock-unwrapped",
+    "file": "src/render/nodeGlint.js",
+    "old": "pass.draw(list, renderer, t % 60, reduced(t))",
+    "new": "pass.draw(list, renderer, t, reduced(t))",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "NODE-GLINT-reduced-motion-unread",
+    "file": "src/render/nodeGlint.js",
+    "old": "pass.draw(list, renderer, t % 60, reduced(t))",
+    "new": "pass.draw(list, renderer, t % 60, false)",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  }
+]

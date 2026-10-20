@@ -258,7 +258,7 @@ export function aimAt(eyePos, at, view) {
  *   how far off the compass marks it (`reach`, NODE_MARK_M without one); null for a node never marked. Without it, a
  *   node is marked at NODE_MARK_SIZE while it is not gone for the day.
  * @property {(node: any, entry: any) => (Array<{ batch: any, first: number, count: number, centers?: number[][]|null, center?: number[]|null, entry?: any }>|null)} [picturesOf]
- *   NODE-OUTLINE (render/nodeOutline.js): the node's pictures where they are not the flats the host stood for it (a tree:
+ *   NODE-OUTLINE (render/nodeGlint.js): the node's pictures where they are not the flats the host stood for it (a tree:
  *   its forest's flat, and its centre - the 3D tree that stands for it near the eye); without it, the host's own
  * @property {(node: any) => (string|null)} [where] SETTLE-SAID: the act's check of the ground the node stands on, in the
  *   prompt's words (GROUND_WHERE_WORDS) - a ready plan there is no ready plan; null where it passes
@@ -1374,7 +1374,7 @@ export function createGatherHost(deps) {
       }
       out.sort((a, b) => a.d - b.d);
       if (out.length > max) out.length = max;
-      // NODE-OUTLINE (render/nodeOutline.js): each mark's pictures - its kind's own (a tree is its forest's flat and the 3D
+      // NODE-OUTLINE (render/nodeGlint.js): each mark's pictures - its kind's own (a tree is its forest's flat and the 3D
       // tree that stands for it), else the flats its place stood for it; a loose node's (a body) none, and the glow
       for (const r of out) r.pictures = r.kind.picturesOf?.(r.node, r.src?.entry ?? null) ?? r.src?.pictures?.get(r.key) ?? null;
       return out;

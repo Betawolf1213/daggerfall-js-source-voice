@@ -323,7 +323,7 @@
   {
     "name": "NODE-MARKS-the-glow-never-drawn",
     "file": "src/scenes/world.js",
-    "old": "peerBodies?.drawVeiled(); drawAuras(); nodeOutlinePass.draw(travelView?.active ? null : nodeMarksAt(enchantFeet())); };",
+    "old": "peerBodies?.drawVeiled(); drawAuras(); nodeGlintPass.draw(travelView?.active ? null : nodeMarksAt(enchantFeet())); };",
     "new": "peerBodies?.drawVeiled(); drawAuras(); };",
     "tests": [
       "test/scenes/nodemarks.test.js",
@@ -333,8 +333,8 @@
   {
     "name": "NODE-MARKS-lit-under-the-travel-view",
     "file": "src/scenes/world.js",
-    "old": "nodeOutlinePass.draw(travelView?.active ? null : nodeMarksAt(enchantFeet()));",
-    "new": "nodeOutlinePass.draw(nodeMarksAt(enchantFeet()));",
+    "old": "nodeGlintPass.draw(travelView?.active ? null : nodeMarksAt(enchantFeet()));",
+    "new": "nodeGlintPass.draw(nodeMarksAt(enchantFeet()));",
     "tests": [
       "test/scenes/nodemarks.test.js",
       "test/net/invislook.test.js"
