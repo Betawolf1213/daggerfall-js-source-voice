@@ -210,10 +210,11 @@
   {
     "name": "BAL9c-the-service-behind-the-law",
     "file": "server-account/src/service.js",
-    "old": "export const ACCOUNT_VERSION = 'acct159';",
+    "old": "export const ACCOUNT_VERSION = 'acct160';",
     "new": "export const ACCOUNT_VERSION = 'acct120';",
     "tests": [
       "test/systems/tech1_roster.test.js"
-    ]
+    ],
+    "note": "JUNGLE-WOODS (PIN MOVED): acct160 (acct159 on its branch, renumbered past QL12 at the merge). QL12 (PIN MOVED): acct159."
   }
 ]
