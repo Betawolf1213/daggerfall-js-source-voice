@@ -43,7 +43,7 @@ import { playStarSound } from '../../systems/starfall/starSounds.js';
 import { starSiteId } from '../../world/worldOfDaggerfall/wodShared.js';
 import { buildStarModel, STAR_BARE_R, STAR_STONE_H } from '../../world/starfall/starModel.js';
 import { starArt, STAR_ARCHIVE, STAR_GLASS_RECORD, STAR_GOLD_RECORD, STAR_DARK_RECORD } from '../../world/starfall/starArt.js';
-import { StarfallPassRenderer, streakAt, omenAt, skyClamp, ringAt, STAR_TRAIL_M, STAR_HEAD_W, STAR_FLASH_W, STAR_FLASH_MS, STAR_FALL_COLOR } from '../../render/starfall/starfallPass.js';
+import { StarfallPassRenderer, streakAt, omenAt, skyClamp, shockRingAt, STAR_TRAIL_M, STAR_HEAD_W, STAR_FLASH_W, STAR_FLASH_MS, STAR_FALL_COLOR } from '../../render/starfall/starfallPass.js';
 import { findGateSite } from '../../systems/gate/gateSite.js';
 import { thunderOf, thunderSourceAt, THUNDER_SOURCE_M } from '../../systems/distantStorms.js';
 import { renownStruckAt } from '../../net/renownTracker.js';
@@ -477,7 +477,7 @@ export function createStarfallHost(host) {
         const c = skyClamp(eye, [S.heart[0], S.heart[1] + 6, S.heart[2]]);
         sky.glows.push({ at: c.at, w: STAR_FLASH_W * c.s * (1 - since / STAR_FLASH_MS * 0.5), color: STAR_FALL_COLOR, light: 2 * (1 - since / STAR_FLASH_MS) });
       }
-      const ring = ringAt(since);
+      const ring = shockRingAt(since);
       if (ring.fade > 0 && S.known) sky.rings.push({ at: S.heart, r: ring.r, fade: ring.fade, color: STAR_FALL_COLOR });
       // the beacon dims with the star's light as the cell says it - a star failing is seen from across the region
       const lt = ledgers.get(S.key)?.lt, dim = Number.isFinite(lt) ? STAR_BEACON_DIM + (1 - STAR_BEACON_DIM) * Math.max(0, Math.min(1, lt / STAR_LIGHT)) : 1;

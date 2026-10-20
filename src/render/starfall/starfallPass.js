@@ -65,7 +65,7 @@ export function skyClamp(eye, p) {
   return { at: [eye[0] + dx * s, eye[1] + dy * s, eye[2] + dz * s], s };
 }
 /** The ring of shock `ms` after the landing: its radius and its strength (0 once it has run). Pure. */
-export function ringAt(ms) {
+export function shockRingAt(ms) {
   if (!(ms >= 0) || ms >= STAR_RING_MS) return { r: 0, fade: 0 };
   const k = ms / STAR_RING_MS;
   return { r: STAR_RING_M * (1 - (1 - k) ** 2), fade: (1 - k) ** 1.5 };

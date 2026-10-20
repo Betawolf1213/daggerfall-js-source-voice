@@ -14,7 +14,7 @@ import {
   STAR_THREAD_H, STAR_SHARDS, STAR_RIM_STONES, STAR_THREADS, STAR_BARE_R, STAR_FLOOR_REACH,
 } from '../../../src/world/starfall/starModel.js';
 import {
-  streakAt, omenAt, skyClamp, ringAt, STAR_SKY_R, STAR_FALL_FROM_M, STAR_FALL_ALT_M, STAR_OMEN_ALT_M, STAR_OMEN_W, STAR_RING_M,
+  streakAt, omenAt, skyClamp, shockRingAt, STAR_SKY_R, STAR_FALL_FROM_M, STAR_FALL_ALT_M, STAR_OMEN_ALT_M, STAR_OMEN_W, STAR_RING_M,
   STAR_RING_MS, STAR_SKY_VS, STAR_SKY_FS, STAR_RING_VS, STAR_RING_FS, STAR_BEACON_COLOR, STAR_HELD_COLOR,
 } from '../../../src/render/starfall/starfallPass.js';
 import { STAR_SOUNDS, playStarSound } from '../../../src/systems/starfall/starSounds.js';
@@ -194,11 +194,11 @@ test('STAR4 THE SKY\'S PATH: the streak comes down its bearing from far out and 
   assert.ok(Math.abs(Math.hypot(...sub(c.at, eye)) - STAR_SKY_R) < 1e-6, 'held inside the far plane');
   assert.ok(Math.abs(c.s - STAR_SKY_R / 9000) < 1e-12);
   assert.ok(Math.abs(c.at[0] - 10) < 1e-9 && Math.abs(c.at[2] - 10) < 1e-9, 'the same direction');
-  assert.deepEqual(ringAt(-1), { r: 0, fade: 0 });
-  assert.deepEqual(ringAt(STAR_RING_MS), { r: 0, fade: 0 });
-  assert.deepEqual(ringAt(NaN), { r: 0, fade: 0 });
-  assert.deepEqual(ringAt(0), { r: 0, fade: 1 });
-  const r1 = ringAt(STAR_RING_MS * 0.3), r2 = ringAt(STAR_RING_MS * 0.7);
+  assert.deepEqual(shockRingAt(-1), { r: 0, fade: 0 });
+  assert.deepEqual(shockRingAt(STAR_RING_MS), { r: 0, fade: 0 });
+  assert.deepEqual(shockRingAt(NaN), { r: 0, fade: 0 });
+  assert.deepEqual(shockRingAt(0), { r: 0, fade: 1 });
+  const r1 = shockRingAt(STAR_RING_MS * 0.3), r2 = shockRingAt(STAR_RING_MS * 0.7);
   assert.ok(r2.r > r1.r && r2.r < STAR_RING_M && r2.fade < r1.fade);
 });
 
