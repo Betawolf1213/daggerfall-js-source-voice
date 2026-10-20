@@ -8,14 +8,14 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { longTasks } from '../../tools/bootFreezeProbe.mjs';
 
-const W = 'http://localhost:5243/src/scenes/world.js', B = 'http://localhost:5243/src/formats/blocksFile.js';
+const W = 'http://localhost:5243/src/fixture/host.mjs', B = 'http://localhost:5243/src/fixture/reader.mjs';   // a profile's frames, no file of ours
 const node = (id, functionName, url = '', children = [], lineNumber = 0) => ({ id, callFrame: { functionName, url, lineNumber }, children });
 /** root -> (idle), (program), bootWorld -> getBlock -> getBlock (recursing), the mark, frame. */
 const NODES = [
   node(1, '(root)', '', [2, 3, 4, 7, 8]),
   node(2, '(idle)'), node(3, '(program)'),
-  node(4, 'bootWorld', W, [5], 1190), node(5, 'getBlock', B, [6], 264), node(6, 'getBlock', B, [], 264),
-  node(7, '__bootFreezeFirstFrame'), node(8, 'frame', W, [], 32383),
+  node(4, 'bootWorld', W, [5], 10), node(5, 'getBlock', B, [6], 21), node(6, 'getBlock', B, [], 21),
+  node(7, '__bootFreezeFirstFrame'), node(8, 'frame', W, [], 32),
 ];
 /** Samples 1 ms apart from t = 0 (the profile's clock in microseconds). */
 function profileOf(ids) {
@@ -30,13 +30,13 @@ test('BOOT-FREEZE longTasks: tasks split at an idle gap past IDLE_GAP_MS and joi
   assert.equal(r.long.length, 2);
   const [boot, after] = r.long;
   assert.deepEqual([boot.atMs, boot.fromFirstMs, boot.ms], [2, -11, 5], 'the boot task, its short idle joined');
-  assert.deepEqual(boot.inclusive, [['bootWorld src/scenes/world.js:1191', 3], ['getBlock src/formats/blocksFile.js:265', 2]], 'getBlock once a sample however deep; (program) no function');
+  assert.deepEqual(boot.inclusive, [['bootWorld src/fixture/host.mjs:11', 3], ['getBlock src/fixture/reader.mjs:22', 2]], 'getBlock once a sample however deep; (program) no function');
   assert.equal(boot.busyMs, 4);
   assert.deepEqual([after.atMs, after.fromFirstMs, after.ms], [13, 0, 4]);
-  assert.deepEqual(after.inclusive.map(([k]) => k), ['frame src/scenes/world.js:32384', '__bootFreezeFirstFrame']);
+  assert.deepEqual(after.inclusive.map(([k]) => k), ['frame src/fixture/host.mjs:33', '__bootFreezeFirstFrame']);
   assert.equal(r.frozenAfterFirstMs, 4);
-  assert.deepEqual(r.boot.inclusive[0], ['bootWorld src/scenes/world.js:1191', 3]);
-  assert.deepEqual(r.afterFirst.inclusive[0], ['frame src/scenes/world.js:32384', 3]);
+  assert.deepEqual(r.boot.inclusive[0], ['bootWorld src/fixture/host.mjs:11', 3]);
+  assert.deepEqual(r.afterFirst.inclusive[0], ['frame src/fixture/host.mjs:33', 3]);
 });
 
 test('BOOT-FREEZE longTasks: a profile with no mark is read whole as the boot, and says the first frame was not found (the probe\'s own judgement reads it)', () => {
