@@ -58,8 +58,18 @@ The look carries the body as an optional field `lg` (1 female, 2 male - the own-
 left out when off, so a look without it keeps the bytes it always had) - `net/remotePlayers.js` composeLook and `ownLayeredGear`, kept by the relay's `validLook`
 (`net/wire.js`). A peer whose look has `lg` walks in their armor, in the body they chose (`net/peer/peerRiders.js`).
 **RELAY_VERSION world224** (world218 in the package, renumbered past main's world218-223 at the merge): deploy the relay
-before the clients. An older relay drops `lg`, and the player is seen in their on-foot skin or class, as before. The
-cloak needs nothing new on the wire: a peer's look already carries its items' `equipSlot` and `dye`.
+before the clients. The cloak needs nothing new on the wire: a peer's look already carries its items' `equipSlot` and
+`dye`.
+
+**The viewer decides** (LAYERED-PEERS, 2026-10-19, the owner: *"when layered skins are on you only see it on your char
+and players who also choosen the option. Normaly once you picked it you should see all other players too in their
+layered gear"*). While this player wears Layered Gearing (`viewerLayered`: Eye of the Beholder on and
+`Graphics.LayeredGear` a body, the default included), every other player on foot is a walker in the armor their look's
+items say they wear (`createPeerWalkers`, read each frame): in the body they chose (`lg`), else their character's own (the
+look's `gender`), whatever they chose themselves. So an older relay that drops `lg` costs only a chosen body, not the
+armor. A Skins viewer sees what they always saw: a chosen set as the set, a chosen `lg` in armor, and no walker for a look
+with neither. Riders, beasts, the dying and a peer a Morrowind body stands are no walkers either way.
+`test/net/layered_peers.test.js`, `tools/mutants/layered_peers.json`.
 
 ## The art - the doctrine's third exception
 
@@ -91,5 +101,5 @@ them as a named exception (2026-10-19), as for Vanilla Enhanced and the desert's
 
 `test/player/eyeOfTheBeholder/worn_armour.test.js` (the outfit, the strips, the composition, the cloak, the hood
 fixes), the skin card's pins (`test/net/skin2_class_skins.test.js`, `test/net/disc23b_eotb_sprites.test.js`,
-`test/ui/skinmode_toggle.test.js` for the toggle), the body's (`prww1_werewolf`, `profile2_pause_profile`,
+`test/ui/skinmode_toggle.test.js` for the toggle, `test/net/layered_peers.test.js` for the others), the body's (`prww1_werewolf`, `profile2_pause_profile`,
 `eotb_audit2`), and the relay's (`relayversion`, the version pins).

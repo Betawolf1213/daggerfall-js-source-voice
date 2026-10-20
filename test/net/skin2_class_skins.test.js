@@ -136,7 +136,7 @@ test('SKIN2: the setting offers them, the look sends them, the relay keeps them,
     destroyBillboardBatch() {},
   };
   const art = createEotbArt({ renderer, urlFor: (k) => `u:${k}`, decode: async () => ({ width: 50, height: 110, colors: new Uint32Array(50 * 110) }) });
-  const w = createPeerWalkers({ art });
+  const w = createPeerWalkers({ art, layeredAll: () => false });   // PIN MOVED (LAYERED-PEERS): a Skins viewer - one in Layered Gearing sees every walker in armor (layered_peers.test.js)
   const peer = { id: 'p1', look: { eo: sorc }, shown: { x: 4, y: 0, z: 9, yaw: 0, pitch: 0, mv: 1, wd: 0, an: 0, sr: 0, cn: 0, ar: 0 } };
   const at = { eye: [4, 1, 20], dt: 0.01 };
   w.sync([peer], (p) => [p.x, p.y, p.z], at);

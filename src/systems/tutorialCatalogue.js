@@ -337,7 +337,7 @@ export const TUTORIALS = Object.freeze([
   page({
     id: 'tavern-cards', group: 'towns', title: 'Card Games', trigger: 'When you first sit at a card table.',
     body: [
-      'Play Texas Hold\'em, Iliac Hand or The King\'s Gambit against the locals, and the first two against other players as well. Online, one table plays for real gold.',
+      'Play Texas Hold\'em, Iliac Hand or The King\'s Gambit against the locals, and the first two against other players too. Online, one table plays for real gold.',
       'Cards you collect go into your Card Binder, kept under Menu > Holdings > Collections.',
     ],
   }),
@@ -376,6 +376,22 @@ export const TUTORIALS = Object.freeze([
       '{LogBook} and the Quests tab of the menu keep track of your quests. Read them carefully: they tell you whom to find and where.',
       'Many quests must be finished in time. Turning work down costs you nothing, except in the main story.',
     ],
+  }),
+  // QL2 (bible/06-Systems/Questlines-Arc.md section 6): what the questlines changed, the first time a quest carries them
+  page({
+    id: 'questlines', group: 'quests',
+    get title() { return t('tutorials.questlines.title', 'Questlines'); },
+    get trigger() { return t('tutorials.questlines.trigger', 'When you first take a quest with objectives.'); },
+    get body() {
+      return [
+        t('tutorials.questlines.body1', 'The Quests tab lists what each quest asks of you and ticks off each step. Some quests make you choose, and end differently for each choice.'),
+        // AUDIT QUESTLINES UI-4 (REWARD-6): not every quest pays gear - 24 sheets' outcomes pay none - so the page promises it
+        // only where the quest's own page does (ui/questlines/qlJournal.js qlObjectivesBlock, its row's `gear`). AUDIT
+        // QUESTLINES VOICE-QL: "longer stories, quest after quest, listed in the same tab" said plainly (Voice.md rule 4),
+        // in the questline page's own words (qlJournal.js ql.journal.lineWhat)
+        t('tutorials.questlines.gearBody', 'Some quests, once finished, let you pick one of three pieces of gear: the quest\u2019s page says so. Questlines are longer stories told in several quests, one after another. The same tab lists them.'),
+      ];
+    },
   }),
   page({
     id: 'quest-guide', group: 'quests', title: 'Tracking Quests', trigger: 'When you first track a quest.',
@@ -608,7 +624,7 @@ export const TUTORIALS = Object.freeze([
         // AUDIT GUILD-WORDS L3-2, L3-4: the pace a quest's reward keeps (writs and receipts add beyond it - the guide says
         // so), the real day it counts by - II C-8: a UTC day, said; II C-3: no quest is free of its own guild's losses
         // (REPUTE-GATE gates the two that cost the most instead), so the page no longer says one is; II C-2: chairs
-        t('tutorials.chapters.body1', 'Online, the realm keeps your standing with your guild. Each quest raises it by no more than {max} a real day (days turn at midnight UTC); the rest is counted later.', { max: ROLL_GAIN_DAY_MAX }),
+        t('tutorials.chapters.body1', 'Online, quests raise your standing with each guild by at most {max} a real day (days start at midnight UTC). Any more is added on later days.', { max: ROLL_GAIN_DAY_MAX }),
         t('tutorials.chapters.body2', 'Reviews promote you up to rank {cap}. Ranks {officer} and {master} are chapter chairs, won by Merit at each Sunday\'s Turning. A notice board explains chapters.', { cap: ROLL_BOOK_RANK_MAX, officer: SEAT_RANK.officer, master: SEAT_RANK.master }),
       ];
     },

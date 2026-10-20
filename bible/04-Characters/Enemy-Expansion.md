@@ -111,7 +111,7 @@ port's enemy code that any mod could use, and the mod's reading through them.
   had its Dragonling (146 health, the bound 60) and its Werewolf (level 9, the bound 8) refused as impossible. A row's
   third number is the level the progression share reads (`foeShare(basics.level)`, the table's row - vanilla or the
   mod's), so the relay reads no table at all and its bound is the same on every machine.
-- **The wire** (`net/wire.js` FOE_TYPE_MAX, relay world225): a streamed foe's kind was bounded at 255, which refused
+- **The wire** (`net/wire.js` FOE_TYPE_MAX, relay world229 - world225 on its branch): a streamed foe's kind was bounded at 255, which refused
   every record of a mod's foe whole; it is MobileTypes' own u16. A peer has the rows whatever its switch (below).
 
 **The reading** (`systems/enemyExpansion/dexTables.js`, line for line as the C# reads, every column, default, `continue`
