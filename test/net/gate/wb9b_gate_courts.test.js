@@ -25,7 +25,7 @@ import {
 import { validGateOut, GATE_COURT_BOUND } from '../../../src/net/wire.js';
 import { foldGate, crossLaid, GATE_STATE_EMPTY } from '../../../src/net/gate/gateLink.js';
 import {
-  courtArena, courtToDungeon, walkSlabs, slabRise, slabMatrix, buildWalkSlabModel, courtLights, courtLightsNear, courtOpenings,
+  courtArena, courtArenaAt, courtToDungeon, walkSlabs, slabRise, slabMatrix, buildWalkSlabModel, courtLights, courtLightsNear, courtOpenings,
   courtSpireAxes, courtBraziers, SLAB_LEN_M, SLAB_RISE_MS, LAVA_Y,
 } from '../../../src/world/gate/gateArena.js';
 import { bossPlace, bossHop, bossAct, CROSS_HEIGHT, BOSS_CUES, QUAKE_ON, ATTACK_COLORS } from '../../../src/world/gate/gateBoss.js';
@@ -339,7 +339,10 @@ test('WB9b the Deadlands keep clear of the floor: no island within LAND_CLEAR_M 
 test('WB9b the seams, by source: the world host refills one arena a frame from the link\'s crossings on the relay\'s clock; the dungeon arm stands the slabs and moves them before the frame\'s draws; the court draws his mark over the court he stands in; the relay carries the brain\'s floor (mutants: each seam removed)', () => {
   const w = read('src/scenes/world.js');
   assert.match(w, /const _courtArena = courtArena\(_gateFloor\.none, 0\);/);
-  assert.match(w, /\{ _courtArena\.xa = gateLink\?\.state\(\)\?\.xa \?\? _gateFloor\.none; _courtArena\.now = Date\.now\(\) \+ _sharedOffsetMs; _courtArena\.day = modes\?\.gateArenaDay\?\.\(\); player\.arena = _courtArena; \}/);   // WB14b: and the night whose plan holds me; PIN MOVED (WB14e): guarded, as every read of modes above its making (audit24_wave37)
+  assert.match(w, /player\.arena = courtArenaAt\(_courtArena, gateLink\?\.state\(\)\?\.xa \?\? _gateFloor\.none, Date\.now\(\) \+ _sharedOffsetMs, modes\?\.gateArenaDay\?\.\(\)\);/);   // WB14b: and the night whose plan holds me; PIN MOVED (WB14e): guarded, as every read of modes above its making (audit24_wave37); PIN MOVED (WB14, the merge of LAYERED-GEAR): refilled by courtArenaAt - the host's ceiling
+  const A = courtArena([], 0), xs = [1, 2];
+  assert.equal(courtArenaAt(A, xs, 77, 9), A, 'the one arena, never a new one a frame');
+  assert.deepEqual([A.xa, A.now, A.day], [xs, 77, 9]);
   assert.match(w, /gateFloor: \(\) => \{ _gateFloor\.xa = gateLink\?\.state\(\)\?\.xa \?\? _gateFloor\.none; _gateFloor\.now = Date\.now\(\) \+ _sharedOffsetMs; return _gateFloor; \},/);
   const wm = read('src/scenes/worldModes.js');
   // WB14b (PIN MOVED): the court is stood by scenes/gate/gateStand.js, out of the host - the night's walkways

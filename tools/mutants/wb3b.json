@@ -237,8 +237,8 @@
   {
     "name": "WB3b-no-ring-in-the-court",
     "file": "src/scenes/world.js",
-    "old": "    if (!player.arena && modes?.gateArenaDay?.() != null) { _courtArena.xa",
-    "new": "    if (!player.arena && false) { _courtArena.xa",
+    "old": "    if (!player.arena && modes?.gateArenaDay?.() != null) player.arena = courtArenaAt(",
+    "new": "    if (!player.arena && false) player.arena = courtArenaAt(",
     "tests": [
       "test/net/gate/wb3b_gate_arena.test.js"
     ]

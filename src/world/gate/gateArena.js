@@ -431,6 +431,11 @@ export function courtArena(xa, now, day = null) {
   };
   return a;
 }
+/** WB14b: the host's one arena (courtArena) refilled for this frame - the fight's crossings, the relay's clock, the night - and handed back. */
+export function courtArenaAt(a, xa, now, day) {
+  a.xa = xa; a.now = now; a.day = day;
+  return a;
+}
 
 // ═══ WB9b: THE WALKWAYS' SLABS ════════════════════════════════════════════════════════════════════════
 /** A walkway is laid in slabs of about this length (each its own draw, rising on its own). */
