@@ -44,6 +44,13 @@ export const MOBILE_BEHAVIOUR = Object.freeze({ General: 0, Flying: 1, Aquatic: 
 /** DaggerfallEntity.IsClassEnemyId (DaggerfallEntity.cs:974-977): the 128 bit. */
 export const isClassEnemyId = (id) => (id & 128) !== 0;
 
+/** A foe's level by its kind, as EnemyEntity.SetEnemyCareer sets it (EnemyEntity.cs:248-299): a monster's is its row's
+ *  (MobileEnemy.Level, :262 and :284), a class's the level it is handed - the player's there (:272, :299), a party's on
+ *  a road's trouble (systems/livingWorld/trouble.js `foeLevel`) - and the handed level where no row stands. One home:
+ *  the streaming host's trouble world and the roads' harness (test/lwRoads.mjs) both read it - the harness's own copy
+ *  still asked `>= 128` after DEX1 gave the host the bit (HOST-SPLIT, at DEX's merge). */
+export const enemyLevelOf = (type, level) => (isClassEnemyId(type) ? level : ENEMY_BASICS[type]?.level ?? level);
+
 /** A MobileTypes member that is an enemy: 0-42, 128-146 (Enum.IsDefined, None aside). */
 export const isClassicEnemyId = (id) => Number.isInteger(id) && ((id >= 0 && id <= 42) || (id >= 128 && id <= 146));
 

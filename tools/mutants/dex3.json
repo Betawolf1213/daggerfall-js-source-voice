@@ -252,8 +252,8 @@
  {
   "name": "AUDIT-DEX-C1-reset-state-keeps-the-flag",
   "file": "src/world/playerGps.js",
-  "old": "export function resetPlayerGpsState() { _inRect = false; }",
-  "new": "export function resetPlayerGpsState() { }",
+  "old": "export function resetPlayerGpsState(jump) { if (RESET_ON.has(jump)) _inRect = false; }",
+  "new": "export function resetPlayerGpsState(jump) { }",
   "why": "PlayerGPS.ResetState keeps the rect flag: a fast travel into another climate's town raises no entry, and its city night is never drawn",
   "tests": [
    "test/systems/enemyExpansion/dex3_encounters.test.js"
@@ -262,19 +262,39 @@
  {
   "name": "AUDIT-DEX-C1-the-jump-core-plays-no-reset",
   "file": "src/scenes/world.js",
-  "old": "    if (modEvent) resetPlayerGpsState();",
-  "new": "    if (false) resetPlayerGpsState();",
+  "old": "    resetPlayerGpsState(modEvent);",
+  "new": "    resetPlayerGpsState(null);",
   "why": "the jump core drops the host's rect flag and not the GPS's: a load or a fast travel from one town into another keeps the mod's last city night",
   "tests": [
    "test/systems/enemyExpansion/dex3_encounters.test.js"
   ]
  },
  {
+  "name": "AUDIT-DEX-C1-a-fast-travel-resets-nothing",
+  "file": "src/world/playerGps.js",
+  "old": "const RESET_ON = new Set(['load', 'travel']);",
+  "new": "const RESET_ON = new Set(['load']);",
+  "why": "OnPostFastTravel is not heard: a fast travel from one town into another climate's raises no entry, and its city night is never drawn",
+  "tests": [
+   "test/systems/enemyExpansion/dex3_encounters.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-C1-a-load-resets-nothing",
+  "file": "src/world/playerGps.js",
+  "old": "const RESET_ON = new Set(['load', 'travel']);",
+  "new": "const RESET_ON = new Set(['travel']);",
+  "why": "OnStartLoad is not heard: a load in the town it was saved in raises no second entry, and its city night is not drawn again",
+  "tests": [
+   "test/systems/enemyExpansion/dex3_encounters.test.js"
+  ]
+ },
+ {
   "name": "AUDIT-DEX-C1-every-jump-resets",
-  "file": "src/scenes/world.js",
-  "old": "    if (modEvent) resetPlayerGpsState();",
-  "new": "    resetPlayerGpsState();",
-  "why": "a Recall or a guild teleport resets the flag too, where DFU raises ResetState only on a load's start and a fast travel's end",
+  "file": "src/world/playerGps.js",
+  "old": "export function resetPlayerGpsState(jump) { if (RESET_ON.has(jump)) _inRect = false; }",
+  "new": "export function resetPlayerGpsState(jump) { _inRect = false; }",
+  "why": "a Recall or a guild teleport resets the flag too, where DFU raises ResetState only on a load's start and a fast travel's end (HOST-SPLIT at DEX's merge: the rule moved from the jump core into the module)",
   "tests": [
    "test/systems/enemyExpansion/dex3_encounters.test.js"
   ]

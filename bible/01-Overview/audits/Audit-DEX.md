@@ -38,7 +38,7 @@ and the record) and in two worktrees of their own (the equipment, the art), each
 | A5 MED | DEX1's reachable arms were unpinned: the Necromancer Assassin's second ranged attack, the Monk's ranged attack, the hosts' four monster-or-class arms | FIXED: pinned (`dex1_registry.test.js`); six mutants in a new `dex1.json` |
 | A6 MED | The fifty names are English in every language, and the L10N4 ratchet's comment said they were never shown | FIXED (the comment); RECORDED (the gap - DFU shows a custom enemy's name in English too, so no departure; a translatable table of a mod's names is a slice of its own) |
 | A7 LOW | The credit said the mod was "ported 1:1 ... each in Kamer's and Kab's own art" | FIXED with B8/E12: reworded in English and the thirteen drafted languages |
-| A8 LOW | The record said relay world229 | FIXED with E6: world232 (renumbered at the merges, E7) |
+| A8 LOW | The record said relay world229 | FIXED with E6: world233 (renumbered at the merges, E7) |
 | A9 LOW | The class test cited as `EnemyBasics.IsClassEnemyId` - no such member | FIXED: `DaggerfallEntity.IsClassEnemyId` (DaggerfallEntity.cs:974-977), in the record and every comment |
 | A10 LOW | readCareerTable held a replacement career's edits to the line's end and read a missing cell as empty; the C# writes in place and throws | FIXED: in place, and a cell past a short line throws; two mutants |
 | A11 LOW | "five hooks" (about nine), "five tables" (six), the mod's method named as DFU's delegate | FIXED with E9 |
@@ -62,7 +62,7 @@ and the record) and in two worktrees of their own (the equipment, the art), each
 
 | Id | Finding | Verdict |
 |---|---|---|
-| C1 HIGH | PlayerGPS's ResetState was not carried: after a fast travel or a load from one town into another climate's, no entry was raised and the mod's city night for that climate never drawn; the record named it a harmless departure | FIXED: `playerGps.js` resetPlayerGpsState, played by the jump core on a load and a fast travel (the two that raise it in DFU); the false departure struck; three mutants |
+| C1 HIGH | PlayerGPS's ResetState was not carried: after a fast travel or a load from one town into another climate's, no entry was raised and the mod's city night for that climate never drawn; the record named it a harmless departure | FIXED: `playerGps.js` resetPlayerGpsState, played by the jump core on a load and a fast travel (the two that raise it in DFU - which two is the module's, `RESET_ON`, since DEX's merge: `Host-Split.md`); the false departure struck; five mutants |
 | C2 MED | The mod's skeletal test only widened DFU's: under the mod a Barbarian (143, career 15) kept the Skeletal Warrior's rule, where the override asks the ID | FIXED: a door's answer stands alone; the mod's is its whole test |
 | C3 HIGH | Detect, Dispel and Pacify read a copy of DFU's group switch (`nearbyObjects.js`), never the mod's door: the 35 grouped monsters of the mod were None to them | FIXED: the switch and its door one leaf (`combat/enemyGroups.js`), every reader through it |
 | C4 MED | DEX1 widened Ocean Holes' own class range (EnemyClass and 128-146, its IL) to DFU's bit: the abyss took every one of the mod's classes, always | FIXED: the mod's range restored; Ocean-Holes.md says so |
@@ -78,7 +78,7 @@ and the record) and in two worktrees of their own (the equipment, the art), each
 |---|---|---|
 | D1 HIGH | A same-dungeon quickload after the body rose or burnt brought no body back, and the ash stood on | FIXED: the load lays the save's body again; the rebuild takes every ash flat |
 | D2 HIGH | Nothing cleared `corpseDestroyed`: a troll un-killed and killed again lay invisible and rose anyway | FIXED: un-death forgets the fate |
-| D3 HIGH | The room's memory dropped the body's fate: a burnt troll stood again for an arrival | FIXED: the save writes `bg`, validSharedFoe keeps it on a dead record (world232 grown in place, undeployed) |
+| D3 HIGH | The room's memory dropped the body's fate: a burnt troll stood again for an arrival | FIXED: the save writes `bg`, validSharedFoe keeps it on a dead record (world233 grown in place, undeployed) |
 | D4 MED | The seat loading a save of a gone body put a ghost body on every copy | FIXED: the load settles it |
 | D5 MED | The dungeon's half was held only by single-line regexes | FIXED: `dex5_audit.test.js` over the dungeon's real corpse chain |
 | D6 LOW | A street copy with no prefab kept the body told burnt | FIXED: it drops its marker |
@@ -101,7 +101,7 @@ and the record) and in two worktrees of their own (the equipment, the art), each
 | E4 MED | Three of the arm's claims unpinned (the id's tests, variant 1, the poison's fallback) | FIXED: pinned |
 | E5 MED | The patch note limited the copy to the new classes; it re-kits every class, and the Monk wears about half its armour | FIXED: the record's section 12 and the patch notes say so |
 | E6 MED | relay world229 in the record and Active-Arcs | FIXED |
-| E7 MED | The pull request no longer merged; main had taken world230 | FIXED: main merged, DEX renumbered to world231, relayversion's duplicate world230 key found and parted - and at the push's merge, past NAME-WORDS' world231 to world232 |
+| E7 MED | The pull request no longer merged; main had taken world230 | FIXED: main merged, DEX renumbered to world231, relayversion's duplicate world230 key found and parted - and at the push's merge, past NAME-WORDS' world231 to world232, and at the next, past GAUNTLET-PLATES' world232 to world233 |
 | E8 MED | Ledger C's glow row left out the Frost Daedra | FIXED with B9 |
 | E9 LOW | Section 1's delegate and hook count | FIXED with A11 |
 | E10 LOW | Cites into the vendored RRI C# off (pre-dating the arc) | FIXED |

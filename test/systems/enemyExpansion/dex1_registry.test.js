@@ -15,7 +15,7 @@ import {
   newMobileEnemy, isMonsterId, classicCareerName, MOBILE_TEAMS, ENEMY_GROUPS,
 } from '../../../src/systems/enemyExpansion/dexTables.js';
 import { installEnemyExpansion, _resetEnemyExpansion, dexProperties, dexEnemyIds, dexRead, dexClassicRow } from '../../../src/systems/enemyExpansion/dexInstall.js';
-import { ENEMY_BASICS, VANILLA_ENEMY_BASICS, enemyEntityType, enemyCareerIndex, enemyDisplayName, isClassicEnemyId } from '../../../src/characters/enemy/enemyBasics.js';
+import { ENEMY_BASICS, VANILLA_ENEMY_BASICS, enemyEntityType, enemyCareerIndex, enemyDisplayName, isClassicEnemyId, enemyLevelOf } from '../../../src/characters/enemy/enemyBasics.js';
 import { customCareerTemplate, clearCustomEnemies } from '../../../src/characters/enemy/customEnemies.js';
 import { makeEnemyEntity, loadEnemyCareer, _resetMintRowEditors } from '../../../src/characters/enemy/enemyEntity.js';
 import { careerTolerance } from '../../../src/systems/spellcast.js';
@@ -244,6 +244,7 @@ test('DEX1 a mod\'s monster and a mod\'s class are built on DFU\'s two arms (Ene
   const d = makeEnemyEntity(384, ENEMY_BASICS[384], druidCareer, 7, () => 0);
   assert.equal(d.isClass, true); assert.equal(d.level, 7, 'a class: the player\'s level - no watchman\'s bonus'); assert.equal(d.maxHealth, 10 + 7, 'RollEnemyClassMaxHealth at its floor');
   assert.equal(d.careerIndex, 384); assert.equal(d.name, 'Druid');
+  assert.deepEqual([enemyLevelOf(256, 7), enemyLevelOf(384, 7)], [g.level, d.level], 'a road\'s trouble levels them as the mint does (enemyBasics.js enemyLevelOf) - the Goblin its row\'s, by the bit: read as `>= 128` it was a person at the party\'s');
 });
 
 test('DEX1 with ARENA2: a career borrowed from Daggerfall is the player\'s own, copied - the Bat is a Giant Bat, the Guard CLASS18', { skip: !ARENA2 }, async (t) => {

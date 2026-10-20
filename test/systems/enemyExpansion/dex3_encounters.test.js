@@ -232,20 +232,23 @@ test('AUDIT DEX C1 PlayerGPS.ResetState: a load\'s start and a fast travel\'s en
   const at = (i) => sel.table(i, { local: true })?.[0];
   readPlayerGps({ climateIndex: CLIMATES.Woodlands, inLocationRect: true });
   assert.equal(random.n, 3, 'a woodlands town: its day, its night, its city night');
-  resetPlayerGpsState();
+  for (const jump of [null, undefined, 'recall']) resetPlayerGpsState(jump);
+  readPlayerGps({ climateIndex: CLIMATES.Woodlands, inLocationRect: true });
+  assert.equal(heard.length, 2, 'a jump that names no DFU event (a Recall, a guild\'s teleport, a respawn) keeps the flag - no second entry');
+  resetPlayerGpsState('travel');
   assert.equal(heard.length, 2, 'ResetState raises nothing - no exit across the jump');
   readPlayerGps({ climateIndex: CLIMATES.Mountain, inLocationRect: true });
   assert.deepEqual(heard.slice(2), [`climate ${CLIMATES.Mountain}`, `enter ${CLIMATES.Mountain}`], 'the arrival in a mountain town: the climate, then the entry');
   assert.equal(random.n, 6); assert.deepEqual([at(24), at(25), at(23)], [2024, 2025, 2023], 'and the mountain\'s city night is drawn (:1849-1850) - not left at whatever the index held');
   readPlayerGps({ climateIndex: CLIMATES.Mountain, inLocationRect: true });
   assert.equal(random.n, 6, 'no jump, no edge');
-  resetPlayerGpsState();
+  resetPlayerGpsState('load');
   readPlayerGps({ climateIndex: CLIMATES.Mountain, inLocationRect: true });
   assert.deepEqual(heard.slice(4), [`enter ${CLIMATES.Mountain}`], 'a load in the town it was saved in: a second entry, no climate (ResetState leaves lastClimateIndex)');
   assert.equal(random.n, 7); assert.equal(at(23), 1023, 'and its city night drawn again');
   const world = readFileSync(join(import.meta.dirname, '../../../src/scenes/world.js'), 'utf8');
   const core = world.slice(world.indexOf('async function _teleportToPixel('), world.indexOf('routByJump();', world.indexOf('async function _teleportToPixel(')));
-  assert.match(core, /_wasInLocationRect = false;[^\n]*\n\s*if \(modEvent\) resetPlayerGpsState\(\);/, 'the jump core drops the GPS\'s flag beside the host\'s own, on a jump that names a DFU event');
+  assert.match(core, /_wasInLocationRect = false;[^\n]*\n\s*resetPlayerGpsState\(modEvent\);/, 'the jump core hands the GPS every jump\'s kind beside the host\'s own flag - which reset is the module\'s (HOST-SPLIT, at DEX\'s merge)');
   assert.deepEqual([...new Set([...world.matchAll(/\bmodEvent: '(\w+)'/g)].map((m) => m[1]))].sort(), ['load', 'travel'], 'and the only events a jump names are the two PlayerGPS resets on (OnStartLoad, OnPostFastTravel) - a Recall or a teleport names none, and DFU keeps the flag across it');
 });
 

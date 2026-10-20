@@ -98,5 +98,15 @@
   "tests": [
    "test/systems/enemyExpansion/dex1_registry.test.js"
   ]
+ },
+ {
+  "name": "DEX1-a-road-levels-the-mod-by-the-number",
+  "file": "src/characters/enemy/enemyBasics.js",
+  "old": "export const enemyLevelOf = (type, level) => (isClassEnemyId(type) ? level",
+  "new": "export const enemyLevelOf = (type, level) => (type >= 128 ? level",
+  "why": "a road's trouble reads a class as `>= 128` (the roads' harness's old copy): the mod's Goblin, 256, is a person at the party's level, not its row's",
+  "tests": [
+   "test/systems/enemyExpansion/dex1_registry.test.js"
+  ]
  }
 ]
