@@ -202,9 +202,9 @@ only: no logic moved, no ICU argument was added or dropped, no hard-coded litera
 - **Translations**: the 823 keys drafted again in every language that holds them, in-session through
   `tools/l10nInSession.mjs` (the thirteen whole languages all 823; the languages still drafting the rows they had).
 - **The relay** carries player-facing lines in its bundle (the Elite Breach's law, the arena's, the duel's, the
-  serpent's, the name filter's, the staff commands'): `world226`, words only (`test/net/relayversion.test.js`;
-  world224 on its branch, renumbered past LAYERED-GEAR and VOICE2's world224 and GAUNTLET-SLAIN's world225 at the
-  merges of main).
+  serpent's, the name filter's, the staff commands'): `world227`, words only (`test/net/relayversion.test.js`;
+  world224 on its branch, renumbered past LAYERED-GEAR and VOICE2's world224, GAUNTLET-SLAIN's world225 and
+  LORD-SHARES' world226 at the merges of main).
 
 ### 6.4 Left alone, and why
 
@@ -262,5 +262,5 @@ section 6.2's (short, the event and then what to do, no developer talk).
   English the catalog now holds (11,653 rows). A line whose English changed only in spelling kept its row and moved its
   record (826 rows, VOICE2's own rule); the 50 keys whose meaning moved at the merge were drafted again in every
   language that holds them.
-- **The relay**: `world226` (the sweep's world224, renumbered past LAYERED-GEAR and VOICE2's world224 and, at a second
-  merge of main, GAUNTLET-SLAIN's world225), words only.
+- **The relay**: `world227` (the sweep's world224, renumbered past LAYERED-GEAR and VOICE2's world224 and, at later
+  merges of main, GAUNTLET-SLAIN's world225 and LORD-SHARES' world226), words only.

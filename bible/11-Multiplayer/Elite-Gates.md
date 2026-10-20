@@ -1783,14 +1783,23 @@ byte. The Spire's lords are written to it. The gate's brain already exports the 
 - **Health**: `ttkRef(c)` seconds of reference damage per fighter (`dpsRef(lv)`, the gate's level claim), added as the
   gate adds its fighters. `ttkRef(c) = 180 x 1.07^(c-1)` to circle 20, then `x 1.03` a circle (`EG_TTK_S`,
   `EG_TTK_GROWTH`, `EG_TTK_GROWTH_DEEP`).
-- **A fall retires a share, which is new.** Both the gate and the Remnant call `retireShare` only for absence
-  (`ABSENT_RETIRE_MS`), and the Remnant restores the share of every body in its arena, alive or fallen. The Spire
-  retires a fallen member's share at the fall and restores it at the recall; its seen-and-restore step skips the
-  fallen, or the next tick would restore the share. Seven members never face a lord sized for eight.
-  - Built by EG-ZQ (its record, below), through the boss seam's `join`. The members a hall can gain mid-fight are those a
-    Memento calls back into it (a member is admitted only in the open window, before the first wake: section 6.1). Each
-    brings its share at the fraction the lord stands at, as the gate adds a fighter. The last share in a lord is never
-    retired.
+- **A lord is stood for the company on its hall's plate, and keeps what the fallen leave** (FIELD BUGS 2026-10-19e
+  LORD-SHARES, `01-Overview/bugs/Field-Bugs-2026-10-19e.md`, after a company's word on its breach: *"Felt like he wasnt
+  being damaged"* and *"It felt like the moment team died difficulty went down"*).
+  - **As its hall wakes** a lord is stood for the members on the arrival plate (`net/eliteGates/egLords.js` egLordsStand,
+    called by `net/eliteGates/egBrain.js` standFight once every lord of the hall stands). The hall's fight is still sized
+    by its whole living company (its legion, its errands). A member not on the plate brings its share when the director
+    first sees it in the hall, at the fraction the lord stands at, as the gate adds a fighter: a late arrival never heals
+    a lord. The lord is sized in the beat the hall wakes, whose whole fight every screen hears before any health word, so
+    no screen ever reads the sizing as a blow. A lord still asleep in its ring lets a fallen member's share go, and wakes
+    for the company standing before it.
+  - **From its wake no fall takes a share out of it.** The living finish what the fallen left, so a death makes a fight
+    harder for the company, never easier. The gate and the Remnant retire a share only for absence (`ABSENT_RETIRE_MS`),
+    and the Remnant keeps a fallen body's. A recall finds its member's share where it was. A member never seen whose
+    absence becomes a fall (section 6.1's 180 s) takes nothing with it: it never brought any.
+  - The members a hall can gain mid-fight are the late and those a Memento calls back into it (a member is admitted only
+    in the open window, before the first wake: section 6.1), each bringing its share at the fraction. The last share in
+    a lord is never let go. Built through the boss seam's `join` (EG-ZQ's record, below, and LORD-SHARES's).
 - **The bucket**: the gate's (`BUCKET_RATE_X` 3, `BUCKET_DEPTH_X` 15, `HIT_CAP_X` 12), each member's times their
   Vestiges' factors (section 15): the client-declared at most 1.25, the relay-established at most 1.6, and **together
   at most `EG_BUCKET_ALL_MAX` 1.6**.
@@ -2492,7 +2501,7 @@ word take the respite whole (section 6.2).
 
 **A fall.** A death in the Spire (the pose's `dd`), or 180 s gone in a trial, is a FALL:
 
-- the fallen's Reliquaries are lost, and their lord's share is retired (section 13.2);
+- the fallen's Reliquaries are lost, and their share stays in every lord awake for the living to finish (section 13.2);
 - they become a **witness** (below);
 - **THE FALL**, their own screen. Today the world host's online death runs the death screen
   (`src/ui/deathScreen.js`, counting `ONLINE_RESPAWN_SECONDS`, 60 s, to a respawn; the enhanced skin's *YOU DIED*
