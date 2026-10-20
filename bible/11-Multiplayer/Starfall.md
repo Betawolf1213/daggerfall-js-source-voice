@@ -292,24 +292,66 @@ and a quarter of the time a piece of **the Starspun Weave** - the Starfall's own
 `starspun`, its powers through SET2's seams, `11-Multiplayer/Sigil-Sets.md` 6f). The Heart-Star doubles the gold and
 the Starglass, and always gives a Starspun piece.
 
-## 7. The questline - The Thirteenth of Frostfall
+## 7. The questline - The Thirteenth of Frostfall (AS BUILT, STAR8)
 
-`thirteenthFrostfall`, tier 3, a group of its own (`festival`), from level 6, online, a registered account, and only
-while the live event is staged (`opens.event`). A step whose deed is a star waits while the Starfall is not running
-(`needs: ['starfall']` - "Opens during the Witches' Festival."), and the window draws no line that has not begun outside
-its event (UI-Calm's law). The giver is **Morwen of Glenmoril**, a witch of Hircine's coven (the port's own), met at the
-Glenmoril Coven in Ilessan Hills (`permanent GlenmorilCoven`). The villains are the Sisters of the Bluff, whose coven
-stands nearest the capital (`permanent BluffCoven`).
+`thirteenthFrostfall` (`systems/questlines/qlLines.js` QL_LINES), tier 3, a group of its own (`festival`), from level
+6, online, a registered account, and only while the Starfall runs (`opens.event: 'starfall'`). A step whose deed is a
+star waits while the Starfall is not running (`needs: ['starfall']` - "Opens during the Witches' Festival.", said once
+though the opener and the first step both need it), and the window draws no line that has not begun outside its event
+(UI-Calm's law); a line begun stays drawn out of season, its starred step waiting. The giver is **Morwen of Glenmoril**,
+a witch of Hircine's coven (the port's own), met at the Glenmoril Coven in Ilessan Hills (`permanent GlenmorilCoven`).
+The villains are the Sisters of the Bluff, whose coven stands nearest the capital (`permanent BluffCoven`). The line's
+own lore holds with the canon (section "The lore"): FACTION.TXT's Glenmoril Witches (#419) summon Hircine, the Sisters
+of the Bluff are #423, the Order of Arkay #82.
+
+**THE SEASON.** `opens.event` names a step need; the line opens only while it holds
+(`systems/questlines/qlLines.js:"export const eventHolds = (l, probe) =>"`), and the window's rows leave out a line not
+begun while it does not (`systems/questlines/qlLineRunner.js:"return QL_LINES.filter((l) => lines[l.id] ||"`). The need
+`starfall` is the dated window and the hub's word together
+(`systems/questlines/qlLineRunner.js:"starfall: (/** @type {number} */ nowMs) => starfallRuns(nowMs, liveEventNow()),"`).
+The hub's word is kept in a leaf, `net/liveEventNow.js`, written where the hub socket takes it
+(`net/online.js:"setLiveEventNow(ev, this);"`), so the runner reads it with no socket of its own; only the socket that
+said the word unsays it, and a cell's socket closing leaves the hub's word standing.
+
+**THE COVENS ARE OPEN AIR - the departure.** In ARENA2 both covens are location type 13 (Glenmoril Coven, locationId
+0xc358, region 60; the Coven on the Bluff, 0xc360, the Daggerfall region): one RMB block, no building, no dungeon, so no
+quest marker. DFU's `place npc`, `place foe` and `place item` stand a thing at a site's marker, and a coven has none for
+them to take. The scripts meet there by ARRIVAL instead: `pc at _glenmoril_` (and `_bluff_`), and a `when` task that
+starts the meeting's own task once (a `when` task re-arms its actions each time it clears - DFU's always-on triggers -
+so the latch is the `start task`). Morwen speaks as the player reaches her fire (a message, no Person stood); the Spinner
+and her three sisters are called up by `create foe ... 1 times` from the latched task, once.
 
 | Step | What the player does | Witness |
 |---|---|---|
-| QLTF01 Music in the Woods | a letter left by a raven; hold a fallen star (`ql act star-held 1`); find Morwen at the Glenmoril Coven | star |
-| QLTF02 The Coven on the Bluff | go into the Coven on the Bluff, slay the Spinner and her sisters, take the spindle of black thread; unwind a length of it (`unwound`, greater pay) or bring it wound (`wound`, Glenmoril +3) | |
-| QLTF03 Three Stars | hold three more stars (`ql act star-held 3`) - every star held is a strand the web loses | stars3 |
-| QLTF04 What the Thread Is Worth | the holiday's own clash: burn the spindle in Hircine's fire (`burned`, the Glenmoril Witches +10, "Morwen's Hunt-Charm"), sell it to the Mages Guild (`guild`, greater pay, "Starglass Rod"), or carry it to a temple of Arkay (`temple`, the temple +5, "Thread-Cutter") - the line's title, Starwarden | |
+| QLTF01 Music in the Woods | a raven's letter; hold a fallen star (`ql act star-held 1`); reach the Glenmoril Coven, where Morwen steps out of the trees | star |
+| QLTF02 The Coven on the Bluff | reach the Coven on the Bluff; the Spinner (a Sorcerer) and three Sisters (Nightblades) come; slay the Spinner and take the spindle of black thread; back at Glenmoril, unwind a length of it to sell (`unwound`, greater pay) or give it whole (`wound`, lesser pay, the Glenmoril Witches +3) | |
+| QLTF03 Three Stars | hold three more stars (`ql act star-held 3`) - every star held is a strand the web loses; Morwen's raven brings word and purse - the line's title, Starwarden | stars3 |
+| QLTF04 What the Thread Is Worth | the holiday's own clash, asked at Glenmoril: burn the spindle in Hircine's fire (`burned`, lesser pay, the Glenmoril Witches +10, "Morwen's Hunt-Charm"), sell it to a mage of the Mages Guild at a guild hall (`guild`, greater pay, "Starglass Rod"), or carry it to a priest of Arkay at a temple (`temple`, standard pay, the Order of Arkay +5, "Thread-Cutter") | |
 
-The act `star-held` is noted by the receipt's claim on `recorded` (`net/starfall/starClaims.js`), once a receipt; the
-service witnesses it (`QL_SERVICE_LINES`, `QL_WITNESS_SQL` over `stars_held`).
+**THE TITLE ON THE THREE STARS - a departure from this page's first design**, which put it on QLTF04. A title is paid
+only on a step the service witnessed (`qlTitleSteps`), and QLTF04's choice is the client's: the Burning Doors' law -
+the service pays only what it saw. So Starwarden is laid on QLTF03's end (`titleAt: 2`), once QLTF01's star and QLTF03's
+three are witnessed (`net/questlineClaims.js` QL_SERVICE_LINES).
+
+**THE WITNESSES** (`server-account/src/questlines.js` QL_WITNESS_SQL, over `stars_held` - STAR7's claim, `stars.js`):
+`star` the account's first star claimed in the step's window; `stars3` its third (`ORDER BY s.at, s.star LIMIT 1 OFFSET
+2`), each newer than the earlier witnessed step's `seen_at` - so QLTF01's star is never one of QLTF03's three.
+
+**THE ACT.** `star-held` (`systems/questlines/qlActs.js` ACT_KINDS, the endgame family) is noted by the receipt's claim
+on `recorded` (`net/starfall/starClaims.js` - STAR7's), once a receipt.
+
+**WHAT THE MACHINE GAINED.** `ql name` names a Foe as well as a Person: `ql name _foe_ <Name> [female|male]`
+(`systems/questlines/qlActions.js` QlName) sets the foe's name, and the gender word sets a class enemy's
+(`isClassEnemyId`) - DFU's Foe.cs SetFoeName rolls a class foe 55% male, and the Spinner and her Sisters are women. A
+gender on a monster is refused with a warning. The spindle is handed over by `get item` (no reward), never `give pc`:
+a `give pc` of any item is the layer's reward, and it would settle the outcome's gold scaling before the choice is made
+(`questReward`, `06-Systems/Questlines-Arc.md` section 2.3). The Guild's buyer is a Person of the Mages Guild stood at a
+remote guild hall; the temple's, a priest of the Order of Arkay at a remote temple; each takes the spindle by `toting
+_spindle_ and _who_ clicked`.
+
+Pinned by `test/systems/questlines/star8_frostfall.test.js` (the line, the season, the hub's word, the foe's name, the
+scripts run on the machine over a rig of both covens, and the covens open air in ARENA2), `test/server/ql12_claim.test.js`
+STAR8 (the witnesses and the title through the Worker), and `tools/mutants/star8.json`.
 
 ## 8. What a player sees and hears
 
@@ -413,7 +455,7 @@ witness; the item law's for Starglass.
 | STAR5 | the defense on the client: the camp, the waves, the ward, the master, the circle, the words to the cell |
 | STAR6 | what a player sees: the tracker, the bar, the map, the compass, the timers, the words |
 | STAR7 | the rewards: the claim, the service, the spoils, Starglass, the Starspun Weave |
-| STAR8 | the questline: The Thirteenth of Frostfall |
+| STAR8 | the questline: The Thirteenth of Frostfall - four scripts and sheets, the `festival` group, `opens.event`, the `starfall` need over the hub's word (`net/liveEventNow.js`), the `star-held` act, the `star`/`stars3` witnesses, Starwarden; `ql name` names a foe (`star8_frostfall`, `ql12_claim`) |
 
 ## 15. Not done, and why
 

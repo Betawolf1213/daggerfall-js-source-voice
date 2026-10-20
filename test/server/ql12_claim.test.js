@@ -16,6 +16,8 @@ import { mintReceipt } from '../../src/net/gate/gateReceipt.js';
 import { mintEgReceipt } from '../../src/net/eliteGates/egReceipt.js';
 import { mintSdReceipt } from '../../src/net/superDungeon/sdReceipt.js';
 import { mintSerpentReceipt } from '../../src/net/serpent/serpentReceipt.js';
+import { mintStarReceipt } from '../../src/net/starfall/starReceipt.js';   // STAR8: the fallen stars' witness
+import { STARFALL_FROM_MS, STAR_HOUR_MS } from '../../src/net/starfall/starfallLaw.js';
 import { egValkRedoubt } from '../../src/net/eliteGates/egPay.js';
 import { QL_SERVICE_LINES, QL_TITLES, QL_WITNESS_KINDS, qlTitleBit, qlStepClaimed } from '../../src/net/questlineClaims.js';
 import { claimQl, QL_WITNESS_SQL, QL_STATUS, qlTitleSteps, qlSwitchOf, questlinesOpenFor } from '../../server-account/src/questlines.js';
@@ -81,9 +83,19 @@ async function stood(t, extra = {}) {
     const res = await S.call('/v1/serpent/claim', { receipt: await mintSerpentReceipt({ d, b: 'sethrakul', s: who.id, c: 99, x: 'dealt', h: 4, l: 20 }, S.gatePriv, { subtle, nowS: now() }), character: CH, name: who.handle }, who.secret);
     assert.equal(res.body.recorded, true, `the serpent's row is written (${JSON.stringify(res.body)})`);
   };
+  /** STAR8: a fallen star held - its receipt claimed (its `stars_held` row), each one a star of its own, a night's three
+   *  and the next night's after them. */
+  let held = 0;
+  const STAR_N = Math.ceil(STARFALL_FROM_MS / STAR_HOUR_MS) + 5;
+  const star = async (who) => {
+    const i = held++;
+    const receipt = await mintStarReceipt({ n: STAR_N + Math.floor(i / 3), k: i % 3, s: who.id, c: 7, l: 14 }, S.gatePriv, { subtle, nowS: now() });
+    const res = await S.call('/v1/star/claim', { receipt, character: CH, name: who.handle }, who.secret);
+    assert.equal(res.body.recorded, true, `the star's row is written (${JSON.stringify(res.body)})`);
+  };
   const row = (who) => ({ ...raw.prepare('SELECT eg_keys, ql_titles, ql_key FROM players WHERE id = ?').get(who.id) });
   const steps = (who) => raw.prepare('SELECT line, step, opened_at, done_at, seen_at, choice FROM ql_steps WHERE account = ? ORDER BY line, step').all(who.id).map((r) => ({ ...r }));
-  return { S, raw, at, now, open, ql, gate, breach, redoubt, end, hour, serpent, row, steps };
+  return { S, raw, at, now, open, ql, gate, breach, redoubt, end, hour, serpent, star, row, steps };
 }
 
 test('QL12 THE LAW: every step the service pays is witnessable - by a kind this module reads or its line\'s `after` - and each kind has its SQL; a line\'s title waits on its witnessed steps before it; the switch reads off, dev and on; the Valkynaz\'s SQL is egValkRedoubt (mutants: a kind unread; the title\'s steps; the fifth)', async (t) => {
@@ -100,6 +112,7 @@ test('QL12 THE LAW: every step the service pays is witnessable - by a kind this 
   assert.deepEqual(qlTitleSteps('weirRoad'), [0, 1, 2]);
   assert.deepEqual(qlTitleSteps('hourThatWasNot'), [1]);
   assert.deepEqual(qlTitleSteps('oldCoil'), [2]);
+  assert.deepEqual(qlTitleSteps('thirteenthFrostfall'), [0, 2], 'STAR8: the first star, then the three');   // PIN MOVED (STAR8)
   assert.deepEqual(qlTitleSteps('nope'), []);
   assert.deepEqual([qlSwitchOf('on'), qlSwitchOf('dev'), qlSwitchOf('off'), qlSwitchOf(undefined), qlSwitchOf('yes')], ['on', 'dev', 'off', 'off', 'off']);
   const dev = { handle: 'Mac' }, env = (v) => ({ QUESTLINES_OPEN: v, DEVELOPER_HANDLES: 'Mac' });
@@ -285,6 +298,29 @@ test('QL12 THE HOUR AND THE OLD COIL: an Hour broken witnesses the Hour\'s step 
   assert.deepEqual(titlesHeld({ handle: 'Witness', ql_titles: row(me).ql_titles }, {}).filter((x) => QL_TITLES.includes(x)), ['hourwitness', 'satakalwitness']);
 });
 
+test('STAR8 THE THIRTEENTH OF FROSTFALL: a star held after the line\'s first opening witnesses its first step, one held before it none; three more, each newer than that one, its third - two are not enough - and the three pay the Starwarden; the spindle\'s steps pay nothing (mutants: the star\'s table; the offset; the title\'s step)', async (t) => {
+  const { S, at, open, ql, star, row } = await stood(t);
+  const me = await S.registered('Starward', { character: CH });
+  await star(me);
+  at(T0 + 100);
+  assert.deepEqual((await open(me, 'thirteenthFrostfall', 0)).body, { opened: true });
+  assert.deepEqual((await ql(me, 'thirteenthFrostfall', 0)).body, { witnessed: false }, 'a star held before the line');
+  at(T0 + 200);
+  await star(me);
+  assert.deepEqual((await ql(me, 'thirteenthFrostfall', 0)).body, { witnessed: true }, 'the first star: no title yet');
+  assert.deepEqual((await ql(me, 'thirteenthFrostfall', 1, 'wound')).body, { why: 'unpaid' }, 'the Bluff is the client\'s');
+  assert.deepEqual((await open(me, 'thirteenthFrostfall', 2)).body, { opened: true });
+  at(T0 + 300);
+  await star(me);
+  await star(me);
+  assert.deepEqual((await ql(me, 'thirteenthFrostfall', 2)).body, { witnessed: false }, 'two are not three');
+  at(T0 + 400);
+  await star(me);
+  assert.deepEqual((await ql(me, 'thirteenthFrostfall', 2)).body, { witnessed: true, title: 'starwarden' });
+  assert.equal(row(me).ql_titles, qlTitleBit('starwarden'));
+  assert.deepEqual((await ql(me, 'thirteenthFrostfall', 3, 'burned')).body, { why: 'unpaid' }, 'the spindle\'s fate is the client\'s');
+});
+
 test('QL12 THE COVENS\' HOARD: its last step is witnessed only behind the Burning Doors witnessed whole (the Doorwarden held - never its breach alone); Covenbane on its END, never its opening; the Weir Key once an account - to an end that keeps it, a seal no bar to a later keep, never twice and said so (mutants: the after-gate; the opening paying; the choice; the key\'s guard; the balance; keyHeld)', async (t) => {
   const { S, at, open, ql, gate, row, steps } = await stood(t);
   /** The Burning Doors witnessed whole at `s`: the line opened, a rite, its end, a breach, its end. */
@@ -388,16 +424,17 @@ test('QL12 THE ROUTE (AUDIT FIVE-ASKS A1\'s lesson): /v1/ql/claim is listed, beh
   assert.match(read('.github/workflows/account-deploy.yml'), /^ {6}- "src\/net\/questlineClaims\.js"$/m, 'the shared law deploys the service');
 });
 
-test('QL12 THE VOCABULARY: the five join TITLES last, in QL_TITLES\' order; a registered row holds each by its bit and a guest none; their words; their colours - each its own, more than 40 from every title\'s; a title\'s loot banner (mutants: the order; the guest; a word)', () => {
-  assert.deepEqual(TITLES.slice(-5), [...QL_TITLES]);
-  assert.deepEqual([...QL_TITLES], ['doorwarden', 'covenbane', 'weirwalker', 'hourwitness', 'satakalwitness']);
+test('QL12 THE VOCABULARY: the six join TITLES last, in QL_TITLES\' order; a registered row holds each by its bit and a guest none; their words; their colours - each its own, more than 40 from every title\'s; a title\'s loot banner (mutants: the order; the guest; a word)', () => {
+  // PIN MOVED (STAR8): the five and the Starwarden of the Thirteenth of Frostfall, its bit the sixth (63 every one)
+  assert.deepEqual(TITLES.slice(-6), [...QL_TITLES]);
+  assert.deepEqual([...QL_TITLES], ['doorwarden', 'covenbane', 'weirwalker', 'hourwitness', 'satakalwitness', 'starwarden']);
   for (const t of QL_TITLES) {
     assert.deepEqual(titlesHeld({ handle: 'Mac', ql_titles: qlTitleBit(t) }, {}), [t], `${t} by its bit alone`);
-    assert.deepEqual(titlesHeld({ handle: null, ql_titles: 31 }, {}), [], 'a guest row holds none');
+    assert.deepEqual(titlesHeld({ handle: null, ql_titles: 63 }, {}), [], 'a guest row holds none');
   }
-  assert.deepEqual(titlesHeld({ handle: 'Mac', ql_titles: 31 }, {}), [...QL_TITLES], 'all five, in the lines\' order');
-  assert.deepEqual(QL_TITLES.map((t) => TITLE_TEXT[t]), ['Doorwarden', 'Covenbane', 'Weirwalker', 'Witness of the Hour', "Satakal's Witness"]);
-  assert.deepEqual(QL_TITLES.map((t) => cssRgba(TITLE_RGBA[t])), ['#e8400c', '#d0aa10', '#1f5fff', '#ada530', '#12b8b8'], 'the ember, the coven\'s gold, the Spire\'s blue, Akatosh\'s brass, the sea\'s teal');
+  assert.deepEqual(titlesHeld({ handle: 'Mac', ql_titles: 63 }, {}), [...QL_TITLES], 'all six, in the lines\' order');
+  assert.deepEqual(QL_TITLES.map((t) => TITLE_TEXT[t]), ['Doorwarden', 'Covenbane', 'Weirwalker', 'Witness of the Hour', "Satakal's Witness", 'Starwarden']);
+  assert.deepEqual(QL_TITLES.map((t) => cssRgba(TITLE_RGBA[t])), ['#e8400c', '#d0aa10', '#1f5fff', '#ada530', '#12b8b8', '#7850ff'], 'the ember, the coven\'s gold, the Spire\'s blue, Akatosh\'s brass, the sea\'s teal, a falling star\'s violet');
   const apart = (a, b) => Math.hypot(...[0, 1, 2].map((i) => (a[i] - b[i]) * 255));
   for (const t of QL_TITLES) {
     for (const o of TITLES.filter((x) => x !== t)) assert.ok(apart(TITLE_RGBA[t], TITLE_RGBA[o]) > 40, `${t} apart from the ${o}'s (${apart(TITLE_RGBA[t], TITLE_RGBA[o]).toFixed(0)})`);

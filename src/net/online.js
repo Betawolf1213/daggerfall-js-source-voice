@@ -1,5 +1,6 @@
 // @ts-check
 import { relaySupportsFoeInventory } from './wire.js';
+import { setLiveEventNow } from './liveEventNow.js';   // STAR8: the hub's live event, for the readers with no socket
 // ONLINE1 (2026-09-12, Mac: "the basic bones of multiplayer. The goal is
 // being able to see others in the world while allowing you to bring
 // over one of your own save file ... All I care about is being able to
@@ -2762,6 +2763,7 @@ export class OnlineSession {
     const cur = this.liveEvent;
     if (cur === ev || (cur && ev && cur.kind === ev.kind && cur.at === ev.at)) return;
     this.liveEvent = ev;
+    setLiveEventNow(ev, this);   // STAR8: the readers with no socket of their own (the questlines' seasonal line)
     this._deliver('event', () => this.onEvent?.(ev, { live }));
   }
 

@@ -23,7 +23,7 @@
 //     line's title held on this row (SERVICE-4). Only an end pays (SERVICE-6: an opening asked again paid Covenbane at
 //     the step's START).
 //   `at` is the claim's own time on each receipt row (accounts.js claimGate, eg.js claimEg, sds.js claimSd, serpents.js
-//   claimSerpent all write `nowS`), so a receipt held unclaimed across the line's opening - the client claims its
+//   claimSerpent, STAR8's stars.js claimStar all write `nowS`), so a receipt held unclaimed across the line's opening - the client claims its
 //   receipts as they come, and each lives a week (RECEIPT_TTL_S) - is read as the claim's, not the kill's.
 //
 // WHAT IT PAYS, in the one batch that lays `done_at` (a failure takes nothing half-written):
@@ -82,6 +82,8 @@ const NOT_REHEARSAL = 'NOT EXISTS (SELECT 1 FROM eg_stakes k WHERE k.b = r.b AND
  *   valkynaz  a Valkynaz's Redoubt - every fifth (src/net/eliteGates/egPay.js egValkRedoubt: w >= 5, w % 5 = 0)
  *   hour      an Hour broken - a Brass Remnant's row
  *   serpent   the Sea Serpent slain - a serpent's row
+ *   star      STAR8: a fallen star held - a star's row (stars.js claimStar: one a (star, account), `at` the claim's second)
+ *   stars3    three of them - each row a distinct star by stars_held's key
  */
 const WINDOW = (x) => `${x}.at >= ${SINCE} AND ${x}.at < ${UNTIL}`;
 export const QL_WITNESS_SQL = Object.freeze({
@@ -92,6 +94,8 @@ export const QL_WITNESS_SQL = Object.freeze({
   valkynaz: `(SELECT MIN(r.at) FROM eg_redoubts r WHERE r.account = ?1 AND ${WINDOW('r')} AND r.w >= 5 AND r.w % 5 = 0 AND ${NOT_REHEARSAL})`,
   hour: `(SELECT MIN(d.at) FROM sd_kills d WHERE d.account = ?1 AND ${WINDOW('d')})`,
   serpent: `(SELECT MIN(z.at) FROM serpent_kills z WHERE z.account = ?1 AND ${WINDOW('z')})`,
+  star: `(SELECT MIN(s.at) FROM stars_held s WHERE s.account = ?1 AND ${WINDOW('s')})`,
+  stars3: `(SELECT s.at FROM stars_held s WHERE s.account = ?1 AND ${WINDOW('s')} ORDER BY s.at, s.star LIMIT 1 OFFSET 2)`,
 });
 for (const k of QL_WITNESS_KINDS) if (!QL_WITNESS_SQL[/** @type {keyof typeof QL_WITNESS_SQL} */ (k)]) throw new Error(`questlines.js: no witness for ${k}`);
 
