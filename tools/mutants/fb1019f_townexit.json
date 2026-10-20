@@ -182,7 +182,7 @@
   {
     "name": "TOWN-EXIT-host-no-exit",
     "file": "src/scenes/world.js",
-    "old": "ringAt: tvRingAt, exitAt: (x, y, to, me) => townExit(built.get(`${x},${y}`), tvTownRects(x, y), me, to) });",
+    "old": "ringAt: tvRingAt, exitAt: (x, y, to, me) => townGateExit(built.get(`${x},${y}`), tvTownRects(x, y), me, to) });",
     "new": "ringAt: tvRingAt });",
     "tests": [
       "test/systems/travel/fb1019f_townexit.test.js",

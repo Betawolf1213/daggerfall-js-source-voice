@@ -164,7 +164,7 @@ export function ringRound(at, start, a, b) {
  * @param {number[]} to
  * @returns {{ points: {x:number, z:number}[] } | { shut: true } | null}
  */
-export function townExit(pixel, rects, me, to) {
+export function townGateExit(pixel, rects, me, to) {
   const nav = pixel?.population?.nav, lo = pixel?.locOrigin;
   if (!rects || !pixel?.cityGates?.length || !(nav?.grid instanceof Uint8Array) || !lo) return null;
   const origin = mapPixelWorldOrigin(pixel.px, pixel.py);
@@ -207,7 +207,7 @@ const middle = (p) => { const o = mapPixelWorldOrigin(p.x, p.y); return { x: o.x
 /**
  * THE LEGS A JOURNEY WALKS from pixel `from` along `plan` (planRoute's pixels and kinds): the route's own legs
  * (routeLegs, round every town it passes through - OW-TOWN-RING's `ringAt`), begun
- *  - out of the walled town it starts in by a gate (TOWN-EXIT: `exitAt(x, y, to, me)`, the host's townExit) - each
+ *  - out of the walled town it starts in by a gate (TOWN-EXIT: `exitAt(x, y, to, me)`, the host's townGateExit) - each
  *    point a leg aimed at it in its own pixel (the autopilot asks a leg's arrival only there), walked point to point
  *    (`ring`: OW-TOWN-RING's flag - a resume in the town skips none and takes none for a road's join, and no road's lane
  *    runs between them), the way in to the gate, through it and out to the ring on foot (EXIT_ON_FOOT), the ring on

@@ -30,7 +30,7 @@ import { getLocationTerrainTileOrigin, setLocationTiles } from '../../../src/wor
 import { locationRectsOf, createTravelOptions, readTravelOptionsSettings } from '../../../src/systems/travel/travelOptions.js';
 import { mapPixelWorldOrigin, P_SIZE } from '../../../src/systems/travel/travelPaths.js';
 import { rectOf } from '../../../src/systems/travel/travelAutopilot.js';
-import { gatesOf, townExit, journeyLegs, streetsFrom } from '../../../src/systems/travel/townExit.js';
+import { gatesOf, townGateExit, journeyLegs, streetsFrom } from '../../../src/systems/travel/townExit.js';
 import { TravelControlUI } from '../../../src/ui/travel/travelControlUI.js';
 import { modSetting } from '../../../src/systems/modSettings.js';
 import { TRAVEL_VIEW_TEXT } from '../../../src/scenes/travelView.js';
@@ -194,7 +194,7 @@ function town(name, { gateModel = () => null, yard = null, breach = null } = {})
 const rel = (p) => ({ x: p.x - O.x, z: p.z - O.z });
 /** A leg as the pins read it: its point, if it has one, from the pixel's corner. */
 const relLeg = (l) => (l.at ? { ...l, at: rel(l.at) } : l);
-const exitOf = (t, me, to) => { const e = townExit(t.pixel, t.rects, me, to); return e && 'points' in e ? e.points.map(rel) : e; };
+const exitOf = (t, me, to) => { const e = townGateExit(t.pixel, t.rects, me, to); return e && 'points' in e ? e.points.map(rel) : e; };
 /** Each gate shut as DaggerfallCityGate's Update shuts it at dusk - offline, and online (OL5). */
 const nightfall = (t, online) => { for (const g of t.pixel.cityGates) updateCityGate(g.gate, true, { online }); };
 
@@ -259,17 +259,17 @@ test('TOWN-EXIT THE WAY OUT: from the streets, through the gate whose walk is sh
   assert.deepEqual(exitOf(t, t.at(12288, 20928 - 150), [0, -1]), [{ x: 17920, z: 24512 }, { x: 17920, z: 25536 }, { x: 17920, z: 28992 }, { x: 16384, z: 28992 }]);
   const open = town('Kaloguja');
   open.pixel.cityGates = [];
-  assert.equal(townExit(open.pixel, open.rects, open.at(12288, 12288), [1, 0]), null, 'an open town - no gates: its connector as before');
-  assert.equal(townExit(undefined, t.rects, t.at(12288, 12288), [1, 0]), null, 'a pixel not built: no gates, no navgrid');
-  assert.equal(townExit({ ...t.pixel, population: null }, t.rects, t.at(12288, 12288), [1, 0]), null, 'no navgrid');
-  assert.equal(townExit(t.pixel, null, t.at(12288, 12288), [1, 0]), null, 'no rects');
+  assert.equal(townGateExit(open.pixel, open.rects, open.at(12288, 12288), [1, 0]), null, 'an open town - no gates: its connector as before');
+  assert.equal(townGateExit(undefined, t.rects, t.at(12288, 12288), [1, 0]), null, 'a pixel not built: no gates, no navgrid');
+  assert.equal(townGateExit({ ...t.pixel, population: null }, t.rects, t.at(12288, 12288), [1, 0]), null, 'no navgrid');
+  assert.equal(townGateExit(t.pixel, null, t.at(12288, 12288), [1, 0]), null, 'no rects');
 });
 
 test('TOWN-EXIT THE GATES SHUT: offline, by night, every gate the streets reach is shut - the way out is refused, never routed through a wall; online they stand open; a gate laid shut is passed over for the next (mutants: TOWN-EXIT-shut-not-said, TOWN-EXIT-through-a-shut-gate)', () => {
   const off = town('Kaloguja');
   nightfall(off, false);
-  assert.deepEqual(townExit(off.pixel, off.rects, off.at(12288, 12288), [1, 0]), { shut: true });
-  assert.equal(townExit(off.pixel, off.rects, off.at(12288, 1500), [0, 1]), null, 'the fields: nothing to be shut in');
+  assert.deepEqual(townGateExit(off.pixel, off.rects, off.at(12288, 12288), [1, 0]), { shut: true });
+  assert.equal(townGateExit(off.pixel, off.rects, off.at(12288, 1500), [0, 1]), null, 'the fields: nothing to be shut in');
   const on = town('Kaloguja');
   nightfall(on, true);
   assert.deepEqual(exitOf(on, on.at(12288, 12288), [1, 0]), [{ x: 24512, z: 14848 }, { x: 25536, z: 14848 }, { x: 28992, z: 14848 }, { x: 28992, z: 16384 }], 'online: the east gate, as by day');
@@ -279,7 +279,7 @@ test('TOWN-EXIT THE GATES SHUT: offline, by night, every gate the streets reach 
 
 test('TOWN-EXIT THE LEGS: the journey\'s legs begin with the way out - each point a leg in its own pixel (the ring past a town eight blocks tall lies in the next), the way in and through on foot, the ring on the ground the route leaves by, every one walked point to point (`ring`) - and the route\'s own legs after, no join; shut, no legs; a route that never leaves the pixel is not asked; off the streets, OW-ROADSIDE\'s join as before (mutants: TOWN-EXIT-legs-not-in-their-pixel, TOWN-EXIT-legs-all-the-roads-kind, TOWN-EXIT-legs-unmarked, TOWN-EXIT-shut-walked-anyway)', () => {
   const t = town('Kaloguja');
-  const exitAt = (town_) => (x, y, to, me) => townExit(x === PX && y === PY ? town_.pixel : undefined, x === PX && y === PY ? town_.rects : null, me, to);
+  const exitAt = (town_) => (x, y, to, me) => townGateExit(x === PX && y === PY ? town_.pixel : undefined, x === PX && y === PY ? town_.rects : null, me, to);
   const east = { pixels: [{ x: PX, y: PY }, { x: PX + 1, y: PY }, { x: PX + 2, y: PY }], kinds: ['road', 'road'] };
   const legs = journeyLegs({ x: PX, y: PY }, east, { me: t.at(12288, 12288), exitAt: exitAt(t) });
   assert.deepEqual(legs.map(relLeg), [
@@ -314,7 +314,7 @@ test('TOWN-EXIT THE LEGS: the journey\'s legs begin with the way out - each poin
 test('TOWN-EXIT THE JOURNEY: Travel Options walks the way out point to point - the legs kept whole (each point, each mark), the autopilot aimed at the gate\'s inner point in its own pixel, and a resume in the town\'s pixel skips none of them and joins no road between them (OW-TOWN-RING\'s `ring`, read four ways)', () => {
   const t = town('Kaloguja');
   const legs = journeyLegs({ x: PX, y: PY }, { pixels: [{ x: PX, y: PY }, { x: PX + 1, y: PY }, { x: PX + 2, y: PY }], kinds: ['road', 'road'] },
-    { me: t.at(12288, 12288), exitAt: (x, y, to, me) => townExit(t.pixel, t.rects, me, to) });
+    { me: t.at(12288, 12288), exitAt: (x, y, to, me) => townGateExit(t.pixel, t.rects, me, to) });
   const st = { pos: t.at(12288, 12288), pixel: { x: PX, y: PY } };
   const ui = new TravelControlUI({ defaultStartingAccel: 10, accelerationLimit: 60 });
   const to = createTravelOptions({
@@ -358,7 +358,7 @@ test('TOWN-EXIT THE HOST: world.js\'s tvJoinedLegs, lifted and run - the built p
   const run = (t) => {
     const said = [];
     const env = {
-      journeyLegs, townExit, tvFreePull: (plan) => plan, tvRingAt: () => null, tvTownRects: (x, y) => (x === PX && y === PY ? t.rects : null),
+      journeyLegs, townGateExit, tvFreePull: (plan) => plan, tvRingAt: () => null, tvTownRects: (x, y) => (x === PX && y === PY ? t.rects : null),
       built: new Map([[`${PX},${PY}`, t.pixel]]), state: { worldCoords: (p) => ({ x: p[0], z: p[2] }) }, player: { pos: [t.me.x, 0, t.me.z] },
       tvSay: (l) => said.push(l), TRAVEL_VIEW_TEXT,
     };
@@ -438,7 +438,7 @@ test('TOWN-EXIT REPRODUCED, then fixed - the steering flown over the town\'s own
     const before = fly(t.walls, t.metres(me), [target], { scale, dt });
     assert.deepEqual([before.reached, before.stop, before.touched], [0, 'blocked', false], `x${scale}: REPRODUCED - stopped, the way ahead blocked, short of the wall`);
     assert.ok(before.body.z < (20928 - ACROSS) * GLOBAL_SCALE && before.body.x > 3648 * GLOBAL_SCALE, `x${scale}: still inside the walls (${before.body.x.toFixed(0)}, ${before.body.z.toFixed(0)})`);
-    const exit = townExit(t.pixel, t.rects, me, [0, -1]);
+    const exit = townGateExit(t.pixel, t.rects, me, [0, -1]);
     assert.deepEqual(exit.points.map(rel), [{ x: 17920, z: 24512 }, { x: 17920, z: 25536 }, { x: 17920, z: 28992 }, { x: 16384, z: 28992 }], 'by the north gate');
     const after = fly(t.walls, t.metres(me), [...exit.points.map(t.metres), target], { scale, dt });
     assert.deepEqual([after.reached, after.stop, after.touched], [5, null, false], `x${scale}: out by the gate and on - every point reached, nothing touched`);

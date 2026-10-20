@@ -2367,7 +2367,7 @@ it met a notch's wall, was turned along the walls - past the north gate's passag
 inside them, the way ahead blocked: the report, reproduced.
 
 **THE FIX** (`systems/travel/townExit.js`). `tvJoinedLegs` is `journeyLegs` now (townExit.js:"export function journeyLegs"), moved out of
-`bootWorld` whole with OW-ROADSIDE's join as it was, and the host hands it the way out: `townExit` (townExit.js:"export function townExit") over the
+`bootWorld` whole with OW-ROADSIDE's join as it was, and the host hands it the way out: `townGateExit` (townExit.js:"export function townGateExit") over the
 start pixel as its build keeps it - its gates (pixelBuild.js:"made.cityGates =") and its town's navgrid.
 - **On the streets.** The town's navgrid (DFU's CityNavigation, every block's automap carved out of it - a wall's and a
   gate's model among them) says where its streets are: a walled town's are a piece of the grid of their own that never

@@ -730,7 +730,7 @@ Find me departs from it as FINDME did on the bay, on the enhanced skin alone, un
 
 ## TOWN-EXIT: a journey from inside a walled town leaves by a gate
 
-`src/systems/travel/townExit.js` (new: `journeyLegs`, `townExit`, `gatesOf`, `streetsFrom`, `ringRound`),
+`src/systems/travel/townExit.js` (new: `journeyLegs`, `townGateExit`, `gatesOf`, `streetsFrom`, `ringRound`),
 `src/scenes/world.js` (`tvJoinedLegs`, moved out to one call; the two journeys' guards), `src/scenes/travelView.js`
 (`TRAVEL_VIEW_TEXT.gatesShut`), `src/systems/travel/travelOptions.js` (`ringPoints`, ringPassPoints' table, shared).
 
@@ -755,7 +755,7 @@ fallback for an unbuilt pixel (a pixel the traveller can walk in is built - the 
 a new leg flag (`ring`'s four readings fit a way out as they fit a ring).
 
 THE FIX. `tvJoinedLegs`' body left `bootWorld` whole for `journeyLegs` (townExit.js:"export function journeyLegs"),
-OW-ROADSIDE's join as it was, and the host hands it the way out: `townExit` (townExit.js:"export function townExit")
+OW-ROADSIDE's join as it was, and the host hands it the way out: `townGateExit` (townExit.js:"export function townGateExit")
 over the start pixel as its build keeps it - its gates and its town's navgrid.
 - ON THE STREETS: the navgrid (DFU's CityNavigation, every block's automap carved out of it, a wall's and a gate's model
   among them) parts a walled town's streets from the fields - a piece of the grid that never reaches its edge

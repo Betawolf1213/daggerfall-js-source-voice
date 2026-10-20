@@ -492,7 +492,7 @@ import { markShown, travellerKin } from '../systems/travel/travelViewFilters.js'
 import { travelPathMode, travelPathUsesRoads, pickTakesPlace, fineMoveHeld, TRAVEL_PATH_TEXT } from '../systems/travel/travelPathMode.js';   // OW-PATH: roads or free, and the snap to a town
 import { groundHit, canvasPoint, classifyPick } from '../player/travelPick.js';   // TV2: the click's ground
 import { planRoute, roadShare, crossesWater, dryLine, SEA_KINDS } from '../systems/travel/travelRoute.js';   // TV2: the way by the roads; OWS2: and over the water
-import { journeyLegs, townExit } from '../systems/travel/townExit.js';   // TOWN-EXIT: a journey's legs - out of a walled town by a gate, else joined to its first road (OW-ROADSIDE)
+import { journeyLegs, townGateExit } from '../systems/travel/townExit.js';   // TOWN-EXIT: a journey's legs - out of a walled town by a gate, else joined to its first road (OW-ROADSIDE)
 import { createSeaHelm, seaHelmStep, seaHelmLook, headingOf as seaHeadingOf, squareOnly as seaSquareOnly } from '../systems/seaHelm.js';   // OWS2: the journey's hand on the helm
 import { createLoadGovernor, unbuiltAround, unbuiltCount } from '../systems/travel/travelGovernor.js';   // TV2: "Cap it to what loads cleanly"
 import { createWildAlert, noticeRoll, WILD_MARK_S } from '../systems/wild/wildAlert.js';   // WILD-ALERT: the wilderness notices a fast traveller on a stealth check
@@ -30847,10 +30847,10 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     return ringPassPoints(r.locationRect, r.locationBorderRect, from, to, { x: o.x + 16384, z: o.z + 16384 });
   }
   /** TOWN-EXIT (FIELD BUGS 2026-10-19f): a journey's legs (systems/travel/townExit.js journeyLegs, moved out whole) - out of
-   *  the walled town it starts in by a gate (townExit over the built pixel: its gates, its navgrid), else joined to its
+   *  the walled town it starts in by a gate (townGateExit over the built pixel: its gates, its navgrid), else joined to its
    *  first road (OW-ROADSIDE); null, and said, where every gate is shut for the night. */
   function tvJoinedLegs(from, plan, roads = false) {
-    const legs = journeyLegs(from, tvFreePull(plan, roads), { me: state.worldCoords(player.pos), ringAt: tvRingAt, exitAt: (x, y, to, me) => townExit(built.get(`${x},${y}`), tvTownRects(x, y), me, to) });
+    const legs = journeyLegs(from, tvFreePull(plan, roads), { me: state.worldCoords(player.pos), ringAt: tvRingAt, exitAt: (x, y, to, me) => townGateExit(built.get(`${x},${y}`), tvTownRects(x, y), me, to) });
     if (!legs) tvSay(TRAVEL_VIEW_TEXT.gatesShut);
     return legs;
   }
