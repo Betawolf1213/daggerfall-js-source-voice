@@ -259,10 +259,11 @@ test('TV7b host: the band word rides my cell\'s foes frame (a chase asks for a f
   assert.match(w, /if \(!full && !_bandChase\.size && key === _bandWordKey\) return false;/, 'a chase is said every frame; a spent list on a change and the full frames');
   assert.match(w, /if \(flag === 2\) \{ _bandSpent\.add\(id\); _bandChase\.delete\(id\); _bandPeer\.delete\(id\); continue; \}/, 'a peer\'s spent band: spent here');
   // PIN MOVED (OW-CHASE-RANGE, 2026-10-19): a peer's word keeps how long it stands - a cell's BAND_WORD_MS, a region mark's TRAV_BAND_HOLD_MS
-  assert.match(w, /_bandPeer\.set\(id, \{ x, z, at: now, from, hold \}\);\n\s*if \(_bandChase\.has\(id\) && chaseYields\(online\?\.id \?\? '', from\)\) \{ _bandChase\.delete\(id\); wildBands\.forget\(id\); \}/, 'one band, one chaser (WILD-ALERT-FIX: its notice of me with it)');
+  // PIN MOVED (AUDIT OW-REVISITED L4-2): a welcome row's age taken from the word's stand (`at: now - aged`)
+  assert.match(w, /_bandPeer\.set\(id, \{ x, z, at: now - aged, from, hold \}\);\n\s*if \(_bandChase\.has\(id\) && chaseYields\(online\?\.id \?\? '', from\)\) \{ _bandChase\.delete\(id\); wildBands\.forget\(id\); \}/, 'one band, one chaser (WILD-ALERT-FIX: its notice of me with it)');
   assert.match(w, /const pc = bandPeerChase\(b\.id\);\n\s*if \(pc\) return pc;/, 'a peer\'s chase shown where it runs');
   assert.match(w, /if \(performance\.now\(\) - p\.at > p\.hold\) \{ _bandPeer\.delete\(id\); return null; \}/, 'a word gone stale: the band wanders on');
-  assert.match(w, /function bandHear\(from, raw, hold = BAND_WORD_MS\) \{/, 'a cell\'s word stands BAND_WORD_MS');
+  assert.match(w, /function bandHear\(from, raw, hold = BAND_WORD_MS, aged = 0\) \{/, 'a cell\'s word stands BAND_WORD_MS');   // PIN MOVED (AUDIT OW-REVISITED L4-2): a welcome row's age
 });
 
 

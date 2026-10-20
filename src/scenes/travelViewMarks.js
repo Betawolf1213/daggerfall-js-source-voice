@@ -28,8 +28,9 @@ import { WILD_MARK } from '../systems/wild/wildAlert.js';
 import { WILD_TEXT } from '../systems/wild/wildZone.js';
 
 /** OW-QUEST: a quest mark's words on the Overworld - the first quest's title (the followed one first, questMapMarks'
- *  order) with how many more stand at the place, and under it the distance and the followed one's time left. The
- *  place itself is the town's plate's to say (or the card's, on a hover). */
+ *  order) with how many more stand at the place, and under it the distance and the first quest's time left (AUDIT
+ *  OW-REVISITED L5-7: the followed one's where it stands here). The place itself is the town's plate's to say (or the
+ *  card's, on a hover). */
 export const QUEST_OW_TITLE_MAX = 40;
 export function questMarkWords(q, distance) {
   const quests = Array.isArray(q?.quests) ? q.quests : [];
@@ -46,7 +47,7 @@ export function createTravelViewMarks(host) {
     TV_PLACE_LIFT, _bandChase, _bandSpent, _hiddenPeers, _lodesSensed, _peerMapPoses, _townOfMapId, _tvBountyHold,
     _tvLodeHold, _tvPartyHold, _tvVendorHold, _tvWaypointHold, _veils, _wildStrangerIds, bandMake, bandNowMs,
     bandPlace, cam, carriageTown, csaOn, exteriorFoes, livingHideoutsHostOf, lodeSense, lodeWords, motherlodeBook,
-    myGuildTag, owForecast, params, player, playerTravelPixel, questPixel, seaRaidPeerChase, townEcon, state, travelViewBands,
+    myGuildTag, owForecast, params, player, playerTravelPixel, questPixel, seaRaidPeerChase, townEcon, state, travelViewBands, tvPlaceRect, tvPlaceSummary,
     travelViewCamps, travelViewDungeons, travelViewFarPlaces, travelViewPlaces, travelViewRaiders, travellerBook,
     tvRaid, tvSceneKept, tvTrip, tvTripLive, walkMode, wildCampKeys, wildHidesPlayer
   } = host;
@@ -149,20 +150,25 @@ export function createTravelViewMarks(host) {
     for (const id of [..._tvBountyHold.keys()]) if (!bountyIds.has(id)) _tvBountyHold.delete(id);   // a bounty over lets its point go
     // OW-QUEST (2026-10-19, the owner, of the Overworld's gaps: "1. Do it"): WHERE THE QUESTS POINT - the held map's own
     // marks (ui/quest/questMarks.js questMapMarks: every active quest whose place is on the player's map, two quests at one
-    // place one mark), each at its pixel's middle - a town's middle, as the bounties stand - a diamond in the journal's
-    // gold, the followed quest's filled and held at the edge off the picture with its distance (the compass's TRACK-ONLY:
-    // the one being followed is never off the screen), the rest where they lie. Pressed, a journey there by the roads.
-    // Under the quest marks' own switch (marksOn), never the map filters' (a quest is never cluttering - it is the point)
+    // place one mark), each at its PLACE's middle (AUDIT OW-REVISITED L5-1: the place's own rect, as its plate and the
+    // journey's end stand - the pixel's middle stood a hundred metres off the main quest's eight off-middle dungeons; the
+    // pixel's middle only where the place is not known), a diamond in the journal's gold, the followed quest's filled and
+    // held at the edge off the picture with its distance (the compass's TRACK-ONLY: the one being followed is never off the
+    // screen) - unless the journey under way is bound there, whose own end is held (L5-5: one arrow a place) - the rest
+    // where they lie. Pressed, a journey there (by the Path switch's way, as every press of the view's). Under the quest
+    // marks' own switch (marksOn), never the map filters' (a quest is never cluttering - it is the point)
     {
       const keep = new Set();
       for (const q of marksOn() ? questMapMarks(questTracker.views, questTracker.shown()?.id ?? null, questPixel) : []) {
-        const o = mapPixelToWorldCoords(q.px, q.py);
-        const x = o.x + 16384, z = o.z + 16384;   // the pixel's middle, native units
         let h = _tvQuestHold.get(q.key);
         if (!h) { h = {}; _tvQuestHold.set(q.key, h); }
+        if (!h.mid) { const s = tvPlaceSummary(q.px, q.py), r = s ? tvPlaceRect(s) : null; if (r) h.mid = { x: r.cx, z: r.cz }; }   // its place's middle, read once a mark
+        const o = h.mid ? null : mapPixelToWorldCoords(q.px, q.py);
+        const x = h.mid?.x ?? o.x + 16384, z = h.mid?.z ?? o.z + 16384;   // native units
         keep.add(q.key);
         const km = (Math.hypot(x - here.x, z - here.z) / 32768) * PIXEL_KM;
-        marks.push({ key: q.key, at: tvSceneKept(h, x, z, TV_PLACE_LIFT), ...questMarkWords(q, farDistanceText(km)), kind: q.tracked ? 'quest tracked' : 'quest', tip: q.tip, edge: q.tracked, pick: true });
+        const bound = live && tvTrip.end?.kind === 'dest' && Math.hypot(tvTrip.end.x - x, tvTrip.end.z - z) < 1;   // the journey's own end, held as its own
+        marks.push({ key: q.key, at: tvSceneKept(h, x, z, TV_PLACE_LIFT), ...questMarkWords(q, farDistanceText(km)), kind: q.tracked ? 'quest tracked' : 'quest', tip: q.tip, edge: q.tracked && !bound, pick: true });
       }
       for (const k of [..._tvQuestHold.keys()]) if (!keep.has(k)) _tvQuestHold.delete(k);   // a quest done lets its point go
     }

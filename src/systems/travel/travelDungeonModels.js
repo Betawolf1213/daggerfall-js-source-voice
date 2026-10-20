@@ -8,8 +8,9 @@
 // it stands, grown to one height in the world (OW-DUNGEON-SIZE: it grew with the eye's distance until 2026-10-19): a
 // Mount & Blade map's icons.
 //
-// The law here is pure: which dungeons, which model, how much it grows and the matrix it is drawn by. The host
-// (scenes/world.js tvDungeonModels) lays each one's blocks, loads its model in its climate, finds its ground and draws.
+// The law here is pure: which dungeons, which model, how much it grows and the matrix it is drawn by. The host's half
+// (scenes/travelViewDungeonModels.js, moved out of scenes/world.js - HOST-SPLIT) lays each one's blocks, loads its model in
+// its climate, finds its ground and draws.
 // Not a DFU member: DFU has no raised travel camera (Travel-View.md "Enhanced lane only").
 import { multiply, trs } from '../../world/mat4.js';
 import { subMeshDoorType, DOOR_TYPE } from '../../world/meshReader.js';
@@ -20,8 +21,11 @@ export const TV_DUNGEON_MODELS_MAX = 12;
  *  on distance"): THE HEIGHT EVERY DUNGEON'S MODEL STANDS AT, metres - one size in the world, as the land is. It was
  *  TV_DUNGEON_ICON_K (0.09) of the eye's distance, so a dungeon stood the same size on the screen at every zoom and grew
  *  as the eye drew back from it: about 30 m at the view's default (260 m up at 52 degrees, 330 m from the traveller -
- *  player/travelCamera.js), 40 m at its top. Four fifths of that default: a dungeon stands slightly smaller there, and
- *  from then on reads nearer as the view zooms in and farther as it draws back, as everything round it does. */
+ *  player/travelCamera.js), 51 m at its top (450 m up at the default tilt; AUDIT OW-REVISITED L5-9). Four fifths of that
+ *  default: a dungeon stands slightly smaller there, and from then on reads nearer as the view zooms in and farther as it
+ *  draws back, as everything round it does. The one exception is the cap below (AUDIT OW-REVISITED L5-8): a door model
+ *  under 2 m tall - every keep's (model 43600, 0.58 m: 123 of the game's 4,238 dungeons) - stops at twelve times itself,
+ *  short of the 24 m; the grown size never varies with the eye either way. */
 export const TV_DUNGEON_ICON_M = 24;
 /** Never more than OW-BIG's twelve times its own size (player/travelCamera.js TV_OWN_GROW_MAX). */
 export const TV_DUNGEON_GROW_MAX = 12;

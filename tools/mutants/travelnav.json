@@ -121,7 +121,7 @@
   {
     "name": "TN-goal-ignored",
     "file": "src/systems/travel/travelSteer.js",
-    "old": "    const lookWant = Math.min(look, Math.max(0, inp.goal) + P.standoff);",
+    "old": "    const lookWant = Math.min(look, Math.max(0, inp.goal) + (inp.pathed ? 0 : P.standoff));",
     "new": "    const lookWant = look;",
     "tests": ["test/systems/travel/travelnav.test.js"]
   },

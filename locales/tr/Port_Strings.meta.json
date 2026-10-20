@@ -884,24 +884,9 @@
   "tr": "09de9c07518e",
   "by": "claude-in-session"
  },
- "forecast.word.cloudy": {
-  "en": "44961bce9ce8",
-  "tr": "0d2162267e55",
-  "by": "claude-in-session"
- },
- "forecast.word.fair": {
-  "en": "64b985898db9",
-  "tr": "7de2118a76b7",
-  "by": "claude-in-session"
- },
  "forecast.word.fog": {
   "en": "bae15ef895e9",
   "tr": "60a9e2501223",
-  "by": "claude-in-session"
- },
- "forecast.word.overcast": {
-  "en": "139327a2e6bf",
-  "tr": "67866966974e",
   "by": "claude-in-session"
  },
  "forecast.word.rain": {
@@ -917,11 +902,6 @@
  "forecast.word.snow": {
   "en": "9c8238f65551",
   "tr": "49bcd1bc525b",
-  "by": "claude-in-session"
- },
- "forecast.word.sunny": {
-  "en": "719ea396ad92",
-  "tr": "2b7ced2726d2",
   "by": "claude-in-session"
  },
  "forecast.word.thunder": {
@@ -1247,6 +1227,46 @@
  "naval.yard.grogDrunk": {
   "en": "c5d2a00c9e0e",
   "tr": "8aa55e9b12a8",
+  "by": "claude-in-session"
+ },
+ "quest.mark.many": {
+  "en": "ac6a379cd9e1",
+  "tr": "6624eee7e113",
+  "by": "claude-in-session"
+ },
+ "quest.mark.more": {
+  "en": "851042194923",
+  "tr": "42c70aaf0bea",
+  "by": "claude-in-session"
+ },
+ "quest.remain.days": {
+  "en": "73ee73e3d10a",
+  "tr": "2dacf4aecc56",
+  "by": "claude-in-session"
+ },
+ "quest.remain.daysHours": {
+  "en": "5844c051235d",
+  "tr": "652aa517de16",
+  "by": "claude-in-session"
+ },
+ "quest.remain.hours": {
+  "en": "a594d89ab25a",
+  "tr": "340184e306c7",
+  "by": "claude-in-session"
+ },
+ "quest.remain.hoursMin": {
+  "en": "afefaaeef17a",
+  "tr": "d83e601869da",
+  "by": "claude-in-session"
+ },
+ "quest.remain.left": {
+  "en": "f1885aa4adca",
+  "tr": "881b81ff86ca",
+  "by": "claude-in-session"
+ },
+ "quest.remain.min": {
+  "en": "a47d8efbcf4d",
+  "tr": "4dab63fd2005",
   "by": "claude-in-session"
  },
  "rest.exhausted.fighting": {
@@ -1837,6 +1857,26 @@
  "town.econ.trend.rising": {
   "en": "26b01983c6f4",
   "tr": "3a98944b1bc0",
+  "by": "claude-in-session"
+ },
+ "travel.held.foes": {
+  "en": "8b441a492a74",
+  "tr": "4b8f02f5bdec",
+  "by": "claude-in-session"
+ },
+ "travel.held.ground": {
+  "en": "5e5f89d56a8c",
+  "tr": "bb50b7d5e1d1",
+  "by": "claude-in-session"
+ },
+ "travel.held.line": {
+  "en": "bbf23ee0dcf9",
+  "tr": "a3ae70246a1f",
+  "by": "claude-in-session"
+ },
+ "travel.held.load": {
+  "en": "d069be6cea55",
+  "tr": "6fec798de237",
   "by": "claude-in-session"
  },
  "travel.held.town": {

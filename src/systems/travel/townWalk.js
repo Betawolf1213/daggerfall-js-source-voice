@@ -21,7 +21,7 @@
 // passage (LW-WALLS found the same: DFU's walkers never cross it, so its streets and the fields about them are two
 // pieces of the grid in 407 of the game's 410 cities). A way out asked of the bare grid found none from 1,776 of 1,920
 // doors of the twelve greatest cities. So a journey's grid is the town's with each OPEN gate's passage carved through it
-// (`gatePassages`, `carveNav`: from the gate's cell, the axis along which covered cells end in a street on both sides
+// (`gatePassage`, `carveNav`: from the gate's cell, the axis along which covered cells end in a street on both sides
 // within GATE_REACH_CELLS - the arch walked through, as the player walks through it); a closed gate (DaggerfallCityGate
 // swaps a wall in at night, offline - world/city/cityGate.js) carves nothing. Its pieces are labelled once
 // (`componentsOf`, a flood over the grid, kept on the grid) and every way is asked only of the piece the traveller stands
@@ -46,15 +46,22 @@ export const TOWN_SNAP_CELLS = 8;
  *  way out, nearest first (the first is all but always reached: they are its piece's). */
 export const TOWN_EXIT_TRIES = 6;
 /** The search's heuristic, weighted (`townPathSearch` hWeight - bounded: a way never dearer than this many times the
- *  cheapest). Measured over 1,000 of the game's own ways out (the four greatest cities and every twentieth, each from ten
- *  doors toward four sides): the cheapest search 9.5 ms on the mean and 50 ms at the worst, this one 5.6 and 28 ms, its
- *  ways 2.7% dearer - still the streets' (a residents' walk stays the cheapest: their weight is 1). Over every city of the
- *  game (410; twelve doors each toward four sides, their open gates carved): all 19,680 ways found, every run clear, 5.3 ms
- *  on the mean, 67 ms at the worst - once a leg, never a frame. */
+ *  cheapest). Measured over 960 of the game's own ways out (the four greatest cities and every twentieth, each from ten
+ *  doors toward four sides): the cheapest search 12.3 ms on the mean and 51 ms at the worst, this one 7.6 and 38 ms -
+ *  about 1.6 times as quick (AUDIT OW-REVISITED L6-7: "twice" was 9.5 against 5.6 ms, 1.7) - its ways 2.7% dearer, still
+ *  the streets' (a residents' walk stays the cheapest: their weight is 1). Over every city of the game (410; twelve doors
+ *  each toward four sides, their open gates carved; re-measured at the audit with TOWN_WAY_MARGIN): all 19,680 ways found,
+ *  every run clear, 6.9 ms on the mean, 61 ms at the worst - once a leg, never a frame; the worst is a grid's FIRST ask,
+ *  which labels its pieces once (`componentsOf`, AUDIT OW-REVISITED L6-9: 62-114 ms in the greatest cities on a shared
+ *  machine), in the frame the leg starts. */
 export const TOWN_WAY_H_WEIGHT = 1.5;
 /** How far a gate's covered footprint is searched across for the streets either side of it, cells - a gate's arch is a
  *  few metres deep; past this the way is a wall's. */
 export const GATE_REACH_CELLS = 24;
+/** AUDIT OW-REVISITED L1-2: how far a string-pulled run keeps from every covered cell, cells - the body's capsule (motor.js:
+ *  0.35 m, a fifth of a 1.6 m cell) and a little more. Clear by the cell alone, a run grazed a footprint's corner on 86% of
+ *  the game's town ways and touched one on 10%; a street a cell wide still walks its middle (half a cell off its walls). */
+export const TOWN_WAY_MARGIN = 0.3;
 
 const inb = (nav, x, y) => x >= 0 && y >= 0 && x < nav.width && y < nav.height;
 const open = (nav, x, y) => inb(nav, x, y) && nav.weightAt(x, y) > 0;
@@ -91,13 +98,22 @@ export function exitCells(nav, toward, max = TOWN_EXIT_TRIES, ok = null) {
   return out.slice(0, Math.max(0, max)).map(([x, y]) => [x, y]);
 }
 
+/** The distance from the segment a-b (cell centres) to the covered cell (cx, cy)'s square - one the segment never enters
+ *  (its supercover is open): the nearer of the square's corners to the segment and the segment's ends to the square. */
+function squareGap(a, b, cx, cy) {
+  const dx = b[0] - a[0], dy = b[1] - a[1], l2 = dx * dx + dy * dy;
+  const toSeg = (px, py) => { const u = l2 > 0 ? Math.max(0, Math.min(1, ((px - a[0]) * dx + (py - a[1]) * dy) / l2)) : 0; return Math.hypot(px - (a[0] + dx * u), py - (a[1] + dy * u)); };
+  const toSq = (px, py) => Math.hypot(Math.max(0, Math.abs(px - cx) - 0.5), Math.max(0, Math.abs(py - cy) - 0.5));
+  return Math.min(toSeg(cx - 0.5, cy - 0.5), toSeg(cx + 0.5, cy - 0.5), toSeg(cx - 0.5, cy + 0.5), toSeg(cx + 0.5, cy + 0.5), toSq(a[0], a[1]), toSq(b[0], b[1]));
+}
 /** Whether every cell the straight line from cell `a` to cell `b` passes through is a street - the line's whole
  *  supercover (each cell it touches, the corner cells of a diagonal step both), so a straight run never shaves a wall's
- *  corner. */
-export function clearLine(nav, a, b) {
+ *  corner - and (AUDIT OW-REVISITED L1-2) passes no covered cell beside it nearer than `margin` cells. */
+export function clearLine(nav, a, b, margin = 0) {
   let x = a[0], y = a[1];
   const dx = Math.abs(b[0] - x), dy = Math.abs(b[1] - y), sx = Math.sign(b[0] - x), sy = Math.sign(b[1] - y);
   if (!open(nav, x, y)) return false;
+  const walked = margin > 0 ? [[x, y]] : null;
   let e = dx - dy;
   for (let n = dx + dy; n > 0; n--) {
     const e2 = 2 * e;
@@ -107,19 +123,31 @@ export function clearLine(nav, a, b) {
     } else if (e2 > -dy) { x += sx; e -= dy; }
     else { y += sy; e += dx; }
     if (!open(nav, x, y)) return false;
+    walked?.push([x, y]);
+  }
+  if (walked) {
+    for (const [wx, wy] of walked) {
+      for (let oy = -1; oy <= 1; oy++) {
+        for (let ox = -1; ox <= 1; ox++) {
+          if (!open(nav, wx + ox, wy + oy) && squareGap(a, b, wx + ox, wy + oy) < margin) return false;
+        }
+      }
+    }
   }
   return true;
 }
 
-/** A four-neighbour path string-pulled: from each kept cell, on to the farthest later cell it can see along clearLine -
- *  both ends kept. A staircase down a diagonal street is one run; a turn at a corner stays a turn. */
-export function simplifyWay(nav, cells) {
+/** A four-neighbour path string-pulled: from each kept cell, on to the farthest later cell it can see along clearLine,
+ *  TOWN_WAY_MARGIN clear of every covered cell (AUDIT OW-REVISITED L1-2: the body's capsule, never its centre alone) -
+ *  both ends kept. A staircase down a diagonal street is one run; a turn at a corner stays a turn. Two cells a step apart
+ *  are always clear (half a cell off what stands beside them), so the string-pull never fails. */
+export function simplifyWay(nav, cells, margin = TOWN_WAY_MARGIN) {
   if (!cells || cells.length <= 2) return cells ? cells.map((c) => [c[0], c[1]]) : [];
   const out = [[cells[0][0], cells[0][1]]];
   let i = 0;
   while (i < cells.length - 1) {
     let j = cells.length - 1;
-    while (j > i + 1 && !clearLine(nav, cells[i], cells[j])) j--;
+    while (j > i + 1 && !clearLine(nav, cells[i], cells[j], margin)) j--;
     out.push([cells[j][0], cells[j][1]]);
     i = j;
   }
@@ -154,6 +182,25 @@ export function componentsOf(nav) {
   }
   piecesOf.set(nav, label);
   return label;
+}
+
+/** @type {WeakMap<object, { edge: Set<number>, all: number }>} */
+const edgesOf = new WeakMap();
+/** AUDIT OW-REVISITED L1-4: the pieces of a grid that reach its edge (`edge`) and how many pieces it has (`all`) - a
+ *  walled city's fields reach it, its streets inside the wall and its closed gates do not (LW-WALLS); kept on the grid as
+ *  its labels are. */
+export function edgePieces(nav) {
+  let got = edgesOf.get(nav);
+  if (got) return got;
+  const label = componentsOf(nav), W = nav.width, H = nav.height;
+  const edge = new Set();
+  for (let x = 0; x < W; x++) { if (label[x]) edge.add(label[x]); if (label[(H - 1) * W + x]) edge.add(label[(H - 1) * W + x]); }
+  for (let y = 0; y < H; y++) { if (label[y * W]) edge.add(label[y * W]); if (label[y * W + W - 1]) edge.add(label[y * W + W - 1]); }
+  let all = 0;
+  for (let i = 0; i < label.length; i++) if (label[i] > all) all = label[i];
+  got = { edge, all };
+  edgesOf.set(nav, got);
+  return got;
 }
 
 /**

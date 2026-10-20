@@ -1520,7 +1520,7 @@ export const KEEPALIVE_FAN_MS = HEARTBEAT_MS / 2;
  *  is deployed by CI and the relay by hand, so a skew between them is the ordinary state of a release day, and until
  *  now nothing on either end could see it. */
 // Integrated Arena spectator visibility with staff teleport, stable boat identity and private ownership; deploy relay before clients.
-export const RELAY_VERSION = 'world225';   // OW-CHASE-RANGE (2026-10-19, the owner, of the Overworld's gaps: "4. Fix it"; bible/06-Systems/Travel-View.md OW-CHASE-RANGE; world224 on its branch, renumbered past LAYERED-GEAR's world224 at the merge; NOT YET DEPLOYED): a traveller mark carries an eighth key, `bd` - TV7b's chase word (the bands and the raiders chasing its traveller, where they run, and those spent there: [[id, x, z, 1|2]], at most TRAV_BANDS_MAX) - checked whole by validTravellerMark (a band's or a raider's id, a place on the world's pixels), kept on the attachment and fanned with the mark; a client hands `bd` only to a relay at world225 or later (TRAV_BANDS_RELAY_MIN)
+export const RELAY_VERSION = 'world225';   // OW-CHASE-RANGE (2026-10-19, the owner, of the Overworld's gaps: "4. Fix it"; bible/06-Systems/Travel-View.md OW-CHASE-RANGE; world224 on its branch, renumbered past LAYERED-GEAR's world224 at the merge; NOT YET DEPLOYED; AUDIT OW-REVISITED L4-1, re-hashed in place): a traveller's trav frame carries its chase words BESIDE its mark - `bd` the bands', `sr` the raiders' (TV7b's and OW6's shapes: [[id, x, z, 1|2]], at most TRAV_BANDS_MAX each, a chase within TRAV_CHASE_NEAR_PX of the mark) - checked whole by validTravWords at the door, kept on the attachment with the mark and fanned and welcomed with it; an older relay reads the mark and drops the words (nothing refused), an older client reads the mark and never the words
 // world224: LAYERED-GEAR and VOICE2 (2026-10-18; world218 in the package, renumbered past GRANT2's world218, EG-PERFECT's world219, FIELD BUGS 2026-10-18d's world220 and 2026-10-18f's world221, GATE-DOOR's world222 and FOE-BOUNDS's world223 at the merge; NOT YET DEPLOYED; the owner: "add a option between those two thats also called On foot Layered Gearing Skin (WIP) Female and Male"; player/eyeOfTheBeholder/layeredArmor.js): validLook keeps a look's `lg` - the On foot Layered Gearing Skin the player chose, 1 female, 2 male, OMITTED when off (`class`'s law) - so a peer is drawn in the armor their items say they wear, in the body they chose; and the voice pass's words in the relay's own text (VOICE1, bible/10-UI/Voice.md). Deploy relay before clients - an older relay drops `lg`, and the player is seen in their set or class, as before.
 // world223: FOE-BOUNDS and GRANT-DOOR (2026-10-19, world219 on its branch, renumbered past EG-PERFECT's world219, FIELD BUGS 2026-10-18d's world220 and 2026-10-18f's world221, and GATE-DOOR's world222, at the merges; Mac: a hand-off spec, "REJECT AND REMOVE INVALID ENEMY HANDOFFS; DO NOT RESCALE", then "Spec + B + A"; bible/11-Multiplayer/Spawn-Grants.md sections 19-21; NOT YET DEPLOYED): a reader's tally takes `stats` - a record whose health no builder could give it (net/foeBounds.js foeStatsRefusal) - and it is a case's reason (net/grantLaw.js GRANT_CASE_REASONS); while `grantStrip` is on the relay drops such a record from a cell's and a world room's own frames and counts it under its own name (net/grantMeasure.js GRANT_RELAY_READER, the worst one's evidence beside it); a foes room's hello says the spawn grants its build stands on (`gv`, GRANT_HELLO_LAW), the relay keeps it on the socket, holds such a socket to grants in its strip, and vouches for it on every foes frame it fans (`g` 1); the setting `grantDoor` (off unset) refuses a foes room's hello that does not say it (GRANT_OLD_REASON, GROUND-GATE's words). A client hands `stats` only to a relay at world220 or later (GRANT_STATS_RELAY_MIN)
 // world222: GATE-DOOR and COURT-WATCH (world218 on its branch, renumbered past GRANT2's world218, EG-PERFECT's world219 and FIELD BUGS 2026-10-18d's world220 and 2026-10-18f's world221 at the merge; NOT YET DEPLOYED; bible/11-Multiplayer/Scale-Arc.md THE PLAN PAST 1,000; from play at a thousand online, "Server is kinda breaking down near oblivion gate cause so many ppl lol"): a gate's court and its copies admit GATE_HELLO_HZ_MAX hellos a second, its opening's crowd, where every room admitted HELLO_HZ_MAX - still spent before the token is read, a busy refusal leaving it unspent; and COURT-WATCH (bible/11-Multiplayer/World-Bosses.md section 24): the answer to an `in` that seats a fighter says so (`me`), so a client the full court kept as its watcher knows when it fights. Deploy relay before clients (a client from before it waits at a deeper door, and a full court still casts it out, as it did).
@@ -2427,7 +2427,8 @@ export function parseClient(text, { hasHello = false } = {}) {
     if (!hasHello) return { error: 'trav before hello' };
     if (m.p === null) return { t: 'trav', p: null };
     const p = validTravellerMark(m.p);
-    return p ? { t: 'trav', p } : { error: 'bad trav' };
+    const words = p ? validTravWords(m, p) : null;   // OW-CHASE-RANGE: the chase words beside it, whole or the frame refused
+    return p && words ? { t: 'trav', p, ...words } : { error: 'bad trav' };
   }
   if (m.t === 'party') {   // SOC1: my party pose, to the hub - projected by the pose's own law
     if (!hasHello) return { error: 'party before hello' };
@@ -3188,28 +3189,49 @@ export function validPartyFrame(m) {
   return acct && p ? { t: 'party', acct, p } : null;
 }
 
-/** TV3: the mark's seven keys - and no other: a mark with an eighth is refused whole, so nothing rides it. OW-CHASE-RANGE
- *  (world225): the eighth, `bd`, a chase word - "a later field is a new relay version and a new key" (TV5's own words). */
-export const TRAV_KEYS = Object.freeze(['px', 'py', 'fx', 'fy', 'h', 'm', 'tv', 'bd']);
+/** TV3: the mark's seven keys - and no other: a mark with an eighth is refused whole, so nothing rides it. (AUDIT
+ *  OW-REVISITED L4-1: OW-CHASE-RANGE's chase word rode as an eighth key, and every client before it - this law, refusing
+ *  the eighth - dropped the traveller whole from its book for the rest of the session; the words ride BESIDE the mark.) */
+export const TRAV_KEYS = Object.freeze(['px', 'py', 'fx', 'fy', 'h', 'm', 'tv']);
 /** OW-CHASE-RANGE: the most entries a mark's chase word holds - the foes frame's own (systems/travel/travelBands.js
- *  BANDS_WIRE_MAX, pinned equal: the relay's graph stays flat). */
+ *  BANDS_WIRE_MAX, pinned equal: the relay's graph stays flat) - for each of its two words. */
 export const TRAV_BANDS_MAX = 8;
-/** OW-CHASE-RANGE: a chase word's id - a band's (`b<cx>.<cy>.<life>`) or a raider's (`r...`), the overworld ledger's own
- *  shapes (OW_BAND_ID_RE, OW_RAIDER_ID_RE). */
-const travChaseId = (id) => typeof id === 'string' && (OW_BAND_ID_RE.test(id) || OW_RAIDER_ID_RE.test(id));
-/** OW-CHASE-RANGE: a chase word, checked whole - each entry [id, x, z, flag]: flag 1 a chase at (x, z), native whole units
- *  on the world's pixels; flag 2 one spent there, (0, 0). Null for any entry that is not, or too many. */
-function validTravChase(v) {
-  if (!Array.isArray(v) || v.length > TRAV_BANDS_MAX) return null;
+/** AUDIT OW-REVISITED L4-5: how far from the mark's own pixel a chase it says may run - a band's leash (900 m) and a
+ *  raider's (3 km) and a pixel to spare; past it the word is no chase of this traveller's and is refused. */
+export const TRAV_CHASE_NEAR_PX = 5;
+/** OW-CHASE-RANGE (AUDIT OW-REVISITED L4-1, L4-5, L4-6): A CHASE WORD BESIDE A MARK - `bd` the bands', `sr` the raiders'
+ *  (the cell's foes frame's own two words, each its own TRAV_BANDS_MAX: one shared word let eight spent bands keep every
+ *  raider off it), checked whole: each entry [id, x, z, flag] of the word's own kind (OW_BAND_ID_RE / OW_RAIDER_ID_RE) and
+ *  named once - flag 1 a chase at (x, z), native whole units on the world's pixels within TRAV_CHASE_NEAR_PX of the mark's
+ *  `p` (a chase is about its chaser - a word naming a chase across the region was any traveller spending every band about
+ *  a reader); flag 2 one spent, (0, 0). Null for any entry that is not, or too many. */
+export function validTravWord(v, idRe, p) {
+  if (!Array.isArray(v) || v.length > TRAV_BANDS_MAX || !p) return null;
   const out = [], seen = new Set();
   for (const e of v) {
     if (!Array.isArray(e) || e.length !== 4) return null;
     const [id, x, z, flag] = e;
-    if (!travChaseId(id) || seen.has(id) || (flag !== 1 && flag !== 2)) return null;
-    if (flag === 1 && !(Number.isInteger(x) && Number.isInteger(z) && worldPixelOk(Math.floor(x / PIXEL_UNITS)) && worldPixelOk(499 - Math.floor(z / PIXEL_UNITS)))) return null;
+    if (typeof id !== 'string' || !idRe.test(id) || seen.has(id) || (flag !== 1 && flag !== 2)) return null;
+    if (flag === 1) {
+      if (!(Number.isInteger(x) && Number.isInteger(z))) return null;
+      const cx = Math.floor(x / PIXEL_UNITS), cy = 499 - Math.floor(z / PIXEL_UNITS);
+      if (!worldPixelOk(cx) || !worldPixelOk(cy) || Math.max(Math.abs(cx - p.px), Math.abs(cy - p.py)) > TRAV_CHASE_NEAR_PX) return null;
+    }
     if (flag === 2 && (x !== 0 || z !== 0)) return null;
     seen.add(id);
     out.push([id, x, z, flag]);
+  }
+  return out;
+}
+/** The words beside a mark `p`, each checked (validTravWord) and kept only when it says something: `{ bd?, sr? }`, or null
+ *  where one is there and refused. */
+export function validTravWords(m, p) {
+  const out = {};
+  for (const [k, re] of /** @type {Array<[string, RegExp]>} */ ([['bd', OW_BAND_ID_RE], ['sr', OW_RAIDER_ID_RE]])) {
+    if (m?.[k] == null) continue;
+    const w = validTravWord(m[k], re, p);
+    if (!w) return null;
+    if (w.length) out[k] = w;
   }
   return out;
 }
@@ -3224,20 +3246,19 @@ export function validTravellerMark(p) {
   if (px == null || py == null || fx == null || fy == null || h == null || m == null) return null;
   const tv = p.tv == null || p.tv === 0 ? 0 : p.tv === 1 ? 1 : null;
   if (tv == null) return null;
-  if (p.bd == null) return { px, py, fx, fy, h, m, tv };
-  const bd = validTravChase(p.bd);   // OW-CHASE-RANGE: the chases it carries, whole or the mark refused
-  if (!bd) return null;
-  return bd.length ? { px, py, fx, fy, h, m, tv, bd } : { px, py, fx, fy, h, m, tv };
+  return { px, py, fx, fy, h, m, tv };
 }
-/** TV3: a traveller's mark from the region room ({t:'trav', id, name, sub?, p} - `p` null when they went indoors, hid,
- *  or the room dropped them), projected with its badge, or null. The name is the relay's, off the verified token. */
+/** TV3: a traveller's mark from the region room ({t:'trav', id, name, sub?, p, bd?, sr?} - `p` null when they went
+ *  indoors, hid, or the room dropped them), projected with its badge, or null. The name is the relay's, off the verified
+ *  token. OW-CHASE-RANGE: the chase words beside the mark (validTravWords) - one refused is dropped, never the mark. */
 export function validTravellerFrame(m) {
   if (!m || typeof m !== 'object' || Array.isArray(m) || m.t !== 'trav') return null;
   const id = idOf(m.id);
   if (!id) return null;
   const p = m.p === null ? null : validTravellerMark(m.p);
   if (m.p !== null && !p) return null;
-  return { t: 'trav', id, name: sanitizeName(m.name), sub: idOf(m.sub), p, ...readBadge(m), lv: readRenown(m), gt: readGuildTag(m), rb: readRibbon(m) };   // OVERWORLD NAMES: and the Renown and the guild's tag the relay stamps (badged) - the name as it reads in play; AUDIT-SEATS: and a Season's banner ribbon
+  const words = p ? (validTravWords(m, p) ?? {}) : {};
+  return { t: 'trav', id, name: sanitizeName(m.name), sub: idOf(m.sub), p, ...words, ...readBadge(m), lv: readRenown(m), gt: readGuildTag(m), rb: readRibbon(m) };   // OVERWORLD NAMES: and the Renown and the guild's tag the relay stamps (badged) - the name as it reads in play; AUDIT-SEATS: and a Season's banner ribbon
 }
 
 /** QUEST1: a quest shared by a party member, from the hub ({t:'quest', acct, name, quest:{questName, displayName,
@@ -3403,9 +3424,6 @@ export const relaySupportsPartyLead = (v) => { const m = /^world(\d+)$/.exec(typ
 /** TV3: the first relay that knows the `trav` frame (an older one CLOSES the socket on it - parseClient's 'unknown
  *  message') and keeps and fans a region's marks; against an older one the client sends none and shows none. */
 export const TRAVELLER_RELAY_MIN = 122;
-/** OW-CHASE-RANGE: the first relay that knows a mark's chase word - an older one refuses the mark whole (an eighth key). */
-export const TRAV_BANDS_RELAY_MIN = 225;
-export const relaySupportsTravBands = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= TRAV_BANDS_RELAY_MIN; };
 export const relaySupportsTravellers = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= TRAVELLER_RELAY_MIN; };
 /** PARTY-MAP: the first relay that knows the `amap` frame (an older one CLOSES the socket on it - parseClient's 'unknown
  *  message') and fans it to the party; against an older one Shared Cartography sends nothing. */

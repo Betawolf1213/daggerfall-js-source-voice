@@ -38,8 +38,8 @@
   {
     "name": "OTW-line-start-unread",
     "file": "src/systems/travel/townWalk.js",
-    "old": "  if (!open(nav, x, y)) return false;\n  let e = dx - dy;",
-    "new": "  let e = dx - dy;",
+    "old": "  if (!open(nav, x, y)) return false;\n  const walked",
+    "new": "  const walked",
     "tests": [
       "test/systems/travel/ow_townwalk.test.js"
     ]
@@ -47,7 +47,7 @@
   {
     "name": "OTW-no-string-pull",
     "file": "src/systems/travel/townWalk.js",
-    "old": "    while (j > i + 1 && !clearLine(nav, cells[i], cells[j])) j--;",
+    "old": "    while (j > i + 1 && !clearLine(nav, cells[i], cells[j], margin)) j--;",
     "new": "    j = i + 1;",
     "tests": [
       "test/systems/travel/ow_townwalk.test.js"
@@ -83,7 +83,7 @@
   {
     "name": "OTW-run-never-moves-on",
     "file": "src/systems/travel/travelAutopilot.js",
-    "old": "    if (t >= 1 && k < last) { k++; continue; }",
+    "old": "    if (k < last && (t >= 1 || segDistance(x, z, bx, bz, path[k + 2][0], path[k + 2][1]) < segDistance(x, z, ax, az, bx, bz))) { k++; continue; }",
     "new": "",
     "tests": [
       "test/systems/travel/ow_townwalk.test.js"
@@ -146,7 +146,7 @@
   {
     "name": "OTW-town-walked-into-unheard",
     "file": "src/systems/travel/travelOptions.js",
-    "old": "      if (k !== st.route.townAt) { st.route.townAt = k; if (k) { startRouteLeg(); applyRate(); } }",
+    "old": "      if (k !== st.route.townAt) { st.route.townAt = k; if (k) { startRouteLeg(); applyRate(); } else st.route.streetFor = null; }",
     "new": "",
     "tests": [
       "test/systems/travel/ow_townwalk.test.js"
@@ -189,10 +189,10 @@
     ]
   },
   {
-    "name": "OTW-host-own-cell-kept",
+    "name": "OTW-host-own-cell-dropped",
     "file": "src/scenes/townWalkHost.js",
-    "old": "<= TOWN_WAY_OWN_CELLS) cells.shift();",
-    "new": "<= -1) cells.shift();",
+    "old": "      return { pts: way.cells.map((c) => nativeOf(town, c)), inside: way.inside, shut: false };",
+    "new": "      return { pts: way.cells.slice(1).map((c) => nativeOf(town, c)), inside: way.inside, shut: false };",
     "tests": [
       "test/systems/travel/ow_townwalk.test.js"
     ]
@@ -371,8 +371,8 @@
   {
     "name": "OTWH-swing-unseen",
     "file": "src/scenes/townWalkHost.js",
-    "old": "    if (kept && kept.base === town.nav && kept.sig === sig) return kept;",
-    "new": "    if (kept && kept.base === town.nav) return kept;",
+    "old": "    const key = `${town.key}|${sig}`;",
+    "new": "    const key = town.key;",
     "tests": [
       "test/systems/travel/ow_townwalk.test.js"
     ]

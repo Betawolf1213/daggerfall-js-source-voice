@@ -415,7 +415,7 @@ export function createTravelSteer(params = TRAVEL_STEER) {
     const reach = Math.max(0, inp.reach);
     const need = reach + P.standoff;
     const look = Math.max(P.minLook, P.lookFrames * reach) + P.standoff;
-    const lookWant = Math.min(look, Math.max(0, inp.goal) + P.standoff);
+    const lookWant = Math.min(look, Math.max(0, inp.goal) + (inp.pathed ? 0 : P.standoff));   // AUDIT OW-REVISITED L1-3: a line's run is walked TO its end
     f.reachFan = Math.min(look, P.feelerMax);
     const pass = P.standoff + P.minStep;
     const keep = Math.max(pass, 0.5 * Math.min(need, f.reachFan));
@@ -556,13 +556,20 @@ export function steerDrive(steer, drive, worldX, worldZ, autopilot, frame, probe
   inp.tx = to.x / r;
   inp.tz = to.z / r;
   inp.pathed = !!autopilot.path;   // OW-ROAD-TRUE / OW-TOWN-WALK: the drive's bearing already keeps the line
-  inp.goal = rectDistance(autopilot.destinationWorldRect, worldX, worldZ) / r;
+  // AUDIT OW-REVISITED L1-3: a line's leg asks its corridor to the run's end - a street turns BECAUSE a building stands
+  // at the corner, and nine metres asked along the run's bearing past it was a detour begun at every corner
+  inp.goal = (inp.pathed ? Math.hypot(to.x - worldX, to.z - worldZ) : rectDistance(autopilot.destinationWorldRect, worldX, worldZ)) / r;
+  inp.manual = !!frame.strafe;   // TRAVEL-STRAFE: the hand's sidestep, kept
+  // AUDIT OW-REVISITED L2-5: TRAVEL-STRAFE ON A LINE'S LEG - the leg pursues its line every frame, so a held strafe was
+  // pulled back toward it before the steering ever saw the hand (TRAVEL-STRAFE's own bug again: a dozen metres out at
+  // most). While the key is held the run's own bearing is walked, the body beside the line where the hand put it; let go,
+  // the road is the route (OW-ROAD-TRUE) and the pursuit takes it back
+  if (inp.manual && inp.pathed && autopilot.runYaw != null) drive.yaw = autopilot.runYaw;
   inp.yaw = drive.yaw * DEG;
   const force = Math.max(0, drive.forward);
   inp.reach = travelFrameReach(frame.speed, frame.dt, frame.scale) * force;
   inp.quantum = Math.max(0, frame.speed) * Math.max(0, frame.scale) * FIXED_DT * force;
   inp.asked = frame.asked;
-  inp.manual = !!frame.strafe;   // TRAVEL-STRAFE: the hand's sidestep, kept
   const out = steer.step(inp, probe, steer.output);
   if (out.deflected) drive.yaw = out.yaw / DEG;
   drive.forward *= out.forward;

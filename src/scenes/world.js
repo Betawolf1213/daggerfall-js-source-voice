@@ -1143,7 +1143,8 @@ import { createTownProbes } from './townProbes.js';   // HOST-SPLIT
 import { createTravelViewDungeonModels } from './travelViewDungeonModels.js';   // HOST-SPLIT
 import { createTownWalk } from './townWalkHost.js';   // OW-TOWN-WALK
 import { createOverworldForecast } from './overworldForecastHost.js';   // OW-FORECAST
-import { regionChaseWord, regionChaseHeard, TRAV_BAND_HOLD_MS } from '../systems/travel/regionChase.js';   // OW-CHASE-RANGE: a chase seen as far as its band is drawn
+import { regionChaseWords } from '../systems/travel/regionChase.js';   // OW-CHASE-RANGE: a chase seen as far as its band is drawn
+import { createRegionChaseHearing } from './regionChaseHost.js';   // OW-CHASE-RANGE: the region's chase words heard (AUDIT OW-REVISITED L4-2, L4-3)
 import { TOWN_PACE_MAX } from '../systems/travel/townWalk.js';   // OW-TOWN-WALK: the keys' travel in a town, held to a town's pace
 
 /** Internal_Strings_en 654 / 655, the two guild map-reveal notes
@@ -16462,7 +16463,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  classic travel map and classic fast travel, whole. */
   _travelUIHolder.ui = travelControlUI;   // AUDIT-TO1 F2: the holder the enchant ctx reads
   const townWalk = createTownWalk({ built, state });   // OW-TOWN-WALK: the town a journey stands in, and its streets (scenes/townWalkHost.js)
-  const tvInTown = () => !!townWalk.townKey(state.worldCoords(player.pos));   // OW-TOWN-WALK: the traveller stands in a town's grid
+  const tvInTown = () => !!townWalk.townPace(state.worldCoords(player.pos));   // OW-TOWN-WALK: the traveller stands in a town's streets (AUDIT OW-REVISITED L1-4: never a walled city's fields)
   travelOptions = travelOptionsOn ? createTravelOptions({   // BOOT-TDZ: ASSIGNED here; the binding stands above the stream that reads it
     townKey: townWalk.townKey, townWay: townWalk.townWay,   // OW-TOWN-WALK: in a town, its streets first, at its pace
     settings: travelOptionsSettings,
@@ -21519,11 +21520,11 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (tab.room === SOCIAL_ROOM) link.onSdReceipt = (r, room) => { sdClaims?.add(r); sdSpoilsReceipt(r, room); };   // AUDIT SD: the hub's hand of my Hour receipt - at the kill when I stood outside its realm, and at my hello - to the account service and the spoils, as the realm's is
       if (tab.room === SOCIAL_ROOM) link.onRaid = (f, room) => (f.k === 'tw' ? offerRaidTowns(link, f.h) : raidRelayWord(f, room));   // RAID3: the hub's word of a cleanse anywhere, and the day's at my hello; RAID-ROLL: its ask for the towns table
       if (tab.id === 'region') {   // TV3: the region's travellers, into the book
-        link.onTraveller = (f) => { travellerBook.put(f, Date.now()); regionChaseHear(f); };   // OW-CHASE-RANGE: a far traveller's chases
+        link.onTraveller = (f) => { travellerBook.put(f, Date.now()); regionChase.hear(f); };   // OW-CHASE-RANGE: a far traveller's chases (withdrawn with a clear - AUDIT OW-REVISITED L4-2)
         // AUDIT TV C1: a welcome is a socket the room has just opened - its attachment holds nothing of mine, whatever I
         // last sent through the one before (a blip, a relay deploy): the next frame sends my mark again
-        link.onTravellerRoom = (list) => { travellerBook.reset(list, Date.now()); travellerSent.last = null; travellerSent.at = 0; for (const f of list ?? []) regionChaseHear(f); };
-        link.onTravellerLeft = (id) => travellerBook.drop(id);
+        link.onTravellerRoom = (list) => { travellerBook.reset(list, Date.now()); travellerSent.last = null; travellerSent.at = 0; regionChase.room(list); };
+        link.onTravellerLeft = (id) => { travellerBook.drop(id); regionChase.hear({ id, p: null }); };   // AUDIT OW-REVISITED L4-2: a leave withdraws their chases
       }
       // ACC1d: the channel link mints too, and it is the link that most
       // needs to - the hub is where a name is READ, so an unsigned name
@@ -28242,9 +28243,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // OWS1: at a helm or aboard, the region sees a ship, headed as its bow (a changed way is sent at once - travellerDue)
     const ship = n ? csaBoatUnderMe() : null;
     const mark = n ? travellerMarkOf({ x: n.x, z: n.z, yaw: ship ? csaBoatYaw(ship) : cam.yaw, mode: ship ? TRANSPORT_MODES.Ship : player.transportMode, journey: !!travelControlUI?.isShowing }) : null;
-    const bd = mark && link.travBandsOk ? regionChaseWord(bandWordOf(_bandChase, _bandSpentAt), raiderWordOf(seaRaidHeld(), tvRaid.spentAt)) : [];   // OW-CHASE-RANGE: my chases, region-wide (systems/travel/regionChase.js)
-    if (bd.length) mark.bd = bd;
-    const due = travellerDue(travellerSent, { now, mark, alone: link.othersHere === 0, shown });   // WILD1: no mark (wildHidden) is a clear
+    if (mark) Object.assign(mark, regionChaseWords(bandWordOf(_bandChase, _bandSpentAt), raiderWordOf(seaRaidHeld(), tvRaid.spentAt), Math.floor(bandNowMs() / BAND_LIFE_MS), Math.floor(raidNowMs() / RAIDER_LIFE_MS)));   // OW-CHASE-RANGE: my chases, region-wide, beside the mark (systems/travel/regionChase.js)
+    const due = travellerDue(travellerSent, { now, mark, alone: link.othersHere === 0, shown, chasing: _bandChase.size > 0 || tvRaid.chase.size > 0 });   // WILD1: no mark (wildHidden) is a clear; AUDIT OW-REVISITED L4-8: refreshed while a chase runs, never for a ship that only stands
     if (due === 'send' && link.sendTraveller(mark)) { travellerSent.last = mark; travellerSent.at = now; }
     else if (due === 'clear' && link.sendTraveller(null)) { travellerSent.last = null; travellerSent.at = now; }
   };
@@ -31730,21 +31730,20 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
   /** TV7b: a peer's band word, heard off their foes frame (past the room test): their chases shown where they are - one
    *  I chase too goes to the lower id - and their spent bands spent here. OW-CHASE-RANGE: `hold` how long the word stands
    *  (a region's, TRAV_BAND_HOLD_MS). */
-  function bandHear(from, raw, hold = BAND_WORD_MS) {
+  function bandHear(from, raw, hold = BAND_WORD_MS, aged = 0) {
     const now = performance.now(), at = bandPixelOf(playerTravelPixel()), life = Math.floor(bandNowMs() / BAND_LIFE_MS);   // AUDIT OW4 B1
     for (const [id, x, z, flag] of validBandWord(raw)) {
       if (!bandNearMe(id, at, life)) continue;   // AUDIT OW3 T7-9: only a band that can be about me
       if (flag === 2) { _bandSpent.add(id); _bandChase.delete(id); _bandPeer.delete(id); continue; }
-      _bandPeer.set(id, { x, z, at: now, from, hold });
+      const cur = _bandPeer.get(id);
+      if (hold > BAND_WORD_MS && cur && cur.hold <= BAND_WORD_MS && now - cur.at < cur.hold) continue;   // AUDIT OW-REVISITED L4-4: a fresh cell word for it says better
+      _bandPeer.set(id, { x, z, at: now - aged, from, hold });
       if (_bandChase.has(id) && chaseYields(online?.id ?? '', from)) { _bandChase.delete(id); wildBands.forget(id); }   // AUDIT-F3: the peer's chase now - its notice of me with it (a stale word was a chase again from anywhere, unchecked)
     }
   }
-  /** OW-CHASE-RANGE (systems/travel/regionChase.js): a far traveller's chases, off their region mark - heard as the cell's
-   *  word is, standing TRAV_BAND_HOLD_MS; none from one within the cell's reach (their foes frame says it, every frame). */
-  function regionChaseHear(f) {
-    const word = regionChaseHeard(f, playerTravelPixel());
-    if (word) { bandHear(f.id, word, TRAV_BAND_HOLD_MS); seaRaidHear(f.id, word, TRAV_BAND_HOLD_MS); }
-  }
+  // OW-CHASE-RANGE (scenes/regionChaseHost.js): a traveller's chases, off the words beside their region mark - withdrawn
+  // when it no longer names them, never heard of one my map hides (WILD1: the guild's mark is no stranger's)
+  const regionChase = createRegionChaseHearing({ bandHear, seaRaidHear, bands: () => _bandPeer, raids: () => tvRaid.peer, me: () => playerTravelPixel(), wildHides: wildHidesPlayer, social: () => social, guildTag: myGuildTag });
   /** TV7b: my band word, on the cell's foes frame - asked with `frame` null whether it must ride (a chase moves every
    *  frame; a spent band is said on the full frames too), then written into the frame. */
   let _bandWordKey = '';
@@ -31864,13 +31863,13 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     }
     return holder._tvAt;
   }
-  const owForecast = createOverworldForecast({ climateAt, ground: mapGroundHere, minuteNow: () => playerTicker.classicMinutes, here: () => state.worldCoords(player.pos), tvTrip, tvTripLive, route: () => travelOptions?.route ?? null });   // OW-FORECAST: the weather ahead (scenes/overworldForecastHost.js)
+  const owForecast = createOverworldForecast({ climateAt, ground: mapGroundHere, minuteNow: () => playerTicker.classicMinutes, here: () => state.worldCoords(player.pos), alt: () => fieldXZ()[2], tvTrip, tvTripLive, travel: () => travelOptions, shared: sharedClockOn, rateNow: worldTimeScale, held: () => sunbaby.on });   // OW-FORECAST: the weather ahead (scenes/overworldForecastHost.js)
   const { travelViewMarks } = createTravelViewMarks({   // HOST-SPLIT: src/scenes/travelViewMarks.js
     TV_PLACE_LIFT, _bandChase, _bandSpent, _hiddenPeers, _lodesSensed, _peerMapPoses, _townOfMapId, _tvBountyHold,
     _tvLodeHold, _tvPartyHold, _tvVendorHold, _tvWaypointHold, _veils, _wildStrangerIds, bandMake, bandNowMs,
     bandPlace, cam, carriageTown, csaOn, exteriorFoes, livingHideoutsHostOf, lodeSense, lodeWords, motherlodeBook,
     myGuildTag, owForecast, params, player, playerTravelPixel, questPixel, seaRaidPeerChase, townEcon, state, travelViewBands,
-    travelViewCamps, travelViewDungeons, travelViewFarPlaces, travelViewPlaces, travelViewRaiders, travellerBook,
+    travelViewCamps, travelViewDungeons, travelViewFarPlaces, travelViewPlaces, travelViewRaiders, travellerBook, tvPlaceRect, tvPlaceSummary,
     tvRaid, tvSceneKept, tvTrip, tvTripLive, walkMode, wildCampKeys, wildHidesPlayer,
     get _sharedOffsetMs() { return _sharedOffsetMs; },
     get bountyHost() { return bountyHost; },
@@ -31974,12 +31973,14 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
   /** OW6: a peer's raider word, heard off their foes frame (past the room test): their chases drawn where they sail - one I
    *  chase too goes to the lower id - and their spent raiders spent here. Only a raider that can be about me is kept.
    *  OW-CHASE-RANGE: `hold` as bandHear's. */
-  function seaRaidHear(from, raw, hold = RAIDER_WORD_MS) {
+  function seaRaidHear(from, raw, hold = RAIDER_WORD_MS, aged = 0) {
     const now = performance.now(), at = playerTravelPixel(), life = Math.floor(raidNowMs() / RAIDER_LIFE_MS);
     for (const [id, x, z, flag] of validRaiderWord(raw)) {
       if (!raiderNearMe(id, at, life)) continue;
       if (flag === 2) { tvRaid.spent.add(id); tvRaid.chase.delete(id); tvRaid.peer.delete(id); continue; }
-      tvRaid.peer.set(id, { x, z, at: now, from, hold });
+      const cur = tvRaid.peer.get(id);
+      if (hold > RAIDER_WORD_MS && cur && cur.hold <= RAIDER_WORD_MS && now - cur.at < cur.hold) continue;   // AUDIT OW-REVISITED L4-4: a fresh cell word for it says better
+      tvRaid.peer.set(id, { x, z, at: now - aged, from, hold });
       if (tvRaid.chase.has(id) && chaseYields(online?.id ?? '', from)) tvRaid.chase.delete(id);
     }
   }
