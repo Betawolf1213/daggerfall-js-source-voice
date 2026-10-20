@@ -46,6 +46,14 @@ PERF-HIDE (2026-10-12, a capture of a player's client standing still for four mi
 frame rate climbs for some twenty seconds) dyes a horse look's pictures in under half the CPU, byte for byte the same
 pictures. Its section is after PERF-DYE.
 
+BOOT-FREEZE (2026-10-20, the owner: "Just do #854 and do your own performance pass in the same PR. You need to install
+the freeware and go deep") is the first pass of this page measured IN THE REAL GAME - the freeware ARENA2 booted in
+Chromium under a CPU profile (`tools/bootFreezeProbe.mjs`) - and it carries #854's TRIP-PICKS with it. Four changes, none
+of them a change to what a player sees, every answer the old one: BOOT-RECTS (the boot's two rect walks read each block
+once), WD-OWNED (a town file's edits laid on its own base, and a kept base copied by a walk), REGION-VIEWS (a MAPS
+region's records read where MAPS.BSA holds them) and FIT-BITS (the Bay's fit on the picture counted 32 cells a word).
+Their sections are after TRIP-PICKS'.
+
 ## How the pass was run
 
 NOT IN THE REAL GAME. The frame probe (`tools/frameProbe.mjs`, PERF-NEXT's recipe) needs the freeware ARENA2, and its
@@ -1107,9 +1115,159 @@ jitter, ties of distance, three regions, courts and temples, ids out of the grid
 one, 12 draws each, the dice left where the old law left them; `roadChoices` asked of the world once a town and a job,
 another job and another world asking for themselves. Mutants: `tools/mutants/trippicks.json`, 7, all dead.
 
+## BOOT-FREEZE — the boot's freezes, measured in the real game
+
+*The owner (2026-10-20): "Just do #854 and do your own performance pass in the same PR. You need to install the freeware
+and go deep."*
+
+**How it was run - in the real game.** `sh tools/fetch-data.sh` put the freeware ARENA2 at `/home/claude/dfdata/arena2`
+(the zip's host answers this container now; PERF-PRIORITY's pass could not reach it). `tools/bootFreezeProbe.mjs` boots a
+scene over it in Chromium (SwiftShader) under ONE CPU profile, from the page's first byte until the stream has stood
+idle twenty frames past the first world frame (or `MAX_S`), and reads the main thread's long tasks off the profile itself:
+a run of samples that are not `(idle)`, closed by an idle gap past 4 ms, each attributed by its samples' stacks
+(inclusive, a function once a sample). The first world frame is marked IN the profile - `__frame` turning from 0 calls
+`__bootFreezeFirstFrame`, whose samples give its time on the profile's own clock - because that frame is the one #854's
+player froze on, and the world's own `__shotReady` waits for the whole stream, which at the real build slice under
+SwiftShader is hours. Knightstale at 15:00, a new character, the town packs on as the game ships them. The figures are
+this machine's CPU, and the frames are SwiftShader's: GPU-process work (a shader's compile, a texture's upload) lands in
+whichever task first waits on it - the sea's wave program's 9-10 s compile was `buildProgram`'s in one run and a
+canvas's `toDataURL` in the next - so the A/B below reads the script's own functions, never the frozen totals after the
+first frame.
+
+**Found** (main, the first profile; and counted, through a probe-only transform of the readers):
+- one 11.6 s task in the boot: `bootWorld`'s two rect walks - the Eltheric isles' 7,538 templates (2.7 s) and Deep
+  Waters' coastal towns (2.2 s), 23,676 blocks asked of BlocksFile (BOOT-RECTS) - and the world-data door rebuilding
+  every town a pack edits as the index reads the world's 15,260 locations: 8,349 rebuilds, each laid on a deep copy, 2.6 s
+  of copying (WD-OWNED);
+- 283 MB slice-copied out of the BSAs before the first frame; MAPS.BSA's regions read 257 times by then and 364 by the
+  40th frame (REGION-VIEWS);
+- the first world frame's `fitBayToPicture`, 772 ms of its own (FIT-BITS), and the roads' day (TRIP-PICKS, #854, above).
+
+**Measured: A/B in the real game** - the same probe on main (016dba12d) and on this branch, one arm after the other with
+nothing else running; inclusive ms of the script's own functions, before the first world frame and (+) after it:
+
+| | main | this branch |
+|---|---|---|
+| the boot: the main thread busy | 40,448 | 32,192 |
+| its largest task | 12,570 | 7,159 |
+| `bootWorld` | 8,883 | 5,567 |
+| the isles' rects (`etherPlaceRects`) | 3,036 | 1,218 |
+| Deep Waters' rects (`deepWatersLocationRects`) | 2,209 | 1,557 |
+| `patchJson` (the door's copies) | 2,782 | 1,135 |
+| the BSAs' copies (`getRecordBytes`) | 442 + 205 | 43 + 0 |
+| MAPS regions read (`loadRegion`) | 249 + 238 | 107 + 37 |
+| the Bay's fit (`fitBayToPicture`, the first frame) | 569 | 293 |
+| the roads' day (`townTrips`) | 457 + 30 | 394 + 0 |
+| the spot check's hashes (`packFileSha256`) | 1,223 | 834 |
+
+One run each, and a second A/B before WD-COPY and FIT-BITS landed agreed: the boot busy 45,780 -> 34,757 ms, its largest
+task 19,100 -> 7,130 ms. In node over the real data, each change below has its own figures and its own proof that every
+answer is the old one.
+
+Pins: `test/tooling/bootfreeze_probe.test.js` (2) - the probe's reading of a profile; mutants `tools/mutants/bootfreeze.json`, 4, all dead.
+The probe judges its own runs (`test/tooling/probehygiene.test.js` T3): no first world frame in the profile, or a page that threw, is no
+measurement.
+
+## BOOT-RECTS — the boot's two rect walks read each block once
+
+**Found.** Two walks of the boot ask SetLocationTiles' rect of thousands of locations: the Eltheric isles' templates
+(`etherWatersBake.js etherPlaceRects`, 7,538 of them) and the Bay's coastal towns for Deep Waters
+(`deepWatersClient.js deepWatersLocationRects`). BlocksFile keeps ONE parsed block (autoDiscard, as `BlocksFile.cs:32`),
+so a walk parsed a block again - and dried its puddles again (PUDDLE-DRY) - every time its name came round: the isles'
+templates name 384 blocks.
+
+**The fix.** `terrainTiles.js locationRectReader` keeps each block's ground tiles - the one thing SetLocationTiles reads of
+it - for the walk, and lets them go with it. A block reads alike at every location the world-data door reads it at,
+save where a layout pin stands (`worldDataReplacement.js pinnedHere`): a town a pin stands at (the door's new
+`locationPinned`), one the door cannot place (no integer indices) and a door that cannot say all read through, as before.
+BlocksFile keeps its one slot - `rmbLayout.js attachWindmillRecord` and others rely on a fresh parse. The isles' walk is
+read as a clone of each template is (`as`), and the host's own tilemap for it went with the walk.
+
+**Measured.** In node over the real data, every rect the same: the 7,538 templates 2,675 -> 1,178 ms with the town packs on
+(3,905 -> 178 ms off), every town of the Bay 49.4 -> 4.2 s; with 3,367 towns pinned, the same in order and shuffled,
+throws included.
+
+Pins: `test/world/terrain/bootrects.test.js` (5); mutants `tools/mutants/bootrects.json`, 7, all dead; `ether_deep`'s source pin and
+ED-world-unsaid re-aimed.
+
+## WD-OWNED — a town file's edits laid on its own base, and a kept base copied by a walk
+
+**Found.** The index reads every location of the world, and each town a pack edits is rebuilt then
+(`worldDataPack.js rebuild`): its classic location read afresh, made DFU's JSON (`locationToDfuJson`) and the author's edits
+laid on it through `patchJson` - which deep-copied its base first. A location's base is made for that one file and held
+nowhere else: 7,727 copies of 40 MB of JSON nothing shared, 513 ms in node. And a block's base is the classic block's JSON
+kept for the next file, so its copy is owed - but it was a JSON round trip, 63% of a replaced block's build (509 of 813
+ms over the isles' walk).
+
+**The fix.** `patchJson` takes `owned`: the caller's own plain tree is laid on in place; `rebuild` passes it for a
+location's base alone (a block's and a file's bases are kept, and copied). Measured first: not one location base of
+either pack holds a value a JSON round trip changes, and its helpers make every node fresh. WD-COPY: the copy a kept base
+is laid on is walked, ~4x the round trip's speed (637 -> 164 ms over the packs' 387 block bases), writing exactly what the
+round trip writes - a number JSON cannot write null and -0 as 0, an undefined left out of an object and null in an array,
+keys in the round trip's order; whatever it cannot vouch for (a boxed value, a toJSON, a `__proto__` key, a bigint, a tree
+past `COPY_DEPTH`) is the round trip's own, throws and all.
+
+**Measured.** Every file of both packs still rebuilds the author's file sha256 for sha256
+(`test/formats/worldData/wd3_pack.test.js` with ARENA2_PATH: 7,526 and 1,021 files).
+
+Pins: `test/formats/worldData/wdowned.test.js` (4); mutants `tools/mutants/wdowned.json`, 12, all dead (a kept block and a kept file
+laid on among them, killed by `wd3_pack`'s own pins).
+
+## REGION-VIEWS — a MAPS region's records read where MAPS.BSA holds them
+
+**Found.** MapsFile keeps one region resident (autoDiscard, as `MapsFile.cs`), so every walk over the regions read every
+region again - the boot's map dictionary and index, a quest's places (`findQuestLocation`), the ports (`navalPortList`),
+the sea lanes, the raids - and each read COPIED its four records: 357 KB a region on the mean (2.3 MB the Wrothgarian
+Mountains', 2.1 MB Daggerfall's), 22 MB a walk. ~0.5 s of the copies' own time in the profile, beside their collection.
+
+**The fix.** The readers only ever read a region's records (every DataView over them takes its offset), so
+`BsaFile.getRecordView` hands a record over as a view of the archive's bytes, held whole for its life anyway;
+`getRecordBytes` stays the copy (DFU's ReadBytes) every other reader takes - a block's automap is edited in place.
+
+**Measured.** In node, every region and every classic location of MAPS.BSA - 30,564 reads - the same off views as off
+copies; a walk of every region 29.0 -> 14.4 ms.
+
+Pins: `test/formats/regionviews.test.js` (2); mutants `tools/mutants/regionviews.json`, 4, all dead.
+
+## FIT-BITS — the Bay's fit on the picture counted 32 cells a word
+
+**Found.** The boot fits the Bay's land on the player's own picture of Tamriel (`tamrielLand.js fitBayToPicture`,
+TAMRIEL4) as its first world frame stands: 25 scales, 49 x 49 offsets, up to 2,178 cells each, compared a cell at a time -
+772 ms of pure self time in that frame.
+
+**The fix.** The inside's score is counted a word at a time: the picture's rows as two bitsets (the pixels that ARE 1 and
+that ARE 0 - a cell agrees only with its own value, so a picture holding anything else counts as it did), each window's
+32 pixels joined across a word boundary, the last word's tail cleared, a popcount. The same counts, so the same fit, ties
+to the same first offset in the same walk.
+
+**Measured.** Over the real data: (38, 57) x15.5, 1,537 of 2,048 inside, 190 of 192 along the seam (`tamriel4`'s ARENA2
+pin) in 157-205 ms against 707-717 ms; 300 random fits the same, 19.8 -> 3.8 s.
+
+Pins: `test/world/fitbits.test.js` (2, the old law restated); mutants `tools/mutants/fitbits.json`, 6, all dead.
+
+### What the boot still pays, ranked
+
+None of these moves the picture; each needs its own pass.
+1. **The snow's settle** - 2.4-2.7 s of the boot here: a year of the snowpack at the arrival's window
+   (`snowCoverHost.js settle` -> `snowpack.js advance` -> the weather's systems, `weatherMap.js drawCells` and its draws). A
+   seeded simulation AUDIT PRECIP already thinned; an exact cut must keep every draw, so it is its own pass.
+2. **The door's first build of each replaced block** - ~1.8 s of the two walks after BOOT-RECTS, beside the stream's:
+   the expand and `blockFromJson` past WD-COPY's copy. The walks need a block's ground alone, which the ops that reach it
+   could rebuild without the rest.
+3. **The GPU's** - the sea's wave program compiled at idle (`warmPrograms`, 9-10 s under SwiftShader; a driver's own on a
+   GPU), the ground's tile array uploaded (`uploadTileArray`), a canvas read back. `KHR_parallel_shader_compile` would let
+   a compile run beside the frame; unmeasurable here.
+4. **A ground set's puddle masks** - 0.5-1.1 s, at the boot and again when the stream meets a new climate or season
+   (`world.js groundLayersOf`): `puddleMask.js cleanMask` allocates an array a texel it walks, `shoreWaterColours` counts
+   2.6 million texels into a Map.
+5. **The world-data spot check** - `packFileSha256`'s canonical JSON of one block in eight, ~0.8 s across the boot.
+
 ## For the owner
 
 - **The A/B this branch owes**: on a machine with the data, `ARENA2_PATH=... node tools/frameProbe.mjs knight night`
   with `TREE=` the base, then this branch (`node tools/frameAb.mjs` reads the two) - the frame's own script time
   is what PERF-V8 moves, and a crowded town with yards is where PERF-YARD, PERF-INST and PERF-COL2 show.
+- **BOOT-FREEZE's A/B on a GPU**: `ARENA2_PATH=... node tools/bootFreezeProbe.mjs knight` with `TREE=` the base, then this
+  branch - SwiftShader cannot say what a driver pays for the sea's compile and the ground's upload (What the boot still
+  pays, 3), and a real GPU's frames are the ones a player waits through.
 - **The picture's levers** above (1, 4, 6b, 7) are yours - and 5's distance is the Other players card's now (PEER-RANGE): each trades a little of what is seen for frame time.
