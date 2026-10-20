@@ -144,7 +144,9 @@ import { t, localizedText, formatMessage, formatNumber } from '../../systems/tex
  *   where the player's guild holds it (fortLaw stationSteps) - 0 elsewhere
  * @property {() => ({ kind: 'shop'|'home', fee: number }|null)} [enchanter]   PROF12: the enchanting station the player stands at
  * @property {() => Array<{ provenance: string, name: string, points: number, essence: number, recipe?: string }>} [disenchantable]   PROF12: the
- *   pack's crafted pieces an enchanting station may take apart, each its Essence (AUDIT PROF12 E2: and its recipe, the XP's tier)
+ *   pack's crafted pieces the enchanting station lists (disenchantableOf), each its points and its Essence (AUDIT PROF12 E2:
+ *   and its recipe, the XP's tier) - the pieces it may take apart, and (DISENCHANT-SAID) those whose points make no
+ *   Essence, `essence` 0, which the page greys with the reason and the station never takes apart
  * @property {(provenance: string) => Promise<{ ok: boolean, text: string }>} [disenchant]   PROF12: a piece taken apart
  * @property {(where: 'anvil'|'loom') => Array<{ item: any, name: string, recipe: string, quality: number, provenance: string|null }>} [temperable]
  *   CRAFT4: the pack's pieces the station's craft tempers (the smith's at the anvil, the tailor's at the loom), each its

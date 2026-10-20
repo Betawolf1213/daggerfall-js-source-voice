@@ -77,7 +77,7 @@ test('DISEASE-UNWELL THE REPORT, ON THE REAL PATH: a disease caught - the warnin
   } finally { cleanup(); }
 });
 
-test('DISEASE-UNWELL ONE TILE, AT ITS PLACE: however many incubate, one Unwell - where the first of them stands among the named; one named and one incubating show both; an ended one and an infection show nothing, the infection never Unwell (the warnings leave it out too); the box the same, its line once (mutants: a tile an incubating disease; an infection taken for one; an ended one shown; the line once per disease)', () => {
+test('DISEASE-UNWELL ONE TILE, AT ITS PLACE: however many incubate, one Unwell - where the first of them stands among the named; one named and one incubating show both; an ended one and an infection show nothing, the infection never Unwell (the rest\'s warning leaves it out too, where the travel warnings count it); the box the same, its line once (mutants: a tile an incubating disease; an infection taken for one; an ended one shown; the line once per disease)', () => {
   const me = freshPlayer();
   try {
     const day = Math.floor(wt.ownMinutes() / 1440);
@@ -91,7 +91,9 @@ test('DISEASE-UNWELL ONE TILE, AT ITS PLACE: however many incubate, one Unwell -
     const turned = { activeEffects: [me.activeEffects[1], me.activeEffects[0], me.activeEffects[2]] };   // the Pox first: where the first incubating one stands
     assert.deepEqual(afflictionRows(turned), [UNWELL, PLAGUE]);
     assert.deepEqual(healthStatusRows(turned, rows), [{ text: 'You feel unwell.', center: true }, ...rows(contractedMessageRecord(DISEASES.Plague))]);
-    // the infection: no plain disease, never Unwell, as the warnings
+    // the infection: no plain disease, never Unwell, as the rest's warning (restWarning.js plainDiseases) - the travel
+    // popup, the held map's travel confirm and world.js's `unwell:` prompt count it (diseases.js diseaseCount, DFU's
+    // DiseaseCount)
     const bitten = { activeEffects: [createInfection('vampirism', { day: now })] };
     assert.equal(diseaseIncubating(bitten.activeEffects[0]), false);
     assert.deepEqual(afflictionRows(bitten), []);

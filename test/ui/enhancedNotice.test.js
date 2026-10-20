@@ -329,7 +329,7 @@ test('ENH-NOTICE1: the sheet - right edge, pointer-transparent, a slide the modu
 });
 
 // ── ENH-NOTICE2: THE WINDOWS' OWN BOXES ──────────────────────────────
-// Eight classic windows drawn on both skins raise DFU's click-anywhere
+// Nine classic windows drawn on both skins raise DFU's click-anywhere
 // box from inside themselves and paint it as their own parchment (a
 // host holds one overlay slot, so they do not push an ActionTextBox).
 // `noticeFrame` is their seam: rows while such a box is up, null when

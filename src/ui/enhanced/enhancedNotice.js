@@ -268,10 +268,11 @@ export function noticeRelease(owner) {
 }
 
 /**
- * A WINDOW'S OWN BOX, decided each frame (ENH-NOTICE2). Eight classic
+ * A WINDOW'S OWN BOX, decided each frame (ENH-NOTICE2). Nine classic
  * windows drawn on both skins - the potion maker, the item maker, the
  * spell maker, the bank, the rest window, the coven, the guild service
- * window and the service flow - raise DFU's click-anywhere box from
+ * window, the service flow and the spellbook (SPELLSHOP-SAID: the
+ * shop's notices and its notes) - raise DFU's click-anywhere box from
  * inside themselves (`DaggerfallUI.MessageBox` over the window) and
  * paint it as their own parchment rather than pushing an
  * ActionTextBox, because a host holds one overlay slot. They hand
