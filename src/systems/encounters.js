@@ -192,9 +192,11 @@ export function quietNights(fn) {
 
 /** DEX3: A ROLL OF THE PLAYER'S OWN, where the player stands (this decision's, and the camps' - systems/campEncounters.js):
  *  out of doors its place is PlayerGPS's reading, so it raises the GPS's events a mod listens to (world/playerGps.js -
- *  every minute the roll runs, whether or not it spawns), and its table is read as the mod's events wrote it (`local`). */
-export function playerReading(ctx) {
-  if (!ctx.inside) readPlayerGps(ctx);
+ *  every minute the roll runs, whether or not it spawns), and its table is read as the mod's events wrote it (`local`).
+ *  AUDIT DEX C7: the GPS is handed PlayerGPS's own reading - `gps`, where a roll's place gates it by another rect (the
+ *  chunk-load camps' any-town ring, campEncounters.js) - so one tracker never edges between two readings of the rect. */
+export function playerReading(ctx, gps = ctx) {
+  if (!ctx.inside) readPlayerGps(gps);
   return { ...ctx, local: true };
 }
 

@@ -401,6 +401,16 @@ export const DEX_DEFAULT_TABLES = Object.freeze([
   ...['Desert', 'Mountain', 'Rainforest', 'Subtropical', 'Woodlands', 'Haunted'].flatMap((c) => [`${c}CityNight`, `${c}Day`, `${c}Night`]),
 ].map((n) => `Default${n}`));
 
+/** AUDIT DEX C8: `Dictionary<string, EncounterTable>(StringComparer.OrdinalIgnoreCase)` (BestiaryMod.cs:88) - a name
+ *  finds its table in any case (a later line's `crypt` replaces `Crypt`), the table keeping the name it was added under.
+ *  The C#'s RemoveAll (`t.name == name`) stays ordinal, so a line in another case moves no table off its old indices. */
+class IgnoreCaseMap extends Map {
+  get(k) { return super.get(String(k).toUpperCase()); }
+  has(k) { return super.has(String(k).toUpperCase()); }
+  set(k, v) { return super.set(String(k).toUpperCase(), v); }
+  delete(k) { return super.delete(String(k).toUpperCase()); }
+}
+
 /**
  * BestiaryMod.ParseEncounterTables (:1633-1726), line for line: `{ tables: name -> { name, tableIndices, enemyIds },
  * byIndex: index -> [table] }`. A line naming a table already read replaces its ids (and moves it to other indices,
@@ -408,7 +418,7 @@ export const DEX_DEFAULT_TABLES = Object.freeze([
  * its ids are read, as the C# adds it, so a line whose ids will not parse leaves its table in the lists with none.
  */
 export function readEncounterTables(files, log = () => {}) {
-  const tables = new Map(), byIndex = new Map();
+  const tables = new IgnoreCaseMap(), byIndex = new Map();
   const at = (i) => byIndex.get(i) ?? byIndex.set(i, []).get(i);
   for (const [assetName, text] of files) {
     const [header = '', ...lines] = csvLines(text);

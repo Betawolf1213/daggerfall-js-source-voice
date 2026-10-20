@@ -332,10 +332,15 @@ export function rollCampEncounter(ctx, rolls = Math.random) {
   return rollGroupComposition(ctx, rolls);
 }
 
+/** AUDIT DEX C7: what a chunk-load roll tells PlayerGPS - the climate of the pixel just entered (UpdateWorldInfo runs
+ *  before RaiseEvents, PlayerGPS.cs:561-576) and no rect: its `inLocationRect` is the camp gate's ring of any town about
+ *  that pixel (DISC19-F), not PlayerGPS's rect of the pixel's own location, which the minute's roll reads. */
+const chunkGps = (ctx) => ({ climateIndex: ctx.climateIndex });
+
 /** The chunk-load twin: same chance, same composition, no time gate at
  *  all - the caller's own `pixelChanged` event IS the cadence. */
 export function rollCampEncounterOnChunkLoad(ctx, rolls = Math.random) {
-  ctx = playerReading(ctx);   // DEX3: the player's own roll, where it stands
+  ctx = playerReading(ctx, chunkGps(ctx));   // DEX3: the player's own roll, where it stands
   if (!campGateOk(ctx)) return null;
   if (!rollCampChanceOnChunkLoad(rolls())) return null;
   return rollGroupComposition(ctx, rolls);
@@ -345,7 +350,7 @@ export function rollCampEncounterOnChunkLoad(ctx, rolls = Math.random) {
  *  hit, each group rolls its own composition (so one can be bandits and the next wolves) and
  *  takes its own bearing round the player. Null on a miss, else the non-empty list of groups. */
 export function rollCampEncountersOnChunkLoad(ctx, rolls = Math.random, { groups = CAMP_GROUPS_ON_CHUNK_LOAD, fovDegrees = 60 } = {}) {
-  ctx = playerReading(ctx);   // DEX3: the player's own roll, where it stands
+  ctx = playerReading(ctx, chunkGps(ctx));   // DEX3: the player's own roll, where it stands
   if (!campGateOk(ctx)) return null;
   if (!rollCampChanceOnChunkLoad(rolls())) return null;
   const bearings = campGroupBearings(fovDegrees, groups);

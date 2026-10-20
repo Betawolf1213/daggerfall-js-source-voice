@@ -31,6 +31,9 @@ import { _resetEncounterTableSelectors } from '../../../src/characters/encounter
 import { _resetPlayerGps } from '../../../src/world/playerGps.js';
 import { _resetSpellRecordsAssets } from '../../../src/systems/spell/standardSpells.js';
 import { _resetEnemySpellbooks } from '../../../src/systems/enemySpells.js';
+import { enemyGroupOf, entityFlags, getNearbyObjects, NEARBY } from '../../../src/systems/nearbyObjects.js';   // AUDIT DEX C3
+import { applySpell } from '../../../src/systems/effects.js';
+import { buildCustomSpell, blankEffectSettings } from '../../../src/systems/spell/spellMaker.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const CS = readFileSync(join(ROOT, 'vendor/daggerfall-enemy-expansion/Scripts/BestiaryMod.cs'), 'utf8');
@@ -132,8 +135,17 @@ test('DEX4b the Skeletal Warrior\'s rule: a row the mod says is skeletal halves 
   const plain = weaponAttackDamage(A, soldier, 0, steel, seq(0.999));
   assert.equal(isSkeletalTarget(soldier), false);
   assert.equal(isSkeletalTarget({ careerIndex: SKELETAL_WARRIOR_INDEX }), true);
+  const barbarian = { isPlayer: false, careerIndex: 15, mobileType: 143 };
+  assert.equal(isSkeletalTarget(barbarian), true, 'DFU\'s test is the career (FormulaHelper.cs:740): the Barbarian rides the Skeletal Warrior\'s');
   registerSkeletalTarget((tg) => tg.mobileType === 266);
   assert.equal(isSkeletalTarget(soldier), true);
+  assert.equal(isSkeletalTarget(barbarian), false, 'AUDIT DEX C2: a mod\'s word replaces DFU\'s test - its override asks the ID');
+  reset();
+  registerSkeletalTarget(() => null);
+  assert.equal(isSkeletalTarget(barbarian), true, 'a door that answers null leaves DFU\'s');
+  reset();
+  registerSkeletalTarget(createDexCombatDoors(new Map(), (id) => (id === 266 ? { isSkeletal: true } : null)).skeletal);
+  assert.deepEqual([soldier, barbarian, { careerIndex: SKELETAL_WARRIOR_INDEX, mobileType: SKELETAL_WARRIOR_INDEX }].map(isSkeletalTarget), [true, false, true], 'the mod\'s test (:1593-1601): its Skeletal row, the Skeletal Warrior by its ID, and no Barbarian');
   assert.equal(weaponAttackDamage(A, soldier, 0, mace, seq(0.999)), 17, 'roll 12 -> /2 6 -> silver x2 12 -> +5 Str: the Skeletal Warrior\'s 17');
   assert.equal(plain - weaponAttackDamage(A, soldier, 0, steel, seq(0.999)), 6, 'a blunt steel mace\'s roll of 12 halved');
   assert.throws(() => registerSkeletalTarget(1), /function/);
@@ -155,6 +167,36 @@ test('DEX4b the groups and languages: the fifty\'s from their rows - a group of 
   assert.equal(enemyLanguageSkill({ isClass: true, careerIndex: 391, mobileType: 391 }), SKILLS.Medical, 'a skill of 0 is the row\'s answer too');
   assert.equal(enemyLanguageSkill({ isClass: false, careerIndex: 1, mobileType: 1 }), SKILLS.Impish, 'the Imp: DFU\'s');
   assert.throws(() => registerEnemyGroup(null), /function/); assert.throws(() => registerEnemyLanguage(null), /function/);
+});
+
+test('AUDIT DEX C3 one group for every reader: Detect, Dispel and Pacify ask EnemyEntity.GetEnemyGroup through the door a mod answers (PlayerGPS.cs:788, PacifyEffect.cs:132) - the mod\'s Blood Spider is an animal to a Pacify Animal and a Detect\'s scan, its Goblin a humanoid, its Wisp of no group; not loaded, they are DFU\'s None', (t) => {
+  t.after(reset);
+  const foe = (mobileType) => ({ stats: { luck: 50, willpower: 50 }, skills: [], activeEffects: [], level: 1, health: 20, maxHealth: 20, mobileType });
+  const pacifyAnimal = (target) => applySpell(buildCustomSpell({ slots: [{ type: 33, subType: 0, settings: { ...blankEffectSettings(), chanceBase: 100, chanceMod: 0 } }], rangeType: 1 }), 1, target, {}, (() => { let i = 0; return () => (i++ === 0 ? 0 : 0.99); })(), null, {});
+  installEnemyExpansion({ on: false, log: silent });
+  assert.equal(enemyGroupOf(271), NEARBY.None, 'not loaded: a career past DFU\'s switch is None');
+  assert.equal(pacifyAnimal(foe(271)).pacify, undefined);
+  reset();
+  installEnemyExpansion({ on: true, log: silent });
+  assert.equal(enemyEntityGroup(271), ENEMY_GROUPS.Animals, 'the door: the mod\'s row');
+  assert.equal(enemyGroupOf(271), NEARBY.Animal, 'and the scan\'s group reads the same door');
+  assert.equal(entityFlags({ mobileType: 256 }), NEARBY.Enemy | NEARBY.Humanoid, 'GetEntityFlags: the Goblin an enemy and a humanoid');
+  assert.equal(entityFlags({ mobileType: 283 }), NEARBY.Enemy, 'the Wisp, whose row names None, takes no group bit');
+  const scan = [{ flags: entityFlags({ mobileType: 271 }), distance: 3, active: true }, { flags: entityFlags({ mobileType: 256 }), distance: 3, active: true }];
+  assert.equal(getNearbyObjects(scan, NEARBY.Enemy | NEARBY.Animal).length, 1, 'a Detect of animals (and Dispel\'s sweep over the same scan) finds the spider alone');
+  assert.equal(pacifyAnimal(foe(271)).pacify, true, 'Pacify Animal calms it');
+  assert.equal(pacifyAnimal(foe(256)).pacify, undefined, 'and not the Goblin');
+  assert.equal(enemyGroupOf(128), NEARBY.Animal, 'a class still rides its colliding career (F080), the mod or not');
+});
+
+test('AUDIT DEX C6 a rider\'s spell is readied from the merged standard list in both hosts - the mod\'s 500-503 among SPELLS.STD\'s', () => {
+  const read = (f) => readFileSync(join(ROOT, f), 'utf8');
+  const dc = read('src/scenes/dungeonContext.js'), xf = read('src/scenes/exteriorFoes.js');
+  assert.match(dc, /readySpell: \(index\) => \{[^\n]*\n\s*const sp = spellsByIndex\?\.get\(index\);\n\s*if \(sp\) castEnemySpell\(f, sp, true\);/, 'the dungeon: the spell by its index, cast free (SetReadySpell(spell, true))');
+  assert.match(dc, /const \{ spellsByIndex \} = await loadMagicRegistries\(fetchBytes\);/, 'and its map the registries\' - the one fold over SPELLS.STD and every mod\'s records');
+  assert.match(xf, /readySpell: \(index\) => \{[^\n]*\n\s*const sp = spellsByIndex\?\.\(\)\?\.get\(index\);\n\s*if \(sp\) castSpellFrom\(f, sp, playerFeet, true\);/, 'the street\'s pool the same');
+  const shared = read('src/scenes/shared.js');
+  assert.match(shared, /const byIndex = standardSpellsByIndex\(await fetch\('SPELLS\.STD'\)\);/, 'the registries\' map is the merged fold (DEX4a)');
 });
 
 test('DEX4b the forced gender: after the unit\'s roll, never instead of it - the DFRandom draw is spent as it was, and the row\'s gender stands over the roll, a given gender and a monster\'s unspecified', (t) => {
@@ -179,6 +221,7 @@ test('DEX4b the install: loaded, the Blood Spider readies its Blood Leech, the L
   onMonsterHit({ careerIndex: 271, mobileType: 271 }, P(), 3, { readySpell: (i) => ready.push(i), rolls: () => 0.5 });
   assert.deepEqual(ready, []);
   assert.equal(isSkeletalTarget({ careerIndex: 266, mobileType: 266 }), false);
+  assert.equal(isSkeletalTarget({ careerIndex: 15, mobileType: 143 }), true, 'DFU\'s Barbarian, its career the Skeletal Warrior\'s');
   assert.equal(enemyEntityGroup(256), ENEMY_GROUPS.None);
   assert.equal(MobileUnit.resolveGender('female', { affinity: 'Human' }, 384), 'female');
   reset();
@@ -192,6 +235,7 @@ test('DEX4b the install: loaded, the Blood Spider readies its Blood Leech, the L
   assert.deepEqual(fat, [3 * 2 * 64], 'the Nymph\'s row names 5: FatigueDamage');
   assert.equal(isSkeletalTarget({ careerIndex: 266, mobileType: 266 }), true);
   assert.equal(isSkeletalTarget({ careerIndex: 265, mobileType: 265 }), false);
+  assert.equal(isSkeletalTarget({ careerIndex: 15, mobileType: 143 }), false, 'AUDIT DEX C2: and the mod\'s, none');
   assert.equal(enemyEntityGroup(256), ENEMY_GROUPS.Humanoid);
   assert.equal(enemyEntityGroup(271), ENEMY_GROUPS.Animals);
   assert.equal(enemyLanguageSkill({ isClass: false, careerIndex: 256, mobileType: 256 }), SKILLS.Orcish);

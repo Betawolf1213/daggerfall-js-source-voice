@@ -44,7 +44,7 @@ export function createDexEncounterSelector(read, { random = Math.random } = {}) 
     setSeed(was);
     write(index, tables[pick]);
   };
-  /** SelectClimateTables (:1784-1830): the climate's day and night. */
+  /** SelectClimateTables (:1784-1824): the climate's day and night. */
   const selectClimateTables = (climateIndex) => {
     const band = CLIMATE_TABLE.get(climateIndex);
     if (band) { selectTable(band[1]); selectTable(band[2]); }
@@ -62,9 +62,9 @@ export function createDexEncounterSelector(read, { random = Math.random } = {}) 
       return ids.length ? ids : null;
     },
     gps: {
-      climateIndexChanged: selectClimateTables,   // PlayerGPS_OnClimateIndexChanged (:1832-1835)
-      exitLocationRect: selectClimateTables,      // PlayerGPS_OnExitLocationRect (:1837-1840), at CurrentClimateIndex
-      /** PlayerGPS_OnEnterLocationRect (:1842-1871): the climate's city night. */
+      climateIndexChanged: selectClimateTables,   // PlayerGPS_OnClimateIndexChanged (:1826-1829)
+      exitLocationRect: selectClimateTables,      // PlayerGPS_OnExitLocationRect (:1831-1834), at CurrentClimateIndex
+      /** PlayerGPS_OnEnterLocationRect (:1836-1871): the climate's city night. */
       enterLocationRect: (climateIndex) => { const band = CLIMATE_TABLE.get(climateIndex); if (band) selectTable(band[0]); },
     },
   };

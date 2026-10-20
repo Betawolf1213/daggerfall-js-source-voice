@@ -102,8 +102,8 @@
  {
   "name": "DEX3-the-reading-indoors",
   "file": "src/systems/encounters.js",
-  "old": "  if (!ctx.inside) readPlayerGps(ctx);",
-  "new": "  readPlayerGps(ctx);",
+  "old": "  if (!ctx.inside) readPlayerGps(gps);",
+  "new": "  readPlayerGps(gps);",
   "why": "an indoor roll's place taken for the GPS's reading",
   "tests": [
    "test/systems/enemyExpansion/dex3_encounters.test.js"
@@ -142,9 +142,19 @@
  {
   "name": "DEX3-the-camp-not-the-players-reading",
   "file": "src/systems/campEncounters.js",
-  "old": "export function rollCampEncounterOnChunkLoad(ctx, rolls = Math.random) {\n  ctx = playerReading(ctx);   // DEX3: the player's own roll, where it stands\n",
-  "new": "export function rollCampEncounterOnChunkLoad(ctx, rolls = Math.random) {\n",
-  "why": "a chunk's camp roll raises no GPS event for the pixel just entered",
+  "old": "export function rollCampEncountersOnChunkLoad(ctx, rolls = Math.random, { groups = CAMP_GROUPS_ON_CHUNK_LOAD, fovDegrees = 60 } = {}) {\n  ctx = playerReading(ctx, chunkGps(ctx));   // DEX3: the player's own roll, where it stands\n",
+  "new": "export function rollCampEncountersOnChunkLoad(ctx, rolls = Math.random, { groups = CAMP_GROUPS_ON_CHUNK_LOAD, fovDegrees = 60 } = {}) {\n",
+  "why": "the world's chunk-load camp roll (AUDIT DEX C5: the one world.js calls) raises no GPS event for the pixel just entered",
+  "tests": [
+   "test/systems/enemyExpansion/dex3_encounters.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-C5-the-street-camp-not-the-players-reading",
+  "file": "src/systems/campEncounters.js",
+  "old": "export function rollCampEncounter(ctx, rolls = Math.random) {\n  ctx = playerReading(ctx);   // DEX3: the player's own roll, where it stands\n",
+  "new": "export function rollCampEncounter(ctx, rolls = Math.random) {\n",
+  "why": "the street's minute camp roll (exterior.js's) raises no GPS event and reads DFU's tables, not the mod's writes",
   "tests": [
    "test/systems/enemyExpansion/dex3_encounters.test.js"
   ]
@@ -235,6 +245,86 @@
   "old": "    const table = { name, tableIndices: null, enemyIds: [...vanilla(index)] };",
   "new": "    const table = { name, tableIndices: null, enemyIds: vanilla(index) };",
   "why": "a default table is DFU's own array, not the C#'s copy",
+  "tests": [
+   "test/systems/enemyExpansion/dex3_encounters.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-C1-reset-state-keeps-the-flag",
+  "file": "src/world/playerGps.js",
+  "old": "export function resetPlayerGpsState() { _inRect = false; }",
+  "new": "export function resetPlayerGpsState() { }",
+  "why": "PlayerGPS.ResetState keeps the rect flag: a fast travel into another climate's town raises no entry, and its city night is never drawn",
+  "tests": [
+   "test/systems/enemyExpansion/dex3_encounters.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-C1-the-jump-core-plays-no-reset",
+  "file": "src/scenes/world.js",
+  "old": "    if (modEvent) resetPlayerGpsState();",
+  "new": "    if (false) resetPlayerGpsState();",
+  "why": "the jump core drops the host's rect flag and not the GPS's: a load or a fast travel from one town into another keeps the mod's last city night",
+  "tests": [
+   "test/systems/enemyExpansion/dex3_encounters.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-C1-every-jump-resets",
+  "file": "src/scenes/world.js",
+  "old": "    if (modEvent) resetPlayerGpsState();",
+  "new": "    resetPlayerGpsState();",
+  "why": "a Recall or a guild teleport resets the flag too, where DFU raises ResetState only on a load's start and a fast travel's end",
+  "tests": [
+   "test/systems/enemyExpansion/dex3_encounters.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-C7-the-chunk-hands-its-ring",
+  "file": "src/systems/campEncounters.js",
+  "old": "const chunkGps = (ctx) => ({ climateIndex: ctx.climateIndex });",
+  "new": "const chunkGps = (ctx) => ctx;",
+  "why": "a chunk-load roll hands the camp gate's ring of any town to PlayerGPS: an entry, then an exit, the player never made - the mod's city night and day drawn between two readings",
+  "tests": [
+   "test/systems/enemyExpansion/dex3_encounters.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-C7-the-reading-not-handed",
+  "file": "src/systems/encounters.js",
+  "old": "  if (!ctx.inside) readPlayerGps(gps);",
+  "new": "  if (!ctx.inside) readPlayerGps(ctx);",
+  "why": "the roll's own place feeds the GPS whatever reading it was handed",
+  "tests": [
+   "test/systems/enemyExpansion/dex3_encounters.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-C6-the-dungeon-hands-no-place",
+  "file": "src/scenes/dungeonContext.js",
+  "old": "      ...dungeonPlace(dfLocation),   // DEX3: its LocationId and the place a mod's table is picked for\n",
+  "new": "",
+  "why": "the dungeon's population is handed no place: no LocationId seeds its random markers and no mod's pick is read - DFU's tables under the mod",
+  "tests": [
+   "test/systems/enemyExpansion/dex3_encounters.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-C8-the-names-ordinal",
+  "file": "src/systems/enemyExpansion/dexTables.js",
+  "old": "  const tables = new IgnoreCaseMap(), byIndex = new Map();",
+  "new": "  const tables = new Map(), byIndex = new Map();",
+  "why": "a table's name matched case for case: a line in another case adds a second table where the C#'s OrdinalIgnoreCase dictionary replaces the first",
+  "tests": [
+   "test/systems/enemyExpansion/dex3_encounters.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-C8-the-header-case-sensitive",
+  "file": "src/systems/enemyExpansion/dexTables.js",
+  "old": "    const hasTableIndices = fields[1].toLowerCase() === 'table indices';",
+  "new": "    const hasTableIndices = fields[1] === 'Table Indices';",
+  "why": "the header's column read case for case: a file whose header says TABLE INDICES reads its indices as ids and refuses every new table",
   "tests": [
    "test/systems/enemyExpansion/dex3_encounters.test.js"
   ]

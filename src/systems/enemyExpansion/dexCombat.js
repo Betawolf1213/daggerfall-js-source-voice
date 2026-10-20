@@ -13,7 +13,7 @@
 // GetCustomProperties is; the group and the language read the fifty alone, as the C#'s `customEnemies` lookup does.
 
 import { runMonsterHitArm, CLASSIC_HIT_ARM, MONSTER_HIT_ARMS } from '../diseases.js';
-import { ENEMY_GROUPS } from '../../combat/formulas.js';
+import { ENEMY_GROUPS, SKELETAL_WARRIOR_INDEX } from '../../combat/formulas.js';   // the career's number, the ID the mod compares (MonsterCareers.SkeletalWarrior)
 import { CAREER_SKILLS } from './dexTables.js';
 
 /** BestiaryEnemySpells (BestiaryEnemySpells.cs): the spells the mod's own arms ready, by arm. */
@@ -40,8 +40,10 @@ const valueOf = (table, v) => (typeof v === 'number' ? v : table[v]);
 export function createDexCombatDoors(enemies, propsOf) {
   return {
     monsterHit: createDexMonsterHit(propsOf),
-    /** registerSkeletalTarget: a row whose Affinity cell read `Skeletal` (dexTables.js) - the classic's or a mod id's. */
-    skeletal: (target) => propsOf(target?.mobileType)?.isSkeletal === true,
+    /** registerSkeletalTarget, the override's whole test (:1593-1601): the Skeletal Warrior by its ID - not its career, so
+     *  no class rides its slot (AUDIT DEX C2) - or a row whose Affinity cell read `Skeletal` (dexTables.js), the
+     *  classic's or a mod id's. */
+    skeletal: (target) => target?.mobileType === SKELETAL_WARRIOR_INDEX || propsOf(target?.mobileType)?.isSkeletal === true,
     /** registerEnemyGroup: the fifty's row (a mod's career index is its id), null for DFU's switch. */
     group: (careerIndex) => { const e = enemies.get(careerIndex); return e ? valueOf(ENEMY_GROUPS, e.props.group) : null; },
     /** registerEnemyLanguage: the fifty's row, null for DFU's. */

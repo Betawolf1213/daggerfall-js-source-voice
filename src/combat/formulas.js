@@ -44,6 +44,7 @@ import { liveVampirism } from '../systems/racialLive.js';   // VU1: an import-fr
 import { breakNormalPowerConcealment } from '../systems/concealment.js';   // wave 31: BreakNormalPowerConcealmentEffects, in its own leaf so this import cannot cycle
 import { localizedText } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language (an import-free leaf)
 import { blowTaken } from '../systems/blowTaken.js';   // TELL1: what the target takes - a leaf, for the brain that registers into it imports the motor that imports this file
+import { ENEMY_GROUPS, enemyEntityGroup, _resetEnemyGroups } from './enemyGroups.js';   // AUDIT DEX C3: the group switch and its mod door, a leaf
 
 // ---- Dice100.cs verbatim ----
 export const dice100 = (chance, roll01 = Math.random()) => Math.floor(roll01 * 100) < chance;   // Random.Range(0,100) < chance
@@ -60,7 +61,7 @@ export const dice100 = (chance, roll01 = Math.random()) => Math.floor(roll01 * 1
 const _overrides = new Map();
 export function registerFormulaOverride(name, fn) { if (fn) _overrides.set(name, fn); else _overrides.delete(name); }
 /** The test seam: every override, group, language and skeletal word let go. */
-export function _resetFormulaDoors() { _overrides.clear(); _groups.length = 0; _languages.length = 0; _skeletal.length = 0; }
+export function _resetFormulaDoors() { _overrides.clear(); _resetEnemyGroups(); _languages.length = 0; _skeletal.length = 0; }
 export const formulaOverride = (name) => _overrides.get(name) ?? null;
 
 // ---- FormulaHelper.AdjustWeaponHitChanceMod / AdjustWeaponAttackDamage ----
@@ -172,7 +173,7 @@ export const STRUCK_BODY_PARTS = Object.freeze([0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3,
 export const calculateStruckBodyPart = (roll01 = Math.random()) => STRUCK_BODY_PARTS[Math.floor(roll01 * STRUCK_BODY_PARTS.length)];
 
 // ---- DFCareer.StructureData attack-modifier bit table ----
-export const ENEMY_GROUPS = Object.freeze({ None: -1, Undead: 0, Daedra: 1, Humanoid: 2, Animals: 3 });
+export { ENEMY_GROUPS, registerEnemyGroup, enemyEntityGroup } from './enemyGroups.js';   // AUDIT DEX C3: GetEnemyEntityEnemyGroup's one home
 export const GROUP_BITS = Object.freeze([[0x01, 0x10], [0x02, 0x20], [0x04, 0x40], [0x08, 0x80]]);   // [bonus, phobia] per group (DEX1: exported - a mod's career is packed into the same bits)
 /** DFCareer.GetAttackModifier (DFCareer.cs:817-848), verbatim: the two
  *  bits are decoded EXCLUSIVELY, bonus first - `if (HasFlags(0x01))
@@ -194,32 +195,7 @@ export function careerAttackModifier(attackModifierFlags, group) {
   return 0;
 }
 
-/** FormulaHelper.GetEnemyEntityEnemyGroup (FormulaHelper.cs:2746-2805),
- *  verbatim: the switch is on CareerIndex, NOT on MobileEnemy.Affinity.
- *  The four atronachs, the horse and every unlisted career are None.
- *  (Careers whose classic grouping disagrees carry DFU's own comment.) */
-const ENEMY_GROUP_BY_CAREER = Object.freeze({
-  0: 3, 3: 3, 4: 3, 5: 3, 6: 3, 11: 3, 20: 3, 34: 3, 39: 3, 40: 3,          // Animals (39/40 "grouped as undead in classic")
-  1: 2, 2: 2, 7: 2, 8: 2, 9: 2, 10: 2, 12: 2, 13: 2, 14: 2, 16: 2,          // Humanoid
-  21: 2, 22: 2, 24: 2, 41: 2, 42: 2,                                        // (41/42 "grouped as undead in classic")
-  15: 0, 17: 0, 18: 0, 19: 0, 23: 0, 28: 0, 30: 0, 32: 0, 33: 0,            // Undead (17 "grouped as animal in classic")
-  25: 1, 26: 1, 27: 1, 29: 1, 31: 1,                                        // Daedra
-});
-/** DEX4b (bible/04-Characters/Enemy-Expansion.md section 9): A MOD'S GROUP. DFU asks TryGetOverride
- *  ("GetEnemyEntityEnemyGroup") first (:2748-2750); Daggerfall Enemy Expansion's answers its own enemies' row and DFU's
- *  switch for the rest. `fn(careerIndex)` -> a group, or null for DFU's (a mod's enemy's career index is its id). */
-const _groups = [];
-export function registerEnemyGroup(fn) {
-  if (typeof fn !== 'function') throw new Error('registerEnemyGroup: a function of (careerIndex)');
-  _groups.push(fn);
-}
-export function enemyEntityGroup(careerIndex) {
-  for (const fn of _groups) {
-    const g = fn(careerIndex);
-    if (g != null) return g;
-  }
-  return ENEMY_GROUP_BY_CAREER[careerIndex] ?? ENEMY_GROUPS.None;
-}
+// FormulaHelper.GetEnemyEntityEnemyGroup and its mod door: combat/enemyGroups.js (AUDIT DEX C3 - one home, a leaf).
 
 // ---- GetBonusOrPenaltyByEnemyType (the DFU always-on port) ----
 /** FormulaHelper.cs:993-1057, verbatim including the ladder's ORDER.
@@ -465,14 +441,20 @@ export const SKELETAL_WARRIOR_INDEX = 15;   // MonsterCareers.SkeletalWarrior
  *  but for one test - the Skeletal Warrior's rule (blunt halved, silver doubled) for any enemy whose row says Skeletal
  *  (BestiaryMod.cs:1587-1630). The port takes that test as a door, so the stock formula's own terms stand under the
  *  mod. PCAAO's core runs its own copy (combat/pcaao.js pcaaoWeaponAttackDamage) and never asks it, as DFU's PCAAO,
- *  replacing CalculateAttackDamage whole, never calls the overridden one. `fn(target)` -> true. */
+ *  replacing CalculateAttackDamage whole, never calls the overridden one. `fn(target)` -> true or false, the mod's
+ *  whole test, or null to leave DFU's. AUDIT DEX C2: the mod's test REPLACES DFU's - its override asks the enemy's ID
+ *  (`MobileEnemy.ID == SkeletalWarrior`, :1594) where DFU asks its career (`CareerIndex`, FormulaHelper.cs:740), whose
+ *  class collision makes a Barbarian (143, career 15) a skeleton; under the mod it is none. */
 const _skeletal = [];
 export function registerSkeletalTarget(fn) {
   if (typeof fn !== 'function') throw new Error('registerSkeletalTarget: a function of (target)');
   _skeletal.push(fn);
 }
-/** Whether the Skeletal Warrior's rule bites `target`: its career, or a mod's word. */
-export const isSkeletalTarget = (target) => target.careerIndex === SKELETAL_WARRIOR_INDEX || _skeletal.some((fn) => fn(target) === true);
+/** Whether the Skeletal Warrior's rule bites `target`: a mod's word where one answers, else DFU's - its career. */
+export const isSkeletalTarget = (target) => {
+  for (const fn of _skeletal) { const a = fn(target); if (a != null) return a === true; }
+  return target.careerIndex === SKELETAL_WARRIOR_INDEX;
+};
 
 /** RVN2 (bible/12-Enhanced-AI/Feud-Arc.md 13.2): NAMED VETOES on silver's double against a kind it doubles against -
  *  `fn(target) -> true` keeps silver to its plain damage on that target (a Silver-scarred revenant's: its kind's double

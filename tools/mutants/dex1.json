@@ -1,0 +1,12 @@
+[
+ {
+  "name": "AUDIT-DEX-C4-the-abyss-class-the-128-bit",
+  "file": "src/scenes/oceanHolesAbyss.js",
+  "old": "    const flag = foe.isClass && type >= 128 && type <= 146;",
+  "new": "    const flag = foe.isClass;",
+  "why": "Ocean Holes' class range widened to the 128 bit: the abyss takes every one of Daggerfall Enemy Expansion's classes, always, for an undead marked WasHumanoid",
+  "tests": [
+   "test/scenes/oh_abyss.test.js"
+  ]
+ }
+]

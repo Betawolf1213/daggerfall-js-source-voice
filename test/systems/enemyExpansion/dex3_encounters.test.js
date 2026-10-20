@@ -17,9 +17,9 @@ import { installEnemyExpansion, _resetEnemyExpansion } from '../../../src/system
 import {
   registerEncounterTableSelector, _resetEncounterTableSelectors, encounterTable, encounterTableChoices, encounterTableGeneration,
 } from '../../../src/characters/encounterTableDoor.js';
-import { onPlayerGpsEvents, readPlayerGps, _resetPlayerGps } from '../../../src/world/playerGps.js';
+import { onPlayerGpsEvents, readPlayerGps, resetPlayerGpsState, _resetPlayerGps } from '../../../src/world/playerGps.js';
 import { ENCOUNTER_TABLES, CLIMATE_TABLE, chooseRandomEnemy, intermittentEnemySpawn } from '../../../src/systems/encounters.js';
-import { rollGroupComposition, rollCampEncounterOnChunkLoad } from '../../../src/systems/campEncounters.js';
+import { rollGroupComposition, rollCampEncounter, rollCampEncountersOnChunkLoad } from '../../../src/systems/campEncounters.js';
 import { collectDungeonEnemies, dungeonPlace } from '../../../src/characters/dungeonEnemies.js';
 import { grantSpecies, grantSpeciesOf } from '../../../src/scenes/grantHost.js';
 import { grantDice } from '../../../src/net/grantLaw.js';
@@ -98,6 +98,22 @@ test('DEX3 ParseEncounterTables line for line: a replacement moves only to other
   assert.equal(log.length, 4);
   assert.match(log[0], /A\.tdb:6: /); assert.match(log[1], /A\.tdb:7: table database line has invalid format/);
   assert.match(log[2], /table indices not specified/); assert.match(log[3], /C\.tdb: table database has invalid format/);
+});
+
+test('AUDIT DEX C8 the names are OrdinalIgnoreCase (BestiaryMod.cs:88): a line in another case replaces the table, which keeps its first name - and the C#\'s RemoveAll, ordinal, leaves it on its old indices; the header\'s "Table Indices" in any case (InvariantCultureIgnoreCase)', () => {
+  const ids = (a, n = 19) => Array.from({ length: n }, (_, k) => a + k).join(',');
+  const head = ['Name', 'TABLE INDICES', ...Array.from({ length: 19 }, (_, k) => k + 1)].join(',');
+  const log = [];
+  const read = readEncounterTables([['A.tdb', [head, `Crypt,3,${ids(100)}`, `CRYPT,4,${ids(200)}`, `crypt,,${ids(300)}`].join('\n')]], (l, m) => log.push(m));
+  assert.deepEqual(log, [], 'the header has its indices column - else the first line, a new table, would be refused');
+  assert.equal(read.tables.size, 1, 'one table, three lines');
+  const t = read.tables.get('cRyPt');
+  assert.equal(t.name, 'Crypt', 'the name it was added under');
+  assert.deepEqual(t.tableIndices, [4]); assert.deepEqual(t.enemyIds, ids(300).split(',').map(Number), 'the last line\'s ids');
+  assert.deepEqual(read.byIndex.get(3).map((tb) => tb.name), ['Crypt'], 'RemoveAll(t => t.name == "CRYPT") removed nothing');
+  assert.deepEqual(read.byIndex.get(4).map((tb) => tb.name), ['Crypt']);
+  const noIdx = readEncounterTables([['B.tdb', [['Name', 'Table Index', ...Array.from({ length: 19 }, (_, k) => k + 1)].join(','), `New,${ids(1, 20)}`].join('\n')]], (l, m) => log.push(m));
+  assert.equal(noIdx.tables.size, 0); assert.match(log[0], /table indices not specified/, 'any other header: no indices column');
 });
 
 test('DEX3 the first Update\'s defaults: an index the mod named no default for takes DFU\'s own table, copied; a default moved off its index leaves it empty, and says so', () => {
@@ -188,20 +204,49 @@ test('DEX3 a climate\'s tables: a climate change and a rect\'s exit pick its day
   onPlayerGpsEvents(sel.gps);
   const at = (i) => sel.table(i, { local: true })?.[0];
   readPlayerGps({ climateIndex: CLIMATES.Woodlands, inLocationRect: false });
-  assert.equal(random.n, 2); assert.deepEqual([at(33), at(34), at(32)], [2033, 1034, undefined], 'the day, then the night (:1815-1819); the city night unpicked');
+  assert.equal(random.n, 2); assert.deepEqual([at(33), at(34), at(32)], [2033, 1034, undefined], 'the day, then the night (:1812-1816); the city night unpicked');
   readPlayerGps({ climateIndex: CLIMATES.Woodlands, inLocationRect: true });
-  assert.equal(random.n, 3); assert.equal(at(32), 2032, 'the entry: its city night (:1862-1866)');
+  assert.equal(random.n, 3); assert.equal(at(32), 2032, 'the entry: its city night (:1861-1864)');
   readPlayerGps({ climateIndex: CLIMATES.Woodlands, inLocationRect: false });
-  assert.equal(random.n, 5); assert.deepEqual([at(33), at(34)], [1033, 2034], 'the exit: the day and night again (:1837-1840)');
+  assert.equal(random.n, 5); assert.deepEqual([at(33), at(34)], [1033, 2034], 'the exit: the day and night again (:1831-1834)');
   readPlayerGps({ climateIndex: CLIMATES.Desert, inLocationRect: true });
   assert.equal(random.n, 8); assert.deepEqual([at(21), at(22), at(20)], [1021, 1022, 2020], 'a new climate and an entry in one reading: its day and night, then its city night');
   readPlayerGps({ climateIndex: CLIMATES.Desert2, inLocationRect: true });
   assert.equal(random.n, 10); assert.deepEqual([at(21), at(22)], [2021, 2022], 'Desert2 is a climate of its own, the same tables');
   readPlayerGps({ climateIndex: CLIMATES.Ocean, inLocationRect: false });
   assert.equal(random.n, 10, 'the Ocean picks nothing, nor its exit (SelectClimateTables has no arm for it)');
-  assert.deepEqual([...CLIMATE_TABLE].map(([c, band]) => [c, band]).filter(([c]) => c === CLIMATES.Swamp || c === CLIMATES.MountainWoods), [[CLIMATES.Swamp, [32, 33, 34]], [CLIMATES.MountainWoods, [32, 33, 34]]], 'the swamp and the mountain woods are the woodlands\' (:1814-1819)');
+  assert.deepEqual([...CLIMATE_TABLE].map(([c, band]) => [c, band]).filter(([c]) => c === CLIMATES.Swamp || c === CLIMATES.MountainWoods), [[CLIMATES.Swamp, [32, 33, 34]], [CLIMATES.MountainWoods, [32, 33, 34]]], 'the swamp and the mountain woods are the woodlands\' (:1812-1816)');
   assert.deepEqual(sel.choices(33), [twenty(1033), twenty(2033)]);
   assert.equal(sel.choices(5), null);
+});
+
+test('AUDIT DEX C1 PlayerGPS.ResetState: a load\'s start and a fast travel\'s end drop the rect flag and raise nothing, so the arrival in a town - another climate\'s, or the very town left - raises its entry and draws its city night; the jump core plays it on the two jumps that raise it in DFU', (t) => {
+  t.after(reset);
+  const two = (i) => [{ name: `a${i}`, enemyIds: twenty(1000 + i) }, { name: `b${i}`, enemyIds: twenty(2000 + i) }];
+  const byIndex = new Map(Array.from({ length: 18 }, (_, k) => [20 + k, two(20 + k)]));
+  const random = dice([0.1, 0.1, 0.1, 0.9, 0.9, 0.9, 0.1]);
+  const sel = createDexEncounterSelector({ byIndex }, { random });
+  const heard = [];
+  onPlayerGpsEvents(sel.gps);
+  onPlayerGpsEvents({ climateIndexChanged: (c) => heard.push(`climate ${c}`), enterLocationRect: (c) => heard.push(`enter ${c}`), exitLocationRect: (c) => heard.push(`exit ${c}`) });
+  const at = (i) => sel.table(i, { local: true })?.[0];
+  readPlayerGps({ climateIndex: CLIMATES.Woodlands, inLocationRect: true });
+  assert.equal(random.n, 3, 'a woodlands town: its day, its night, its city night');
+  resetPlayerGpsState();
+  assert.equal(heard.length, 2, 'ResetState raises nothing - no exit across the jump');
+  readPlayerGps({ climateIndex: CLIMATES.Mountain, inLocationRect: true });
+  assert.deepEqual(heard.slice(2), [`climate ${CLIMATES.Mountain}`, `enter ${CLIMATES.Mountain}`], 'the arrival in a mountain town: the climate, then the entry');
+  assert.equal(random.n, 6); assert.deepEqual([at(24), at(25), at(23)], [2024, 2025, 2023], 'and the mountain\'s city night is drawn (:1849-1850) - not left at whatever the index held');
+  readPlayerGps({ climateIndex: CLIMATES.Mountain, inLocationRect: true });
+  assert.equal(random.n, 6, 'no jump, no edge');
+  resetPlayerGpsState();
+  readPlayerGps({ climateIndex: CLIMATES.Mountain, inLocationRect: true });
+  assert.deepEqual(heard.slice(4), [`enter ${CLIMATES.Mountain}`], 'a load in the town it was saved in: a second entry, no climate (ResetState leaves lastClimateIndex)');
+  assert.equal(random.n, 7); assert.equal(at(23), 1023, 'and its city night drawn again');
+  const world = readFileSync(join(import.meta.dirname, '../../../src/scenes/world.js'), 'utf8');
+  const core = world.slice(world.indexOf('async function _teleportToPixel('), world.indexOf('routByJump();', world.indexOf('async function _teleportToPixel(')));
+  assert.match(core, /_wasInLocationRect = false;[^\n]*\n\s*if \(modEvent\) resetPlayerGpsState\(\);/, 'the jump core drops the GPS\'s flag beside the host\'s own, on a jump that names a DFU event');
+  assert.deepEqual([...new Set([...world.matchAll(/\bmodEvent: '(\w+)'/g)].map((m) => m[1]))].sort(), ['load', 'travel'], 'and the only events a jump names are the two PlayerGPS resets on (OnStartLoad, OnPostFastTravel) - a Recall or a teleport names none, and DFU keeps the flag across it');
 });
 
 test('DEX3 a table whose ids would not parse is in its index\'s list and is never written, nor a choice - the C#\'s Select throws before the write', () => {
@@ -266,14 +311,35 @@ test('DEX3 the player\'s own rolls are its PlayerGPS reading: the decision raise
   assert.equal(intermittentEnemySpawn({ ...out, gameMinutes: 0 }, dice([0.0, 0.0, 0.0])).mobileType, 13, 'the wilderness by day: the table as written');
   intermittentEnemySpawn({ ...out, climateIndex: CLIMATES.Desert, inside: true }, noDraw);
   assert.deepEqual(heard, [CLIMATES.Woodlands], 'indoors the place is no GPS reading');
-  rollCampEncounterOnChunkLoad({ ...out, climateIndex: CLIMATES.Mountain }, dice([0.99]));
-  assert.deepEqual(heard, [CLIMATES.Woodlands, CLIMATES.Mountain], 'a camp\'s roll is the player\'s reading too - its chance missed or not');
+  // AUDIT DEX C5: the camps' two rolls the hosts call - the street's minute (exterior.js rollCampEncounter) and the
+  // world's chunk (world.js rollCampEncountersOnChunkLoad)
+  rollCampEncounter({ ...out, climateIndex: CLIMATES.Mountain }, noDraw);
+  assert.deepEqual(heard, [CLIMATES.Woodlands, CLIMATES.Mountain], 'a camp\'s minute is the player\'s reading too - its window shut or not');
+  rollCampEncountersOnChunkLoad({ ...out, climateIndex: CLIMATES.Rainforest }, dice([0.99]));
+  assert.deepEqual(heard, [CLIMATES.Woodlands, CLIMATES.Mountain, CLIMATES.Rainforest], 'and a chunk\'s - its chance missed or not');
   _resetEncounterTableSelectors();
   const sel = createDexEncounterSelector(readShipped(), { random: noDraw });
   registerEncounterTableSelector(sel);
   const pick = encounterTable(9, { dungeon: { unknown2: 138, region: 0 } });
   const rest = intermittentEnemySpawn({ gameMinutes: 0, inside: true, inDungeon: true, isResting: true, enemyAlertActive: true, dungeonType: 9, playerLevel: 1 }, dice([0.0, 0.0, 0.0]));
   assert.equal(rest.mobileType, pick[0], 'the rest roll: the population\'s pick, as the transition wrote it');
+});
+
+test('AUDIT DEX C7 one reading of the rect: the chunk-load camps hand PlayerGPS their pixel\'s climate and no rect - their ring of any town about the pixel is the camp gate\'s (DISC19-F), and the minute\'s roll reads PlayerGPS\'s own', (t) => {
+  t.after(reset);
+  const heard = [];
+  onPlayerGpsEvents({ climateIndexChanged: (c) => heard.push(`climate ${c}`), enterLocationRect: (c) => heard.push(`enter ${c}`), exitLocationRect: (c) => heard.push(`exit ${c}`) });
+  const wild = { gameMinutes: 12, skyMinutes: 720, inside: false, inLocationRect: false, climateIndex: CLIMATES.Woodlands, playerLevel: 1 };
+  intermittentEnemySpawn(wild, noDraw);
+  assert.deepEqual(heard, [`climate ${CLIMATES.Woodlands}`], 'the minute\'s roll, out of any rect');
+  assert.equal(rollCampEncountersOnChunkLoad({ ...wild, inLocationRect: true, climateIndex: CLIMATES.Swamp }, noDraw), null, 'a chunk by a town\'s ring: the gate shuts, no draw');
+  assert.deepEqual(heard, [`climate ${CLIMATES.Woodlands}`, `climate ${CLIMATES.Swamp}`], 'its climate raised, its ring no entry');
+  intermittentEnemySpawn({ ...wild, climateIndex: CLIMATES.Swamp }, noDraw);
+  assert.equal(heard.length, 2, 'and the next minute\'s roll, still out of the rect, sees no edge - no exit from an entry never raised');
+  const world = readFileSync(join(import.meta.dirname, '../../../src/scenes/world.js'), 'utf8');
+  const chunk = world.slice(world.indexOf('rollCampEncountersOnChunkLoad({'), world.indexOf('}, Math.random, { fovDegrees', world.indexOf('rollCampEncountersOnChunkLoad({')));
+  assert.match(chunk, /inLocationRect: _inAnyLocationRect\(/, 'the world\'s chunk roll gates on the ring of any town (the reading this test hands it)');
+  assert.match(chunk, /climateIndex: maps\.getClimateIndex\(r\.current\.x, r\.current\.y\)/, 'and its climate is the pixel just entered');
 });
 
 test('DEX3 a group\'s one table: rollGroupComposition reads it once, for the seed and every mate', (t) => {
@@ -329,6 +395,15 @@ test('DEX3 the population reads the dungeon\'s two tables through the door - the
   _resetEncounterTableSelectors();
   registerEncounterTableSelector({ table: (i, place) => (i === 9 && place.local ? twenty(261) : null), choices: (i) => (i === 9 ? [twenty(1), twenty(2)] : null) });
   assert.ok(collectDungeonEnemies(blocks, opts).every((e) => e.mobileType === 261), 'handed no dungeon: the player\'s own, as written - never a roll that wants a die');
+});
+
+test('AUDIT DEX C6 the dungeon hands its population the place - its LocationId and the seed a mod\'s pick is made by (dungeonPlace)', () => {
+  const dc = readFileSync(join(import.meta.dirname, '../../../src/scenes/dungeonContext.js'), 'utf8');
+  const at = dc.indexOf('const _layoutEnemies = collectDungeonEnemies(');
+  assert.ok(at > 0, 'the population is built where it was');
+  const call = dc.slice(at, dc.indexOf('});', at));
+  assert.match(call, /\n\s*\.\.\.dungeonPlace\(dfLocation\),/, 'the place spread into the options - without it the population reads DFU\'s tables, never the mod\'s pick');
+  assert.match(call, /dungeonType: dfLocation\.mapTableData\.dungeonType,/);
 });
 
 test('DEX3 the install: loaded, the mod\'s tables on the door and its handlers on PlayerGPS; not loaded, DFU\'s', (t) => {

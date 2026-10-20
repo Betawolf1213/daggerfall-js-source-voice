@@ -34,5 +34,12 @@ export function readPlayerGps({ climateIndex, inLocationRect }) {
   for (const l of _listeners) (_inRect ? l.enterLocationRect : l.exitLocationRect)?.(_climate);
 }
 
+/** PlayerGPS.ResetState (:398-401), on a load's start and after a fast travel (subscribed at :301-303): the rect flag
+ *  false, raising nothing - so a reading inside a town after it raises that town's entry, the one it left included. The
+ *  climate tracker stays (ResetState leaves lastClimateIndex). AUDIT DEX C1: the port's jump core plays it where the host's
+ *  own rect flag drops (scenes/world.js `_teleportToPixel`, the jumps that raise either event); a new game is the page's
+ *  boot, where the trackers start. */
+export function resetPlayerGpsState() { _inRect = false; }
+
 /** The test seam: no listener, and the trackers where PlayerGPS.Start leaves them. */
 export function _resetPlayerGps() { _listeners.length = 0; start(); }
