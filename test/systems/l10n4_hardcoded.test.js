@@ -627,7 +627,7 @@ const HARDCODED = {
   'src/ui/enhanced/enhancedTavern.js': 9,
   'src/ui/enhanced/enhancedTimers.js': 6,
   'src/ui/enhanced/enhancedTrade.js': 19,
-  'src/ui/enhanced/enhancedTravelControl.js': 6,
+  'src/ui/enhanced/enhancedTravelControl.js': 3,
   'src/ui/eventMapMarks.js': 6,
   'src/ui/exteriorAutomapWindow.js': 6,
   'src/ui/familyPages.js': 110,
