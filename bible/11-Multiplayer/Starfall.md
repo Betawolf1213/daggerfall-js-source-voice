@@ -111,7 +111,7 @@ the sky's dark, read off `skyLaw.js` itself.
 so a company can hold one and ride to the next.
 
 **The Witches' Night.** On the night of the sky's own 13th of Frostfall (the sky's day 283 at its 18:00 - once a sky
-year, every fifteen real days: its dusk 2026-11-04 11:45 UTC inside this window), the third star is **the Heart-Star**: its
+year, every fifteen real days: its dusk at 11:45 UTC on 2026-10-20 and 2026-11-04 inside this window), the third star is **the Heart-Star**: its
 master's circle is twice the size, and what it gives is twice as much (section 6). The client's law alone
 (`systems/starfall/starfallNight.js`, which reads the sky); the relay neither knows nor needs it.
 

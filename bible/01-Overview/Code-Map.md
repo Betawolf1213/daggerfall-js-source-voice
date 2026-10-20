@@ -153,6 +153,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 | Ships (models) | `world/ships/` |
 | Sieges | `net/siege/` |
 | Sigil Sets | `systems/sigil/` |
+| Starfall (the Witches' Festival's fallen stars) | `systems/starfall/`, `net/starfall/` |
 | Spells | `systems/spell/`, `ui/spell/` |
 | Studio art (the artists' folder) | `systems/studioArt/` |
 | Survival | `systems/survival/` |
@@ -236,6 +237,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 | `src/net/safety/` | The chat's safety: the relay's stamp on a line, its feed to the reviewer, a report's law and the code of conduct (`11-Multiplayer/Chat-Safety-Arc.md`) - online - the law both ends run. |
 | `src/net/serpent/` | The sea serpent, the sea's world boss (`11-Multiplayer/Sea-Serpent.md`) - online - the law both ends run. |
 | `src/net/siege/` | Sieges of a seat - online - the law both ends run. |
+| `src/net/starfall/` | The Starfall, the Witches' Festival's fallen stars (`11-Multiplayer/Starfall.md`) - online - the law both ends run: the night and its stars, the defense's ledger, the receipt. |
 | `src/net/superDungeon/` | The Abyss Dungeon, the super dungeons (`11-Multiplayer/Super-Dungeons-Look.md`) - online - the law both ends run. |
 | `src/net/wild/` | The Wrothgarian open zone (`11-Multiplayer/Wild-Zone.md`) - online - the law both ends run. |
 
@@ -320,6 +322,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 | `src/systems/sigil/` | Sigil Sets (`11-Multiplayer/Sigil-Sets.md`) - the law. |
 | `src/systems/song/` | Music: the songs, their player and manager - the law. |
 | `src/systems/spell/` | Spells: effects, the spell maker, power and the impact's sound. |
+| `src/systems/starfall/` | The Starfall (`11-Multiplayer/Starfall.md`) - the law: the covens and the night's coven, the night's stars over the gate's scan, the Witches' Night. |
 | `src/systems/studioArt/` | The studio (`07-Rendering/Studio-Art.md`): the game's artists' own pictures (`public/art/studio/`) on the texture door, and the slots they paint. |
 | `src/systems/superDungeon/` | The Abyss Dungeon's law (`11-Multiplayer/Super-Dungeons-Look.md`): the site, the omen, the score, the spoils and the rift's sound. |
 | `src/systems/survival/` | Survival: needs, camping, food, rest, exposure. |
