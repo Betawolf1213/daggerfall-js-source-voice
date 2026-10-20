@@ -10081,7 +10081,7 @@ home's alone - they are about other players.
   faint fill, green, and the one the eye looks at gold - and the door is FITTED into the one looked at (turned so its
   thickness runs through the doorway, sized to the tighter of the opening's width and height within the piece law,
   stood on its floor); a turn swings it the other way. The bar says "Finding the doorways...", then "Look at a marked
-  doorway to hang the door (N free) - turn to swing it the other way", or "This house has no open doorway for a door";
+  doorway to hang the door (N free). Turn to swing it the other way.", or "This house has no open doorway for a door";
   the catalogue's line for a door says how many this house has free before it is chosen.
 - **The rooms follow**: a door put in parts the rooms either side (a shut door is what parts them - DECOR-ROOMS), so
   the house's rooms are found again; a door moved or removed finds its doorways again too. A house of one room with a
@@ -14996,7 +14996,7 @@ What failed was what the HUD SAID of it, and the reports read that as nothing gi
   `no-session`) says that (`KEPT_SIGNED_OUT_LINE`); a lapse says the gathering was not counted, never "with the day" of
   its ten minutes (`LAPSED_LINE`).
 - **An act that stopped short only lost its meter.** Let go, walked off, a window over it, the dungeon left: the act
-  ended, nothing was asked, and nothing said. It says "The gathering stopped before its end - nothing was taken."
+  ended, nothing was asked, and nothing said. It says "The gathering stopped early. Nothing was taken."
   (`ACT_STOPPED_LINE`); Escape, the player's own, stays unsaid.
 - **The maintenance minute let the act go.** RESTORE's 503 is answered before any route, so the act never reached one;
   `maintenance` is an answer the book keeps and asks again (`profBook.js` RETRY), as it keeps `server` and `rate`.
@@ -16694,9 +16694,9 @@ beside padding - `standsAlone` finds neither. **The fix:** `src/net/nameFilter.j
 `strangler` anywhere inside a word, as it reads `fuck` in `motherfucker` (kind `crude`). A handle holding either is
 refused at entry (`handle-refused`, naming the word); a character's name holding either cannot be worn (NAME-AS); a
 line stars them (TEXT-F1's mask - "a prostitute and a strangler" reads "a ********** and a *********" in a chat line,
-a letter or a note). `Strangle`, `Stranglehold` and `SanguinePanguine` pass. RELAY_VERSION world224, ACCOUNT_VERSION acct159.
+a letter or a note). `Strangle`, `Stranglehold` and `SanguinePanguine` pass. RELAY_VERSION world231, ACCOUNT_VERSION acct162.
 
-**The account.** No route renames a player, so migration `server-account/migrations/0133_handle_rename.sql` does, once,
+**The account.** No route renames a player, so migration `server-account/migrations/0134_handle_rename.sql` does, once,
 at the account deploy: `players.handle` and `handle_lc` (the player signs in as SanguinePanguine, password and recovery
 codes unchanged), and every row that keeps the display name as it was - letters, board and guild notes, guild rosters
 and ledgers, homes and rooms, seat orders, renown tracks, POI documents - matched on the old name exactly (case aside).
@@ -16706,4 +16706,4 @@ nothing is written.
 
 **Open.** A live handle other than this one that holds either word now fails the token's own law (identityToken.js
 claimsValid - `mintToken` throws), so its player cannot go online until it is renamed the same way; the live table was
-not read from here. Pinned by `test/server/handlerename0133.test.js`.
+not read from here. Pinned by `test/server/handlerename0134.test.js`.

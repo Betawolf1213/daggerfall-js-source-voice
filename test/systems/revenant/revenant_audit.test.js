@@ -134,7 +134,7 @@ test('AUDIT A4/A5: A SWORN ONE\'S PACK IS THE SAVE\'S - a load lays the save\'s 
   RC.releaseRevenant(r.id);
   assert.equal(me.items.length, items0 + 1, 'the sword into the pack');
   assert.equal(me.goldPieces, 40, 'the gold into the purse, never a row');
-  assert.match(read('src/ui/companionRoster.js'), /hands you back what it carries/, 'the confirm says so (AUDIT RVN G6: its pack and its kit)');
+  assert.match(read('src/ui/companionRoster.js'), /giving back what it carries/, 'the confirm says so (AUDIT RVN G6: its pack and its kit)');
 });
 
 test('AUDIT A7-A15: its words - the tally taunt only with kills to count, a revenant\'s flight knows the player\'s name, a beast\'s moment keeps what it says, a skeleton is never a wit, a $ in a name is a letter, three risen taunts each, one possessive for every title, the cornered say their words (mutants: the tally for a runner; a stranger to its own revenant; the body dropped; a mute kind talking temperaments)', () => {
@@ -269,7 +269,7 @@ test('AUDIT B2/B3/B5/P1-P3: the execution pays its Renown and takes its soul; a 
 
 // ── THE UI ───────────────────────────────────────────────────────────────────────────────────────────────────────
 test('AUDIT D1/D4/D5: Enter on a focused button is that button\'s; the judgement opens in beast form; the classic box keys short and its details wrapped, a refused choice saying why (mutants: Enter confirms over Back; the beast refuses; a long label)', () => {
-  const fate = { options: [{ id: 'kill', key: 'K', label: 'Kill', detail: 'It drops a rod', disabled: false }, { id: 'spare', key: 'S', label: 'Spare', detail: 'You keep 6 sworn already - release one first', disabled: true }], name: 'Grushnak', sub: 'Rank II', plea: { speech: 'Mercy!' }, choose: () => {} };
+  const fate = { options: [{ id: 'kill', key: 'K', label: 'Kill', detail: 'It drops a rod', disabled: false }, { id: 'spare', key: 'S', label: 'Spare', detail: 'You keep 6 sworn already. Release one first', disabled: true }], name: 'Grushnak', sub: 'Rank II', plea: { speech: 'Mercy!' }, choose: () => {} };
   const got = [];
   const kit = { onPick: (id) => got.push(['pick', id]), onChoose: (id) => got.push(['choose', id]) };
   assert.equal(fateKey({ key: 'Enter', target: { closest: () => ({}) } }, fate, 'kill', kit), false, 'a focused button keeps its Enter');

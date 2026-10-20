@@ -2027,7 +2027,7 @@ discordgates, gateclear, loot7 and survtiers3 lists. world141 re-hashed in place
 > within. Every apprentice who calls a scamp into a circle proves as much, and every coven of the Bay that calls a
 > Prince on his own day proves it more loudly.
 >
-> **The faithful.** Mehrunes Dagon, Prince of Destruction, has never lacked for worshippers in a land as quarrelsome
+> **The faithful.** Mehrunes Dagon, Prince of Destruction, has never lacked for worshipers in a land as quarrelsome
 > as ours. His faithful keep to the wilds, and to a rite older than Wayrest. They gather about a ring of braziers, burn
 > his sigil into the earth, and bleed for him. What opens is not a gate as the Daedra raise them in their own realms.
 > It is a breach: a wound in the world, held open by the will of the Prince and the blood of his faithful, and by
@@ -2650,6 +2650,20 @@ sets run whole after the slice, the change's own tests having passed it): the wa
 languages that cover the catalog, and two pins that read the court's words moved with it: `egseam_law.test.js` THE
 GOLDEN FRAMES (the gate's hash - the two answers' `me`, every frame else word for word: taken out, the old hash to the
 byte) and `sd8c_remnant_page.test.js` (`me: 1` said in two answers, the court's beside the Hour's). Not a DFU member.
+
+## 25. The Breach's portents (WB14, 2026-10-19) - its own page
+
+Mac: *"adding the chance of a gate to spawn with platforms of wave based adds that need to be defeated before
+encountering the boss / More diabolical boss movesets / More unique, but not super hard mechanics. Like the boss
+splitting and players having to split and navigate to beat both sides and then merging at the end for its final stand
+(chance based encounter modifer)"*, then *"This is all yours to take on."* The record is
+`11-Multiplayer/Breach-Portents.md`: a third kind of mark beside his aspect and his trials (section 8 here, and section
+17's Legion-Lord, which carries none), the night's floor plan that grows this page's three courts (section 14, WB9b)
+into a graph of six floors and six walkways, the Warden's new arsenal, and the slices WB14a-g. A portent adds to the court;
+it never changes the gate's clock, its marks or its claim. Two of the arc's changes are every night's, named (AUDIT WB14
+RECORD-12, `01-Overview/audits/Audit-Breach-Portents.md`): the Warden's new arsenal is his on every night (Breach-Portents
+section 3), its Burning Gaze the one blow answered by turning, not by a step (section 5's escape law, Breach-Portents
+answer 5); and the Tithe-Imp may run on any night, the Legion-Lord's too (Breach-Portents section 9).
 
 ## Shipped
 

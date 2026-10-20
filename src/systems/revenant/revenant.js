@@ -1278,7 +1278,7 @@ export function revenantCorneredEvent(entity, base, { gender = 'male', archive =
   const src = liveSource(entity, base, gender);
   const v = voiceParts(src, 'cornered', src.id ? playerName : '', rolls);
   return revenantEvent('cornered', src, {
-    speech: v.speech, body: v.speech ? 'Cornered - it turns to fight.' : v.body,
+    speech: v.speech, body: v.speech ? 'Cornered, it turns to fight.' : v.body,
     line: v.speech ? `${src.name} is cornered and turns to fight! "${v.speech}"` : v.line, archive,
   });
 }
@@ -1298,21 +1298,21 @@ export function revenantEscapeEvent(r, playerName, { rolls = Math.random, archiv
   const speech = voiceParts(r, 'escape', playerName, rolls).speech;
   // UNQUIET (section 46): ascended - the Dread, gone to ground for good
   if (revenantAscended(r)) {
-    const body = t('rvn.unq.ascended', '{given} will run no more. It has gone to ground in {lair} - the Dread now - and waits for you there.', { given: r.given, lair: r.lair?.name ?? '' });
+    const body = t('rvn.unq.ascended', '{given} will run no more. It is the Dread now, and waits for you in {lair}.', { given: r.given, lair: r.lair?.name ?? '' });
     _newWounds.delete(r.id);
     return revenantEvent('ascended', r, { speech, body, line: body, archive });
   }
   const tail = revenantEscapeTail(r);
   return revenantEvent('escape', r, {
     speech,
-    body: `${r.rank > 1 ? t('rvn.unq.escapeRank', 'Got away. Now rank {rank} - it will remember this.', { rank: revenantRankNumeral(r.rank) }) : t('rvn.unq.escape', 'Got away. It will remember this.')}${tail}`,
+    body: `${r.rank > 1 ? t('rvn.unq.escapeRank', 'Got away and rose to rank {rank}. It will remember this.', { rank: revenantRankNumeral(r.rank) }) : t('rvn.unq.escape', 'Got away. It will remember this.')}${tail}`,
     line: `${revenantEscapeLine(r)}${tail}`, archive,
   });
 }
 /** RVN3 (14.1): its weakness - found (my blow of it: what it is) or hinted (its flinch: the narrator's line). */
 export function revenantWeaknessEvent(r, { found = false, archive = null } = {}) {
   const name = WEAK_NAMES[r?.weak] ?? 'Something';
-  const body = found ? `${name} - its weakness, laid bare.` : (FLINCH_LINES[r?.weak] ?? 'It shies from something.');
+  const body = found ? `Its weakness laid bare: ${name}.` : (FLINCH_LINES[r?.weak] ?? 'It shies from something.');
   return revenantEvent('weakness', r, { body, line: `${r.name}: ${body}`, archive });
 }
 /** RVN3 (14.2): its will unbroken - at the killing blow it tears away into the smoke (an escape: it learns, and every
@@ -1382,10 +1382,10 @@ export function revenantHuntEntries(here = null, { now = nowMinutes() } = {}) {
     const dx = Number.isInteger(here?.px) ? r.lair.px - here.px : 0, dy = Number.isInteger(here?.py) ? r.lair.py - here.py : 0;
     const way = dx || dy ? `, ${distanceWord(Math.max(Math.abs(dx), Math.abs(dy)))} to the ${compassWord(dx, dy)}` : '';
     const kind = enemyDisplayName(r.mobileType) ?? 'Revenant';
-    const lines = [`${kind}, rank ${revenantRankNumeral(r.rank)}.`, `Its lair: ${r.lair.name}${way} - marked on your map with a red circle.`,
+    const lines = [`${kind}, rank ${revenantRankNumeral(r.rank)}.`, `Its lair: ${r.lair.name}${way}, marked on your map with a red circle.`,
       r.dread ? t('rvn.unq.hunt.dread', 'The Dread will not come to you again. Go to it.') : 'Find it there before it finds you.'];   // UNQUIET: the Dread waits
     // UNQUIET II (section 47): its trail warm - wounded in its den, for a while
-    if (trailWarm(r, now)) lines.push(t('rvn.unq.hunt.trail', 'Weakened - it went to ground here to recover. {hours, plural, one {# hour} other {# hours}} before it is whole again.', { hours: trailHours(r, now) }));
+    if (trailWarm(r, now)) lines.push(t('rvn.unq.hunt.trail', 'Weakened, it went to ground here to recover. It will be whole again in {hours, plural, one {# hour} other {# hours}}.', { hours: trailHours(r, now) }));
     return { id: `${HUNT_QUEST_PREFIX}${r.id}`, name: `Hunt: ${r.name}`, questName: 'HUNT', hunt: true, clockSeconds: null, messages: [lines.map(line)] };
   });
 }
@@ -1554,7 +1554,7 @@ export function revenantDesertEvent(r, { archive = null, playerName = '' } = {})
 }
 /** RVN9 (20): its rank-up, told - "Grushnak grows bolder - it has waited too long." */
 export function revenantFesterEvent(r, { archive = null } = {}) {
-  const body = ambitionOf(r.personality) === 'mastery' ? t('rvn.unq.fester.mastery', '{given} grows bolder - it has been training.', { given: r.given }) : `${r.given} grows bolder - it has waited too long.`;   // UNQUIET: a revenant of mastery trained
+  const body = ambitionOf(r.personality) === 'mastery' ? t('rvn.unq.fester.mastery', '{given} grows bolder. It has been training.', { given: r.given }) : `${r.given} grows bolder. It has waited too long.`;   // UNQUIET: a revenant of mastery trained
   return revenantEvent('festered', r, { body, line: body, archive });
 }
 /** UNQUIET III (section 48): ITS TRAINING, told - "Grushnak has been training - it has learned to answer your blade." (its
@@ -1597,7 +1597,7 @@ export function revenantFelled(player, striker, ally, { now = nowMinutes(), roll
 /** RVN10 (21.1): the felling, told - "Grushnak felled Borgakh. It will remember this." */
 export function revenantFelledEvent(r, ally, { archive = null } = {}) {
   const who = allyName(ally) ?? 'your companion';
-  const body = `${r.given} felled ${who}. ${r.rank > 1 ? `Now rank ${revenantRankNumeral(r.rank)} - it` : 'It'} will remember this.`;
+  const body = `${r.given} felled ${who}. ${r.rank > 1 ? `It is rank ${revenantRankNumeral(r.rank)} now, and` : 'It'} will remember this.`;
   return revenantEvent('felled', r, { body, line: `${r.name} felled ${who}.`, archive });
 }
 /** RVN10 (21.2): may this foe ROUT me - a special foe, alive, hostile and on me (detecting me), neither kneeling nor
@@ -1633,7 +1633,7 @@ export function revenantRoutSweep(player, foes = playerDoor()?.foes?.() ?? [], {
 }
 /** RVN10 (21.2): the rout, told - "You ran from Grushnak. It will remember this." */
 export function revenantRoutedEvent(r, { archive = null } = {}) {
-  const body = `You ran from ${r.given}. ${r.rank > 1 ? `Now rank ${revenantRankNumeral(r.rank)} - it` : 'It'} will remember this.`;
+  const body = `You ran from ${r.given}. ${r.rank > 1 ? `It is rank ${revenantRankNumeral(r.rank)} now, and` : 'It'} will remember this.`;
   return revenantEvent('routed', r, { body, line: `You ran from ${r.name}. It will remember this.`, archive });
 }
 /** RVN4 (section 15): ITS LAST STAND, written on its record - the deed (`laststand`) at the character's minute. Answers
@@ -1648,7 +1648,7 @@ export function revenantLastStand(player, entity, { now = nowMinutes() } = {}) {
 }
 /** RVN4: its last stand, as the card says it - it rises again, its words the cornered's. */
 export function revenantLastStandEvent(r, playerName, { rolls = Math.random, archive = null } = {}) {
-  const body = `${r.given} rises again - its last stand.`;
+  const body = `${r.given} rises again for its last stand.`;
   return revenantEvent('laststand', r, { speech: voiceParts(r, 'laststand', playerName, rolls).speech, body, line: body, archive });   // RVN12a (23): its own words
 }
 /** RVN3 (14.1): ITS FLINCH - a revenant of mine under FLINCH_HEALTH of its health, its weakness unknown, shies from it:

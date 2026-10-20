@@ -277,7 +277,7 @@ export function checkName(name) {
       return {
         ok: false, kind, word,
         reason: kind === 'impersonation'
-          ? `"${word}" is reserved - please pick a name that is not the server's.`
+          ? `"${word}" is reserved. Please pick another name.`
           : `That name reads as "${word}". Please pick another.`,
       };
     }
