@@ -215,6 +215,7 @@ on:
       - "src/characters/weapons.js"
       - "src/combat/clawMetal.js"
       - "src/combat/enemyEquipment.js"
+      - "src/combat/enemyGroups.js"
       - "src/combat/formulas.js"
       - "src/combat/gun/gunFeel.js"
       - "src/formats/blocksFile.js"
