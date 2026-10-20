@@ -73,7 +73,7 @@ test('AUDIT STAR W2/W3/W5: the claim\'s lines in the gate\'s shape, the day\'s b
   assert.equal(STAR_CLAIM_TEXT.guest(), 'Star not recorded. Add a username within a week to keep it.');
   assert.equal(STAR_CLAIM_TEXT.dayFull(), 'You have held enough stars for today.');
   assert.equal(STAR_SPOILS_TEXT.granted(), 'The star\'s spoils are in your pack.');
-  assert.equal(MARKS_TEXT.cappedStar(), `No silver for this star. Today's cap of ${MARKS_COMBAT.perDay} silver is reached.`);
+  assert.equal(MARKS_TEXT.cappedStar(), `No silver for this star. You've reached today's limit of ${MARKS_COMBAT.perDay} silver.`);
   assert.equal(haulCappedText(), 'Daily silver cap reached');
   const capped = claimHauls({ marks: { struck: 0, balance: 150, why: 'cap' } }, 'star');
   assert.deepEqual(capped.map((c) => [c.haul, c.text]), [['note', 'Daily silver cap reached']]);

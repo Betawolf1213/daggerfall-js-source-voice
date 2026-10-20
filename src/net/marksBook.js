@@ -97,7 +97,7 @@ export const MARKS_TEXT = Object.freeze({
   cappedRaid: `No silver for this town. You can earn at most ${marksText(MARKS_COMBAT.perDay)} a day from breaches, town defenses, serpents, Redoubts and fallen stars.`,
   cappedSerpent: `No silver for this serpent. You can earn at most ${marksText(MARKS_COMBAT.perDay)} a day from breaches, town defenses, serpents, Redoubts and fallen stars.`,
   cappedEg: `No silver for this Redoubt. You can earn at most ${marksText(MARKS_COMBAT.perDay)} a day from breaches, town defenses, serpents, Redoubts and fallen stars.`,   // EG-E1: a Redoubt of the Elite Breach
-  cappedStar: () => t('marks.capped.star', 'No silver for this star. Today\'s cap of {cap, number} silver is reached.', { cap: MARKS_COMBAT.perDay }),   // STAR7: a held star, through the text core; AUDIT STAR (W2): the number handed in, the language's own words round it
+  cappedStar: () => t('marks.capped.star', 'No silver for this star. You\'ve reached today\'s limit of {cap, number} silver.', { cap: MARKS_COMBAT.perDay }),   // STAR7: a held star, through the text core; AUDIT STAR (W2): the number handed in, the language's own words round it
   /** SILVER-WAYS: a guild deed this claim completed - three of the guild's accounts on one raid or gate. */
   deed: (n, guild) => `A deed for ${guild?.name ?? 'your guild'}: three of its members fought together. ${marksText(n)} added to its treasury.`,
   /** SILVER-WAYS: a guild contract's pay for a town defended. */
