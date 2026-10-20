@@ -101,9 +101,10 @@ export function seatFacts(rows, nowS) {
   return { seats: out, ignored };
 }
 
-/** Every seat row's read, and (LEAN-WITNESS) the read of the rows that are not late - one text each, the pins' too. */
+/** Every seat row's read, and (LEAN-WITNESS) the read of the rows that are not late, by their index whatever the
+ *  statistics (AUDIT LEAN-READS 2 A3) - one text each, the pins' too. */
 export const SEAT_ROWS_SQL = "SELECT key, account, report, at FROM world_witness WHERE kind = 'seat'";
-export const SEAT_JUDGED_SQL = `${SEAT_ROWS_SQL} AND ${LEAN_ROWS}`;
+export const SEAT_JUDGED_SQL = `SELECT key, account, report, at FROM world_witness INDEXED BY idx_world_witness_lean_key WHERE kind = 'seat' AND ${LEAN_ROWS}`;
 /** Every seat row - LEAN-WITNESS: a developer's list alone, whose audit counts every witness. */
 async function allSeatRows(db) {
   const { results = [] } = await db.prepare(SEAT_ROWS_SQL).all();

@@ -234,7 +234,7 @@
   {
     "name": "LEANW-hall-read-not-lean",
     "file": "server-account/src/npcHalls.js",
-    "old": "    AND key IN (SELECT key FROM world_witness WHERE kind = '${HALL_WITNESS_KIND}' AND ${LEAN_ROWS} AND region = ? AND key LIKE ?)`).bind(region, `${HALL_REPORT_V}:%`).all();\n  return exactRows",
+    "old": "    AND key IN (SELECT key FROM world_witness INDEXED BY idx_world_witness_lean_region WHERE kind = '${HALL_WITNESS_KIND}' AND ${LEAN_ROWS} AND region = ? AND key LIKE ?)`).bind(region, `${HALL_REPORT_V}:%`).all();\n  return exactRows",
     "new": "    AND key IN (SELECT key FROM world_witness WHERE kind = '${HALL_WITNESS_KIND}' AND region = ? AND key LIKE ?)`).bind(region, `${HALL_REPORT_V}:%`).all();\n  return exactRows",
     "tests": [
       "test/server/lean_witness.test.js"
@@ -440,5 +440,47 @@
       "test/server/lean_witness.test.js"
     ],
     "note": "AUDIT LEAN-READS 2 A3: a read left to the statistics - a key's late rows up to a second: under the pin's statistics the planner takes the late index for the range unnamed; the pin counts every read the triggers name, so none is left to them"
+  },
+  {
+    "name": "LEANW2-judged-towns-unnamed",
+    "file": "server-account/src/npcHalls.js",
+    "old": "SELECT key, account, report, at FROM world_witness INDEXED BY idx_world_witness_lean_key WHERE kind = '${HALL_WITNESS_KIND}' AND ${LEAN_ROWS}",
+    "new": "SELECT key, account, report, at FROM world_witness WHERE kind = '${HALL_WITNESS_KIND}' AND ${LEAN_ROWS}",
+    "tests": [
+      "test/server/lean_witness.test.js"
+    ],
+    "note": "AUDIT LEAN-READS 2 A3: with statistics a region's towns read by the table's key index - every row of each, the region's 24,000 again"
+  },
+  {
+    "name": "LEANW2-judged-region-unnamed",
+    "file": "server-account/src/npcHalls.js",
+    "old": "(SELECT key FROM world_witness INDEXED BY idx_world_witness_lean_region WHERE",
+    "new": "(SELECT key FROM world_witness WHERE",
+    "tests": [
+      "test/server/lean_witness.test.js"
+    ],
+    "equivalent": true,
+    "why": "a region's lean towns sought by kind and region: with or without statistics the planner takes the lean region index, the one that holds those rows alone and the fewest - named so no other statistics can choose otherwise"
+  },
+  {
+    "name": "LEANW2-seats-judged-unnamed",
+    "file": "server-account/src/townSeats.js",
+    "old": "FROM world_witness INDEXED BY idx_world_witness_lean_key WHERE kind = 'seat' AND ${LEAN_ROWS}",
+    "new": "FROM world_witness WHERE kind = 'seat' AND ${LEAN_ROWS}",
+    "tests": [
+      "test/server/lean_witness.test.js"
+    ],
+    "equivalent": true,
+    "why": "the seats' lean rows sought by their kind: with or without statistics the planner takes the lean key index, which holds those rows alone and the fewest - named so no other statistics can choose otherwise"
+  },
+  {
+    "name": "LEANW2-confirmers-index-unnamed",
+    "file": "server-account/src/npcHalls.js",
+    "old": "(SELECT account, report FROM world_witness INDEXED BY idx_world_witness_lean_key WHERE",
+    "new": "(SELECT account, report FROM world_witness WHERE",
+    "tests": [
+      "test/server/lean_witness.test.js"
+    ],
+    "note": "AUDIT LEAN-READS 2 A3: a late report's confirmers left to the statistics - a 1,516-row town walked on every late report"
   }
 ]

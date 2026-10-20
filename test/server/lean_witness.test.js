@@ -437,6 +437,7 @@ test('LEAN-WITNESS with ANALYZE\'s statistics the triggers\' reads keep their in
   raw.exec('BEGIN');
   for (let k = 0; k < 20_000; k++) ins.run('pixel', `p${k}`, ACCOUNTS[k % ACCOUNTS.length], 'g', T0);   // the day's shape: pixels, a key a row or so
   for (let k = 0; k < 100; k++) for (let j = 0; j < 27; j++) ins.run('seat', String(k), `x${(k + j) % 60}`, KINDS.seat.report(k, 21, 40), T0 + j);   // and seats of 27 answers
+  for (let k = 0; k < 300; k++) for (let j = 0; j < 19; j++) ins.run('npchall', `1:${k}`, `x${(k + j) % 60}`, KINDS.npchall.report(k, 21, 40), T0 + j);   // and towns of 19
   raw.exec('COMMIT');
   raw.exec('ANALYZE');
   assert.ok(raw.prepare('SELECT COUNT(*) AS n FROM sqlite_stat1').get().n > 0);
@@ -454,6 +455,17 @@ test('LEAN-WITNESS with ANALYZE\'s statistics the triggers\' reads keep their in
       assert.doesNotMatch(p, /SCAN world_witness/, `${name}: ${p}`);
       assert.doesNotMatch(p, KEY_WALK, `${name}: its named index, not the key's every row - ${p}`);
     }
+  }
+  // and the service's own reads of the lean rows: a region's towns, the seats', a town's confirmers on a late report
+  const hallSql = src('server-account/src/npcHalls.js').match(/async function judgedRows[\s\S]*?db\.prepare\(`([\s\S]*?)`\)/)[1].replaceAll('${HALL_WITNESS_KIND}', HALL_WITNESS_KIND).replaceAll('${LEAN_ROWS}', LEAN_ROWS);
+  assert.match(plan(unnamed(hallSql).replace('?', '21').replace('?', "'1:%'")), KEY_WALK, 'the statistics turn the towns\' rows unnamed');
+  const reads = { hall: hallSql.replace('?', '21').replace('?', "'1:%'"), seats: SEAT_JUDGED_SQL,
+    confirmers: src('server-account/src/npcHalls.js').match(/const CONFIRMER_MAY_BE_IGNORED = `EXISTS \(SELECT 1 FROM \((SELECT[^)]*?)\) w/)[1]
+      .replaceAll('${HALL_WITNESS_KIND}', HALL_WITNESS_KIND).replaceAll('${LEAN_ROWS}', LEAN_ROWS).replace('?1', "'1:5'") };
+  for (const [what, sql] of Object.entries(reads)) {
+    const p = plan(sql);
+    assert.doesNotMatch(p, KEY_WALK, `${what}: ${p}`);
+    assert.match(p, /idx_world_witness_lean_(key|region)/, `${what}: the lean rows by their index - ${p}`);
   }
   const named = (name) => triggerStatements(raw, name).join(' ').match(/INDEXED BY idx_world_witness_\w+/g)?.length ?? 0;
   assert.equal(named('witness_lean_in'), 3, 'the settle\'s three reads');

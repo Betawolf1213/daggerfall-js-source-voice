@@ -83,7 +83,7 @@ export const forgetChapters = () => _kept.clear();
  *  confirmer's leaving makes a later agreeing answer count: the law's confirmation of the town is otherwise the
  *  database's, and an agreeing answer after it counts nothing. `?1` the town's key; its rows that are not late by the lean
  *  index, each confirmer's answers by its own (idx_world_witness_account). */
-const CONFIRMER_MAY_BE_IGNORED = `EXISTS (SELECT 1 FROM (SELECT account, report FROM world_witness WHERE kind = '${HALL_WITNESS_KIND}' AND key = ?1 AND ${LEAN_ROWS}) w
+const CONFIRMER_MAY_BE_IGNORED = `EXISTS (SELECT 1 FROM (SELECT account, report FROM world_witness INDEXED BY idx_world_witness_lean_key WHERE kind = '${HALL_WITNESS_KIND}' AND key = ?1 AND ${LEAN_ROWS}) w
       JOIN witness_confirmed c ON c.kind = '${HALL_WITNESS_KIND}' AND c.key = ?1 AND c.report = w.report
       WHERE (${unmatchedSql(`'${HALL_WITNESS_KIND}'`, 'w.account', '?4')}) >= ${SEAT_WITNESS_UNMATCHED_MAX})`;
 const bumpRegions = (/** @type {any} */ db, /** @type {string} */ keySql, /** @type {string} */ key, /** @type {number} */ nowS, guard = '1', ...binds) => db.prepare(
@@ -102,10 +102,12 @@ export async function regionRows(/** @type {any} */ db, /** @type {number} */ re
 
 /** LEAN-WITNESS: A REGION'S TOWNS AS THE LAW JUDGES THEM - the same towns (a late row names the region its confirmers
  *  name), each read over its rows that are not late, and whole where an account the region's law ignores answered it
- *  (leanWitness.js exactRows). The facts and the ignored are regionRows' own; the witnesses' counts are not. */
+ *  (leanWitness.js exactRows). The facts and the ignored are regionRows' own; the witnesses' counts are not. Each part
+ *  names its index (AUDIT LEAN-READS 2 A3: with statistics the towns' rows were read by the table's key index - every
+ *  row of each, late or not, the region's 24,000 again). */
 export async function judgedRows(/** @type {any} */ db, /** @type {number} */ region, /** @type {number} */ nowS) {
-  const { results = [] } = await db.prepare(`SELECT key, account, report, at FROM world_witness WHERE kind = '${HALL_WITNESS_KIND}' AND ${LEAN_ROWS}
-    AND key IN (SELECT key FROM world_witness WHERE kind = '${HALL_WITNESS_KIND}' AND ${LEAN_ROWS} AND region = ? AND key LIKE ?)`).bind(region, `${HALL_REPORT_V}:%`).all();
+  const { results = [] } = await db.prepare(`SELECT key, account, report, at FROM world_witness INDEXED BY idx_world_witness_lean_key WHERE kind = '${HALL_WITNESS_KIND}' AND ${LEAN_ROWS}
+    AND key IN (SELECT key FROM world_witness INDEXED BY idx_world_witness_lean_region WHERE kind = '${HALL_WITNESS_KIND}' AND ${LEAN_ROWS} AND region = ? AND key LIKE ?)`).bind(region, `${HALL_REPORT_V}:%`).all();
   return exactRows(db, HALL_WITNESS_KIND, results.map(witnessRow), (rows) => hallFacts(rows, nowS).ignored);
 }
 
