@@ -167,6 +167,6 @@ no street (a dungeon's kills and acts find as anywhere).
 - Streets: `src/scenes/witchesHost.js`, `src/world/witchesDecor.js`, `src/world/festivalArt.js`.
 - Window: `src/ui/wyrdDoor.js`, `src/ui/wyrdWindow.js`; icons `src/ui/profileIcons.js`; the aura in
   `src/render/auraRing.js` (`witchfire`).
-- Versions: RELAY_VERSION world234, ACCOUNT_VERSION acct165, migration 0140 (world231, acct162 and 0134 on the branch, renumbered past main's at the merges).
+- Versions: RELAY_VERSION world235, ACCOUNT_VERSION acct165, migration 0140 (world231, acct162 and 0134 on the branch, renumbered past main's at the merges).
 
 Tests: `test/systems/festival/` and `test/server/witch1_festival.test.js`.
