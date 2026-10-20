@@ -221,7 +221,8 @@ test('YARDS-FOUND THE OVERWORLD: each yard standing is a mark - its name over it
 
 test('YARDS-FOUND THE HOSTS: the streaming host hands its yards to the town map (laid on the rows once, at the door both maps share), to the talk directory and to the Overworld\'s marks; townTalk joins them to its directory and, with no engine, groups them after the shops; the bench stands no yard, and the interiors and the dungeon open no town map (mutants: each hand dropped)', () => {
   const w = read('src/scenes/world.js');
-  assert.match(w, /\n\s+yards: b\.merchantYards \?\? null,   \/\/ YARDS-FOUND/, 'the town map');
+  // PIN MOVED (STAR0): the world host's town map opens from its automap toggle's module (scenes/exteriorAutomapToggle.js)
+  assert.match(read('src/scenes/exteriorAutomapToggle.js'), /\n\s+yards: b\.merchantYards \?\? null,   \/\/ YARDS-FOUND/, 'the town map');
   assert.match(w, /\n\s+yards: cur\.merchantYards \?\? null,   \/\/ YARDS-FOUND/, 'the talk directory');
   // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js, the yards
   // read live off the host that hands them over
