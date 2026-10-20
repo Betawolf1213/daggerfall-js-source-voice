@@ -3674,8 +3674,8 @@ Seats-Arc 7.5). What sections 1, 2, 3.3, 4.1, 4.3, 4.5, 9.3 and 9.4 left open fo
   template's, one Essence a hundred - the **Greaves 50** and **either Pauldron 40**, so none at any metal, of chain or of
   leather (and most of DFU's garments, 5 to 80), and the service refuses them (`prof-no-essence`). What was wrong was the
   silence: the station's list dropped every piece under one Essence and the page explained only a list with nothing on
-  it, so the greaves vanished without a word. The station now **lists them greyed**, `{points} points - under one Arcane
-  Essence: 100 points make one` beside each (l10n `prof.page.enchant.under`, the hundred the law's `ESSENCE_POINTS`), its
+  it, so the greaves vanished without a word. The station now **lists them greyed**, `{points} points: under one Arcane
+  Essence (100 points make one)` beside each (l10n `prof.page.enchant.under`, the hundred the law's `ESSENCE_POINTS`), its
   Disenchant disabled and never asked; the line for nothing to take apart stands while no piece gives Essence. A form with
   no points at all (a dish, a tool, a Repair Kit, the mason's stone) is no enchanter's piece and stays off the list.
   HOST-SPLIT: the list is made by the page's module (`profPages.js` disenchantableOf - the pack's crafted pieces that may

@@ -2802,7 +2802,7 @@ export const _enchantForTests = () => _enchant;
 /** AUDIT PROF-541 B8: a piece whose Essence the Stores have no room for. */
 export const ENCHANT_FULL_LINE = (room) => t('prof.page.enchant.full', 'Your Stores have room for {n} more Arcane Essence, not enough for this piece.', { n: Math.max(0, room) });
 /** DISENCHANT-SAID: a piece whose points make no Essence - listed, greyed, and why (alchemyLaw ESSENCE_POINTS). */
-export const ENCHANT_UNDER_LINE = (points) => t('prof.page.enchant.under', '{points, number} points - under one Arcane Essence: {per, number} points make one', { points, per: ESSENCE_POINTS });
+export const ENCHANT_UNDER_LINE = (points) => t('prof.page.enchant.under', '{points, number} points: under one Arcane Essence ({per, number} points make one)', { points, per: ESSENCE_POINTS });
 /**
  * DISENCHANT-SAID (FIELD BUGS 2026-10-19e; the owner, 2026-10-19: "List them greyed with the reason"): THE PIECES THE
  * ENCHANTING STATION LISTS, made here and wired by the host (scenes/world.js `disenchantable`), never in it. A player's

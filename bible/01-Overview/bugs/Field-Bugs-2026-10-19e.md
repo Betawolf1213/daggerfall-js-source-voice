@@ -1160,7 +1160,7 @@ one holding only greaves was told no piece carried enough enchantment, the greav
 
 THE FIX (the owner, 2026-10-19: "List them greyed with the reason"). No change to the law or the service. The list
 keeps a piece whose form carries enchantment points under a hundred, its `essence` 0; the page draws it greyed
-(`prof-smelt prof-locked`, the house's greyed row), `{points} points - under one Arcane Essence: 100 points make one`
+(`prof-smelt prof-locked`, the house's greyed row), `{points} points: under one Arcane Essence (100 points make one)`
 beside it (`prof.page.enchant.under`, the hundred the law's `ESSENCE_POINTS`, drafted in-session in the sixteen languages
 that carry the station's lines), and its Disenchant disabled with no press wired - the page never asks the service for
 it. The line for nothing to take apart now stands while no piece GIVES Essence, so the greaves alone are named beneath

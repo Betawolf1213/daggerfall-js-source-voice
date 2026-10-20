@@ -146,7 +146,10 @@ test('ROCK-CLEAR a yard\'s piece goes by the same gate: its pool names no body, 
 
 test('ROCK-CLEAR by source: the pixel build files every solid through the world collider\'s gate, each with its bucket\'s provider - the mills, the town\'s models and gates, Gothway\'s boards, World of Daggerfall\'s pieces, the Hold\'s camp - and the hill patch (ground) alone directly; the world frame settles the gate after the motor\'s step with the walking body, none while a jump is under way; the collider forgets a removed bucket\'s held parts (mutants: each site past the gate; the settle gone; the jump\'s body named; the hook gone)', () => {
   const p = rd('src/scenes/pixelBuild.js');
-  assert.ok(p.includes('  const late = lateSolidsOf(collider);\n  async function buildPixelNow('), 'one gate, the world collider\'s');
+  // PIN MOVED (the merge of main: PRECIP HOST-7's standFlatGroups stands between them): the one gate is the build's scope's,
+  // made once above the build
+  const gateAt = p.indexOf('\n  const late = lateSolidsOf(collider);\n');
+  assert.ok(gateAt > 0 && gateAt < p.indexOf('\n  async function buildPixelNow(') && p.indexOf('lateSolidsOf(') === p.lastIndexOf('lateSolidsOf('), 'one gate, the world collider\'s');
   const sites = [
     'late.add(key, BODY.positions, BODY.indices, local,\n              { translation: onFloatingFrame(host.state, ((o) => () => host.state.pixelTranslation(px, py, o))([0, 0, 0])) });',
     'late.add(gateKey, cpu.positions, cpu.indices, local,\n            { translation: onFloatingFrame(host.state, ((o) => () => host.state.pixelTranslation(px, py, o))([0, 0, 0])) });',

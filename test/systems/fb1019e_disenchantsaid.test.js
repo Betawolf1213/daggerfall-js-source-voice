@@ -53,7 +53,7 @@ function station(pack, book = bookOf()) {
     done() { root?.remove?.(); setProfessionsPages(null); },
   };
 }
-const NONE = 'No crafted piece in your pack carries enough enchantment to give Essence.';
+const NONE = 'No crafted piece in your pack holds enough enchantment to give Essence.';   // PIN MOVED (the merge of main): VOICE2's words
 
 test('DISENCHANT-SAID: the station\'s list keeps a piece under one Essence - the Greaves (50) and Pauldrons (40), at every metal and of chain and leather, Essence 0; a Cuirass 4 and Boots 1 as before; a Disenchanter\'s twice; a form with no points (a dish, a tool), loot, a worn, a locked and a kept piece left off (mutants: the essence filter back; a form with none listed; the Disenchanter unread)', () => {
   const [greaves, lp, rp, cuirass, boots, chain, leather, stew, pick, worn, locked, kept] = ['greaves:iron', 'lpauldron:iron', 'rpauldron:silver', 'cuirass:iron',
@@ -90,14 +90,14 @@ test('DISENCHANT-SAID: the page lists the Greaves and Pauldrons greyed with the 
     for (const [name, points] of [['Iron Greaves', 50], ['Iron Left Pauldron', 40]]) {
       const r = page.row(name);
       assert.equal(r.className, 'prof-smelt prof-locked', `${name}: greyed`);
-      assert.equal(r.textContent, `${name}${points} points - under one Arcane Essence: 100 points make one${'Disenchant'}`, `${name}: the reason`);
-      assert.equal(ENCHANT_UNDER_LINE(points), `${points} points - under one Arcane Essence: 100 points make one`);
+      assert.equal(r.textContent, `${name}${points} points: under one Arcane Essence (100 points make one)${'Disenchant'}`, `${name}: the reason`);
+      assert.equal(ENCHANT_UNDER_LINE(points), `${points} points: under one Arcane Essence (100 points make one)`);
       const b = r.querySelector('button');
       assert.deepEqual([b.textContent, b.disabled, b.onclick ?? null], ['Disenchant', true, null], `${name}: never pressed`);
     }
     assert.equal(page.row('Iron Cuirass').className, 'prof-smelt');
-    assert.match(page.row('Iron Cuirass').textContent, /^Iron Cuirass400 points - 4 Arcane Essence, \+\d+ Enchanting XPDisenchant$/);
-    assert.match(page.row('Iron Boots').textContent, /^Iron Boots175 points - 1 Arcane Essence, \+\d+ Enchanting XPDisenchant$/, 'one Essence is one: listed as before');
+    assert.match(page.row('Iron Cuirass').textContent, /^Iron Cuirass400 points: 4 Arcane Essence, \+\d+ Enchanting experienceDisenchant$/);
+    assert.match(page.row('Iron Boots').textContent, /^Iron Boots175 points: 1 Arcane Essence, \+\d+ Enchanting experienceDisenchant$/, 'one Essence is one: listed as before');
     assert.equal(page.text().includes(NONE), false, 'a piece gives Essence: no none line');
     const go = page.row('Iron Cuirass').querySelector('button');
     assert.equal(go.disabled, false);
