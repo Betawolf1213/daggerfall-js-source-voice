@@ -634,7 +634,7 @@ captiveNameOf; `net/gate/gateBrain.js` COURTS (six), WALKS (six), nightPlan, liv
 clampToFloor, newFight's `pt`, xaWire; `world/gate/gateArena.js` planOfDay, arrivalOf and the plan's model, collider,
 slabs and lights; `scenes/gate/gateStand.js` (the court's builders out of `scenes/worldModes.js`, HOST-SPLIT); the
 words in the chat, the map's card, the marks card's rows (made the first night that has one) and the herald's omen
-post. GATE_BRAIN_V/MIN 6; RELAY_VERSION world226 (world222 on its branch, renumbered past GATE-DOOR, FOE-BOUNDS and GRANT-DOOR's world223, LAYERED-GEAR and VOICE2's world224 and GAUNTLET-SLAIN's world225 at the merges).
+post. GATE_BRAIN_V/MIN 6; RELAY_VERSION world227 (world222 on its branch, renumbered past GATE-DOOR, FOE-BOUNDS and GRANT-DOOR's world223, LAYERED-GEAR and VOICE2's world224, GAUNTLET-SLAIN's world225 and LORD-SHARES's world226 at the merges).
 Pins: `test/net/gate/wb14b_portents.test.js` (13); mutants: `tools/mutants/wb14b.json` (18, all dead). Found in it and
 fixed in WB14a's push: the court's `reset` had lost its first line of resets behind the night's arrival (a comment
 swallowed them) - a new night's attacks numbered as the last night's were never judged; pinned by a Slam that must land
@@ -659,7 +659,7 @@ rollSpoils's `p` and `portent`, SPOILS_PORTENT_BITS; `scenes/spoilsPool.js` spoi
 last); `server-account/src/eg.js` EG_KEY_ODDS_PORTENT and egGateWeir's odds; `server-account/src/service.js` and
 `wrangler.toml` ACCOUNT_VERSION acct159 (every version pin moved with its note). Pins: `test/net/gate/wb14g_pays.test.js` (5);
 mutants: `tools/mutants/wb14g.json`, and the re-aimed version records (hackedgold, bal9, crafthold, nameas, br5,
-fb1004d_knight_house, tech1, gatekeys). RELAY_VERSION's LAW hash recomputed (world226 now). The arc is whole.
+fb1004d_knight_house, tech1, gatekeys). RELAY_VERSION's LAW hash recomputed (world227 now). The arc is whole.
 
 **WB14f (2026-10-19) - shipped.** `net/gate/gateBrain.js` HOST_KINDS 7 (the gaoler), HOST.gaoler, HOST_BLOWS 7 (its Pulse,
 the Ward-Bearer's), its rising's span, CAPTIVE_RING_R, newCaptive and newFight's `cp`, stepCaptive (the gaolers and the
