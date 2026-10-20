@@ -139,10 +139,12 @@ export function tagHit(target, word, { now = Date.now() } = {}) {
 
 /** FIELD BUGS 2026-10-15e ROSE-SEEN: a FOLLOW-UP BLOW of mine (Open Hand's second, Many Endings' echo -
  *  systems/loot/lootPowers.js again) runs no formula, so the seam below never hears it and only the first blow rose: its own
- *  number, the power's name its tag. Only while the enhanced HUD has mounted the numbers. */
-export function showFollowUp(damage, word) {
+ *  number, the power's name its tag. Only while the enhanced HUD has mounted the numbers. FIELD BUGS 2026-10-20d LANDED-WORD:
+ *  on `target`, a body whose room says what a blow LANDED, none - its follow-up rides its blow's claim (playerDoor.js oweFoe),
+ *  and the room's word for that blow is its number. */
+export function showFollowUp(damage, word, target = null) {
   const n = Math.max(0, Math.round(damage || 0));
-  if (!registered || !(n > 0)) return null;
+  if (!registered || !(n > 0) || target?.landsByWord) return null;
   return showNumber({ kind: 'hit', text: String(n), tag: word ? String(word) : null });
 }
 

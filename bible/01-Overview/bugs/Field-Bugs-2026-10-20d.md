@@ -190,7 +190,8 @@ in each one's own word (`tools/l10nInSession.mjs`).
 `src/net/eliteGates/egBrain.js` (egBlow's `eland`), `src/net/eliteGates/egLords.js` (egLordHit answers what the lord lost; the
 seam returns it), `src/net/wire.js` (`eland`, `EG_LAND_RELAY_MIN`, `relaySupportsEgLand`), `src/net/online.js` (`egLandOk`),
 `src/scenes/eliteGates/egClient.js` (the word to the fight), `src/scenes/eliteGates/egFight.js` (`landsWord`, `landed`, the
-stand-ins' `landsByWord`), `src/ui/hitNumbers.js` (numberFor).
+stand-ins' `landsByWord`), `src/ui/hitNumbers.js` (numberFor, showFollowUp), `src/systems/loot/lootPowers.js` and
+`src/systems/martialPowers.js` (a follow-up's target).
 
 FOUND. On a body the relay runs, the hit number was the striker's CLAIM: a swing's formula damage, or a spell's held to one
 blow's cap (STAND-IN-WHOLE, `Field-Bugs-2026-10-19f.md`: 780 at level 60, 975 with the Vestiges' factor). The room lands what
@@ -229,6 +230,10 @@ FIXED.
   "Warded") still say theirs at once. The room's word shows the number a moment later through HN1's seam
   (`reportPlayerAttack`), 0 included, and a lasting round's and an Echo's words show too. So the numbers a player sees add up
   to what the chart says.
+- **A follow-up blow.** Open Hand's second, Many Endings' echo and the martial signatures' again (`systems/loot/lootPowers.js`,
+  `systems/martialPowers.js`) raise their own number (ROSE-SEEN, `Field-Bugs-2026-10-15e.md`). On a body the relay runs,
+  each is owed to the blow's one claim (`systems/playerDoor.js` oweFoe), and the room's word for that blow counts it. So on a
+  body whose room says what lands it raises no claim of its own (`ui/hitNumbers.js` showFollowUp, its `target`).
 - **An older relay.** A page facing a relay before world236 (`EG_LAND_RELAY_MIN`) keeps its claims, since it would hear no
   word. The relay goes first, or with the pages.
 
@@ -236,7 +241,7 @@ What it costs: a landed number loses the gold a critical or a backstab painted. 
 swing rolled. The gate's court, the Abyss's Remnant and the sea serpent still show claims. Their rooms are other relays'
 laws, and none of them was reported. Each owes the same word, and it is written here as the next slice of this law.
 
-PINS. `test/net/eliteGates/fb1020d_landedword.test.js` (4):
+PINS. `test/net/eliteGates/fb1020d_landedword.test.js` (5):
 - THE REPORT: at circle 16's Court, a solo level-60 member claims over a million in spells. Every blow's word goes to it
   alone, and their sum is the lord's health lost, the member's damage and its chart's, under the lord's whole. A refused blow
   lands 0;
@@ -245,12 +250,16 @@ PINS. `test/net/eliteGates/fb1020d_landedword.test.js` (4):
   stand-ins and shows each word as a number, 0 included; an older relay's claims return; the breach client hands the word to
   the fight and tells it whether its relay says it;
 - THE WIRE: `eland` bounded to a body's number and whole points; world236 the first relay that says it, and the relay this
-  tree builds says it.
+  tree builds says it, read off the welcome;
+- THE FOLLOW-UP: Many Endings' echo on a breach body's stand-in raises nothing and still rides the blow's claim; on a foe of
+  this machine's it rises as before.
 
-Mutants `tools/mutants/fb1020d_landedword.json` (13, all dead).
+Mutants `tools/mutants/fb1020d_landedword.json` (16, all dead).
 
-PIN MOVED. `fb1018f_turnedblow.test.js`'s source pin reads the relay asking the strike law as `return land(0)`, and
-`Field-Bugs-2026-10-18f.md`'s anchor quotes that line.
+PINS MOVED. `fb1018f_turnedblow.test.js`'s source pin reads the relay asking the strike law as `return land(0)`, and
+`Field-Bugs-2026-10-18f.md`'s anchor quotes that line. `audit_martial.test.js`'s L1 N1 source pin reads the martial path's
+follow-up handing its target. Re-aimed by content (7, all dead): `fb1015e_rose.json`'s six records on the follow-up's
+lines, and `audit_martial.json`'s AUDIT-MARTIAL-L1N1-the-owed-number-unshown.
 
 ## The relay's version
 

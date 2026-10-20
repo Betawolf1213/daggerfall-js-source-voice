@@ -128,5 +128,35 @@
       "test/net/eliteGates/fb1020d_landedword.test.js"
     ],
     "why": "every relay trusted to say the word"
+  },
+  {
+    "name": "LANDED-followup-claim",
+    "file": "src/ui/hitNumbers.js",
+    "old": "if (!registered || !(n > 0) || target?.landsByWord) return null;",
+    "new": "if (!registered || !(n > 0)) return null;",
+    "tests": [
+      "test/net/eliteGates/fb1020d_landedword.test.js"
+    ],
+    "why": "a follow-up's claim risen on a breach body beside the room's word for its blow: two numbers, the first a claim"
+  },
+  {
+    "name": "LANDED-followup-loot-target",
+    "file": "src/systems/loot/lootPowers.js",
+    "old": "  if (!f?.dead) showFollowUp(n, word, target);",
+    "new": "  if (!f?.dead) showFollowUp(n, word);",
+    "tests": [
+      "test/net/eliteGates/fb1020d_landedword.test.js"
+    ],
+    "why": "the loot's follow-up never told whose body it struck: its claim risen on a breach body"
+  },
+  {
+    "name": "LANDED-followup-martial-target",
+    "file": "src/systems/martialPowers.js",
+    "old": "showFollowUp(n, word, entity);",
+    "new": "showFollowUp(n, word);",
+    "tests": [
+      "test/net/eliteGates/fb1020d_landedword.test.js"
+    ],
+    "why": "the martial path's follow-up never told whose body it struck"
   }
 ]
