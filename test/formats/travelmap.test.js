@@ -338,7 +338,9 @@ test('U41: the world host mounts the art window and keeps performFastTravel\'s o
   // with its note, above the needles (the last stood at 12608 on the branch; at the merge of SHIPYARDS, 12879 - inside it)
   // PIN MOVED (POI-2, found by AUDIT POI), 13000 -> 13400: the approved POIs taken down with the old frame
   // (`poiHost?.destroyAll()`), with its note, above the last needle (it stood at 12881 on main, 12981 on the POI branch)
-  const core = src.slice(k, k + 13400);
+  // PIN MOVED (STAR4), 13400 -> 13600: the Starfall's stars taken down with the old frame (`starfall?.destroyAll()`), with its
+  // note, above the last needle (it stands at 13451)
+  const core = src.slice(k, k + 13600);
   for (const needle of ['destroyPixel(bx, by)', 'state.init(px, py)', 'awaitedBuild(first.px']) {
     assert.ok(core.includes(needle), `the core carries ${needle}`);
   }
