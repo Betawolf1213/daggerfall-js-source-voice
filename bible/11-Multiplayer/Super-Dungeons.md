@@ -1364,8 +1364,9 @@ player sees the same step in the same place; what a foot breaks is its own.
   it at the realm's now: the Drift swinging; a Beat step there or gone - its bucket sunk far under the void
   (`SD_STEP_GONE_Y`), its draw hidden - and blinking its last 0.4 s; a Crumble step shuddering from the moment my own foot
   first stands on it (its grind heard), then its bucket gone and its draw falling, whole again 5 s after.
-- **Ridden BEFORE the motor**: the mode machine asks the set every frame of the dungeon, right after the action movers'
-  ride (`ridePlatform`) and before the motor - so the motor sweeps against the steps where they now are - and a body
+- **Ridden BEFORE the motor**: the mode machine asks the set every frame of the dungeon, before the motor - so the motor
+  sweeps against the steps where they now are (the action movers' ride, `ridePlatform` beside it then, is the movers'
+  own update since MOVER-BODY, FIELD BUGS 2026-10-19f: they carry the body as they step) - and a body
   standing on a step (`groundKey`) is carried with the step's own move, as a deck carries one (`player.carryBy`: the
   body and both ends of its render span, so a swing is no lerp). A step that went or came back carries nothing; a frame's
   hitch, or the clock put right, carries the body the step's whole move - it stays on its step.
@@ -2218,7 +2219,7 @@ good. You wake before the Abyss Dungeon's door."*) and is final for that Hollow 
   whether they were in: *"The Hour will not take you back."* (`net/superDungeon/sdLaw.js` `SD_NO_FALLEN`) - a refusal the page takes
   as final, so it casts out with those words. A world cell's death marks nothing.
 - **The page keeps the slot.** The frame I die in the Hour keeps its slot on the device (`SD_FALLEN_KEY`, the last
-  SD_ENTERED_MAX, one memory with the slots gone through - `scenes/world.js` `sdSlotsKept`); the Rift asks with it
+  SD_ENTERED_MAX, one memory with the slots gone through - `systems/superDungeon/sdSlots.js` `sdSlotsKept`, out of `scenes/world.js` for WITCH1's room); the Rift asks with it
   (`world/superDungeon/sdDungeon.js` `sdRiftWord`'s `fallen`) and says the realm's words before the step, found or collapsing, though
   I went through.
 - **No Resurrect in the Hour.** A body raised in place would stand in a fight its death has left; the death's way out

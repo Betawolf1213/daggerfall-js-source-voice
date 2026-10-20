@@ -53,7 +53,7 @@ export const offeringKey = (/** @type {number} */ mapId, /** @type {number} */ b
 /** The offering's words, read when they are shown. */
 export const OFFERING_TEXT = Object.freeze({
   name: () => t('festival.offering.name', 'Hearth Offering'),
-  owner: (/** @type {string} */ owner) => t('festival.offering.owner', "{owner}'s", { owner }),
+  whose: (/** @type {string} */ owner) => t('festival.offering.whose', "{owner}'s Hearth Offering", { owner }),
   take: () => t('festival.offering.take', 'Take a Soul Cake'),
   fill: () => t('festival.offering.fill', 'Fill'),
   takeIn: () => t('festival.offering.takeIn', 'Take in'),
@@ -253,23 +253,23 @@ export function createWitchesHost(deps) {
       }
       return _targets;
     },
-    /** WORLD-HOVER: an offering named - whose, its cakes - and its rows. */
+    /** WORLD-HOVER: an offering named by whose it is, its cakes, and its rows. */
     hoverName(/** @type {unknown} */ key) {
       const hit = offeringOf(key);
       if (!hit) return null;
       const { s, r } = hit;
-      const subs = [OFFERING_TEXT.owner(r.o.owner), cakesText(r.o.stock)];
-      if (ownsHome(s, r)) return { title: OFFERING_TEXT.name(), subs, actions: [{ id: 'fill', label: OFFERING_TEXT.fill() }, { id: 'takeIn', label: OFFERING_TEXT.takeIn() }] };
-      if (r.o.mine) return { title: OFFERING_TEXT.name(), subs: [...subs, festivalRefusalText('own')] };
+      const title = OFFERING_TEXT.whose(r.o.owner), subs = [cakesText(r.o.stock)];
+      if (ownsHome(s, r)) return { title, subs, actions: [{ id: 'fill', label: OFFERING_TEXT.fill() }, { id: 'takeIn', label: OFFERING_TEXT.takeIn() }] };
+      if (r.o.mine) return { title, subs: [...subs, festivalRefusalText('own')] };
       const why = r.o.taken ? 'taken' : r.o.stock < 1 ? 'empty' : null;
-      return { title: OFFERING_TEXT.name(), subs, actions: [{ id: 'take', label: why ? festivalRefusalText(why) : OFFERING_TEXT.take(), disabled: !!why }] };
+      return { title, subs, actions: [{ id: 'take', label: why ? festivalRefusalText(why) : OFFERING_TEXT.take(), disabled: !!why }] };
     },
     /** A press on an offering: Info names it, Steal is refused, the owner's Fill (or the lit Take in), another's take. */
     activate(/** @type {unknown} */ key, mode = 'grab', /** @type {string|null} */ verb = null) {
       const hit = offeringOf(key);
       if (!hit) return false;
       const { s, r } = hit;
-      if (verb == null && mode === 'info') { say(presentNpcInfoText(`${OFFERING_TEXT.owner(r.o.owner)} ${OFFERING_TEXT.name()}`)); return true; }
+      if (verb == null && mode === 'info') { say(presentNpcInfoText(OFFERING_TEXT.whose(r.o.owner))); return true; }
       if (verb == null && mode === 'steal') { say(OFFERING_TEXT.steal()); return true; }
       if (ownsHome(s, r)) { void move(verb === 'takeIn' ? 'takeIn' : 'fill', s, r); return true; }
       if (r.o.mine) { say(festivalRefusalText('own')); return true; }

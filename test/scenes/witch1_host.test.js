@@ -92,10 +92,10 @@ test('WITCH1 THE RAY AND THE PLAQUE: each offering a target at a door\'s reach; 
   assert.equal(targets[0].reach, DEFAULT_ACTIVATION_DISTANCE);
   assert.equal(targets[0].aabb[0], 1.15 - 0.5 + 100, 'in the scene: the pixel\'s translation added');
   const own = H.hoverName(offeringKey(MAP, MINE));
-  assert.equal(own.title, 'Hearth Offering');
+  assert.equal(own.title, "Alice's Hearth Offering", 'named whole, so a language orders it as it reads');
   assert.deepEqual(own.actions.map((a) => a.id), ['fill', 'takeIn']);
   const theirs = H.hoverName(offeringKey(MAP, THEIRS));
-  assert.deepEqual(theirs.subs, ["Bobby's", '5 Soul Cakes']);
+  assert.deepEqual([theirs.title, theirs.subs], ["Bobby's Hearth Offering", ['5 Soul Cakes']]);
   assert.deepEqual(theirs.actions, [{ id: 'take', label: 'Take a Soul Cake', disabled: false }]);
   assert.equal(H.hoverName('witch:1:2'), null);
   assert.equal(H.hoverName('port:1'), null);
@@ -105,6 +105,7 @@ test('WITCH1 THE RAY AND THE PLAQUE: each offering a target at a door\'s reach; 
   H.activate(offeringKey(MAP, MINE), 'grab', null);
   H.activate(offeringKey(MAP, MINE), 'grab', 'takeIn');
   assert.equal(H.activate(offeringKey(MAP, THEIRS), 'steal', null), true);
+  assert.equal(H.activate(offeringKey(MAP, THEIRS), 'info', null), true);
   await settle();
   const moves = world.asked.filter(([n]) => ['take', 'fill', 'takeIn'].includes(n));
   assert.deepEqual(moves.map(([n]) => n), ['take', 'take', 'fill', 'takeIn'], 'ASYNC NEVER DROPS: each press asked, in order');
@@ -114,6 +115,7 @@ test('WITCH1 THE RAY AND THE PLAQUE: each offering a target at a door\'s reach; 
   assert.ok(world.said.includes('+1 Soul Cake'));
   assert.ok(world.said.includes('The bowl holds 13.'));
   assert.ok(world.said.includes('The Wyrd watches over offerings.'));
+  assert.ok(world.said.some((l) => l.includes("Bobby's Hearth Offering")), 'Info names it whole');
 });
 
 test('WITCH1 a cake taken today, an empty bowl, an account\'s other character\'s: each row says why', async () => {

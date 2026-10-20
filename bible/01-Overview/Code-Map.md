@@ -323,7 +323,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 | `src/systems/song/` | Music: the songs, their player and manager - the law. |
 | `src/systems/spell/` | Spells: effects, the spell maker, power and the impact's sound. |
 | `src/systems/studioArt/` | The studio (`07-Rendering/Studio-Art.md`): the game's artists' own pictures (`public/art/studio/`) on the texture door, and the slots they paint. |
-| `src/systems/superDungeon/` | The Abyss Dungeon's law (`11-Multiplayer/Super-Dungeons-Look.md`): the site, the omen, the score, the spoils and the rift's sound. |
+| `src/systems/superDungeon/` | The Abyss Dungeon's law (`11-Multiplayer/Super-Dungeons-Look.md`): the site, the omen, the score, the spoils, the rift's sound and the slots kept on the device. |
 | `src/systems/survival/` | Survival: needs, camping, food, rest, exposure. |
 | `src/systems/talk/` | Talking to people: topics, sessions, macros - the law. |
 | `src/systems/town/` | A town's population, seats and watch. |

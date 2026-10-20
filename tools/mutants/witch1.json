@@ -273,8 +273,8 @@
   {
     "name": "WITCH1-the-owner-takes",
     "file": "src/scenes/witchesHost.js",
-    "old": "      if (ownsHome(s, r)) return { title: OFFERING_TEXT.name(), subs, actions:",
-    "new": "      if (false && ownsHome(s, r)) return { title: OFFERING_TEXT.name(), subs, actions:",
+    "old": "      if (ownsHome(s, r)) return { title, subs, actions:",
+    "new": "      if (false && ownsHome(s, r)) return { title, subs, actions:",
     "tests": [
       "test/scenes/witch1_host.test.js"
     ],
