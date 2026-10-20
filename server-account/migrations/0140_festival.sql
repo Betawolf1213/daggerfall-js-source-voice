@@ -4,7 +4,7 @@
 --   npx wrangler d1 migrations apply daggerfall-accounts --remote
 --
 -- Applied exactly once through the `d1_migrations` ledger, which the deploy runs (ACC1-CI). Deploy this service
--- (acct165) after the relay that knows the festival's titles, aura and icons (world234) - THE RELAY FIRST, as WIKIMAID's.
+-- (acct165) after the relay that knows the festival's titles, aura and icons (world235) - THE RELAY FIRST, as WIKIMAID's.
 --
 -- bible/06-Systems/Witches-Festival.md. The law both ends share is src/net/festivalLaw.js; the service is
 -- server-account/src/festival.js.
