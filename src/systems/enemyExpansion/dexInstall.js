@@ -14,7 +14,7 @@
 //   WHILE LOADED: the sixteen classic rows and the two classic classes edited (written into the table, and again at a
 //     foe's mint over Meaner Monsters' and the overhaul's - DFU's order: their Init, then this Start), and the quest
 //     foes added, its encounter tables picked (DEX3), its spells and spellbooks (DEX4a), its combat hooks and forced
-//     gender (DEX4b). (DEX5: the troll; DEX6: the equipment.)
+//     gender (DEX4b), the troll's corpse prefab and its save record (DEX5). (DEX6: the equipment.)
 
 import { DEX_TABLE_TEXT } from './dexTableText.js';
 import { classicCareers, readCareerTable, readEnemyTables, careerFromSpec, writeEnemyLine, readEncounterTables, addDefaultEncounterTables } from './dexTables.js';
@@ -36,6 +36,7 @@ import { createDexSpellbooks } from './dexSpells.js';   // DEX4a: its spellbook 
 import { createDexCombatDoors } from './dexCombat.js';   // DEX4b: its FormulaHelper overrides and forced gender
 import { registerFormulaOverride, registerSkeletalTarget, registerEnemyGroup, registerEnemyLanguage } from '../../combat/formulas.js';
 import { registerForcedGender } from '../../characters/mobile/mobileUnit.js';
+import { installDexTroll } from './dexTroll.js';   // DEX5: the troll's corpse prefab and its save record
 
 export const DEX_VENDOR = 'daggerfall-enemy-expansion';
 /** The mod as loaded for this game: the latch its install set, else (before the install, or in a test) its switch. */
@@ -162,6 +163,9 @@ export function installEnemyExpansion({ on = modSetting(DEX_VENDOR, 'Enabled') =
     registerEnemyGroup(combat.group);
     registerEnemyLanguage(combat.language);
     registerForcedGender(combat.gender);
+    // DEX5: the troll's corpse prefab (1618_20 - AssetInjection reads a loaded mod's bundle alone) and the record DFU's
+    // mod save slot keeps for it (Init's SaveDataInterface, BestiarySaveInterface)
+    installDexTroll(DEX_VENDOR);
     // DEX3: the encounter tables, picked on the dungeon's transition and PlayerGPS's events (BestiaryMod.cs:1728-1871)
     const encounters = createDexEncounterSelector(read.encounters);
     registerEncounterTableSelector(encounters);

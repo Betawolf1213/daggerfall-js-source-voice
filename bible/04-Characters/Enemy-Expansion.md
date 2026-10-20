@@ -61,7 +61,7 @@ The mod in DFU's terms (`BestiaryMod.cs`, cited below by line):
 | DEX2 | the sprites on the texture door: a non-classic archive's real frame counts, the xml scales, the emission maps, NoShadow and the ghost shader by behaviour (DFU's own rows too) - section 6 | SHIPPED (the glow's light routed, Ledger C) |
 | DEX3 | the encounter tables in all four hosts: the dungeon's seeded choice, the water's, the climates' - on a door every reader asks, the climates' on PlayerGPS's events | SHIPPED (section 7) |
 | DEX4 | combat: the on-hit effects, spells 500-503 and the spellbook tables, the skeletal rule, groups and languages, forced gender, ranged | SHIPPED - DEX4a (section 8: the spells, the spellbooks), DEX4b (section 9: the hit's effects, the skeletal rule, groups and languages, forced gender); ranged rode DEX1's rows |
-| DEX5 | the Troll's corpse: up again after ten seconds unless struck, saved with the game, the cheat | open |
+| DEX5 | the Troll's corpse: up again after ten seconds unless a spell's missile burns it, saved with the game, the cheat | DEX5a SHIPPED (section 11: the prefab door, the rise, the burn, the save, the cheat); DEX5b open (the room's: a burn on the stream, a joiner's spell to the runner) |
 | DEX6 | DEX_RRICompat: the new classes equipped by their tables under Roleplay & Realism: Items | open |
 | DEX7 | the Morrowind bodies (section 4) | SHIPPED (section 10) |
 
@@ -376,3 +376,66 @@ Departures (Port-Ledger A, the DEX row):
 Tests: `test/systems/enemyExpansion/dex7_bodies.test.js` (the census by the mod's own names, the motion law, the people
 and the riders, the looks at the door with the switch either way, the doors' refusals, once a page), mutants
 `tools/mutants/dex7.json`.
+
+## 11. DEX5 - the Troll that gets back up
+
+The mod ships a PREFAB for the Troll's corpse picture (`1618_20`), and DFU stands it in the corpse's place
+(MeshReplacement.ImportCustomFlatGameobject, through CreateLootContainer). What it is, read off the bundle and the mod's
+three scripts (BestiaryTrollCorpseBillboard, BestiaryTrollCorpseEntity, BestiaryTrollCorpseSerializer, and
+BestiarySaveInterface):
+
+- **Its components.** The imported json carries the mod's two; the prefab's own GameObject carries DFU's - a
+  DaggerfallEntityBehaviour of type **None**, an **EntityEffectManager** and a **trigger** sphere of radius 1
+  (`vendor/daggerfall-enemy-expansion/Prefabs/1618_20.components.json`, written by `tools/dexExtract.mjs` out of the
+  bundle). So a blade or an arrow does nothing to it (WeaponManager.WeaponDamage harms only an enemy-typed entity), a
+  touch spell and an explosion's overlap never find it (both ignore triggers), and a spell's MISSILE that meets the
+  sphere assigns its bundle to the body's entity: health 1 of 1, the troll's career, every stat 50, level 0.
+- **No loot.** PostParentedSetup destroys the loot container's DaggerfallLoot: the body is never searched, and what the
+  troll carried goes with it.
+- **The rise.** Ten seconds (the prefab's RespawnTime) of game time, frozen while `Cheat.DisableTrollRespawn` is on; then
+  a NEW troll of the dead one's kind stands where the body lay (CreateEnemy - hostile, no quest's, no save's), the body
+  is destroyed and the HUD says "The Troll has recovered from its injuries."
+- **The burn.** A bundle that brings the body to 0 says the death ("Troll just died.", DisableEnemyDeathAlert its gate -
+  the kind's name, never a champion's: the body knows its MobileID alone), stands the ash (1618/21) by its CENTRE 0.1
+  over the body's foot and destroys the body: gone for good. Fire is the troll's critical weakness (no save), magic,
+  frost and shock its resistances (CareerBase).
+- **The save.** Every body still down, with its time left; a load sets each again (one with none left is skipped).
+
+The port's half:
+
+- **The door** (`scenes/corpseMarker.js` registerCorpsePrefab, createCorpsePrefabs): a mod registers a prefab for a
+  corpse's archive and record while it is loaded (AssetInjection reads a loaded mod's bundle alone); each foe host builds
+  one runner over its reach (`runs`, `body`, `rise`, `burn`, `say`, `key`), mints the prefab at its corpse mint on every
+  machine (a copy's body is its owner's), drives it on its foes' clock and its magic rounds (OnNewMagicRound - every
+  EntityEffectManager), and drops it with itself. The player's missile meets a prefab's trigger after the living foes
+  (`scenes/hostMagic.js`, `corpsePrefabStruck`); a peer's drawn missile stops where its caster's does. An executed
+  revenant's body is the port's own fate and takes no prefab.
+- **The troll** (`systems/enemyExpansion/dexTroll.js`): the prefab's values read off the vendored json; the body's entity
+  through the port's own AssignBundle (`systems/effects.js` applySpell - its saves against the troll's career, a lasting
+  effect's first round now and its later ones in the magic rounds); the record on DFU's mod save slot
+  (`systems/modSaveData.js`), a time handed back for a body not stood yet kept until it is (a quickload restores the mod's
+  record before the foes).
+- **The dungeon** (`scenes/dungeonContext.js`): its runner the foe's (the seat, a loose foe's owner); a rise a new LOOSE
+  foe (spawnLooseFoe) where the body lay, the dead one staying dead with no body (`corpseDestroyed` - its save writes no
+  body, as REVENANT-FATE's); the ash a flat the level keeps; a layout body's time saved by its slot. Its loot gate
+  (`lootableBody`) honours a disabled body.
+- **The street, the interiors, exterior.js** (`scenes/exteriorFoes.js`): its owner counts; a rise a new foe by the
+  slot-neutral replacement (`spawnFoe`, `replacing`), the body gone as removeCorpse takes one; the ash a marker the pool
+  keeps beside its bodies.
+
+Departures (Port-Ledger A, the DEX row):
+
+- **Only my spell's missile reaches the body.** DFU's trigger stops EVERY missile and arrow that meets it - an enemy's
+  spell aimed past it burns it, an arrow vanishes into it harming nothing, and DFU's bounding-box melee may spend a swing
+  on its entity and land nothing. The port's enemy missiles, arrows and blows read the living alone.
+- **The street saves no body** (snapshotWorld: "Dead foes stay out" - every body outdoors), so a troll down outdoors at a
+  save is gone on its load, where DFU stands it again with its time.
+- **A troll that rose outdoors is saved standing**, as every street foe is; DFU's (CreateEnemy, LoadID 0) is in no save.
+  Underground the port matches DFU: a loose foe is no foe a boot load stands again.
+- **A loose troll's body underground keeps no time in a save** (its slot is no layout's) - a load lays none for it
+  anyway.
+
+Tests: `test/systems/enemyExpansion/dex5_troll.test.js` (the prefab read off the bundle and the scripts, the body's
+entity against the troll's career, the street's rise and burn through a real pool, my real missile on the trigger, the
+door, the save, the hosts' wiring), mutants `tools/mutants/dex5.json`.
+

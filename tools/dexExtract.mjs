@@ -86,6 +86,35 @@ export const VERBATIM_TEXT = Object.freeze({
   'Daggerfall Enemy Expansion.dll': 'Daggerfall Enemy Expansion.dll',
 });
 
+/** DEX5: the corpse prefab's OWN GameObject - the components DFU builds it from, which the imported json (the mod's
+ *  ImportedComponents alone) does not carry: each by its class, a MonoBehaviour by its script's name with its scalar
+ *  fields, a collider with its shape. What the troll's corpse IS to DFU's physics and effects - its entity's type, its
+ *  effect manager, its trigger - and so what reaches it (systems/enemyExpansion/dexTroll.js). */
+export const PREFAB_COMPONENTS = Object.freeze({ '1618_20': 'Prefabs/1618_20.components.json' });
+const UNITY_CLASS = Object.freeze({ 4: 'Transform', 23: 'MeshRenderer', 33: 'MeshFilter', 65: 'BoxCollider', 114: 'MonoBehaviour', 135: 'SphereCollider', 136: 'CapsuleCollider' });
+export function prefabComponents(assets, name) {
+  for (const a of assets) {
+    const byId = new Map(a.objects.map((o) => [String(o.pathId), o]));
+    for (const o of a.objects) {
+      if (o.classId !== 1) continue;
+      const g = o.read();
+      if (g.m_Name !== name) continue;
+      const components = (g.m_Component ?? []).map((c) => {
+        const co = byId.get(String((c.component ?? c).m_PathID));
+        if (!co) throw new Error(`${name}: a component outside the asset`);
+        const body = co.read(), out = { class: UNITY_CLASS[co.classId] ?? `#${co.classId}` };
+        if (co.classId === 114) {
+          out.script = byId.get(String(body.m_Script.m_PathID))?.read().m_ClassName ?? null;
+          for (const [k, v] of Object.entries(body)) if (!k.startsWith('m_') && (typeof v === 'number' || typeof v === 'boolean' || typeof v === 'string')) out[k] = v;
+        } else if (co.classId === 135) Object.assign(out, { m_IsTrigger: body.m_IsTrigger, m_Radius: body.m_Radius, m_Center: body.m_Center });
+        return out;
+      });
+      return `${JSON.stringify({ GameObject: name, Components: components }, null, 1)}\n`;
+    }
+  }
+  throw new Error(`the bundle carries no GameObject ${name}`);
+}
+
 const sha = (b) => createHash('sha256').update(b).digest('hex');
 const NAME = /^(\d+)_(\d+)-(\d+)(?:_([A-Za-z]+))?$/;
 
@@ -172,6 +201,7 @@ export function dexAssets(arena2, bundleBytes) {
   if (manifest.GUID !== DEX_GUID) throw new Error(`the bundle is ${manifest.ModTitle} (${manifest.GUID}), not Daggerfall Enemy Expansion`);
   const out = {};
   for (const [name, path] of Object.entries(VERBATIM_TEXT)) out[`${VENDOR_DIR}/${path}`] = textByName.get(name).bytes;
+  for (const [name, path] of Object.entries(PREFAB_COMPONENTS)) out[`${VENDOR_DIR}/${path}`] = prefabComponents(bundle.assets, name);   // DEX5
   const xmlByName = {};
   for (const t of bundle.textAssets) if (/^\d+(_\d+-\d+)?$/.test(t.name) && /<info>/.test(t.text)) xmlByName[t.name] = t.text;
   out[`${VENDOR_DIR}/Textures/xml.json`] = `${JSON.stringify(Object.fromEntries(Object.entries(xmlByName).sort(([a], [b]) => (a < b ? -1 : 1))), null, 1)}\n`;

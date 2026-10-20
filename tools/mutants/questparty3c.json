@@ -221,8 +221,8 @@
   {
     "name": "QP3C-body-lootable",
     "file": "src/scenes/dungeonContext.js",
-    "old": "  function lootableBody(f) { return !!f?.dead && !!f.corpse && f._ownFrom == null; }",
-    "new": "  function lootableBody(f) { return !!f?.dead && !!f.corpse; }",
+    "old": "  function lootableBody(f) { return !!f?.dead && !!f.corpse && f._ownFrom == null && !f.corpseDisabled; }",
+    "new": "  function lootableBody(f) { return !!f?.dead && !!f.corpse && !f.corpseDisabled; }",
     "tests": ["test/scenes/questparty3c.test.js"]
   },
   {

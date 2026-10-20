@@ -83,6 +83,7 @@ export const ARROW_TEMPLATE_INDEX = 131;
 export async function mintCorpseMarker({
   renderer, getTexture, uploadRecordFrame, collider = null,
   corpseTexture, feet, fallbackSize = null, stillDead = () => true, sizeScale = 1,   // ELITE FOES: an elite's body lies larger
+  centre = null,   // DEX5: a flat stood by its CENTRE, `centre` over `feet` (GameObjectHelper.CreateDaggerfallBillboardGameObject aligns nothing) - a prefab's ash
 }) {
   if (!corpseTexture) return null;
   const { archive, record } = corpseTexture;
@@ -108,6 +109,7 @@ export async function mintCorpseMarker({
   uploadRecordFrame(archive, record, 0);
   const size0 = billboardSize(t, record) ?? fallbackSize;
   const size = sizeScale !== 1 && size0 ? { ...size0, w: size0.w * sizeScale, h: size0.h * sizeScale } : size0;   // ELITE FOES
+  if (centre != null && size) pos[1] += centre - size.h / 2;   // DEX5: the shader bottom-anchors, so the base is half a height under the centre
   const batch = renderer.createBillboardBatch(archive, record, size, [[pos[0], pos[1], pos[2]]]);
   // FA1 slice 3: a BARE record plus a frame FIELD - the draw builds
   // `record#frame`, so the record must not carry one already.
@@ -143,6 +145,54 @@ export function raiseEnemyDeath(entity, opts = {}) {
     try { fn(entity, opts); } catch (e) { console.warn('[enemyDeath] a handler threw', e); }
   }
   capFoeLoot(entity);   // FOE-CAP: after EVERY handler's find - a plain foe's body never carries more than its cap
+}
+
+/**
+ * DEX5 (bible/04-Characters/Enemy-Expansion.md section 11): A MOD'S CORPSE PREFAB. DFU stands a corpse's billboard
+ * through MeshReplacement.ImportCustomFlatGameobject (GameObjectHelper.CreateLootContainer): a mod that ships a prefab
+ * named for the corpse's archive and record (`<archive>_<record>`) puts it in the billboard's place, components and all,
+ * and they run as the prefab's own from then on - Daggerfall Enemy Expansion's troll corpse (1618_20) takes the loot
+ * away, counts down and stands the troll again. Only a loaded mod's prefabs are found (AssetInjection reads an enabled
+ * mod's bundle), so a mod registers while it is loaded.
+ *   registerCorpsePrefab(archive, record, make) - `make(f, host)` answers the components on a body (or null): an object
+ *     with `frame(dt)` (each frame of the foes' clock), `sphere()` (`{ center, radius }`, a trigger a spell's missile
+ *     meets - or null) and `struck(spell, casterLevel, caster)` (that missile's bundle, assigned to it).
+ *   createCorpsePrefabs(host) - one foe host's runner: `mint(f, corpseTexture)` at its corpse mint, on every machine (a
+ *     copy's body is its owner's); `frame(foes, dt)`; `destroy()` with the host (the bodies' OnDestroy). `host` is the
+ *     host's reach: `runs(f)` (this machine simulates the foe), `body(f)` (`{ pos, size }`, where the body lies and its
+ *     flat's size, or null), `rise(f)` (stand a new foe of its kind where the body lies, and take the body away),
+ *     `burn(f, ash)` (take the body away and stand `ash` - `{ archive, record, centre }` - where it lay), `say(line)` and
+ *     `key(f)` (the body's place in a save, or null where a save keeps no body).
+ */
+const _corpsePrefabs = new Map();   // `${archive}_${record}` -> make
+export function registerCorpsePrefab(archive, record, make) {
+  if (!Number.isInteger(archive) || !Number.isInteger(record) || typeof make !== 'function') throw new Error('registerCorpsePrefab(archive, record, make(f, host))');
+  _corpsePrefabs.set(`${archive}_${record}`, make);
+}
+/** The test seam. */
+export function _resetCorpsePrefabs() { _corpsePrefabs.clear(); }
+export function createCorpsePrefabs(host) {
+  let alive = true;
+  const reach = Object.freeze({ ...host, alive: () => alive });
+  return {
+    mint(f, corpseTexture) {
+      // an executed revenant's body is the port's own fate (gone for good - revenant.js), never a prefab's to raise
+      const make = corpseTexture && !f.executed ? _corpsePrefabs.get(`${corpseTexture.archive}_${corpseTexture.record}`) : null;
+      f.corpsePrefab = make ? make(f, reach) ?? null : null;
+      return f.corpsePrefab;
+    },
+    frame(foes, dt) { for (const f of foes) if (f.corpsePrefab && f.dead && f.corpse) f.corpsePrefab.frame?.(dt); },
+    destroy() { alive = false; },
+  };
+}
+/** The body a missile at `pos` meets, among `foes` - a dead one whose prefab stands a trigger (its sphere and the
+ *  missile's own `reach`, DaggerfallMissile's cast) - or null. */
+export function corpsePrefabStruck(pos, foes, reach) {
+  for (const f of foes) {
+    const s = f?.dead && f.corpse ? f.corpsePrefab?.sphere?.() : null;
+    if (s && Math.hypot(pos[0] - s.center[0], pos[1] - s.center[1], pos[2] - s.center[2]) <= s.radius + reach) return f;
+  }
+  return null;
 }
 
 export function sayEnemyDied(say, mobileType, entity = null) {

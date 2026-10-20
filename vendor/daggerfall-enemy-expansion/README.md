@@ -73,6 +73,11 @@ Fifty new enemies and a new law for where enemies come from:
 - `Prefabs/1618_20.imported.json` - the troll corpse prefab's components as the
   bundle serializes them (DFU's ImportedComponent): the billboard's archive
   and record, its ash's, and its 10-second respawn.
+- `Prefabs/1618_20.components.json` - the same prefab's OWN GameObject, which
+  the imported json does not carry: DFU's components on it, read out of the
+  bundle by `tools/dexExtract.mjs` - a DaggerfallEntityBehaviour of type None,
+  an EntityEffectManager and a trigger sphere of radius 1. What reaches the
+  body is read off these (a spell's missile, never a blade).
 - `Textures/xml.json` - the bundle's 1,130 xml files, name -> text, verbatim:
   each record's `<scaleX>`/`<scaleY>` and the two archives' `<emission>`.
 - `Daggerfall Enemy Expansion.dll` - the compiled assembly, byte for byte
@@ -185,3 +190,8 @@ through the texture door these register on, so neither draws the other's.
   in the Morrowind creature that is it and moves as it does, or a declared
   miss; the lizard men Argonians; the riders their sprites
   (`src/systems/enemyExpansion/dexBodies.js`). Section 10.
+- **DEX5a** (2026-10-20): the troll that gets back up - its corpse prefab on
+  a door of the port's (`src/scenes/corpseMarker.js` registerCorpsePrefab),
+  no loot, the rise after ten seconds, the cheat, a spell's missile burning it
+  to ash, the save keeping its time (`src/systems/enemyExpansion/dexTroll.js`).
+  Section 11.

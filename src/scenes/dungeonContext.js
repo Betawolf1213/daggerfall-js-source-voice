@@ -304,7 +304,7 @@ import { getPref } from '../systems/uiPrefs.js';
 import { createHostNpcBodies, npcBodiesOn } from '../characters/npcBodies.js';   // MWNPC5b: the foes in their Morrowind bodies
 import { isBodyFoe, foeActor, foeFx, foeId, foeSeed, applyWireLook, drawBodiesUnderWindow } from '../characters/foeBodies.js';
 import { createPopulationLane } from '../characters/npcBodies.js'; import { personActor } from '../characters/peopleBodies.js';   // MWNPC8b: the dungeon's standing people   // ENHANCED AI 3b: the Enhanced tab's switch
-import { raiseEnemyDeath, playRareDrop, pileBody, sayEnemyDied, corpseEntityName } from './corpseMarker.js';   // UL1: OnEnemyDeath; LR3: the drop chime; LOOT-STACK: a body as the loot window's tab; LOOT7-CHECK DUNGEON-DIED: the kill notice; L10N3e: a body's name as shown
+import { raiseEnemyDeath, playRareDrop, pileBody, sayEnemyDied, corpseEntityName, createCorpsePrefabs, mintCorpseMarker } from './corpseMarker.js';   // UL1: OnEnemyDeath; LR3: the drop chime; LOOT-STACK: a body as the loot window's tab; LOOT7-CHECK DUNGEON-DIED: the kill notice; L10N3e: a body's name as shown
 import { egFindStruck, egFindKill } from '../systems/eliteGates/egFind.js';   // EG-E3: the dungeon's find - a joiner's kill, asked by the joiner; PARTY-LOOT: a room's body's kill
 import { rollCorpseKit, capFoeLoot } from '../systems/foeLootCap.js';   // KIT-ROLL: a foe's kit, laddered at its death by every body door; AUDIT 625 L5: a copy's cap
 import { dropFoeCard } from '../systems/card/cardSources.js';   // AUDIT CARDS-6 A3: a joiner's copy of a body draws for its own card
@@ -3097,7 +3097,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // of THIS frame, so these minutes were not merely late for the
     // foes, they were lost.
     for (const f of foes) {
-      if (f.dead) continue;
+      if (f.dead) { f.corpsePrefab?.rounds?.(_w.from, _w.to); continue; }   // DEX5: a prefab's body has an effect manager of its own
       runMagicRoundsFor(f.entity, _w.from, _w.to, { sinks: foeSinks(f, false) });   // AUDIT 68 S19-round-ticks-player-provenance: a round is nobody's blow unless its tick says so
     }
     // PlayerEntity.Update:380-384 runs BEFORE the catch-up loop below,
@@ -4302,6 +4302,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // below (AlignBillboardToGround semantics for every corpse).
     const p = floorLanding(collider, [f.ai.feet[0], f.ai.feet[1] + 0.1, f.ai.feet[2]]);
     f.corpsePos = p;   // AUDIT 32 H3: where the body lies - its loot's box and Hunting's body read it (corpseAt), never the air it died in
+    corpsePrefabs.mint(f, ct);   // DEX5: a mod's prefab for this picture takes the body's place - before the art warms, so the kill's first frame already finds no loot
     if (!ct) return;
     const t = await getTexture(ct.archive);
     if (!t || ct.record >= t.recordCount) return;
@@ -6139,7 +6140,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
    *  Wabbajack, a quest's removal - questPoolOps.removeFoe) is dead with no corpse and is NOT a container, which the
    *  shared Detect walk (corpseNearbyRecords) already said; the doors below read `dead` alone, so an invisible body
    *  holding the whole inventory stood at the removed foe's feet. One predicate for every door. */
-  function lootableBody(f) { return !!f?.dead && !!f.corpse && f._ownFrom == null; }   // QUEST-PARTY phase 3c: a party member's quest foe's body is its owner's (a quest's loot stays its host's)
+  function lootableBody(f) { return !!f?.dead && !!f.corpse && f._ownFrom == null && !f.corpseDisabled; }   // QUEST-PARTY phase 3c: a party member's quest foe's body is its owner's (a quest's loot stays its host's)
   function lootHolder(key) {
     const canon = lootKeyOf(key);
     if (!canon) return null;
@@ -6309,6 +6310,21 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     renderer.destroyBillboardBatch(f.corpseBatch);
     f.corpseBatch = null;
   }
+  // DEX5 (bible/04-Characters/Enemy-Expansion.md section 11): a mod's corpse prefab on a body (scenes/corpseMarker.js) - the
+  // dungeon's reach. Its runner counts down (the seat, a loose foe's owner); a RISE is a NEW loose foe of its kind where the
+  // body lay - CreateEnemy's, no quest's and no slot's (spawnLooseFoe), while the dead one stays dead with no body, as DFU's
+  // stays; a BURN stands the ash, by its centre, as a flat the level keeps; a save keeps a layout body's time by its slot
+  const corpsePrefabs = createCorpsePrefabs({
+    runs: (f) => !isPuppetFoe(f),
+    body: (f) => (f.corpsePos ? { pos: f.corpsePos, size: f.corpseBatch?.size ?? null } : null),
+    rise: (f) => { const p = f.corpsePos ?? f.ai.feet; f.corpseDestroyed = true; freeCorpse(f); spawnLooseFoe(f.mobileType, [p[0], p[1], p[2]]); },
+    burn: (f, ash) => {
+      const p = f.corpsePos; f.corpseDestroyed = true; freeCorpse(f);
+      if (p) mintCorpseMarker({ renderer, getTexture, uploadRecordFrame, corpseTexture: ash, feet: p, centre: ash.centre }).then((c) => { if (c) { if (_ctxDead) renderer.destroyBillboardBatch(c.batch); else billboardBatches.push(c.batch); } });
+    },
+    say: (line) => hudText.add(line),
+    key: (f) => { const i = foes.indexOf(f); return i >= 0 && i < _layoutFoes ? `${_locationKey}|${i}` : null; },
+  });
   /** WORLD8: THE HOUR'S RESPAWN of the layout foe at `i` - the corpse freed, its body's loot record forgotten, and the
    *  foe REBUILT fresh at its marker through the one build chain (retypeFoe as its own species: a new entity at full
    *  health with its own loot roll, the old record dead to everything still holding it). The host's stream then says
@@ -6403,6 +6419,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         died: f.dead && Number.isFinite(f._diedAt) ? f._diedAt : null,   // WORLD8: when it fell, the relay's clock - the hour's respawn reads it
         ...(f.abyssDestroyed ? { abyssDestroyed: true } : {}),   // AUDIT OH-F B1: Object.Destroy'd - in DFU's save not at all
         ...(f.dead && (f.escaped || f.executed || f._swornAway) ? { noBody: true } : {}),   // REVENANT-FATE (the 2026-10-02 audit): fled, burnt away or sworn - gone with no body, so a load lays none
+        ...(f.dead && f.corpseDestroyed ? { noBody: true } : {}),   // DEX5: a body a mod's prefab destroyed (risen, burnt) - DFU's save keeps the foe dead and no body
         feet: [...f.ai.feet], yaw: f.ai.yaw, anchor: 1,   // REVIEW 2026-09-05: feet under the enemyAnchor law (a pre-fix save carries no stamp)
         items: (f.entity.items ?? []).map((it) => ({ ...it })),
         // CH4 (the senses verify pass): SerializableEnemy carries
@@ -7379,6 +7396,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     _ecvT += dt;
     respawnSweep(_ecvT);   // WORLD8: the hour's respawn, once a second
     roomClaimTick(_ecvT * 1000);   // PARTY-LOOT: the takes this frame - judged by the host, claimed of it by anyone else
+    corpsePrefabs.frame(foes, dt);   // DEX5: a prefab's body on the foes' clock (paused under a window, as the foes are)
     const ecvOn = combatVisualsOn();   // ECV1: once per frame
     _weaponCanvas = canvas;   // C10: the rig's late canvas (gesture dim + the overlay draw)
     // MW-D8: latch the eye and heading THIS frame, before anything draws.
@@ -7615,7 +7633,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // any minute added by someone else (the rest window, a court sentence)
     // was simply lost for the foes, and diseases never ran on them at all.
     for (const f of foes) {
-      if (f.dead) continue;
+      if (f.dead) { f.corpsePrefab?.rounds?.(_tick.magicRoundWindow.from, _tick.magicRoundWindow.to); continue; }   // DEX5: as the rest window's
       runMagicRoundsFor(f.entity, _tick.magicRoundWindow.from, _tick.magicRoundWindow.to, { sinks: foeSinks(f, false) });   // AUDIT 68 S19-round-ticks-player-provenance: as the rest window's
     }
     // AUDIT 24 (wave 31): every entity has an EntityEffectManager, so the
@@ -10733,6 +10751,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     colliderTris,
     destroy() {
       _ctxDead = true;   // NT1 (F213): before anything frees - the warm-window continuations read it
+      corpsePrefabs.destroy();   // DEX5: its prefabs' bodies with it (OnDestroy)
       _unregisterPresenter();   // ENH-NOTICE3: the registration leaves with the context (the dead latch above is what REFUSES a box in the meantime - pushDungeonWindow reads it, AUDIT ENH-NOTICE3 F2)
       // PX21c: the plaque leaves with the host that raised it - AFTER
       // the latch, which NT1 pins as the first act of this function.

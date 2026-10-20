@@ -76,7 +76,7 @@ const NO_PUPPET_BLOW = Object.freeze({ hold: false, staggered: false });
 import { CORPSE_ACTIVATION_DISTANCE, liveFoeTargets, liveFoeFor } from '../player/activate.js';   // WORLD-HOVER H2: the LIVE bodies, in the shape the hover's one seam takes
 import { WEAPON_REACH } from '../combat/playerWeapon.js';   // AUDIT WATCH1 B2: a peer's melee blow on my watch lands from the player's own reach, no farther   // AUDIT WORLD6b-iii(c) A1/C7: the owner reads the taker's reach
 import { createWeapon, bowDamageArrow } from '../combat/enemyEquipment.js';   // MAC-N1: the recovered shaft is CreateWeapon's arrow, value and all   // AUDIT WORLD6b-ii B2: a puppet's weapon is its owner's word, rebuilt from the descriptor   // AUDIT WORLD6b B3/C2: a cell's record projected and its puppets capped, the wire's law
-import { mintCorpseMarker, playBodyFall, playRareDrop, corpseLootTargets, physicalCorpseSources, corpseEntryFor, corpseContents, openCorpseLoot, pileBody, sayEnemyDied, raiseEnemyDeath, corpseEntityName } from './corpseMarker.js';
+import { mintCorpseMarker, createCorpsePrefabs, playBodyFall, playRareDrop, corpseLootTargets, physicalCorpseSources, corpseEntryFor, corpseContents, openCorpseLoot, pileBody, sayEnemyDied, raiseEnemyDeath, corpseEntityName } from './corpseMarker.js';
 import { rollCorpseKit } from '../systems/foeLootCap.js';   // KIT-ROLL: a plain foe's kit, laddered at its death by every body door
 import { floorLanding } from '../player/enterExit.js';   // REVENANT-FATE (the 2026-10-02 audit): a flyer kneels, and its pile lies, on the ground below
 import { renownFoeStruck, renownFoeDied } from '../net/renownTracker.js';   // RENOWN1: a foe the player fought pays its Renown XP when it dies, by any hand
@@ -687,13 +687,15 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
   function mintCorpse(f) {
   const _corpsePixel = currentPixelKey();
   const _corpseGen = epoch;   // AUDIT-39r: the world this body falls in
+  const ct = f.mobile?.basics?.corpseTexture ?? ENEMY_BASICS[f.mobileType]?.corpseTexture;
+  corpsePrefabs.mint(f, ct);   // DEX5: a mod's prefab for this picture takes the body's place - before the art warms, so no loot from the first frame
   mintCorpseMarker({
     renderer, getTexture, uploadRecordFrame, collider,
     // A5 - EnemyDeath.cs:86-92 reads `mobile.Enemy.CorpseTexture`,
     // the per-mobile STRUCT COPY: SetSpecialTransformationCompleted
     // swaps the seducer's unwinged corpse (400/6) for the winged
     // one (400/5), which the static row cannot carry.
-    corpseTexture: f.mobile?.basics?.corpseTexture ?? ENEMY_BASICS[f.mobileType]?.corpseTexture,
+    corpseTexture: ct,
     feet: f.ai.feet,
     fallbackSize: billboardSize(f.tex, 0),
     stillDead: () => f.dead,
@@ -1534,6 +1536,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     if (eye) _eye = eye;
     portals.tick(_eye);   // COMPANION-PORTAL: each opening, holding, sealing
     hitEffects?.bleed?.(dt, foes, foeBleedView);   // BLOOD2c: the wounded drip, the dead bleed out - every body this pool walks, puppets included
+    corpsePrefabs.frame(foes, dt);   // DEX5: a prefab's body on the foes' clock
     _peerFrame++;   // WORLD6b-ii: the peers are read once a frame
     spaceFoes(foes, collider, foeFrameDt(dt));   // FOE-SPACING: two bodies in one spot are pushed apart (characters/foeSpacing.js)
     for (const f of foes) {
@@ -2158,6 +2161,22 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     if (f.corpseMarker) { const i = corpseBatches.indexOf(f.corpseMarker); if (i >= 0) { renderer.destroyBillboardBatch(corpseBatches[i].batch); corpseBatches.splice(i, 1); } }
     f.corpse = false; f.corpseMarker = null;
   }
+  // DEX5 (bible/04-Characters/Enemy-Expansion.md section 11): a mod's corpse prefab on a body (scenes/corpseMarker.js) - the
+  // pool's reach. Its owner counts down; a RISE is a new foe of its kind where the body lay (spawnFoe, the slot-neutral
+  // replacement the Wabbajack takes) and the body goes as removeCorpse takes one; a BURN stands the ash, by its centre, as
+  // a marker the pool keeps beside the bodies (moved with the origin and the ground, collected with its pixel). The
+  // street saves no body (snapshotWorld - "Dead foes stay out"), so none is keyed.
+  const corpsePrefabs = createCorpsePrefabs({
+    runs: (f) => !f.puppet,
+    body: (f) => f.corpseMarker ?? null,
+    rise: (f) => { const p = f.corpseMarker?.pos ?? f.ai.feet, at = [p[0], p[1], p[2]]; removeCorpse(f); spawnFoe(f.mobileType, at, { feetGiven: true, replacing: true }); },
+    burn: (f, ash) => {
+      const body = f.corpseMarker, pixelKey = f.corpsePixelKey, gen = epoch; removeCorpse(f);
+      if (body) mintCorpseMarker({ renderer, getTexture, uploadRecordFrame, corpseTexture: ash, feet: body.pos, centre: ash.centre }).then((c) => { if (!c) return; if (gen !== epoch) renderer.destroyBillboardBatch(c.batch); else { c.pixelKey = pixelKey; corpseBatches.push(c); } });
+    },
+    say: (line) => say?.(line),
+    key: () => null,
+  });
 
   /**
    * IF: TEARDOWN. Every allocation has an owner, and until a SECOND
@@ -2198,6 +2217,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     for (const c of corpseBatches) renderer.destroyBillboardBatch(c.batch);
     corpseBatches.length = 0;
     foes.length = 0;
+    corpsePrefabs.destroy();   // DEX5: its prefabs' bodies with it (OnDestroy)
     _npcLane?.destroy(); _npcLane = null;   // MWNPC5c: the bodies with them
     portals.clear();   // COMPANION-PORTAL: and the portals standing
     for (const s of spawning) s.capped = false;   // AUDIT 68 S20-encounter-cap-race: a cancelled spawn holds no slot in the next world
