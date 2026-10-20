@@ -3284,7 +3284,7 @@ all dead (+14: the mint before the ban, off a replica, binding-only, the first-p
 unminted and unread, the save's and the beat's session and ban unread or unsent, a timeout forgetting, a registration
 keeping, the realm's offline keep).
 
-## THE OVERLOAD OF 2026-10-19: LEAN-READS (2026-10-19, this branch - acct160, migrations 0134-0138, no drop; acct159 and 0133-0137 on its branch, renumbered past QL12 at the merge)
+## THE OVERLOAD OF 2026-10-19: LEAN-READS (2026-10-19, this branch - acct161, migrations 0134-0138, no drop; acct159 then acct160 and 0133-0137 on its branch, renumbered past QL12 and WB14 at the merges)
 
 The owner: "Can you check the server. I think certain actions like gathering and menus are having issues", then, handed
 the Cloudflare token: "Use it", then "Do everything. No band aids. No short fixes."
@@ -3400,8 +3400,8 @@ the Cloudflare token: "Use it", then "Do everything. No band aids. No short fixe
 - The migrations run before the new Worker; the old Worker (acct158) works on the new schema - it reads none of the new
   columns, and the triggers keep every new table through its writes, its strikes among them (a plain delete settles a
   confirmer at a time). Rollback is Worker-first: acct158 may stand on these migrations for as long as it must. The
-  reverse is not safe - dropping the triggers while acct160 runs leaves `late`, the confirmations and the three boards
-  stale; and a Time Travel restore to the bookmark the deploy prints, with acct160 still live, takes away tables it reads
+  reverse is not safe - dropping the triggers while acct161 runs leaves `late`, the confirmations and the three boards
+  stale; and a Time Travel restore to the bookmark the deploy prints, with acct161 still live, takes away tables it reads
   (500s): put the code back first, then restore, then redeploy - from the reverted tree, or the deploy applies 0134-0138
   again (AUDIT LEAN-READS D6).
 - 0137 builds one index over `writs` - some 862,000 rows live (`MAX(rowid)`, 2026-10-20): 0.6 s on a copy of that size,
@@ -3499,7 +3499,7 @@ finding below is fixed and pinned, or answered with its reason.
   is a read of the rows); the schema's table list (`accountworker`); the yards' reads (`yardshed`, `primary_trips` - a
   refused bookmark refuses any first statement - and `scale4d`: the town's built row); the clock's quiet minute
   (`auditscale` D7: eleven statements a minute and thirty-four an hour); a heartbeat timed out holds the reads
-  (`sessionsign_client`); the deploy's smoke calls (`home2`: twelve); ACCOUNT_VERSION acct160 (acct159 on its branch, renumbered past QL12 at the merge) and every pin and mutant
+  (`sessionsign_client`); the deploy's smoke calls (`home2`: twelve); ACCOUNT_VERSION acct161 (acct159 then acct160 on its branch, renumbered past QL12 and WB14 at the merges) and every pin and mutant
   record on acct158 (each pin's PIN MOVED history kept). Records of earlier slices re-aimed by content at the code this
   one moved (audit_chap2, audit_chap3, auditlwii2_service, chap3a, d1load, homevendor, lw15, seat_replica, busy_gate,
   scale4f), all dead.

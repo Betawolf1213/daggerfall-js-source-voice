@@ -5,7 +5,7 @@
 --   npx wrangler d1 migrations apply daggerfall-accounts --remote
 --
 -- Applied exactly once through the `d1_migrations` ledger, which the
--- deploy runs (ACC1-CI). Deploy this service (acct160) with the site; no
+-- deploy runs (ACC1-CI). Deploy this service (acct161) with the site; no
 -- relay change.
 --
 -- A hall's and a seat's facts are the first answer three accounts agree on (nodeLaw.js witnessedFact), and every
