@@ -2,13 +2,18 @@
 -- Begun by the raven's letter (the line's runner starts it an hour after the first). The Sisters of the Bluff spin the
 -- black thread at their coven nearest the capital (`permanent BluffCoven`, the region of Daggerfall). A coven is an
 -- open-air place with no quest marker (WITCAA04.RMB - QLTF01 says why), so its people come out of the dark when the
--- player arrives, as DFU's own ambushes do (`create foe ... 1 times`, started once by the arrival and never cleared, so
--- a return brings no second coven): the Spinner and three of her sisters, each named and stood as a woman (`ql name ...
--- female`, systems/questlines/qlActions.js QlName - Foe.cs SetFoeName rolls a man as often as not), the spindle given to
--- the Spinner before she comes (QLCH02's way with the Weir Key). Then Morwen at the Glenmoril Coven's fire, met once on
--- the player's arrival with the spindle, and her question: a length unwound for the player to sell (`unwound`) or the
--- spindle given whole (`wound`). Lore: canon - the Sisters of the Bluff (FACTION.TXT 423), the Coven on the Bluff
--- (MAPS.BSA, the quest table's BluffCoven). The port's own: the Spinner, her spindle, the starlight spun on it.
+-- player arrives, as DFU's own ambushes do (`create foe ... 1 times`, started by the arrival, so a return while the
+-- coven stands brings no second): the Spinner and three of her sisters, each named and stood as a woman (`ql name ...
+-- female`, systems/questlines/qlActions.js QlName - Foe.cs SetFoeName rolls a man as often as not). AUDIT STAR8 S1: the
+-- spindle is the player's as the Spinner falls (`get item`, never on her body - a body the cull, a teleport or a load
+-- takes would take it too), and a coven gone unfought (`ql gone`: the Spinner unkilled and none of them standing - the
+-- encounters' 120 m cull, a death's teleport) is called up again at the next arrival; her death costs the Sisters of
+-- the Bluff's favour (`change repute with`, a stand-in of their faction - A0C0XY04's `_dummymage_` way). Then Morwen at
+-- the Glenmoril Coven's fire, met once on the player's arrival with the spindle, and her question: a length unwound to
+-- sell (`unwound`, and Morwen buys it herself rather than see it sold) or the spindle given whole (`wound`); with the
+-- spindle in hand her patience has no end (`stop timer`). Lore: canon - the Sisters of the Bluff (FACTION.TXT 423), the
+-- Coven on the Bluff (MAPS.BSA, the quest table's BluffCoven). The port's own: the Spinner, her spindle, the starlight
+-- spun on it.
 Quest: QLTF02
 DisplayName: The Coven on the Bluff
 -- Message panels
@@ -99,10 +104,10 @@ Message:  1032
 Give it to her whole
 
 Message:  1033
-<ce>         Morwen watches you unwind it with a face like
-<ce>         stone. "Sell it far from here," she says, "and
-<ce>         never say where you had it." She pays you all
-<ce>                         the same.
+<ce>         Morwen watches you unwind a length with a face
+<ce>         like stone. "An alchemist would pay this for
+<ce>         it," she says, and pays it herself. "Better my
+<ce>               coin than a stranger's questions."
 
 Message:  1034
 <ce>         "Whole." Morwen closes her hand over the spindle.
@@ -129,13 +134,14 @@ Place _bluff_ permanent BluffCoven
 Clock _courier_ 01:00 03:00
 Clock _wait_ 60.00:00 0 flag 1 range 0 1
 
+Person _bluffsister_ face 1 faction The_Sisters_of_the_Bluff remote
+
 Foe _spinner_ is Sorcerer
 Foe _sisters_ is 3 Nightblade
 
 --	Quest start-up:
 	ql name _spinner_ The_Spinner female
 	ql name _sisters_ Sister_of_the_Bluff female
-	give item _spindle_ to _spinner_
 	pc at _bluff_ set _atbluff_ saying 1015
 	pc at _glenmoril_ set _atcoven_
 	have _spindle_ set _hasspindle_
@@ -155,17 +161,24 @@ _arrived_ task:
 	when _courier_ and _atbluff_
 	start task _ambush_
 
+_lost_ task:
+	ql gone _spinner_ _sisters_
+	clear _arrived_ _ambush_ _lost_
+
 _ambush_ task:
 	create foe _spinner_ every 0 minutes 1 times with 100% success msg 1019
 	create foe _sisters_ every 0 minutes 1 times with 100% success
 
 _spinnerslain_ task:
 	killed 1 _spinner_ saying 1013
+	get item _spindle_
+	change repute with _bluffsister_ by -10
 
 _sistersslain_ task:
 	killed 3 _sisters_
 
 _hasspindle_ task:
+	stop timer _wait_
 	say 1014
 	log 1016 step 1
 

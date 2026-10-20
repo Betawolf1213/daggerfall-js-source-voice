@@ -4,10 +4,12 @@
 -- letter (the open-air coven has no quest marker - QLTF01 says why), and asks what the Bluff's spindle is worth (one
 -- `ask`, three choices): burned in Hircine's fire there and then (`burned`), or handed to the player (`get item`, never
 -- `give pc` - a give is a quest's pay, qlLayer.js reward) to sell to the Mages Guild (`guild`) or to take to a priest of
--- Arkay (`temple`), each met in a town of the region's (`toting`). The Witches' Festival is the day "the forces of
--- sorcery and religion clash" (TEXT.RSC 8349): the coven's fire, the Guild's study and Arkay's temple are the three ways
--- the holiday names. Lore: canon - Hircine the Huntsman, the Glenmoril Witches' Prince; Arkay, god of the cycle of life
--- and death, and the Order of Arkay (FACTION.TXT 82). The port's own: Morwen, the spindle, the three ways.
+-- Arkay (`temple`), each met in a town of the region's (`toting`) - the priest in a temple of Arkay's own (`templeArkay`,
+-- AUDIT STAR8 S4: the questlines' row, qlActions.js QL_PLACE_ROWS; quest/place.js holds a temple to its row's faction).
+-- The Witches' Festival is the day "the forces of sorcery and religion clash" (TEXT.RSC 8392): the coven's fire, the
+-- Guild's study and Arkay's temple are the three ways the holiday names. Lore: canon - Hircine the Huntsman, the
+-- Glenmoril Witches' Prince; Arkay, god of the cycle of life and death, and the Order of Arkay (FACTION.TXT 82, the
+-- god's own 21's). The port's own: Morwen, the spindle, the three ways.
 Quest: QLTF04
 DisplayName: What the Thread Is Worth
 -- Message panels
@@ -18,7 +20,8 @@ QuestFail:  [1003]
 <ce>                 fate without you.
 
 QuestComplete:  [1004]
-<ce>              _gold_ gold, for the stars and the thread.
+<ce>         _gold_ gold, and the Bluff's spindle is out of
+<ce>                       your hands.
 
 QuestLogEntry:  [1010]
 %qdt:
@@ -72,7 +75,8 @@ Take it to the priests of Arkay
 Message:  1034
 <ce>         Morwen drops the spindle into the coven's fire.
 <ce>         The thread burns white, and for a moment the
-<ce>         hall is as bright as noon. Then it is only a fire.
+<ce>         clearing is as bright as noon. Then it is only
+<ce>                         a fire.
 <ce>
 <ce>         "The Huntsman has seen what you did," Morwen
 <ce>          says. "Glenmoril will not forget it."
@@ -86,9 +90,8 @@ Message:  1035
 Message:  1036
 <ce>         "Arkay's, then." Morwen wraps the spindle in a
 <ce>          strip of hide and puts it in your hands. "_priest_
-<ce>          keeps vigil at _temple_ in __temple_. His order
-<ce>          cuts what holds a thing past its time. That is
-<ce>                   all this thread does."
+<ce>          keeps vigil at _temple_ in __temple_. Let him see
+<ce>                     what it holds."
 
 Message:  1037
 <ce>         _mage_ turns the spindle over in both hands and
@@ -152,7 +155,7 @@ Person _priest_ faction The_Order_of_Arkay male anyInfo 1040
 
 Place _glenmoril_ permanent GlenmorilCoven
 Place _hall_ remote magery
-Place _temple_ remote temple
+Place _temple_ remote templeArkay
 
 Clock _courier_ 01:00 03:00
 Clock _wait_ 60.00:00 0 flag 1 range 0 1

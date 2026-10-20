@@ -17,9 +17,10 @@
 //   THE INTRODUCTIONS (4.5) - a short line for each Tutorials group with a feature to go to: the crafts, the gear's own
 //     laws, the sea, the road, the tavern's tables, the Arena, the Bay's troubles, the Firmament. The Tutorials explain;
 //     an introduction gives a reason to go, and pays for it.
-//   THE THIRTEENTH OF FROSTFALL (STAR8, bible/11-Multiplayer/Starfall.md section 7) - the Starfall's, from a witch of
-//     Glenmoril. Seasonal: it begins only while the Witches' Festival is staged (`opens.event`), and a step whose deed is
-//     a fallen star waits for the next one. Online: its witnesses are the stars' receipts.
+//   THE THIRTEENTH OF FROSTFALL (STAR8, bible/11-Multiplayer/Starfall.md section 7) - the Starfall's, from a Wyrd Sister
+//     of Glenmoril. Seasonal: it begins only while the Witches' Festival is staged (`opens.event`), and a step whose deed
+//     is a fallen star waits for the next one - set aside, fail-free, if the Festival ends under it (qlLineRunner.js
+//     keepSeason). Online: its witnesses are the stars' receipts.
 //
 // Every word through t() (the Port_Strings catalog): a line's title, its lead, its giver, each step's title. A step's
 // title is its quest's DisplayName in English (test/systems/questlines/ql12_lines.test.js holds the two to one word).
@@ -117,8 +118,8 @@ export const QL_LINES = Object.freeze([
   line({
     id: 'thirteenthFrostfall', group: 'festival', tier: 3,
     title: () => t('ql.line.thirteenthFrostfall', 'The Thirteenth of Frostfall'),
-    lead: () => t('ql.line.thirteenthFrostfall.lead', 'On the Witches’ Festival the covens of the Bay sing stars down out of the sky. A witch of Glenmoril wants to know what they mean to do with them.'),
-    giver: () => t('ql.line.thirteenthFrostfall.giver', 'Morwen of Glenmoril, a witch of Hircine’s coven'),
+    lead: () => t('ql.line.thirteenthFrostfall.lead', 'At the Witches’ Festival the covens sing stars out of the sky. A witch of Glenmoril wants to know why.'),
+    giver: () => t('ql.line.thirteenthFrostfall.giver', 'Morwen, a Wyrd Sister of Glenmoril'),   // AUDIT STAR8 T1: of the Festival's Glenmoril Wyrd
     opens: { level: 6, online: true, account: true, event: 'starfall' },
     steps: [
       { quest: 'QLTF01', title: () => t('ql.step.QLTF01', 'Music in the Woods'), needs: ['starfall'] },

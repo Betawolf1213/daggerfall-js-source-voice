@@ -211,6 +211,23 @@ test('WITCH1 SETTING ONE OUT: the Hearth Offering\'s Use at the door of a home t
   playerEntity.items = [];
 });
 
+test('AUDIT STAR8 T1 A WYRD SISTER MET: her window opened is the act `wyrd-met`, once a press - Morwen\'s letter waits on it (QLTF01) - and a page with no window to open says nothing (mutants: the act unsaid; said with no window)', async () => {
+  const { setActSink } = await import('../../src/systems/questlines/qlActs.js');
+  const { withDom } = await import('../invdrag.mjs');
+  const heard = [];
+  setActSink((kind, n) => { heard.push([kind, n]); return 1; });
+  try {
+    assert.equal(H.shop(), false, 'no document: no window, and she talks instead');
+    assert.deepEqual(heard, []);
+    withDom(() => {
+      assert.equal(H.shop(), true);
+      assert.equal(world.overlays.length, 1, 'her window, in the host\'s slot');
+      world.overlays[0].dispose();
+    });
+    assert.deepEqual(heard, [['wyrd-met', 1]]);
+  } finally { setActSink(null); }
+});
+
 test('WITCH1 THE FOUR HOSTS: world.js makes the host and reads its frame, names and presses; worldModes presses a Wyrd Sister and an offering', () => {
   const world = readFileSync(new URL('../../src/scenes/world.js', import.meta.url), 'utf8');
   const modes = readFileSync(new URL('../../src/scenes/worldModes.js', import.meta.url), 'utf8');

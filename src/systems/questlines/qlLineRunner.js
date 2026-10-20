@@ -54,8 +54,9 @@ export const CLAIM_RETRY_MS = 60_000;
 export const CLAIM_TRIES = 5;
 export const CLAIM_SLOW_MS = 600_000;
 
-/** A line's record, fresh - `begun` the character's second it began (AUDIT QUESTLINES LINES-17: one new line an hour). */
-const freshLine = (begun = 0) => ({ step: 0, outcomes: {}, done: false, wait: 0, claims: {}, begun });
+/** A line's record, fresh - `begun` the character's second it began (AUDIT QUESTLINES LINES-17: one new line an hour);
+ *  `aside` its running step's quest set aside by the runner itself for a need that stopped holding (AUDIT STAR8 S2). */
+const freshLine = (begun = 0) => ({ step: 0, outcomes: {}, done: false, wait: 0, claims: {}, begun, aside: false });
 
 /**
  * @param {{ machine: any, ctx?: any, service?: any, nowMs?: () => number }} deps
@@ -134,6 +135,23 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
     c.next = nowMs() + (c.tries < CLAIM_TRIES ? CLAIM_RETRY_MS : CLAIM_SLOW_MS);
   }
 
+  /**
+   * AUDIT STAR8 S2: A RUNNING STEP OUT OF SEASON IS SET ASIDE, FAIL-FREE. A step's needs are read as it starts (startStep),
+   * and the Witches' Festival can end under a star step begun inside it: its own clock would run out on a deed no star
+   * is left to do. Its quest is set aside as the journal's Abandon sets one aside (machine.js shelveQuest: its clocks
+   * stopped, its items kept, no act heard) and the record says the runner did it (`aside`); the need holding again, it is
+   * reclaimed (reclaimQuest: its clocks moved on by the time away) and goes on where it stood. Its row waits, saying for
+   * what (rows, waitingWords). A quest the player set aside is the player's: never reclaimed here.
+   */
+  function keepSeason(l, rec, q) {
+    if (unmetNeeds(l, rec.step, probe).length) {
+      if (q.shelvedAt == null && machine.shelveQuest?.(q.uid)?.ok) rec.aside = true;
+      return;
+    }
+    if (!rec.aside || (q.shelvedAt != null && !machine.reclaimQuest?.(q.uid)?.ok)) return;
+    rec.aside = false;
+  }
+
   function startStep(l, rec) {
     const step = l.steps[rec.step];
     if (!step) return;
@@ -178,6 +196,8 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
           rec = lines[l.id] = freshLine(Math.max(1, s));
         }
         if (rec.done || rec.wait > s) continue;
+        const stepQuest = runningStep(l.steps[rec.step]?.quest);
+        if (stepQuest) keepSeason(l, rec, stepQuest);   // AUDIT STAR8 S2: online or not
         if (l.opens.online && !online()) continue;   // an endgame line waits, offline, where it stood
         if (l.opens.account && !registered()) continue;   // LINES-2: and a guest's page, where it stood
         startStep(l, rec);
@@ -223,7 +243,8 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
     /**
      * The window's rows: every line, begun or not - `{ id, group, title, lead, giver, state, steps, opens, outcome, honour }`
      * (`honour` the title the line pays, or null).
-     * `state` 'done' | 'running' | 'waiting' (between steps, or offline for an endgame line) | 'retry' (a step failed,
+     * `state` 'done' | 'running' | 'waiting' (between steps, offline for an endgame line, or - AUDIT STAR8 S2 - its step
+     * set aside by the runner until its need holds again) | 'retry' (a step failed,
      * offered again) | 'shelved' (its step's quest set aside in the journal) | 'locked'; each step `{ title, state:
      * 'done'|'current'|'next', witnessed: bool (a step the service witnesses), seen: bool (it did), unseen: bool (done,
      * not yet witnessed), outcome, refused: the service's refusal of its claim (UI-19), or null }` - the steps after the current one are named
@@ -238,6 +259,7 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
         const stepQuest = rec && !rec.done ? runningStep(l.steps[rec.step]?.quest) : null;
         const shelved = stepQuest?.shelvedAt != null;
         const running = !!stepQuest && !shelved;
+        const aside = shelved && !!rec?.aside;   // AUDIT STAR8 S2: set aside by the runner, out of season - it waits
         const steps = l.steps.map((s, i) => {
           // UI-7: the step at the line's place is `current` only while its quest runs - between steps it is still to come
           const state = !rec ? 'next' : rec.done || i < rec.step ? 'done' : i === rec.step && (running || shelved) ? 'current' : 'next';
@@ -248,7 +270,7 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
           return { quest: s.quest, title: s.title(), state, witnessed: !!witnessOf(l, i), seen: said === 'witnessed', unseen: state === 'done' && !!witnessOf(l, i) && said !== 'witnessed', outcome: rec?.outcomes?.[i]?.text ?? null, refused };
         });
         // UI-7: a failed step offered again (`retry`), a step's quest set aside in the journal (`shelved`)
-        const state = !rec ? 'locked' : rec.done ? 'done' : running ? 'running' : shelved ? 'shelved' : rec.retry ? 'retry' : 'waiting';
+        const state = !rec ? 'locked' : rec.done ? 'done' : running ? 'running' : shelved && !aside ? 'shelved' : rec.retry ? 'retry' : 'waiting';
         const last = rec?.outcomes?.[l.steps.length - 1] ?? null;
         return {
           id: l.id, group: l.group, title: l.title(), lead: l.lead(), giver: l.giver(), state, steps,
@@ -276,7 +298,7 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
         const step = Math.max(0, Math.min(l.steps.length, Number.isSafeInteger(r.step) ? r.step : 0));
         lines[id] = {
           step, done: !!r.done || step >= l.steps.length, wait: Number.isFinite(r.wait) ? r.wait : 0,
-          begun: Number.isFinite(r.begun) ? r.begun : 0, stalled: !!r.stalled, retry: !!r.retry,
+          begun: Number.isFinite(r.begun) ? r.begun : 0, stalled: !!r.stalled, retry: !!r.retry, aside: !!r.aside,
           outcomes: r.outcomes && typeof r.outcomes === 'object' ? structuredClone(r.outcomes) : {},
           claims: r.claims && typeof r.claims === 'object' ? { ...r.claims } : {},
         };

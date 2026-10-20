@@ -177,8 +177,8 @@
  {
   "name": "STAR8-the-ambush-unlatched",
   "file": "src/systems/questlines/quests/QLTF02.txt",
-  "old": "_arrived_ task:\n\twhen _courier_ and _atbluff_\n\tstart task _ambush_\n\n_ambush_ task:\n",
-  "new": "_ambush_ task:\n\twhen _courier_ and _atbluff_\n",
+  "old": "_ambush_ task:\n\tcreate foe _spinner_",
+  "new": "_ambush_ task:\n\twhen _courier_ and _atbluff_\n\tcreate foe _spinner_",
   "tests": [
    "test/systems/questlines/star8_frostfall.test.js"
   ]

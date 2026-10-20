@@ -2,8 +2,11 @@
 -- Begun by the raven's letter while the Starfall runs (`needs: ['starfall']`). Witnessed (net/questlineClaims.js
 -- `stars3`, three j1 receipts newer than the first step's): three more fallen stars held (`ql act star-held 3`), and
 -- the raven brings Morwen's word and her purse where the player stands, so no journey ends in a walk to the coven.
--- Lore: canon - Mephala, Queen of Oblivion (N0B00Y09.QRC), whose day the Festival is. The port's own: the web the
--- covens weave of the stars they spin, each star held a strand it loses.
+-- AUDIT STAR8 T2: and the Heart-Star, if it falls while the step runs (the Witches' Night's third star, about twice a
+-- Festival - systems/starfall/starfallNight.js): held, it is the step's own bonus (`ql act heart-star-held 1`, the
+-- receipt's act - net/starfall/starClaims.js), never its gate - the sheet's optional objective and its `heart` outcome,
+-- the greater pay and Morwen's ring. Lore: canon - Mephala, Queen of Oblivion (N0B00Y09.QRC), whose day the Festival is.
+-- The port's own: the web the covens weave of the stars they spin, each star held a strand it loses; the Heart-Star.
 Quest: QLTF03
 DisplayName: Three Stars
 -- Message panels
@@ -50,6 +53,10 @@ Message:  1013
 <ce>         "Three strands gone. The web is torn, and the
 <ce>          covens know it. Come to me when you can."
 
+Message:  1014
+<ce>         The Heart-Star's thread burns through. Morwen
+<ce>                  will hear of this one.
+
 QBN:
 Item _letter_ letter used 1011
 Item _gold_ gold range 300 to 600
@@ -64,6 +71,10 @@ _courier_ task:
 	give pc _letter_ notify 1012
 	log 1010 step 0
 	start timer _wait_
+
+_heart_ task:
+	ql act heart-star-held 1
+	say 1014
 
 _held_ task:
 	ql act star-held 3

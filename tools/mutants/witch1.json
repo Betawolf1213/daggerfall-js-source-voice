@@ -333,8 +333,8 @@
   {
     "name": "WITCH1-AUDIT-the-elite-act-finds-too",
     "file": "src/systems/festival/festivalClient.js",
-    "old": "const ACT_NOT_FOUND = Object.freeze(['elite-foe-slain']);",
-    "new": "const ACT_NOT_FOUND = Object.freeze([]);",
+    "old": "const ACT_NOT_FOUND = Object.freeze(['elite-foe-slain', 'wyrd-met']);",
+    "new": "const ACT_NOT_FOUND = Object.freeze(['wyrd-met']);",
     "tests": [
       "test/systems/festival/witch1_client.test.js"
     ],

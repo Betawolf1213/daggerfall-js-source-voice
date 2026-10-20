@@ -101,6 +101,16 @@ test('WITCH1 AN ACT, A QUEST AND A BOUNTY ask by their group: a fish caught is `
   assert.equal(FESTIVAL_FIND, 'festival-find');
 });
 
+test('AUDIT STAR8 T1 A WYRD SISTER\'S WINDOW OPENED IS NO FIND: `wyrd-met` (The Thirteenth of Frostfall\'s letter waits on it) asks nothing, where a deed of its family asks its own (mutants: the window a find)', async () => {
+  const { api, asked } = fakeApi({ find: { ok: true, data: { found: 0, cakes: 0 } } });
+  bind(api);
+  noteAct('wyrd-met');
+  await new Promise((r) => setTimeout(r, 0));
+  noteAct('raid-repelled');   // the world's family, a deed
+  await askFind('sea');   // the queue drains in order
+  assert.deepEqual(asked.filter(([n]) => n === 'find').map(([, s]) => s), ['world', 'sea']);
+});
+
 test('WITCH1 A SALE: asked by its own id, the piece minted on the answer; a lost answer (no line, or the service\'s fault) kept on the save and asked again by the same id, landing once', async () => {
   const sold = new Map();
   const buy = (ware, rid) => {
