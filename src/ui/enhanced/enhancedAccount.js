@@ -36,6 +36,7 @@ import { raidRecordText } from '../../net/raid/raidClaims.js';   // RAID4: and i
 import { t, localizedTable, intlLocale } from '../../systems/textManager.js';   // L10N4: the card's words in the player's language, read when it is drawn
 import { serpentRecordText } from '../../net/serpent/serpentClaims.js';   // AUDIT SERPENT D4: and its serpents-slain row
 import { sdRecordText } from '../../net/superDungeon/sdClaims.js';   // SD9b: and its Hours-broken row
+import { starRecordText } from '../../net/starfall/starClaims.js';   // STAR7: and its stars-held row
 
 /** RENOWN-CHAR (Mac: "Can we make renown per character again"): the card's Renown tracks as the service sends them -
  *  its characters', the most recently played first - or none: none earned yet, or a service from RENOWN-ACCOUNT's day
@@ -641,6 +642,10 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
       // (net/superDungeon/sdClaims.js carries the receipts). A service from before it says nothing.
       const hours = sdRecordText(flow.account.sds);
       if (hours) row(t('account.card.hours', 'Hours broken'), hours);
+      // STAR7: the fallen stars this account held - each a master's fall the relay signed and this service counted once
+      // (net/starfall/starClaims.js carries the receipts). A service from before it says nothing.
+      const stars = starRecordText(flow.account.stars);
+      if (stars) row(t('account.card.stars', 'Stars held'), stars);
       // MARKS1: the account's Marks - the server's currency, struck for acts a server witnessed (PROF0 10.5). Null where
       // Marks are not this account's (a guest, the service's switch), and a service from before it says nothing.
       if (Number.isSafeInteger(flow.account.marks)) row(t('account.card.silver', 'Silver'), marksText(flow.account.marks));

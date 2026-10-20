@@ -164,16 +164,31 @@ pseudo-archives registered in `world/eliteGates/pseudoArchives.js`): no ARENA2 p
   says where.
 - **The fall** (8 s): the star tears loose and comes down at a slant, a white head and a violet trail kilometres long,
   lighting the land under it. It lands with a flash seen across the region, a ring of shock running out over the
-  ground, a burst of embers and a thunderclap that reaches each player its distance late (`systems/distantStorms.js`
-  thunderOf). The ground shakes under a player within 300 m.
+  ground and a thunderclap that reaches each player its distance late (`systems/distantStorms.js` thunderOf). The ground
+  shakes under a player within 300 m.
 - **The crater** (`world/starfall/starModel.js`): a scorched bowl 14 m across, conformed to the land, its cracks
   glowing faintly; a rim of thrown earth and stone; no grass grows in it.
 - **The Fallen Star**: a jagged stone of pale glass, half buried, two and a half metres of it standing out of the
   crater's heart, lit from inside. Black thread is wound about it and runs up into the dark.
 - **The beacon**: a column of the star's light, rising hundreds of metres, seen across the region (the gate beacon's
-  law: never fogged out). It dims with the star's light.
+  column). It rises over three seconds after the landing and dims with the star's light as the cell says it, to three
+  tenths of its strength at none (`STAR_BEACON_DIM`): a star failing is seen from across the region.
 - **Held**: the thread burns away, the stone turns gold-white, the beacon goes gold and thins over a minute.
 - **Lost**: the stone goes dark, the beacon goes out, and the thread stays.
+
+**As built (STAR4).** The art is six records under `STAR_ARCHIVE` (38301): the burned floor (its cracks lit violet), the
+thrown rim, the glass, the thread, the glass held gold and the glass lost dark (`world/starfall/starArt.js`). The crater
+never cuts the land's triangles (every client's pixel is the same mesh): its floor is laid ON the land, each point on
+the highest ground within half a metre of it (the rite's sigil's drape) and a hand over it, with the rim's earth raised
+round it to a crest at 7 m and falling away to 9.6 m, nine stones thrown onto the rim, six glass shards (the heart's
+upright, two and a half metres out of the earth and sunk most of a metre into it, the rest leaning out from it) and three
+strands of thread that wind up the stone and run 90 m straight up (`world/starfall/starModel.js`). Every shape is the star's
+own roll, so every screen builds the same crater. The host builds it for a player within `STAR_BUILD_M` (1500 m), puts
+the stone in the collider, keeps the grass off the crater and its rim (`STAR_BARE_R`) and builds it again when the
+ground under it is built finer (`scenes/starfall/starfallHost.js`). The sky is one foreign pass after the Hollow's omen
+(`render/starfall/starfallPass.js`): the omen's glow, the streak's head and trail, the landing's flash and ring, and the
+beacon, each drawn scaled about the eye to `STAR_SKY_R` (4200 m) so the far plane (6000 m) never cuts a star that burns
+9 km up. The sounds are DAGGER.SND's own records, pitched (`systems/starfall/starSounds.js`).
 
 ## 4. The defense - waves, the light, the master
 
@@ -193,7 +208,7 @@ to hurt (`ENEMY_BASICS` minMetalToHit), so a band never stands a foe its players
 | wave | band 1 (to 8) | band 2 (9 to 15) | band 3 (16 and up) |
 |---|---|---|---|
 | 1 - the coven's hands | the coven's members: Mage, Sorcerer, Battlemage, Nightblade | the same | the same |
-| 2 - what they called | Imps, Giant Spiders, Spriggans, Giant Bats | Giant Spiders, Skeletal Warriors, Zombies, Spriggans | Skeletal Warriors, Wraiths, Iron and Flesh Atronachs |
+| 2 - what they called | Giant Spiders, Spriggans, Giant Bats | Giant Spiders, Skeletal Warriors, Zombies, Spriggans | Skeletal Warriors, Wraiths, Iron and Flesh Atronachs |
 | 3 - what they made | Giant Spiders, Spriggans and members | Fire and Ice Atronachs, Skeletal Warriors and members | Fire and Ice Atronachs, Daedroths and members |
 | 4 - Mephala's own | Nightblades and Giant Spiders | Nightblades, Assassins and Giant Spiders | Daedra Seducers, Assassins, Fire and Frost Daedra |
 
@@ -207,7 +222,7 @@ coven draws breath for `STAR_BREATH_MS` (12 s) and the star's light steadies (`S
 
 **The light.** A star has `STAR_LIGHT` (100). The coven's summoned that fight hand to hand go for the STAR, not the
 defenders: the star stands in the target machine as a body of its own (the townsperson's law,
-`systems/livingWorld/quarry.js` - `systems/starfall/starWard.js`), hunted by its own coven's melee foes alone
+`systems/livingWorld/quarry.js` - the Starfall host's own body for it, `scenes/starfall/starfallHost.js`), hunted by its own coven's melee foes alone
 (`characters/enemy/enemyTargets.js` huntsStar), and each of their blows that lands on it drinks `STAR_BLOW_LIGHT` (1).
 A foe struck by a defender turns on them, as any foe does. The witches themselves - casters and archers - fight the
 defenders. So the defense reads: cut down what walks to the star, and stand off the witches' spells. At 0 the star goes
@@ -230,6 +245,17 @@ peer's through the owner - meets it.
 
 The master's fall HOLDS the star. The relay believes it no sooner than `STAR_MASTER_MIN_MS` (45 s) after the master
 stood. A star whose deadline passes unheld is LOST: "Dawn. The coven pulls the last light home."
+
+**As built (STAR5).** No Imp stands in the first band's second wave: it wants steel (`minMetalToHit` 1), and the first
+band stands nothing past iron. A star's foes stand under THREE sites of one owner - the waves' `px,py:star.<N>.<k>`, the
+master's `.m` and the circle's `.c` (`wodShared.js` starSiteId) - so every screen tells the master and its circle apart
+among the foes it sees, names them, says the circle's calls and its breaking, and draws the master's bar, the owner's
+or not. The owner stands what the ledger says: each wave its size less the kills the cell already heard (a star taken
+over mid-wave stands only what is left of it), stood again after `STAR_RESTAND_MS` (4 s) if none of it could stand; the
+master an elite under `.m` with its circle's ward on it (`f.circleWard`); its circle at its calls. The blows the coven's
+monsters land on the star are counted on the owner's device per character (`STAR_BLOWS_STORE`), so a reloaded owner
+counts on from its own and the relay credits only past its last. A hunter turns on a defender once a defender's blow
+lands on it (`starTurned`); until then it weighs the star `STAR_HUNT_PRIORITY` (40) over anyone beside it.
 
 ## 5. The relay holds the star
 
@@ -286,11 +312,33 @@ character three quests' Renown (the raid's `renownRaidXp` measure, for a fight a
 registers. On `recorded` the client notes the act `star-held` (the questline's witness, section 7).
 
 **On the device**, rolled from the receipt's seed (`systems/starfall/starSpoils.js`, the spoils pool under keys of its
-own): gold (60 a level, a fifth either way); one to three pieces of **Starglass** (a reagent of the port's own, item
+own): gold (60 a level, a fifth either way); one to three pieces of **Starglass** (a trade good of the port's own, item
 template 576 - pale glass that still holds some of the star's light; it sells well); one piece Magic or better, known;
 and a quarter of the time a piece of **the Starspun Weave** - the Starfall's own Aetheric set (Mephala's, `sigilSets.js`
 `starspun`, its powers through SET2's seams, `11-Multiplayer/Sigil-Sets.md` 6f). The Heart-Star doubles the gold and
 the Starglass, and always gives a Starspun piece.
+
+**As built (STAR7).** The service (`server-account/src/stars.js`, migration 0140, acct165) counts a (night, star,
+account) once in `stars_held`, at most 9 on the UTC day the star FELL (a receipt claimed a day late counts on its own
+day), pays the Renown on the raid's measure charged to its hour, and strikes 30 silver (`net/marksLaw.js` MARKS `star`,
+`MARKS_COMBAT`'s kinds) under the day's combat cap; a guest's claim writes the spoils row alone (`star_spoils`, keyed by
+the device's claim id). The device carries the receipts (`net/starfall/starClaims.js` - the serpent's carrier, its own
+keys) and the Starfall host's rewards (`scenes/starfall/starRewards.js`) roll the spoils when the service says the claim
+is theirs (`systems/starfall/starSpoils.js` - the raid's thanks' measure: the source a treasure pile's, halfway up the
+ladder; the set piece LAST, the ladder's last pass and the technique pass after it), give them into the pack through the
+world's one door under the star's own pool keys (`star7.spoils`), keep the crash's record until a save holds them (its
+stand-up door and the realm save's hooks), adopt the Renown for the character that held the star alone, and say the
+silver's lines and cards (`Star held`). **Starglass** is template 576 (`systems/starfall/starglassRow.js`, the leaf the
+item law reads headless as it reads the Weir Key's - the account service loads none of the game; `starglass.js` its name
+and picture): miscellany, 0.1 kg, 400 gold, stacked, traded freely, its own painted sliver under pseudo-archive 38302
+(`world/starfall/starglassArt.js`). **The Starspun Weave** is nine Elven pieces at the Legendary band's floor (the raiding
+parties' measure - a star is held three times an hour): a cowl, both pauldrons, a cuirass, the hands, greaves, boots, a
+buckler and the Spindle-Blade, a one-handed shortsword - no poison resistance on a piece (Spinner's Thread carries it).
+Its tiers: **Spinner's Thread** (2), poison resistance and Agility; **Bound in Silk** (4), every 4th weapon hit that lands
+on the same foe deals 60 to 140% more, the count each foe's own and falling away 8 s after the last hit; **Mephala's
+Veil** (6), a foe's blow that takes the wearer under 30% health hides them - Chameleon for two to four rounds - recovering
+in 240 to 120 s (never one of the Spire's death saves: it saves no life). The cards say *Stars held* (`enhancedAccount.js`,
+`profileWindow.js`).
 
 ## 7. The questline - The Thirteenth of Frostfall
 
@@ -329,7 +377,7 @@ STAR6's words test holds every line.
 | its circle | at the star | *The Coven Mother calls her circle. Break it!* |
 | the circle broken | at the star | *Her circle is broken.* |
 | held | at the star | *The star is held. Its thread burns away.* |
-| held | everyone online | *The star near Gothway Garden is held, by Ann, Bran and 2 others.* |
+| held | everyone online | *The star near Gothway Garden is held by Ann, Bran and 2 others.* |
 | lost | at the star | *The coven has taken the star.* |
 | dawn | at the star | *Dawn. The coven pulls the last light home.* |
 | spoils | the claimant | *Starglass from the fallen star is in your pack.* |
@@ -338,9 +386,21 @@ STAR6's words test holds every line.
 role, and in every skin, as the gate's bar is - a fight is read whatever skin is worn): within `STAR_HUD_M` (400 m) of a
 star - *Fallen Star*, its town, its coven, *Wave 2 of 4* or *The master* or *Held* or *Lost*, the light as a bar, and
 the time to its deadline. **The master's bar** is the gate's (`ui/gate/gateBossBar.js`, theme `star`): the master's
-name, *Master of the Fallen Star* (the Heart-Star's: *Heart of the Web*), its health, and *Her circle - 2 stand* while
+name, *Master of the Fallen Star* (the Heart-Star's: *Heart of the Web*), its health, and *2 of her circle stand* while
 the ward holds. **The map** marks each star of the night with a card; **the compass** points to the nearest within the
 region; **the timers** row says the night's coven and the next fall.
+
+**As built (STAR6).** Every line goes through the text core (`systems/starfall/starWords.js`, `t('starfall.*')`, its
+names as arguments), held to WB13b's style by a law over all of them (`test/systems/starfall/star6_words.test.js`). The
+Timers window shows each fallen star still undecided counting down to its deadline (*Fallen Star*, *Near Gothway
+Garden*, *The coven takes it when this runs out*) and the next to fall counting down to its landing (*A star falls* - the
+Heart-Star's own words - its town from its omen on, as the region hears it, and *The Daggerfall Witches are at their
+rite*), the next night's first once this night's last is down (`systems/starfall/starfallClient.js` starTimerRows). The
+held map's cards ride the raids' reader and a violet four-pointed star of its own (`ui/ink/inkMap.js` paintStarMark).
+**The compass's door, fixed at its root**: the world host had handed `drawHud` the sea serpent's and a found Hollow's
+compass marks since SERPENT1 and SD2c, and `drawHud` dropped both - neither ever showed on the enhanced strip. It
+forwards them now, and the star's beside them (`ui/hud/hud.js`). The star's colours are one leaf
+(`ui/starfall/starMapMark.js`), so the Timers sheet imports nothing that imports it.
 
 **The sound** (`systems/starfall/starSounds.js`, DAGGER.SND's own records, pitched - no new clip): the omen's rising
 whine, the fall's roar, the impact's thunder at its distance, the star's hum near it, a blow on the star, the thread
@@ -383,9 +443,17 @@ not know whether the live event is staged; the dated window bounds what it pays.
 and `scenes/dungeonContext.js` (underground) are named and carry none of it, by design (pinned by source, the
 serpent's law).
 
-**THE HOSTS DO NOT GROW.** `bootWorld` stood at its ceiling with no room (`test/scenes/hostceiling.test.js`). STAR0 moves
-the serpent's world block out first (`scenes/serpentWorld.js`, `tools/hostMove.mjs`) and lowers the ceiling by what it
-moved; the Starfall's wiring then spends less than that.
+**THE HOSTS DO NOT GROW.** `bootWorld` stood at its ceiling with no room (`test/scenes/hostceiling.test.js`). STAR0 moved
+the exterior town map's door out first (`scenes/exteriorAutomapToggle.js`, by `tools/hostMove.mjs` - `01-Overview/Host-Split.md`,
+STAR0's move): 67 logical lines freed (36,183 -> 36,116), the ceiling kept; the Starfall's wiring spends less than that.
+
+**As built (STAR4-STAR7).** The Starfall's host reads the world's bindings by name (`createStarfallHost({ renderer,
+state, exteriorFoes, ... })` - its settled ones by value, every live one through a getter), so its wiring in `bootWorld`
+is the adapter and one hook at each door: the frame, the lights, the draw, the sky, the flash, the senses' candidates,
+the compass, the held map, the Timers, the grass, the hub's event and the cell's words. The rewards (`starRewards.js`)
+are made by the host on the same adapter; `bootWorld` keeps three hooks for them (the crash's door at a stand-up and the
+realm save's two), and the spoils' one lock moved out of it to `scenes/spoilsPool.js` (`spoilsLock`). `bootWorld` stands at
+36,170 of its 36,183.
 
 ## 12. The merge seam with the Halloween event
 
@@ -399,7 +467,8 @@ tested before the merge. When the Halloween pull request is taken over, its word
 
 Relay first (it signs), then the account service (its migration first), then the client. The relay's version moves for
 the frame, the live-event word, the receipt and the hub's door; the account service's for the claim and the questline's
-witness; the item law's for Starglass.
+witness. The item law's version does not move: Starglass and the Starspun Weave are new records, never minted before
+this, so no finding a law made could be a finding to ask again (its leaf is read beside the registry from the first).
 
 ## 14. The slices
 

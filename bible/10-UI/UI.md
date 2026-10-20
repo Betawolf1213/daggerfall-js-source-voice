@@ -53,7 +53,8 @@ ESCORTING FACES - the quest escorts' portrait column, FE1 - and the CREDITS TABL
 - and PRIVATE-REPORT's REPORT FORM AND INBOX (`enhanced/enhancedReport.js`: a player's private report of an exploit, a bug or a security hole, written in the mailbox's window, their own reports under it, and the readers' inbox; `06-Systems/Private-Reports.md`)
 - and EG-PLUS' BREACH WINDOWS (`eliteGates/egKit.js`: the chrome the Elite Breach's panel, boards and start window wear in the stone-and-brass kit, and the kit's cut for the classic skin; `eliteGates/egStartPanel.js`: the start window on Enhanced Plus - where to start, the party's readiness, the Wager, the Rehearsal; `11-Multiplayer/Elite-Gates.md` section 31, EG-PLUS)
 - and QUESTLINES' JOURNAL PARTS (`questlines/qlJournal.js`: a stamped quest's objectives, its choices and how it ended, the rewards waiting and their Take, a questline's page and a guild's ladder - the Quests tab's and the chronicle's one home; `06-Systems/Questlines-Arc.md` section 6)
-393 modules
+- and STARFALL's FACES (`starfall/starTracker.js`: a fallen star's plate - its name, its town, its coven, how it stands, its light and its deadline, made once and written only where it changed, in every skin; `starfall/starBar.js`: the master's bar on the gate's, its circle's two calls and its ward; `starfall/starMapMark.js`: the star's violet and its held gold, the one leaf every face reads; `11-Multiplayer/Starfall.md` section 8)
+396 modules
 live under `src/ui/`. Items still routed here are
 collected in `01-Overview/Port-Ledger.md` section C; scope in
 `01-Overview/Port-Doctrine.md` phase plan.

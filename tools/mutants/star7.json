@@ -106,5 +106,365 @@
   "tests": [
    "test/net/starfall/star7_service.test.js"
   ]
+ },
+ {
+  "name": "STAR7-silk-number",
+  "file": "src/systems/sigil/sigilSets.js",
+  "old": "tier(4, 'bound-in-silk', 'Bound in Silk', { more: [60, 140] },",
+  "new": "tier(4, 'bound-in-silk', 'Bound in Silk', { more: [50, 140] },",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-strand-hits",
+  "file": "src/systems/sigil/sigilSets.js",
+  "old": "export const STRAND_HITS = 4;",
+  "new": "export const STRAND_HITS = 3;",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-veil-line",
+  "file": "src/systems/sigil/sigilSets.js",
+  "old": "export const VEIL_BELOW = 0.3;",
+  "new": "export const VEIL_BELOW = 0.35;",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-the-make",
+  "file": "src/systems/aetheric.js",
+  "old": "const spun = raidRec('starspun', 'Elven');",
+  "new": "const spun = raidRec('starspun', 'Mithril');",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-a-poison-piece",
+  "file": "src/systems/aetheric.js",
+  "old": "spun('left-pauldron', 'Left Pauldron of the Weave', 'Armor', 105, [a('armor'), a('stat', 'endurance'), a('resist', 'shock')],",
+  "new": "spun('left-pauldron', 'Left Pauldron of the Weave', 'Armor', 105, [a('armor'), a('stat', 'endurance'), a('resist', 'poison')],",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-records-unlisted",
+  "file": "src/systems/aetheric.js",
+  "old": "...PANOPLY_SET_PIECES, ...STARSPUN_SET_PIECES]);",
+  "new": "...PANOPLY_SET_PIECES]);",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-the-chance",
+  "file": "src/systems/aetheric.js",
+  "old": "export const STARSPUN_SET_CHANCE = RAID_SET_CHANCE;",
+  "new": "export const STARSPUN_SET_CHANCE = 1 / 3;",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-heart-takes-a-chance",
+  "file": "src/systems/aetheric.js",
+  "old": "if (!always && !(rolls() < STARSPUN_SET_CHANCE)) return null;",
+  "new": "if (!(rolls() < STARSPUN_SET_CHANCE)) return null;",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-thread-frost",
+  "file": "src/systems/sigil/sigilSetPowers.js",
+  "old": "if (thread) { add(m().resist, 'poison', thread.poison);",
+  "new": "if (thread) { add(m().resist, 'frost', thread.poison);",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-silk-late",
+  "file": "src/systems/sigil/sigilSetPowers.js",
+  "old": "strandsAt(target, now) >= STRAND_HITS - 1) pct += silk.more;",
+  "new": "strandsAt(target, now) >= STRAND_HITS) pct += silk.more;",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-silk-never-cut",
+  "file": "src/systems/sigil/sigilSetPowers.js",
+  "old": "  if (n >= STRAND_HITS) _s.strands.delete(target);\n  else _s.strands.set(target, { n, until: now + STRAND_SECONDS });",
+  "new": "  _s.strands.set(target, { n, until: now + STRAND_SECONDS });",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-silk-forever",
+  "file": "src/systems/sigil/sigilSetPowers.js",
+  "old": "else _s.strands.set(target, { n, until: now + STRAND_SECONDS });",
+  "new": "else _s.strands.set(target, { n, until: Infinity });",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-one-count-moved",
+  "file": "src/systems/sigil/sigilSetPowers.js",
+  "old": "const now = _now(), n = strandsAt(target, now) + 1;",
+  "new": "const now = _now(), n = strandsAt(_s.strandFoe === target ? target : null, now) + 1;",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-death-kept",
+  "file": "src/systems/sigil/sigilSetPowers.js",
+  "old": "  if (entity) _s.strands.delete(entity);   // STAR7: and its strands\n",
+  "new": "",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-veil-at-four",
+  "file": "src/systems/sigil/sigilSetPowers.js",
+  "old": "  const v = tierOf(entity, 'starspun', 2);",
+  "new": "  const v = tierOf(entity, 'starspun', 1);",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-veil-unrecovered",
+  "file": "src/systems/sigil/sigilSetPowers.js",
+  "old": "  _s.veilReady = now + v.recover;",
+  "new": "  _s.veilReady = now;",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-veil-unheard",
+  "file": "src/systems/sigil/sigilSetPowers.js",
+  "old": "  veil(entity, before, after, saved);   // STAR7: Mephala's Veil - Shed Skin's crossing, at its own line\n",
+  "new": "",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-veil-on-a-kill",
+  "file": "src/systems/sigil/sigilSetPowers.js",
+  "old": "  if (!v || !(max > 0) || !(after > 0) || saved) return;\n  const line = max * VEIL_BELOW;",
+  "new": "  if (!v || !(max > 0) || saved) return;\n  const line = max * VEIL_BELOW;",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-glass-unstacked",
+  "file": "src/systems/starfall/starglassRow.js",
+  "old": "basePrice: 400, rarity: 20, stackable: true,",
+  "new": "basePrice: 400, rarity: 20, stackable: false,",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-the-law-unread",
+  "file": "src/systems/item/itemLaw.js",
+  "old": "...DEEP_WATERS_FISH_TEMPLATES, WEIR_KEY_LAW_ROW, STARGLASS_LAW_ROW]).map",
+  "new": "...DEEP_WATERS_FISH_TEMPLATES, WEIR_KEY_LAW_ROW]).map",
+  "tests": [
+   "test/server/star7_law.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-ground-unclear",
+  "file": "src/world/starfall/starglassArt.js",
+  "old": "  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (!starglassTexel(x, y) && !outline.has(y * w + x)) { const i = (y * w + x) * 4; img.colors[i] = 0; img.colors[i + 1] = 0; img.colors[i + 2] = 0; }\n",
+  "new": "",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-art-twice",
+  "file": "src/world/starfall/starglassArt.js",
+  "old": "  if (_registered || typeof addVendorTextures !== 'function') return 0;",
+  "new": "  if (typeof addVendorTextures !== 'function') return 0;",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-gold-per-level",
+  "file": "src/systems/starfall/starSpoils.js",
+  "old": "export const STAR_SPOILS_GOLD_PER_LEVEL = 60;",
+  "new": "export const STAR_SPOILS_GOLD_PER_LEVEL = 80;",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-glass-one",
+  "file": "src/systems/starfall/starSpoils.js",
+  "old": "starglass((1 + Math.min(STARGLASS_MAX - 1, Math.floor(rolls() * STARGLASS_MAX))) * twice)",
+  "new": "starglass((1 + Math.min(STARGLASS_MAX - 1, Math.floor(rolls() * 1))) * twice)",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-heart-plain",
+  "file": "src/systems/starfall/starSpoils.js",
+  "old": "const twice = heartStar(n, k) ? 2 : 1;",
+  "new": "const twice = 1;",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-heart-no-set",
+  "file": "src/systems/starfall/starSpoils.js",
+  "old": "const set = rollStarspunPiece(rolls, twice === 2);",
+  "new": "const set = rollStarspunPiece(rolls);",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-list-order",
+  "file": "src/systems/starfall/starSpoils.js",
+  "old": "{ kind: 'item', item: s.starglass, tier: 'common' }, { kind: 'gold', gold: s.gold, tier: 'common' }];",
+  "new": "{ kind: 'gold', gold: s.gold, tier: 'common' }, { kind: 'item', item: s.starglass, tier: 'common' }];",
+  "tests": [
+   "test/systems/starfall/star7_rewards.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-no-act",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "          noteAct('star-held');",
+  "new": "          void 0;",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-settled-forgotten",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "settled.add(e.r); markSettled(live(e.r)); keep(",
+  "new": "keep(",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-any-account",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "if (!mine || live(e.r)?.s !== mine) continue;   // another account's waits for its own sign-in",
+  "new": "if (!mine) continue;   // another account's waits for its own sign-in",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-guest-said-again",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "answer.data?.why === 'guest' && !guestSaid.has(e.r)) {",
+  "new": "answer.data?.why === 'guest') {",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-spoils-ungated",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "const given = answer?.ok && answer.data?.spoils === true ? await granted(onSpoils, e, answer.data) : true;",
+  "new": "const given = answer?.ok ? await granted(onSpoils, e, answer.data) : true;",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-spoils-unawaited",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "if (given && starClaimVerdict(answer) === 'done')",
+  "new": "if (starClaimVerdict(answer) === 'done')",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-expiry-ignored",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "return c && c.signed && (now == null || c.e > now) ? c : null; };",
+  "new": "return c && c.signed ? c : null; };",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-renown-anyone",
+  "file": "src/scenes/starfall/starRewards.js",
+  "old": "    if (data?.renown?.character !== who()) return;\n",
+  "new": "",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-recovery-keyless",
+  "file": "src/scenes/starfall/starRewards.js",
+  "old": "onHanded: (rec) => spoils.adopt(rec), key: STAR_SPOILS_KEYS.store, inSave })",
+  "new": "onHanded: (rec) => spoils.adopt(rec), key: STAR_SPOILS_KEYS.day, inSave })",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-silver-gate-kind",
+  "file": "src/scenes/starfall/starRewards.js",
+  "old": "return host.marksBook?.claimLines?.(data, 'star') ?? null;",
+  "new": "return host.marksBook?.claimLines?.(data, 'raid') ?? null;",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-profile-field",
+  "file": "src/ui/profileWindow.js",
+  "old": "const n = record && typeof record === 'object' ? record.stars?.held : null;",
+  "new": "const n = record && typeof record === 'object' ? record.stars?.count : null;",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-record-zero",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "return rec.held > 0 ? String(rec.held) : t('starfall.claim.noneYet', 'None yet');",
+  "new": "return String(rec.held);",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-capped-unnamed",
+  "file": "src/net/marksBook.js",
+  "old": "kind === 'star' ? MARKS_TEXT.cappedStar() : ",
+  "new": "",
+  "tests": [
+   "test/net/silverways_client.test.js"
+  ]
  }
 ]

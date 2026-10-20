@@ -376,5 +376,23 @@
   "tests": [
    "test/systems/starfall/star5_defense.test.js"
   ]
+ },
+ {
+  "name": "STAR4-beacon-undimmed",
+  "file": "src/scenes/starfall/starfallHost.js",
+  "old": "L.lost ? 0 : Math.min(1, since / 3000) * dim;",
+  "new": "L.lost ? 0 : Math.min(1, since / 3000);",
+  "tests": [
+   "test/scenes/starfall/star5_host.test.js"
+  ]
+ },
+ {
+  "name": "STAR4-lost-beacon-lit",
+  "file": "src/scenes/starfall/starfallHost.js",
+  "old": "L.lost ? 0 : Math.min(1, since / 3000) * dim;",
+  "new": "Math.min(1, since / 3000) * dim;",
+  "tests": [
+   "test/scenes/starfall/star5_host.test.js"
+  ]
  }
 ]

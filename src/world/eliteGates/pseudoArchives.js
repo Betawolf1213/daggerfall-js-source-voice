@@ -87,6 +87,7 @@ export const PSEUDO_ARCHIVES = Object.freeze([
   N(EG_BAND_ARCHIVES[3], 'world/eliteGates/pseudoArchives.js', 'EG_BAND_ARCHIVES', 'port', "the Spire's Havoc Wellhead", EG_BAND_ARCHIVES[3] + EG_BAND_BLOCK - 1),
   N(EG_ARCH_ARCHIVES.from, 'world/eliteGates/pseudoArchives.js', 'EG_ARCH_ARCHIVES', 'port', "the Spire's arch (held), the Weir Key (38282, painted - world/eliteGates/egKeyArt.js) and the beacon (held)", EG_ARCH_ARCHIVES.to),
   N(38301, 'world/starfall/starArt.js', 'STAR_ARCHIVE', 'port', 'the fallen star - its crater, its stone and its thread (STAR4)'),
+  N(38302, 'world/starfall/starglassArt.js', 'STARGLASS_ARCHIVE', 'port', 'Starglass, the glass a held star leaves (STAR7)'),
   N(38990, 'tools/abyssLab.js', 'LAB_ARCHIVE', 'port', "the abyss lab's walls and floor"),
   N(56790, 'world/townStandIns.js', 'TOWN_CLUTTER_ARCHIVE', 'data', "the towns' clutter Daggerfall's blocks name"),
   N(112358, 'systems/handheldTorches.js', 'DROPPED_ARCHIVE', 'mod', 'Handheld Torches: a dropped torch'),

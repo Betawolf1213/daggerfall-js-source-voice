@@ -326,6 +326,42 @@ test('STAR5 THE CAMP\'S RACE: a peer who sprang the coven first holds it - this 
   Date.now = realNow;
 });
 
+test('STAR4 THE SKY: the omen burns over its site, the streak comes down, the landing flashes and its ring runs out; the beacon rises over the star and dims with its light as the cell says it, goes gold when it is held and out when it is lost (mutants: the dimming, the held gold, the lost dark)', () => {
+  const w = world();
+  clockOf(w);
+  const T = starTimes(N, 0), eye = [0, 2, 0];
+  w.at(0, 5);
+  w.t = T.omenAt + 1000; w.frame();
+  let sky = w.host.skyLists(eye);
+  assert.deepEqual([sky.glows.length, sky.trails.length, sky.beacons.length], [1, 0, 0], 'the omen: a glow');
+  w.t = T.streakAt + 1000; w.frame();
+  sky = w.host.skyLists(eye);
+  assert.deepEqual([sky.glows.length, sky.trails.length], [1, 1], 'the streak: its head and its trail');
+  w.t = T.fallAt + 500; w.frame();
+  sky = w.host.skyLists(eye);
+  assert.ok(sky.rings.length === 1 && sky.glows.length === 1, 'the landing\'s flash and its ring');
+  w.t = T.fallAt + 5000; w.frame();
+  const full = w.host.skyLists(eye).beacons[0];
+  assert.deepEqual([full.fade, full.held], [1, false], 'the beacon at full strength');
+  w.st(0, { p: P_WAVE, lt: 50 });
+  const half = w.host.skyLists(eye).beacons[0].fade;
+  w.st(0, { p: P_WAVE, lt: 0 });
+  const none = w.host.skyLists(eye).beacons[0].fade;
+  assert.ok(half < 1 && none < half && none > 0, `it dims with the light (${half}, ${none})`);
+  w.st(0, { p: P_HELD, lt: 40, hd: w.t });
+  const held = w.host.skyLists(eye).beacons[0];
+  assert.deepEqual([held.held, held.fade > 0.9], [true, true], 'held: gold, full');
+  w.t += 30_000;
+  assert.ok(w.host.skyLists(eye).beacons[0].fade < 0.6, 'and thinning');
+  const l = world();
+  clockOf(l);
+  l.at(1, 5); l.t = starTimes(N, 1).fallAt + 5000; l.frame();
+  const standing = l.host.skyLists(eye).beacons.length;   // the night's first star stands beside it
+  l.st(1, { p: P_LOST, lt: 0, why: STAR_LOST_DARK, lo: l.t });
+  assert.equal(l.host.skyLists(eye).beacons.length, standing - 1, 'lost: its beacon out');
+  Date.now = realNow;
+});
+
 test('STAR6 THE READINGS: the Timers\' rows (the standing star and the next fall), the map\'s cards, the compass\'s nearest star in the region, the grass\'s clearing, the star\'s sites; all let go on destroyAll (mutants: the region guard, the clearing)', () => {
   const w = world();
   clockOf(w);

@@ -300,9 +300,38 @@ export const PANOPLY_SET_PIECES = Object.freeze([
   mithril('saber', 'The Spire-Saber', 'Weapons', 119, [t('damage'), t('stat', 'intelligence'), t('skill', SKILLS.LongBlade)],
     'Every Battlemage carried one into the Spire in 3E 398. Few carried one out.'),
 ]);
+// ── STAR7: THE STARSPUN WEAVE ───────────────────────────────────────
+/** STAR7 (2026-10-20, bible/11-Multiplayer/Starfall.md section 6): the Witches' Festival's own - the thread Mephala's covens
+ *  wind about a fallen star, cut from the stars they lost and laid over pale plate - nine in the places' order (the seven
+ *  body pieces, a buckler and a ONE-HANDED Shortsword, so all nine are worn at once), Elven, light as the thread is. A
+ *  star is held three times an hour while the festival runs, so its numbers are the raiding parties' measure: every affix
+ *  at the Legendary band's floor, the blow the band's floor too. One resistance of an element at most, and never poison
+ *  (Spinner's Thread, the 2-piece tier, carries it): no two pieces stack an element toward the saving throw's immunity
+ *  (the Regalia's AUDIT FINAL lesson). */
+const spun = raidRec('starspun', 'Elven');
+export const STARSPUN_SET_PIECES = Object.freeze([
+  spun('cowl', 'The Starspun Cowl', 'Armor', 107, [a('armor'), a('stat', 'personality'), a('skill', SKILLS.Illusion)],
+    'The coven wound this thread about a fallen star. It still gives off a little of its light.'),
+  spun('right-pauldron', 'Right Pauldron of the Weave', 'Armor', 106, [a('armor'), a('stat', 'strength'), a('skill', SKILLS.ShortBlade)],
+    'Black thread laid over pale plate, eight strands to every knot.'),
+  spun('left-pauldron', 'Left Pauldron of the Weave', 'Armor', 105, [a('armor'), a('stat', 'endurance'), a('resist', 'shock')],
+    'The knots keep a count. No witch will tell you what it counts.'),
+  spun('cuirass', 'The Starspun Cuirass', 'Armor', 102, [a('armor'), a('stat', 'agility'), a('stat', 'endurance')],
+    'Over the heart the thread is bound with a shard of the star itself.'),
+  spun('hands', "The Spinner's Hands", 'Armor', 103, [a('armor'), a('stat', 'agility'), a('skill', SKILLS.Backstabbing)],
+    'Fine enough to feel one strand move at the far end of a web.'),
+  spun('greaves', 'Greaves of the Silent Strand', 'Armor', 104, [a('armor'), a('stat', 'speed'), a('skill', SKILLS.Stealth)],
+    'They make no sound at all, even on stone.'),
+  spun('boots', 'Boots of the Long Fall', 'Armor', 108, [a('armor'), a('stat', 'speed'), a('skill', SKILLS.Jumping)],
+    'The star came down from higher than anything should fall. The thread held.'),
+  spun('buckler', 'The Web-Buckler', 'Armor', 109, [a('armor'), a('stat', 'willpower'), a('resist', 'magic')],
+    'Strung across like a web. A blade that catches in it is slow to come free.'),
+  spun('blade', 'The Spindle-Blade', 'Weapons', 116, [a('damage'), a('stat', 'agility'), a('skill', SKILLS.ShortBlade)],
+    'Ground from the spindle a coven wound its thread on. It still turns in the hand.'),
+]);
 /** EVERY AETHERIC RECORD - the Regalia, then the raiding parties', then (SERPENT-SET) the Old Coil's, then (SD9d) the
- *  Walking Brass's, then (EG15) the Battlemages' - and the one every reader asks. */
-export const AETHERIC_RECORDS = Object.freeze([...REGALIA, ...RAID_SET_PIECES, ...SERPENT_SET_PIECES, ...NUMIDIUM_SET_PIECES, ...PANOPLY_SET_PIECES]);
+ *  Walking Brass's, then (EG15) the Battlemages', then (STAR7) the Starspun Weave - and the one every reader asks. */
+export const AETHERIC_RECORDS = Object.freeze([...REGALIA, ...RAID_SET_PIECES, ...SERPENT_SET_PIECES, ...NUMIDIUM_SET_PIECES, ...PANOPLY_SET_PIECES, ...STARSPUN_SET_PIECES]);
 export const aethericById = (id) => AETHERIC_RECORDS.find((r) => r.id === id) ?? null;
 registerAethericLore((item) => aethericById(item?.aetheric)?.lore ?? null);   // the card's last line, as a Legendary's
 /** A record's make as the item wears it: its material's id in its group's table. */
@@ -418,6 +447,17 @@ export const NUMIDIUM_SET_CHANCE = 1 / 3;
 export function rollNumidiumPiece(rolls = Math.random) {
   if (!(rolls() < NUMIDIUM_SET_CHANCE)) return null;
   return mintAetheric(NUMIDIUM_SET_PIECES[Math.min(NUMIDIUM_SET_PIECES.length - 1, Math.floor(rolls() * NUMIDIUM_SET_PIECES.length))]);
+}
+
+/** STAR7: the share of a held star's spoils that carries a piece of the Starspun Weave - a town's thanks' own share
+ *  (RAID_SET_CHANCE); the Heart-Star's carry one every time. */
+export const STARSPUN_SET_CHANCE = RAID_SET_CHANCE;
+/** STAR7, THE SPOILS' LAST ROLL (systems/starfall/starSpoils.js, after everything they rolled before - every earlier spoils
+ *  stays what it was for its seed): null most times; else one Starspun piece, the same seed choosing which. `always` (the
+ *  Heart-Star's) takes no chance. One roll when nothing drops, two when a piece does (one with `always`). */
+export function rollStarspunPiece(rolls = Math.random, always = false) {
+  if (!always && !(rolls() < STARSPUN_SET_CHANCE)) return null;
+  return mintAetheric(STARSPUN_SET_PIECES[Math.min(STARSPUN_SET_PIECES.length - 1, Math.floor(rolls() * STARSPUN_SET_PIECES.length))]);
 }
 
 /** EG15, WHICH PANOPLY PIECE (systems/eliteGates/egSpoils.js rollEgSpoils, once its own draw - net/eliteGates/egPay.js egPanoplyHit, or the

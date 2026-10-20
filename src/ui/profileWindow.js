@@ -30,7 +30,7 @@ import { STAT_KEYS_ORDER } from '../systems/chargen.js';
 import { duelRecordText } from '../net/duel/duelRecord.js';   // DUEL1: the duelling record's words, the account card's own
 import { renownText } from '../net/renown.js';   // RENOWN1: Renown, left of the name
 import { guildTagText } from '../net/guild/guildLaw.js';   // GUILD1c: the guild's tag, right of the name
-import { localizedStrings } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
+import { localizedStrings, t } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; STAR7: the stars' line through the core
 import { houseLine } from '../net/houseLaw.js';   // LEGACY7: the house, under the name
 
 export const PROFILE_STYLE_ID = 'dagger-profile-style';
@@ -152,6 +152,12 @@ export function profileSdLine(record) {
   const n = record && typeof record === 'object' ? record.sds?.broken : null;
   return Number.isSafeInteger(n) && n > 0 ? `Hours broken: ${n}` : null;
 }
+/** STAR7: the fallen stars they held - each a master's fall the relay signed and the service counted once - off the same
+ *  record, said only once there is one. */
+export function profileStarLine(record) {
+  const n = record && typeof record === 'object' ? record.stars?.held : null;
+  return Number.isSafeInteger(n) && n > 0 ? t('starfall.card.profile', 'Stars held: {n}', { n }) : null;
+}
 /** AUDIT RENOWN1 UI-3: a view with the peer's Renown as the session knows it NOW - the level rises on a renown frame
  *  while the card stands open, and the card showed the level it was opened with. A level the session does not know
  *  leaves the view's own. */
@@ -194,6 +200,7 @@ export function profileView({ name = null, peer = null, look = null, card = null
     raids: profileRaidLine(record),   // RAID4
     serpents: profileSerpentLine(record),   // AUDIT SERPENT D4
     hours: profileSdLine(record),   // SD9b
+    stars: profileStarLine(record),   // STAR7
   };
 }
 
@@ -314,7 +321,7 @@ export function createProfileWindow({ canOpen = () => true, onOpen = null, onClo
     if (v.line) head.append(el('div', 'dfprofile-line', v.line));
     // PROFILE-UI: their record - the duels (DUEL1), the gates closed (WB5b), the towns defended (RAID4), the serpents slain
     // (AUDIT SERPENT D4) - a row of plaques, each its own words, where four dim lines stood one under another
-    const facts = [['dfprofile-duels', v.duels], ['dfprofile-gates', v.gates], ['dfprofile-raids', v.raids], ['dfprofile-serpents', v.serpents], ['dfprofile-hours', v.hours]].filter(([, t]) => t);
+    const facts = [['dfprofile-duels', v.duels], ['dfprofile-gates', v.gates], ['dfprofile-raids', v.raids], ['dfprofile-serpents', v.serpents], ['dfprofile-hours', v.hours], ['dfprofile-stars', v.stars]].filter(([, t]) => t);   // STAR7: and the fallen stars held
     if (facts.length) {
       const record = el('div', 'dfprofile-facts');
       for (const [cls, t] of facts) record.append(el('div', `dfprofile-fact ${cls}`, t));

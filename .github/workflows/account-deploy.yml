@@ -333,6 +333,7 @@ on:
       - "src/systems/spell/spellPower.js"
       - "src/systems/spellcast.js"
       - "src/systems/spellcost.js"
+      - "src/systems/starfall/starglassRow.js"
       - "src/systems/statMods.js"
       - "src/systems/stolenGoods.js"
       - "src/systems/survival/difficulty.js"

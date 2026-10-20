@@ -107,8 +107,8 @@
   {
     "name": "SUNBABY1-host-hub-word-unheard",
     "file": "src/scenes/world.js",
-    "old": "link.onEvent = (ev, o) => { dread.set(ev, o); sunbaby.set(ev, o); };",
-    "new": "link.onEvent = (ev, o) => { dread.set(ev, o); };",
+    "old": "link.onEvent = (ev, o) => { dread.set(ev, o); sunbaby.set(ev, o); starfall?.setEvent(ev); };",
+    "new": "link.onEvent = (ev, o) => { dread.set(ev, o); starfall?.setEvent(ev); };",
     "tests": ["test/net/sunbaby1_event.test.js"]
   },
   {

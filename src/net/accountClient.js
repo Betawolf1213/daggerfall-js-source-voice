@@ -1750,6 +1750,24 @@ export function accountSerpents({ fetch, storage }) {
   };
 }
 
+/** STAR7: a fallen star's receipt the relay signed for this account, carried to the service with the character that held
+ *  it and this device's claim id (the spoils' key) - `{ recorded, held, renown, spoils, marks, order }`, or
+ *  `{ recorded: false, why, held, spoils }` (`claimed`, `guest`, `day-full`). */
+export const claimStarReceipt = (io, receipt, character, name = null, cid = null) => call(io, '/v1/star/claim', { receipt, character, name, ...(cid ? { cid } : {}) });
+
+/**
+ * STAR7: THE STARS' ONE CALL, bound to this device's stored session (the serpents' own shape). With no session there is no
+ * account to claim for: `{ ok: false, error: 'no-session' }`, never a knock - and net/starfall/starClaims.js keeps the
+ * receipt for when there is one.
+ */
+export function accountStars({ fetch, storage }) {
+  const io = () => { const s = storedSession(storage); return s ? { fetch, base: serviceBase(storage), secret: s.secret } : null; };
+  return {
+    claim: async (receipt, character, name = null, cid = null) => { const i = io(); return i ? claimStarReceipt(i, receipt, character, name, cid) : { ok: false, error: 'no-session' }; },
+    me: () => storedSession(storage)?.id ?? null,
+  };
+}
+
 /** SD9b: a Brass Remnant's receipt the relay signed for this account, carried to the service - `{ recorded, slot, title,
  *  aura, broken }`, or `{ recorded: false, why }` (`claimed`, `guest`). */
 export const claimSdReceipt = (io, receipt) => call(io, '/v1/sd/claim', { receipt });

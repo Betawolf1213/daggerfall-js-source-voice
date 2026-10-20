@@ -26,7 +26,7 @@
 // bible/01-Overview/Host-Split.md - the shape of scenes/fishHost.js). Not a DFU member. Ledger A (STARFALL).
 import {
   starfallRuns, starInWindow, starNightAt, starTimes, starStreakBearing, starCircleSize, STAR_WORD_MS, STAR_ORPHAN_MS,
-  STAR_CIRCLE_AT, STAR_LOW_LIGHT, STAR_GRACE_MS, P_WAVE, P_BREATH, P_MASTER, P_HELD, P_LOST, STAR_LOST_DARK,
+  STAR_CIRCLE_AT, STAR_LOW_LIGHT, STAR_LIGHT, STAR_GRACE_MS, P_WAVE, P_BREATH, P_MASTER, P_HELD, P_LOST, STAR_LOST_DARK,
 } from '../../net/starfall/starfallLaw.js';
 import { worldRoom } from '../../net/wire.js';
 import { findStarSites } from '../../systems/starfall/starfallSites.js';
@@ -49,6 +49,7 @@ import { renownStruckAt } from '../../net/renownTracker.js';
 import { setMidScreenText } from '../../ui/midScreenText.js';
 import { drawGateBossBar } from '../../ui/gate/gateBossBar.js';
 import { drawStarTracker, destroyStarTracker } from '../../ui/starfall/starTracker.js';
+import { createStarRewards } from './starRewards.js';
 import { starBarModel } from '../../ui/starfall/starBar.js';
 import { playerEntity } from '../../characters/playerEntity.js';
 import { audio as defaultAudio } from '../../systems/audio.js';
@@ -64,6 +65,8 @@ export const STAR_GLOW_RANGE = 14;
 export const STAR_GLOW_REACH_M = 90;
 /** The held beacon thins over this long after the hold. */
 export const STAR_HELD_FADE_MS = 60_000;
+/** A standing star's beacon at no light left: this share of its full strength (it never quite goes out before it is lost). */
+export const STAR_BEACON_DIM = 0.3;
 /** A stand that stood nothing is tried again this long after. */
 export const STAR_RESTAND_MS = 4000;
 /** The star's hum is played this often for a player near it. */
@@ -103,8 +106,9 @@ function blowStore(storage) {
  * scan, which the night's stars are found over), `surfaceAt` and `gateGroundAt` (the drawn ground, and the coarse one
  * past it), `player`, `walkMode` and `playerSpawned` (the feet), `online` (the session), the camp law's five
  * (`_wodPeerSprung`, `wodPeerHeldAgo`, `wodForgetPeer`, `wodSprang`, `wodUnsprang`), `chatNotice`, `labGrassField`,
- * `_questRegionIndex`, `gamePaused` and `townTalk` (the HUD's hide), `collider`, `_sharedOffsetMs` - and, for the tests,
- * `audio` and `storage`.
+ * `_questRegionIndex`, `gamePaused` and `townTalk` (the HUD's hide), `collider`, `_sharedOffsetMs`; STAR7's rewards'
+ * (scenes/starfall/starRewards.js): `takeSpoil`, `relayNowS`, `marksBook`, `renownXpAdopt`, `renownAdopt`, `renownRose`,
+ * `renownSaid` - and, for the tests, `audio`, `storage`, `starAccount` and `rewardsStorage`.
  * @param {any} host
  */
 export function createStarfallHost(host) {
@@ -130,7 +134,7 @@ export function createStarfallHost(host) {
   const hudHidden = () => !!host.gamePaused?.() || !!host.townTalk?.hudHidden;
   const two = (v) => String(v).padStart(2, '0');
   const localTime = (ms) => { const d = new Date(ms); return Number.isFinite(ms) ? `${two(d.getHours())}:${two(d.getMinutes())}` : ''; };
-  const onReceipt = (r) => host.starReceipt?.(r);   // STAR7: the claims' book
+  const rewards = createStarRewards(host);   // STAR7: the receipts carried, the spoils given, the Renown adopted
   const storage = host.storage !== undefined ? host.storage : globalThis.localStorage ?? null;
   const audio = host.audio ?? defaultAudio;
   /** The frame's fog, as the gate's pass is handed it. */
@@ -474,7 +478,9 @@ export function createStarfallHost(host) {
       }
       const ring = ringAt(since);
       if (ring.fade > 0 && S.known) sky.rings.push({ at: S.heart, r: ring.r, fade: ring.fade, color: STAR_FALL_COLOR });
-      const fade = L.held ? Math.max(0, 1 - (t - (held.get(S.key)?.at ?? ledgers.get(S.key)?.hd ?? t)) / STAR_HELD_FADE_MS) : L.lost ? 0 : Math.min(1, since / 3000);
+      // the beacon dims with the star's light as the cell says it - a star failing is seen from across the region
+      const lt = ledgers.get(S.key)?.lt, dim = Number.isFinite(lt) ? STAR_BEACON_DIM + (1 - STAR_BEACON_DIM) * Math.max(0, Math.min(1, lt / STAR_LIGHT)) : 1;
+      const fade = L.held ? Math.max(0, 1 - (t - (held.get(S.key)?.at ?? ledgers.get(S.key)?.hd ?? t)) / STAR_HELD_FADE_MS) : L.lost ? 0 : Math.min(1, since / 3000) * dim;
       if (fade > 0) sky.beacons.push({ origin: [S.heart[0], S.heart[1] + STAR_STONE_H, S.heart[2]], fade, held: L.held });
     }
   }
@@ -483,6 +489,7 @@ export function createStarfallHost(host) {
     /** THE FRAME: the night's stars entered, stepped and let go; each one's moments said, its crater built, its defense
      *  run; the tracker and the master's bar drawn. Answers the star this player stands nearest, or null. */
     frame() {
+      try { rewards.tick(); } catch (e) { console.warn('[star] claims', e?.message ?? e); }   // STAR7: what is kept, offered in its time - festival or not
       try { return this.step(); } catch (e) { console.warn('[star] host', e?.message ?? e); return null; }
     },
     /** The frame's work (frame's, inside its catch). */
@@ -551,7 +558,7 @@ export function createStarfallHost(host) {
      */
     onStar(w) {
       if (!w) return;
-      if (w.k === 'rc') { onReceipt(w.r); return; }
+      if (w.k === 'rc') { rewards.receipt(w.r); return; }
       if (w.k === 'hds') { for (const [n, s, px, py, at] of w.l) if (!held.has(starHeldKey(n, s, px, py))) held.set(starHeldKey(n, s, px, py), { top: [], c: 0, at }); return; }
       const key = starHeldKey(w.n, w.s, w.px, w.py);
       if (w.k === 'hd') {
@@ -609,10 +616,15 @@ export function createStarfallHost(host) {
     /** The sky's pass, after the world's: the omens, the falls, the flashes, the rings, the beacons. */
     drawSky(proj, view, eye, seconds, fog = fogOf()) {
       if (!pass || !eye) return 0;
+      return pass.draw(this.skyLists(eye), proj, view, eye, seconds, fog);
+    },
+    /** What the sky's pass is handed for an eye this frame - `{ beacons, glows, trails, rings }`, its lists filled in place
+     *  (drawSky's, and the tests'). */
+    skyLists(eye) {
       const t = now();
       sky.beacons.length = 0; sky.glows.length = 0; sky.trails.length = 0; sky.rings.length = 0;
       for (const S of stars.values()) skyOf(S, t, eye);
-      return pass.draw(sky, proj, view, eye, seconds, fog);
+      return sky;
     },
     /** The map's cards for the night's stars (ui/eventMapMarks.js's shape). */
     mapMarks() { return starfallRuns(now(), liveEvent) ? starMapMarks(nightSites(now()), now(), { held, led: ledgers, localTime }) : NONE; },
@@ -653,6 +665,12 @@ export function createStarfallHost(host) {
       if (barUp) { drawGateBossBar(null); barUp = false; }
       thunders.length = 0;
     },
+    /** STAR7: the spoils' crash door at a character's stand-up, and the realm save's two hooks (scenes/starfall/starRewards.js). */
+    recoverSpoils: (who, inSave = null) => rewards.recover(who, inSave),
+    spoilsHeld: (who) => rewards.held(who),
+    spoilsSaved: (who, ids) => rewards.saved(who, ids),
+    /** STAR7: the rewards, for the tests and the probes. */
+    rewards,
     /** Whether a star of the night is in the sky or standing - the host's cheap test before it asks for more. */
     active: () => stars.size > 0,
   };

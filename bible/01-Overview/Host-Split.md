@@ -546,3 +546,14 @@ of the host's - went to `src/scenes/exteriorAutomapToggle.js` (`createExteriorAu
 STAR5 of its page). Three pin files read the host whole now (`test/hostText.mjs`: `auditdisc28_quests`, `automap_ext`,
 `town_marks`), two of their quotes in the moved spelling (`host.activeQuestIds`, `host.topicTree`,
 `host.townBoardMarks`); eleven mutant records re-aimed by the tool.
+
+## The Starfall's wiring in bootWorld (STAR4-STAR7, 2026-10-20)
+
+STAR0's 67 lines bought the room; the Starfall spends 54 of them (36,116 -> 36,170 of 36,183). Its host
+(`src/scenes/starfall/starfallHost.js`) and its rewards (`starRewards.js`, made by the host) read the world's bindings by
+name - one adapter object, its settled bindings by value and every live one through a getter (TDZ: `chatNotice` is made
+below the construction) - so the host's scope holds the adapter and one hook at each door it uses: the frame, the
+lights, the draw, the sky, the flash, the senses' candidates, the compass, the held map, the Timers, the grass, the
+hub's event, the cell's words, the spoils' crash door and the realm save's two hooks, and one sound in the set powers'
+voice. The spoils' one lock moved OUT of the host to its pool's own home (`src/scenes/spoilsPool.js` `spoilsLock`), so
+every pool's host takes the same one.

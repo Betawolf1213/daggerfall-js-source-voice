@@ -303,6 +303,33 @@ Reprieve, Unbroken, The Hour Turns and Shed Skin are no timers - spent there, ea
 its chip reads *Redoubt*; out of that breach its own timer governs again. The HUD's chip shows the Reprieve's shield (its
 points) while it holds, then its recovery; its sound is a Shield spell's own cast. A Spire lord's blow is a foe's to it (section 8, AUDIT EG V).
 
+## 6f. The Witches' Festival's own set (STAR7, 2026-10-20)
+
+`Starfall.md` section 6: one more Aetheric set, **The Starspun Weave** - the coven's thread, turned on the coven - and its
+patron Mephala, the Webspinner, whose covens wind black thread about a fallen star to draw its light home: the Weave is
+that thread, cut from the stars they lost and laid over pale plate. Nine fixed records of Elven make, light as the thread
+is - the seven body pieces, a buckler and a ONE-HANDED Shortsword, so all nine are worn at once - every affix at the
+Legendary band's FLOOR (armour 12, an attribute 10, a resistance 35, a skill 20, weight 35, damage 20) and the
+Spindle-Blade's blow the band's floor too (7): the raiding parties' measure, since a star is held three times an hour
+while the festival runs. One resistance of an element at most, and never poison - the 2-piece tier carries it. Nothing
+drops it but a held star: its spoils carry a piece a quarter of the time (the raids' own share), the Heart-Star's every
+time, rolled after everything they rolled before (`systems/aetheric.js` `STARSPUN_SET_PIECES`, `STARSPUN_SET_CHANCE`,
+`rollStarspunPiece`; the spoils `systems/starfall/starSpoils.js`). No world drop, shelf or Broker rolls one.
+
+The Starspun Cowl, the Right and Left Pauldrons of the Weave, The Starspun Cuirass, The Spinner's Hands, Greaves of the
+Silent Strand, Boots of the Long Fall, The Web-Buckler (Buckler), The Spindle-Blade (Shortsword).
+
+| pieces | ability | Faint -> Ascendant |
+|---|---|---|
+| 2 | **Spinner's Thread** - poison resistance, Agility | +10 -> +30; +2 -> +6 |
+| 4 | **Bound in Silk** - every 4th weapon blow of yours that LANDS on the same foe is the one the web holds still: that blow deals more, and its landing cuts the count back to none. Every foe holds its own count (Constrict's law), which falls away 8 s after your last blow on it; a foe's death ends its own; a bow's blow counts | +60% -> +140% |
+| 6 | **Mephala's Veil** - a foe's blow that takes you under 30% of your health (from at or over it, still standing - never a killing blow, a saved one, a fall or a spell) hides you in the web: Chameleon on you, Eventide's own spell under the Veil's name, its rounds and one more (AUDIT SET M5); then it must recover. Never one of the Spire's death saves: it hides you, it saves no life | 2 -> 4 rounds (10 -> 20 s); recovers 240 -> 120 s |
+
+Bound in Silk is read where every blow is (the BLOW modifier) and counted where a blow lands (the STRIKE listener) - the
+blow after three strands is the held one, so a blow that never lands spends nothing. The Veil is cast through the door
+Eventide's shadow takes (`systems/playerDoor.js` `castOnPlayer`), and heard as its cast. The HUD's chip shows the Veil's
+recovery.
+
 ## 7. The Sigil Broker - Sigil Stones buy the day's stock (SET7)
 
 A Daedra trader (the game has no Dremora sprite; a Daedra Seducer stands in) is held at each breach's faithful's
@@ -1048,3 +1075,11 @@ account Worker's bundle, so the account deploy's path filter names it (ACC4). At
 one home now (ONE EXPORT): Discipline's return calls `manaMine`, `systems/loot/lootPowers.js` reads it as `gainMana`, and
 `eg15_panoply`'s pins and EG15-return-share were re-aimed and judged dead (`Elite-Gates.md` section 31's note after
 AUDIT EG IV).
+
+### STAR7 - the Witches' Festival's own set (2026-10-20)
+
+**The Starspun Weave** (section 6f): the law's twelfth set (`sigilSets.js` `starspun`, `sigil.js` `SIGIL_SET_IDS` last), its
+nine records (`aetheric.js` `STARSPUN_SET_PIECES`, `AETHERIC_RECORDS` last) and its drop (`rollStarspunPiece`, the Heart-Star's
+`always`), its three powers through the seams (`sigilSetPowers.js`: the FOLD, `stranded` and the BLOW's read, `veil` on the
+HURT listener, the round's "ready again", the chip). Pinned by `test/systems/starfall/star7_rewards.test.js`; the order pins of
+SET1, SERPENT-SET, SD9d and EG15 moved for it. Mutants in `tools/mutants/star7.json`.

@@ -67,6 +67,18 @@
 //                              for point while its window holds (Iron Hide's ward, timed) - and shields the allies near
 //                              me through the host's ALLY-CAST door (setSetPowersAllies), each receiver's own client
 //                              applying it
+//   (the Spire's recovery below)
+//
+// STAR7 (2026-10-20) - THE STARSPUN WEAVE, the Witches' Festival's own (bible/11-Multiplayer/Starfall.md section 6), through
+// the same seams:
+//   Spinner's Thread           the FOLD (poison resistance and Agility)
+//   Bound in Silk              the STRIKE listener lays a strand on the foe my weapon blow LANDED on (each foe its own
+//                              count, Constrict's law); the BLOW reads it - the blow after STRAND_HITS - 1 strands is the
+//                              one the web holds, and the landing of that blow cuts the count back to none
+//   Mephala's Veil             the HURT listener (Shed Skin's crossing, at its own line) casts Chameleon on me through
+//                              the door Eventide's shadow takes (playerDoor castOnPlayer); a timer of its own, never one
+//                              of the Spire's death saves (it hides; it saves no life)
+//
 //   THE SPIRE'S RECOVERY       in an Elite Breach (setSpireRecovery - an `eg:` room) every death save here recovers at the
 //                              next Redoubt taken (spireRedoubtTaken), never on its timer: Unbroken, The Hour Turns,
 //                              Shed Skin and the Reprieve (Elite-Gates.md section 15, "Death saves")
@@ -92,6 +104,7 @@ import { registerAbsorptionChance } from '../absorption.js';
 import { registerMagicRoundHook } from '../worldTick.js';
 import { playerDoor, paidBack } from '../playerDoor.js';   // BAL5: a blow paid back never kills
 import { hudText } from '../notify.js';
+import { t } from '../textManager.js';   // STAR7: the Veil's lines
 import { weaponSkillUsed } from '../../characters/weapons.js';
 import { friendlyProtected } from '../../combat/playerWeapon.js';
 import { careerTolerance, EFFECT_FLAGS } from '../spellcast.js';
@@ -101,6 +114,7 @@ import {
   wornSets, setsAwake, RAMPAGE_SECONDS, RAMPAGE_STACKS, CLEAVE_METRES, WRATH_BELOW, NOVA_METRES, WRATH_SECONDS,
   RIPOSTE_SECONDS, MARK_METRES, MARK_SECONDS, BLOOD_SECONDS, BLOOD_STACKS, COIL_STACKS, COIL_SECONDS, SHED_BELOW,
   ROUND_SECONDS, REPRIEVE_BELOW, REPRIEVE_SECONDS, REPRIEVE_METRES, REPRIEVE_ALLY_SHARE,
+  STRAND_HITS, STRAND_SECONDS, VEIL_BELOW,   // STAR7: the Starspun Weave
 } from './sigilSets.js';
 
 // ── the session's memory, and its voice ────────────────────────────
@@ -121,12 +135,15 @@ const fresh = () => ({
   hourReady: 0, hourHeal: 0,          // SD9d: the Brass of Numidium (6) - its recovery, and the heal its save owes
   armed: -1, lastCost: 0,             // EG15: the Battlemage's Panoply (4) - the element my next blow carries (-1 none), the last spell's cost
   reprieve: 0, reprieveUntil: 0, reprieveReady: 0,   // EG15: the Panoply (6) - the shield's points left, its window, its recovery
+  strands: new WeakMap(),             // STAR7: the Starspun Weave (4) - each foe's own strands, entity -> { n, until }
+  strandFoe: null,                    // the foe my last landed blow laid a strand on - the one the states say
+  veilReady: 0,                       // STAR7: the Starspun Weave (6)
   spireHeld: new Map(),               // EG15: THE SPIRE'S RECOVERY - a death save spent in a breach, `key -> the breach`, held to its next Redoubt
   recovering: new Set(),              // the powers whose "ready again" is still to be said
 });
 let _s = fresh();
 /** The host's voice (scenes/world.js): a line on the HUD, and a sound by the power's name ('unbroken', 'wrath',
- *  'eventide'; RAID4b 'mark', 'ward'; SERPENT-SET 'shed'; EG15 'reprieve'). The line defaults to the HUD's own door; the
+ *  'eventide'; RAID4b 'mark', 'ward'; SERPENT-SET 'shed'; EG15 'reprieve'; STAR7 'veil'). The line defaults to the HUD's own door; the
  *  sound to none. */
 let _say = (line) => { hudText(line); };
 let _sound = null;   // SD9d: and 'gear', 'hour'
@@ -179,6 +196,8 @@ export function setFold(entity) {
   if (brass) { add(m().resist, 'magic', brass.magic); add(m().resist, 'shock', brass.shock); }
   const bearing = t.get('panoply')?.[0];   // EG15: Battlemage's Bearing - every resistance, and the maximum magicka
   if (bearing) { for (const el of RESIST_ELEMENTS) add(m().resist, el, bearing.resist); m().magicka += bearing.magicka; }
+  const thread = t.get('starspun')?.[0];   // STAR7: Spinner's Thread
+  if (thread) { add(m().resist, 'poison', thread.poison); add(m().stats, 'agility', thread.agility); }
   return mods ?? EMPTY_MODS;
 }
 
@@ -200,6 +219,13 @@ export const coilStacksAt = (foe, now = _now()) => {
 /** The foe my last landed blow coiled, while its coil holds, and its stacks (the states' - a card's, the pins'). */
 export const coiledFoe = (now = _now()) => (coilStacksAt(_s.coilFoe, now) ? _s.coilFoe : null);
 export const coilStacks = (now = _now()) => coilStacksAt(_s.coilFoe, now);
+/** STAR7, BOUND IN SILK: a foe's own strands now - none once its window has run out, or over a body (the coil's law). */
+export const strandsAt = (foe, now = _now()) => {
+  const c = foe && !(foe.health <= 0) ? _s.strands.get(foe) : null;
+  return c && now < c.until ? c.n : 0;
+};
+/** The strands on the foe my last landed blow touched (the states' - a chip, the pins'). */
+export const strandCount = (now = _now()) => strandsAt(_s.strandFoe, now);
 const belowHalf = (e) => (healthShare(e) ?? 1) < 0.5;   // FIELD BUGS 2026-10-18f RELAY-SHARE: the one law - a body the relay runs reads its word (Run Them Down there too)
 const ranged = (w) => weaponSkillUsed(w?.templateIndex) === SKILLS.Archery;
 /** @type {WeakMap<object, number>} */
@@ -241,6 +267,8 @@ export function setBlow(weapon, damage, attacker, target, info) {
   if (coil?.[1]) pct += coil[1].stack * coilStacksAt(target, now);   // SERPENT-SET: Constrict, at that foe's own coil (AUDIT 625 P3)
   const disc = t.get('panoply')?.[1];
   if (disc && weapon && _s.armed >= 0) { pct += disc.armed * elementShare(target, _s.armed); if (keep) _s.armed = -1; }   // EG15: Battlemage's Discipline - the next weapon blow alone, whatever its element does to this foe
+  const silk = t.get('starspun')?.[1];
+  if (silk && weapon && strandsAt(target, now) >= STRAND_HITS - 1) pct += silk.more;   // STAR7: Bound in Silk - the blow the web holds (its landing cuts the count: setStrike)
   let out = damage;
   if (pct > 0) {
     const key = weapon ?? attacker;
@@ -259,6 +287,7 @@ export function setBlow(weapon, damage, attacker, target, info) {
 export function setStrike(attacker, target, damage, weapon, info = null) {
   if (!(damage > 0) || !weapon || target?.warded) return;   // AUDIT FB1018f L3-3: a blow its referee turns whole landed nothing - no Discipline's return, no coil, no Cleave off it (setBlow's own AUDIT SETS L4)
   if (info?.blow !== false) coiled(attacker, target);   // TWO-HANDS (AUDIT 2): a stack a blow, from a blow that counts whole (formulas.js `blow`)
+  if (info?.blow !== false) stranded(attacker, target);   // STAR7: Bound in Silk - a strand a blow that counts whole
   if (info?.blow !== false) returned(attacker);   // EG15: the Discipline's return - a bow's blow too (a weapon blow); TWO-HANDS (AUDIT 2): a per-blow charge, so a blow that counts whole alone
   if (ranged(weapon)) return;
   const v = tierOf(attacker, 'ruhn', 1);
@@ -273,6 +302,17 @@ function coiled(attacker, target) {
   const now = _now();
   _s.coils.set(target, { n: Math.min(COIL_STACKS, coilStacksAt(target, now) + 1), until: now + COIL_SECONDS });   // AUDIT 625 P3: its own
   _s.coilFoe = target;
+}
+
+/** STAR7, BOUND IN SILK: a weapon blow of mine that LANDED on a foe lays a strand on it, its window renewed to
+ *  STRAND_SECONDS - and the STRAND_HITS-th, the blow the web held (setBlow), cuts the count back to none. Each foe its
+ *  own count (Constrict's law). Never on a player, and only while the tier is awake on me. */
+function stranded(attacker, target) {
+  if (!target || target.isPlayer || !tierOf(attacker, 'starspun', 1)) return;
+  const now = _now(), n = strandsAt(target, now) + 1;
+  if (n >= STRAND_HITS) _s.strands.delete(target);
+  else _s.strands.set(target, { n, until: now + STRAND_SECONDS });
+  _s.strandFoe = target;
 }
 
 // ── EG15: Battlemage's Discipline - the cast, the armed blow, the return ──
@@ -517,6 +557,7 @@ export function setHurt(entity, { before, after, saved = false }) {
   if (before - after > 0) bloodied(entity);   // RAID4b: Riposte, Blood for Blood
   shed(entity, before, after, saved);   // SERPENT-SET: Shed Skin
   reprieve(entity, before, after, saved);   // EG15: Battlemage's Reprieve - Shed Skin's crossing, at its own line
+  veil(entity, before, after, saved);   // STAR7: Mephala's Veil - Shed Skin's crossing, at its own line
   const v = tierOf(entity, 'ruhn', 2);
   const max = entity?.maxHealth;
   if (!v || !(max > 0) || !(after > 0)) return;
@@ -564,6 +605,29 @@ function shed(entity, before, after, saved = false) {
   const healed = healMine(entity, (max * v.heal) / 100);
   say(healed > 0 ? `Shed Skin! ${healed} health returns.` : 'Shed Skin!');
   sound('shed');
+}
+
+/** STAR7, MEPHALA'S VEIL: the Veil's Chameleon (classic 23,0 - it breaks when I strike) for `rounds` magic rounds,
+ *  Eventide's own spell under its own name, its round MORE (AUDIT SET M5). */
+export const veilBundle = (rounds) => ({ ...eventideBundle(rounds), name: "Mephala's Veil" });
+/** STAR7, MEPHALA'S VEIL: a foe's blow that takes me under VEIL_BELOW of my health - from at or over it, still standing,
+ *  never a killing blow a death save turned aside (Shed Skin's crossing and its guards) - while it is ready hides me in
+ *  the web: Chameleon on me through the player's own door, and it must recover. Its own timer, in a breach as anywhere. */
+function veil(entity, before, after, saved = false) {
+  const v = tierOf(entity, 'starspun', 2);
+  const max = entity?.maxHealth;
+  if (!v || !(max > 0) || !(after > 0) || saved) return;
+  const line = max * VEIL_BELOW;
+  if (!(before >= line && after < line)) return;
+  const now = _now();
+  if (now < _s.veilReady) return;
+  const door = playerDoor();
+  if (!door?.castOnPlayer) return;
+  _s.veilReady = now + v.recover;
+  _s.recovering.add('veil');
+  door.castOnPlayer(veilBundle(v.rounds));
+  say(t('starfall.set.veil', 'Mephala\'s Veil! The web hides you.'));
+  sound('veil');
 }
 
 /** EG15, BATTLEMAGE'S REPRIEVE: a foe's blow that takes me under REPRIEVE_BELOW of my health - from at or over it, still
@@ -721,6 +785,7 @@ export function setKill(entity = null) {
   }
   if (entity && _s.marked === entity) _s.markUntil = 0;   // AUDIT SETS L1: the marked foe's own death ends its mark (its chip counted on over a body)
   if (entity) _s.coils.delete(entity);   // SERPENT-SET: a coiled foe's death ends its coil (AUDIT 625 P3: its own - every other foe keeps theirs)
+  if (entity) _s.strands.delete(entity);   // STAR7: and its strands
   if (t.get('thieftaker')?.[2]) markNext(door, entity, now);
   const hide = t.get('orcsbane')?.[2];
   if (hide && now >= _s.wardReady) {   // RAID4b: Iron Hide - a fresh ward, never one on top of another
@@ -771,6 +836,7 @@ const READY = Object.freeze({
   shed: { at: () => _s.shedReady, line: 'Shed Skin is ready again.', set: 'coilscale', tier: 2 },   // SERPENT-SET
   hour: { at: () => _s.hourReady, line: 'The Hour Turns is ready again.', set: 'numidium', tier: 2 },   // SD9d
   reprieve: { at: () => _s.reprieveReady, line: 'Battlemage\'s Reprieve is ready again.', set: 'panoply', tier: 2 },   // EG15
+  veil: { at: () => _s.veilReady, get line() { return t('starfall.set.veilReady', 'Mephala\'s Veil is ready again.'); }, set: 'starspun', tier: 2 },   // STAR7: through the text core, read where it is said
 });
 export function setRound(entity) {
   if (!entity?.isPlayer || entity.peer || !_s.recovering.size) return;
@@ -820,6 +886,8 @@ export function setPowerStates(now = _now()) {
     // and recovery, and the death saves the Spire holds to its next Redoubt
     armed: _s.armed, reprieve: now < _s.reprieveUntil ? _s.reprieve : 0, reprieveLeft: now < _s.reprieveUntil && _s.reprieve > 0 ? left(_s.reprieveUntil) : 0,
     reprieveRecoverLeft: left(_s.reprieveReady), redoubt: Object.keys(SPIRE_SAVES).filter(spireHeld),
+    // STAR7: Bound in Silk's strands on the foe my last blow touched, and Mephala's Veil's recovery
+    strands: strandCount(now), veilRecoverLeft: left(_s.veilReady),
   };
 }
 
@@ -861,6 +929,8 @@ export function setHudChips(entity, now = _now()) {
     if (st.reprieve) out.push({ key: 'reprieve', set: 'panoply', name: 'Reprieve', text: String(st.reprieve), state: 'active' });
     else if (st.reprieveRecoverLeft || held.has('reprieve')) out.push({ key: 'reprieve', set: 'panoply', name: 'Reprieve', text: wait('reprieve', st.reprieveRecoverLeft), state: 'recovering' });
   }
+  // STAR7: Mephala's Veil's recovery, while it recovers
+  if (t.get('starspun')?.[2] && st.veilRecoverLeft) out.push({ key: 'veil', set: 'starspun', name: 'Veil', text: time(st.veilRecoverLeft), state: 'recovering' });
   return out;
 }
 
