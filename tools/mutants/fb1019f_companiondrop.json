@@ -406,7 +406,7 @@
   {
     "name": "COMPANION-DROP-the-words-lost",
     "file": "src/systems/wild/wildZone.js",
-    "old": "'No companion leaves the {zone} but at your side - {name} walks out with you.'",
+    "old": "'{name} stays at your side until you leave the {zone}.'",
     "new": "'No companion leaves.'",
     "tests": [
       "test/systems/fb1019f_companiondrop.test.js"
@@ -415,7 +415,7 @@
   {
     "name": "COMPANION-DROP-the-away-words-lost",
     "file": "src/systems/wild/wildZone.js",
-    "old": "'{name} waits outside the {zone} - nothing you carry reaches it from here.'",
+    "old": "'{name} is waiting outside the {zone}. Come out to hand over gear.'",
     "new": "''",
     "tests": [
       "test/systems/fb1019f_companiondrop.test.js"

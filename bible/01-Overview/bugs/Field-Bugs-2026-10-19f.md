@@ -10,6 +10,12 @@ the real producers, most with a repro; several were already fixed by a record ne
 Renumbered 19f at the merges of main: main's FIELD BUGS 2026-10-19b (the #suggestions batch), 19c (the crafting odds), 19d
 (the Gauntlet's slain Casters) and 19e (LORD-SHARES) took the earlier letters, so this record's pins are `fb1019f_*` and its mutants
 `fb1019f_*.json`.
+At the second merge, main's PLAIN-SWEEP (`10-UI/Plain-Words.md` section 6, its law 6) was in force: the nine lines
+this record added that hung a clause off a dash or spoke in the house's words were said plainly - the staff mend's three
+refusals (`account.refusal.mendNotNegative`, `mendMoved`, `repairTicket`), DISENCHANT-SAID's reason
+(`prof.page.enchant.under`), STEED-KEPT's line (`rvn.took.home`), TOWN-EXIT's shut gates (`travel.gatesShut`) and
+COMPANION-DROP's three (`wild.companion.stays`, `away`, `left`) - drafted again in every language that holds them,
+their pins moved to the new words and their mutants re-run dead. The quotes below are the words as they now stand.
 
 Twenty-two fixes, below. Eight of them are the owner's calls, asked and answered on 2026-10-19 (each section says so):
 SIDE-ONCE, DISENCHANT-SAID, COMPANION-DROP, STEED-KEPT, BOSS-DOT, DUEL-BAR, DISEASE-UNWELL and ROCK-CLEAR. What is
@@ -210,9 +216,8 @@ THE FIX - THE OWNER'S DECISION (Mac, 2026-10-19, answering this session's questi
   piece whose pack is not there is left, never another list's piece of the same marks.
 - NO SEND-OFF IN THE ZONE, in the companion modules: a hand ashore is never sent back aboard (`heldAtSide` - the host's
   one line in `companionPress`), the sworn one at the side never sent away nor on an errand (`leaveRefusal`, in
-  `sendRevenantAway` itself and `errandRefusal`; the roster says it; the slots' hold picks another), each said in the
-  zone's own voice - the teleport refusal's ("No teleport reaches into or out of the Wrothgarian Mountains ..."), said of a
-  companion: "No companion leaves the Wrothgarian Mountains but at your side - Bran walks out with you."
+  `sendRevenantAway` itself and `errandRefusal`; the roster says it; the slots' hold picks another), each said plainly
+  (PLAIN-SWEEP, `10-UI/Plain-Words.md` section 6): "Bran stays at your side until you leave the Wrothgarian Mountains."
   (`WILD_TEXT.companionStays`, through the text core). Nothing of mine is given as kit to a sworn one waiting outside the
   zone (`WILD_TEXT.companionAway`).
 - CARRIED OFF IN THE ZONE - the same exploit by a knock-out: a hand knocked out or fallen from her roster gives his pack
@@ -767,7 +772,7 @@ over the start pixel as its build keeps it - its gates and its town's navgrid.
   across runs in the next pixel, and the autopilot asks a leg's arrival only there), marked `ring`; the three to the
   ring on foot, the ring's on the ground the route leaves by; then the route's own legs, no join.
 - THE GATES SHUT: offline by night, no gate the streets reach open (townExit.js:"if (!ways.some((w) => w.g.open)) return { shut: true };"):
-  no legs, "The town gates are shut for the night - there is no way out until morning." said once
+  no legs, "The town gates are shut for the night. Wait until morning to leave." said once
   (world.js:"if (!legs) tvSay"; the text core's `travel.gatesShut`, drafted in-session for the catalog's languages), and
   neither journey begins. DFU's own night, kept; no DFU member departed from (the Overworld's route is TV2's Ledger A row
   already). The four hosts: `world.js` wired; `exterior.js` plans no route; `worldModes.js` and `dungeonContext.js`
@@ -1160,7 +1165,7 @@ one holding only greaves was told no piece carried enough enchantment, the greav
 
 THE FIX (the owner, 2026-10-19: "List them greyed with the reason"). No change to the law or the service. The list
 keeps a piece whose form carries enchantment points under a hundred, its `essence` 0; the page draws it greyed
-(`prof-smelt prof-locked`, the house's greyed row), `{points} points: under one Arcane Essence (100 points make one)`
+(`prof-smelt prof-locked`, the house's greyed row), `{points} points. One Arcane Essence needs 100.`
 beside it (`prof.page.enchant.under`, the hundred the law's `ESSENCE_POINTS`, drafted in-session in the sixteen languages
 that carry the station's lines), and its Disenchant disabled with no press wired - the page never asks the service for
 it. The line for nothing to take apart now stands while no piece GIVES Essence, so the greaves alone are named beneath
@@ -1223,8 +1228,8 @@ THE FIX - THE OWNER'S DECISION (Mac, 2026-10-19, answering this session's questi
   the save's own copy of `took` - the pack it came out of is that save's, so never twice) now hands home EVERY piece
   `revenantMayTake` refuses - a horse, a cart, a deed, a ship's deed or parts, the spellbook, a letter - into the pack,
   which is where the game keeps owned transport: the horse is the very horse the stable sold (its `horseSeed`). What it
-  may take stays its own. SAID ONCE, as the owner asked: one line a piece, "Grushnak the Butcher could not keep your Horse
-  - it is yours again." (`tookHomeLine`, through the text core), handed to the HUD once the world can speak
+  may take stays its own. SAID ONCE, as the owner asked: one line a piece, "Grushnak the Butcher could not keep your Horse.
+  It is back in your pack." (`tookHomeLine`, through the text core), handed to the HUD once the world can speak
   (`notify.js hudTextWhenShown` - the merge can run before a host stands). DECIDED here, named: a returning letter is said
   now too (LETTERS-HOME handed it back silently) - one law, one word.
 - Repro after the fix: 0 of 1,000. No host touched.

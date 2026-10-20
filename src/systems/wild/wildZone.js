@@ -498,9 +498,9 @@ export const WILD_TEXT = Object.freeze({
   // pack with mine, so none is sent off from inside the zone (the teleport's own refusal, said of a companion), nothing of
   // mine reaches one waiting outside it, and one carried off knocked out leaves what it carries with me - through the
   // text core (L10N4), read when they are said
-  companionStays: (name) => t('wild.companion.stays', 'No companion leaves the {zone} but at your side - {name} walks out with you.', { zone: WILD_NAME, name: name || t('wild.companion.yours', 'your companion') }),
-  companionAway: (name) => t('wild.companion.away', '{name} waits outside the {zone} - nothing you carry reaches it from here.', { zone: WILD_NAME, name: name || t('wild.companion.yoursFirst', 'Your companion') }),
-  companionLeft: (name, n) => t('wild.companion.left', '{name} hands you what it carries before it goes ({n, plural, one {# item} other {# items}}) - nothing leaves the {zone} but at your side.', { zone: WILD_NAME, name: name || t('wild.companion.yoursFirst', 'Your companion'), n }),
+  companionStays: (name) => t('wild.companion.stays', '{name} stays at your side until you leave the {zone}.', { zone: WILD_NAME, name: name || t('wild.companion.yours', 'your companion') }),
+  companionAway: (name) => t('wild.companion.away', '{name} is waiting outside the {zone}. Come out to hand over gear.', { zone: WILD_NAME, name: name || t('wild.companion.yoursFirst', 'Your companion') }),
+  companionLeft: (name, n) => t('wild.companion.left', '{name} hands you {n, plural, one {# item} other {# items}} before leaving.', { zone: WILD_NAME, name: name || t('wild.companion.yoursFirst', 'Your companion'), n }),
   // WILD2: the rings
   ring: (r) => `${wildRingName(r)}: ${wildRingBonus(r)}.`,
   ringCross: (r, deeper) => `${deeper ? 'Deeper' : 'Back out'} - ${wildRingName(r)}: ${wildRingBonus(r)}.`,

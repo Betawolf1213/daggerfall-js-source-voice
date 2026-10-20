@@ -206,8 +206,8 @@ Either death, at the first dead frame, while the room is still the player's (`wi
   list's piece of the same marks. NO SEND-OFF IN THE ZONE: a hand ashore is never sent back aboard from inside it
   (`crewCompanions.js:"export function heldAtSide"`, the boat's picker), nor the sworn one at the side sent away or on an
   errand (`revenantCompanions.js:"export const leaveRefusal = (r) =>"`; the roster says it, and the slots' hold sends
-  another) - said in the zone's own voice, the teleport refusal's said of a companion (`WILD_TEXT.companionStays`: "No
-  companion leaves the Wrothgarian Mountains but at your side - Bran walks out with you."); nothing of mine is given as
+  another) - said plainly (`WILD_TEXT.companionStays`: "Bran stays at your side
+  until you leave the Wrothgarian Mountains."); nothing of mine is given as
   kit to a sworn one waiting outside the zone (`WILD_TEXT.companionAway`). CARRIED OFF IN THE ZONE: a hand knocked out or
   fallen from her roster gives his pack up into the player's pack, never her hold
   (`crewCompanions.js:"export const packStaysAshore = () =>"`, the host's stowPack), and the sworn one at the side knocked

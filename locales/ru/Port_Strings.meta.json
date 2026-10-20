@@ -2035,13 +2035,13 @@
   "by": "claude-in-session"
  },
  "account.refusal.mendMoved": {
-  "en": "f2d73067470e",
-  "tr": "29f6db1c7bf7",
+  "en": "09f51592c6f3",
+  "tr": "0b6941c030e5",
   "by": "claude-in-session"
  },
  "account.refusal.mendNotNegative": {
-  "en": "f2a03e0749b4",
-  "tr": "0e1c5a92d5ef",
+  "en": "7a93371171ae",
+  "tr": "90cf209904f9",
   "by": "claude-in-session"
  },
  "account.refusal.method": {
@@ -2915,8 +2915,8 @@
   "by": "claude-in-session"
  },
  "account.refusal.repairTicket": {
-  "en": "f9401e68dfd8",
-  "tr": "2e967ced90b7",
+  "en": "d751d8e5031b",
+  "tr": "658a9230c5ef",
   "by": "claude-in-session"
  },
  "account.refusal.reportBody": {
@@ -21375,8 +21375,8 @@
   "by": "claude-in-session"
  },
  "prof.page.enchant.under": {
-  "en": "716c82b7bf20",
-  "tr": "2539bafb90aa",
+  "en": "1b71e3df149f",
+  "tr": "1061a67e388e",
   "by": "claude-in-session"
  },
  "prof.page.family.armour": {
@@ -24910,8 +24910,8 @@
   "by": "claude-in-session"
  },
  "rvn.took.home": {
-  "en": "84ea8e5aee36",
-  "tr": "8ae65d6a6750",
+  "en": "885996d181e9",
+  "tr": "9859ceed7feb",
   "by": "claude-in-session"
  },
  "rvn.unq.amb.mastery": {
@@ -26835,8 +26835,8 @@
   "by": "claude-in-session"
  },
  "travel.gatesShut": {
-  "en": "85ab71b92d3f",
-  "tr": "1c3acc956410",
+  "en": "3dc74deaebcd",
+  "tr": "77d54a8db043",
   "by": "claude-in-session"
  },
  "tutorials.chapters.body1": {
@@ -26955,18 +26955,18 @@
   "by": "claude-in-session"
  },
  "wild.companion.away": {
-  "en": "7e77f9c09561",
-  "tr": "ff3020475aa1",
+  "en": "488eae2a81a1",
+  "tr": "f24b774d1fa1",
   "by": "claude-in-session"
  },
  "wild.companion.left": {
-  "en": "56feda3a32f4",
-  "tr": "2a7f7d239e87",
+  "en": "4b3bcdd7b011",
+  "tr": "fae6d6420f20",
   "by": "claude-in-session"
  },
  "wild.companion.stays": {
-  "en": "49c0926abdee",
-  "tr": "1f1463aa707c",
+  "en": "137d146989f7",
+  "tr": "99e556afafd5",
   "by": "claude-in-session"
  },
  "wild.companion.yours": {

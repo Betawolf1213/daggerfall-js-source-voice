@@ -526,8 +526,8 @@ STEED-KEPT (FIELD BUGS 2026-10-19f, a player's private report - their horse gone
 it - a horse or a cart (owning one is having it in the pack), a deed (Daggerfall's, and a ship's deed or her packed
 parts) or the spellbook (`revenant.js:"export const revenantMayTake = (item) =>"`); a bound piece stays its own (AUDIT
 625 W2). A stable's horse beside a worn longsword was drawn one death in six. One it took before comes home to the pack
-at the next load, from the save's own copy, and is said once ("Grushnak the Butcher could not keep your Horse - it is
-yours again."); a deserter's ship's deed comes back with the rest. The law: `12-Enhanced-AI/Feud-Arc.md` section 19.
+at the next load, from the save's own copy, and is said once ("Grushnak the Butcher could not keep your Horse. It is
+back in your pack."); a deserter's ship's deed comes back with the rest. The law: `12-Enhanced-AI/Feud-Arc.md` section 19.
 
 ## 25. Festering (FEUD RVN9, 2026-10-04)
 

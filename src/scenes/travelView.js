@@ -119,7 +119,7 @@ export const TRAVEL_VIEW_TEXT = Object.freeze({
   passenger: 'You are aboard another\'s boat. Its helmsman sets the course.',
   rider: 'You ride in another\'s wagon. Its driver sets the course.',   // WAGONS2: seated in the back of another's wagon (scenes/wagon/wagonRiders.js)
   climbing: 'You cannot set out from a wall. Climb down first.',   // AUDIT FB1007b C2
-  get gatesShut() { return t('travel.gatesShut', 'The town gates are shut for the night - there is no way out until morning.'); },   // TOWN-EXIT (systems/travel/townExit.js): offline, every gate a wall from dusk to dawn
+  get gatesShut() { return t('travel.gatesShut', 'The town gates are shut for the night. Wait until morning to leave.'); },   // TOWN-EXIT (systems/travel/townExit.js): offline, every gate a wall from dusk to dawn
   noLaunch: 'There is no water here for your boat to float in.',
   noWayAtSea: 'Your boat can make no way toward its mark.',
   noShore: 'There is no safe landing here. Your boat stays in the water.',

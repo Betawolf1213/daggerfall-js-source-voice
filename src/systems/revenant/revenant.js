@@ -953,7 +953,7 @@ export const revenantMayTake = (item) => !!item && typeof item === 'object' && N
 export const takenName = (item) => String(itemLongName(item) ?? '').replace(/^the\s+/i, '');
 /** STEED-KEPT (FIELD BUGS 2026-10-19f): a piece it took and may no longer keep, home in my pack at the load - the
  *  words (ensureMirror says each once, through the text core). */
-export const tookHomeLine = (r, item) => t('rvn.took.home', '{name} could not keep your {item} - it is yours again.', { name: r?.name ?? '', item: takenName(item) });
+export const tookHomeLine = (r, item) => t('rvn.took.home', '{name} could not keep your {item}. It is back in your pack.', { name: r?.name ?? '', item: takenName(item) });
 /** RVN8 (19): the piece it takes - drawn on its id and its kill count from my equipped weapon and my pack's five most
  *  valuable pieces (each takeable). Null with none. */
 export function pickTaken(id, kills, weapon, items) {

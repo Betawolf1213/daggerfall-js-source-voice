@@ -199,7 +199,7 @@ test('COMPANION-DROP THROUGH THE SERVICE AND BACK (server-account/src/wild.js, w
 test('COMPANION-DROP NO SEND-OFF IN THE ZONE: a hand ashore is never sent back aboard from inside the zone - said in the zone\'s words, he stays ashore with his pack - and is outside it; the sworn one at the side is never sent away nor on an errand there, the one waiting outside the zone is; nothing of mine is given to one waiting outside the zone; the roster says the refusal (mutants: the zone unread at the boat\'s picker; the sworn\'s refusal unread; the errand\'s; the gift\'s; the one outside refused too)', async () => {
   const s = await stand();
   const w = WILD_TEXT.companionStays(s.hand);
-  assert.equal(w, `No companion leaves the Wrothgarian Mountains but at your side - ${s.hand} walks out with you.`);
+  assert.equal(w, `${s.hand} stays at your side until you leave the Wrothgarian Mountains.`);
   setWildHere(true);
   assert.equal(s.h.host.companionPress(s.h.boat, s.hand, 0), null, 'refused');
   assert.equal(s.h.log.say.at(-1), w);
@@ -216,7 +216,7 @@ test('COMPANION-DROP NO SEND-OFF IN THE ZONE: a hand ashore is never sent back a
   const gift = blade(W.Broadsword, 0);
   s.p.items.push(gift);
   assert.equal(RC.giveSwornGear(s.c.id, gift), WILD_TEXT.companionAway(s.c.name), 'nothing of mine reaches one outside the zone');
-  assert.equal(WILD_TEXT.companionAway(s.c.name), `${s.c.name} waits outside the Wrothgarian Mountains - nothing you carry reaches it from here.`);
+  assert.equal(WILD_TEXT.companionAway(s.c.name), `${s.c.name} is waiting outside the Wrothgarian Mountains. Come out to hand over gear.`);
   assert.ok(s.p.items.includes(gift) && !N.revenantById(s.c.id).companion.gear.weapon, 'the piece still mine');
   assert.equal(RC.sendRevenantAway(s.b.id), true, 'the one outside the zone may go');
   // outside the zone, as ever
@@ -254,7 +254,7 @@ test('COMPANION-DROP CARRIED OFF IN THE ZONE: a hand knocked out there gives his
   assert.ok(s.p.items.includes(s.sword), 'the kit back');
   assert.equal(s.p.goldPieces, gold + 100, 'its gold to my purse');
   assert.deepEqual(said, [WILD_TEXT.companionLeft(s.a.name, 3)]);
-  assert.equal(said[0], `${s.a.name} hands you what it carries before it goes (3 items) - nothing leaves the Wrothgarian Mountains but at your side.`);
+  assert.equal(said[0], `${s.a.name} hands you 3 items before leaving.`);
   // outside the zone: his mate knocked out, and the sworn one walking with me
   setWildHere(false);
   assert.equal(packStaysAshore(), false);

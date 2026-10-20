@@ -794,9 +794,9 @@ const REFUSAL_WORDS = {
   'firm-respec-empty': () => t('account.refusal.firmRespecEmpty', 'Nothing is learned yet.'),
   'repair-no-faction': () => t('account.refusal.repairNoFaction', 'That character\'s record holds no such faction, so nothing was repaired.'),   // SUMMON-REPAIR: the review's repair (tools/realmReview.mjs)
   'repair-not-set': () => t('account.refusal.repairNotSet', 'That faction does not have that flag on this character, so nothing was repaired. Check that it is the right character.'),   // SUMMON-REPAIR: a repair aimed at the wrong character mends nothing
-  'mend-not-negative': () => t('account.refusal.mendNotNegative', 'That character\'s purse is not below nothing, so nothing was mended - mended already, or the wrong character?'),   // PURSE-MEND: the review's mend (tools/realmReview.mjs)
-  'mend-moved': () => t('account.refusal.mendMoved', 'That character\'s purse is not the one the mend was reckoned from, so nothing was mended. Read its findings again and reckon again.'),   // PURSE-MEND: played since, or the wrong character
-  'repair-ticket': () => t('account.refusal.repairTicket', 'That ticket already names another act on this character, so nothing was done. Give this one a ticket of its own.'),   // PURSE-MEND: a ticket names one act, a repair or a mend
+  'mend-not-negative': () => t('account.refusal.mendNotNegative', 'That character\'s gold is not below zero, so nothing was mended. Check that it is the right character.'),   // PURSE-MEND: the review's mend (tools/realmReview.mjs)
+  'mend-moved': () => t('account.refusal.mendMoved', 'That character\'s gold has changed since its findings were read, so nothing was mended. Read the findings again and try again.'),   // PURSE-MEND: played since, or the wrong character
+  'repair-ticket': () => t('account.refusal.repairTicket', 'That ticket is already used for another fix on this character, so nothing was done. Use a new ticket.'),   // PURSE-MEND: a ticket names one act, a repair or a mend
   // SAFE1-SAFE7 (bible/11-Multiplayer/Chat-Safety-Arc.md): the chat's safety - a block, a report, the code of conduct, a ban
   'block-self': () => t('account.refusal.blockSelf', 'You cannot block yourself.'),
   'blocks-full': () => t('account.refusal.blocksFull', 'Your block list is full. Unblock someone first.'),

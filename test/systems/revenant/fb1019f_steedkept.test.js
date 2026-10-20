@@ -145,7 +145,7 @@ test('STEED-KEPT THE LOAD (revenant.js ensureMirror): a horse, a cart, a ship\'s
     N.tookHomeLine(rv(living.id), steed), N.tookHomeLine(rv(living.id), cart),
     N.tookHomeLine(rv(fallen.id), deed), N.tookHomeLine(rv(fallen.id), book),
   ], 'each said once');
-  assert.equal(said[0], `${rv(living.id).name} could not keep your Horse - it is yours again.`);
+  assert.equal(said[0], `${rv(living.id).name} could not keep your Horse. It is back in your pack.`);
   // the record without them is what the next save writes: its load brings none again, and says nothing
   const next = JSON.parse(JSON.stringify(modSaveRecords()[N.REVENANT_SAVE]));
   const r2 = load(next);

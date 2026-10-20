@@ -57,7 +57,7 @@
   {
     "name": "STEED-KEPT-the-words-lost",
     "file": "src/systems/revenant/revenant.js",
-    "old": "'{name} could not keep your {item} - it is yours again.'",
+    "old": "'{name} could not keep your {item}. It is back in your pack.'",
     "new": "'{name} could not keep it.'",
     "tests": [
       "test/systems/revenant/fb1019f_steedkept.test.js"

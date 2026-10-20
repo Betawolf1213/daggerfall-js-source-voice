@@ -372,7 +372,7 @@ test('TOWN-EXIT THE HOST: world.js\'s tvJoinedLegs, lifted and run - the built p
   nightfall(night, false);
   const n = run({ ...night, me: night.at(12288, 12288) });
   assert.deepEqual([n.legs, n.said], [null, [TRAVEL_VIEW_TEXT.gatesShut]], 'no legs, and said once');
-  assert.equal(TRAVEL_VIEW_TEXT.gatesShut, 'The town gates are shut for the night - there is no way out until morning.');
+  assert.equal(TRAVEL_VIEW_TEXT.gatesShut, 'The town gates are shut for the night. Wait until morning to leave.');
   // both journeys begin none (a place's and a spot's)
   assert.match(fnSource('travelViewRouteTo'), /const legs = tvJoinedLegs\(from, plan, roads\);\n\s*if \(!legs\) return false;[^\n]*\n\s*const ok = travelOptions\.beginTravelAlongRoute\(/);
   assert.match(fnSource('travelViewWalkTo'), /let legs = tvJoinedLegs\(from, plan, roads\);\n\s*if \(!legs\) return false;/);
