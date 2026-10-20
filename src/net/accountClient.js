@@ -220,6 +220,7 @@ const REFUSAL_WORDS = {
   set: () => t('festival.refusal.set', 'An offering already stands here.'),
   full: () => t('festival.refusal.full', 'The bowl is full.'),
   own: () => t('festival.refusal.own', 'This offering is your own.'),
+  item: () => t('festival.refusal.item', 'You have no Hearth Offering.'),
   'no-name-as': () => t('account.refusal.noNameAs', 'The account service does not know that choice of name. The game may need updating.'),   // NAME-AS
   'no-insignia': () => t('account.refusal.noInsignia', 'The Broker does not sell that any more. The game may need updating.'),
   owned: () => t('account.refusal.owned', 'Your account already owns that.'),

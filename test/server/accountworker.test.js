@@ -278,7 +278,7 @@ test('ACC1b: the migration is the real schema, and applying it twice changes not
   // qlTitleBit) - recorded as `sd_honours` is and held for good; and `ql_key`, 1 once the Covens' Hoard paid its Weir Key
   // (once an account) - a fact of play, as `eg_mercy` is.
   // PIN MOVED (WITCH1, 0134): the Soul Cakes, the wares bought, the cakes given and taken, the profile icon worn
-  assert.deepEqual(cols.sort(), ['aura', 'ban_reason', 'banned_until', 'conduct_v', 'created_at', 'eg_annals', 'eg_first', 'eg_honours', 'eg_key_miss', 'eg_keys', 'eg_live_b', 'eg_live_until', 'eg_mercy', 'eg_pity', 'eg_rh_day', 'eg_valk_wk', 'email', 'fest_cakes', 'fest_given', 'fest_taken', 'fest_wares', 'first_played_at', 'glyphs_off', 'guest_name', 'handle', 'handle_lc', 'icon', 'id', 'insignia', 'insignia_spent',
+  assert.deepEqual(cols.sort(), ['aura', 'ban_reason', 'banned_until', 'conduct_v', 'created_at', 'eg_annals', 'eg_first', 'eg_honours', 'eg_key_miss', 'eg_keys', 'eg_live_b', 'eg_live_until', 'eg_mercy', 'eg_pity', 'eg_rh_day', 'eg_valk_wk', 'email', 'fest_bowls', 'fest_cakes', 'fest_given', 'fest_taken', 'fest_wares', 'first_played_at', 'glyphs_off', 'guest_name', 'handle', 'handle_lc', 'icon', 'id', 'insignia', 'insignia_spent',
     'lamp_title', 'last_seen', 'legal_accepted_at', 'muted_by', 'muted_until', 'name_as', 'password', 'patreon_at', 'patreon_status', 'patreon_tiers', 'patreon_user',
     'played_at', 'played_s', 'privacy_version', 'ql_key', 'ql_titles', 'recovery_hash',
     'registered_at', 'renown_hour', 'renown_hour_xp', 'renown_last_credit', 'sd_honours', 'serpent_honours', 'terms_version', 'title']);

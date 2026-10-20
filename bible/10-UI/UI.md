@@ -54,7 +54,8 @@ ESCORTING FACES - the quest escorts' portrait column, FE1 - and the CREDITS TABL
 - and EG-PLUS' BREACH WINDOWS (`eliteGates/egKit.js`: the chrome the Elite Breach's panel, boards and start window wear in the stone-and-brass kit, and the kit's cut for the classic skin; `eliteGates/egStartPanel.js`: the start window on Enhanced Plus - where to start, the party's readiness, the Wager, the Rehearsal; `11-Multiplayer/Elite-Gates.md` section 31, EG-PLUS)
 - and QUESTLINES' JOURNAL PARTS (`questlines/qlJournal.js`: a stamped quest's objectives, its choices and how it ended, the rewards waiting and their Take, a questline's page and a guild's ladder - the Quests tab's and the chronicle's one home; `06-Systems/Questlines-Arc.md` section 6)
 - and WITCH1's WYRD SISTER (`wyrdDoor.js` and `wyrdWindow.js`: the Witches' Festival's vendor window, the Broker's house in the festival's colours - its insignia, the Wyrd's Raiment, the festival's cards and the Hearth Offering for Soul Cakes; `profileIcons.js`: the profile icons, drawn in code - `06-Systems/Witches-Festival.md`)
-396 modules
+- and the HUD's 2026-10-20 three (`hud/hudTip.js`: the HUD's hover card, the pack's own card; `hud/statusTips.js`: what a buff, a debuff, a need or a disease tile says under the pointer - STATUS-TIPS; `hud/hudAdvance.js`: the two tiles beside the Renown bar, the skills ready and the Firmament's stars not yet placed, clear of the hotbar - SKILL-READY, FIRM-STARS; `UI-Arc.md`)
+399 modules
 live under `src/ui/`. Items still routed here are
 collected in `01-Overview/Port-Ledger.md` section C; scope in
 `01-Overview/Port-Doctrine.md` phase plan.

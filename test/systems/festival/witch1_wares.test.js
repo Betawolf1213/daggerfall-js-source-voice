@@ -192,6 +192,11 @@ test('WITCH1 THE WINDOW\'S ROWS AND PRESSES: the wares in their parts, the two t
   assert.deepEqual(wyrdPress(by('card:warlock'), { ...live, shut: 'guest' }), { label: 'Buy', why: 'Link an account to keep Soul Cakes.' }, 'a guest is told why (AUDIT WITCH1 F-M1)');
 });
 
+test('WITCH1 THE RAIMENT IS LEATHER, A CASTER\'S - the Athame Elven; and the Witchfire\'s candles wrap, one candle at the seam (AUDIT WITCH1 B4, E5)', () => {
+  for (const r of WYRD_SET_PIECES) assert.equal(r.make, r.group === 'Weapons' ? 'Elven' : 'Leather', r.id);
+  assert.ok(AURA_FS.includes('float k = mod(floor(fract(a / TAU) * 7.0 + 0.5), 7.0);'), 'the first candle one candle');
+});
+
 const kidsOf = (n, cls) => (n?.children ?? []).flatMap((c) => [...(c.classList?.contains(cls) ? [c] : []), ...kidsOf(c, cls)]);
 test('WITCH1 THE WINDOW MOUNTED: the reason a press cannot be said (a guest\'s, offline\'s), an earned row\'s progress said once, the bowl\'s row never its name twice, the card sticky and brought into view on a phone; it looks again at what no answer says, and leaves nothing behind (AUDIT WITCH1 E3/E8/E10)', () => {
   withDom(() => {

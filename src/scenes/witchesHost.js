@@ -169,10 +169,7 @@ export function createWitchesHost(deps) {
     if (deps.mode?.() !== 'exterior') return;
     // offline, or another account signed in: nothing anyone's machine stood stands on (every pixel's, not this one's alone)
     const who = online() ? festivalAccount() : null;
-    if (who !== account || (!online() && stood.size)) {
-      if (who !== account) { account = who; heard = false; towns.clear(); }
-      for (const k of [...stood.keys()]) unstand(k);
-    }
+    if (who !== account) { account = who; heard = false; towns.clear(); for (const k of [...stood.keys()]) unstand(k); }
     const entry = here();
     if (!entry) return;
     if (entry.witchHomes) notice();   // a town the festival dressed

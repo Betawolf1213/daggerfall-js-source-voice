@@ -163,7 +163,7 @@ let _actTurn = /** @type {Set<string>|null} */ (null);
 hearActs(FESTIVAL_FIND, (/** @type {string} */ kind) => {
   const g = ACT_KINDS[/** @type {keyof typeof ACT_KINDS} */ (kind)];
   if (!g || ACT_NOT_FOUND.includes(kind)) return;
-  if (!_actTurn) { _actTurn = new Set(); queueMicrotask(() => { _actTurn = null; }); }
+  if (!_actTurn) { _actTurn = new Set(); Promise.resolve().then(() => { _actTurn = null; }); }   // the turn over, the next deed its own
   if (_actTurn.has(g)) return;
   _actTurn.add(g);
   askFind(g);

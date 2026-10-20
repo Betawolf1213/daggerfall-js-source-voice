@@ -9,6 +9,7 @@ import {
   WITCH_KITS, WITCH_SPOTS, WYRD_SISTER_FLAT, witchCulture, witchesDressing, witchesDressingBreathing, dryGround, doorFront, offeringSpot, witchStepSide, colliderBlocked,
 } from '../../src/world/witchesDecor.js';
 import { FESTIVAL_ARCHIVE, FESTIVAL_ART } from '../../src/world/festivalArt.js';
+import { footShare } from '../../src/world/propBodies.js';
 import { CLIMATES } from '../../src/formats/mapsTables.js';
 import { BUILDING_TYPES } from '../../src/world/buildingNames.js';
 
@@ -165,6 +166,14 @@ test('WITCH1 THE GROUND A PIECE STANDS ON: inside the location\'s blocks and off
   assert.equal(g(100 + 6 * 6.4 + 1, 200 + 1), true, 'a dock');
   const d = witchesDressing({ frames: town(), taverns: [TAVERN], nowMs: IN, ground: () => false });
   assert.deepEqual([d.flats.length, d.sisters.length, d.homes.size], [0, 0, 0], 'nothing stood where there is no ground');
+});
+
+test('WITCH1 A PAINTED STAND-IN\'S FOOT IS ITS OWN PICTURE\'S: no index to read, its alpha read instead - a 2 px ward-staff stands a post\'s body, not its whole picture\'s cover (propBodies.js footShare, AUDIT WITCH1 D7)', () => {
+  const w = 20, h = 60, rgba = new Uint8Array(w * h * 4);
+  for (let y = 0; y < h; y++) for (const x of [9, 10]) rgba[(y * w + x) * 4 + 3] = 255;
+  const t = { getDFBitmap: () => ({ width: w, height: h, data: null, rgba }) };
+  assert.equal(footShare(t, 3, { w: 0.6, h: 1.8 }), 2 / w);
+  assert.equal(footShare({ getDFBitmap: () => ({ width: w, height: h, data: null, rgba: null }) }, 3, { w: 0.6, h: 1.8 }) > 2 / w, true, 'no picture at all: cover\'s share, as before');
 });
 
 test('WITCH1 THE DRESSING BREATHES: the same town as the whole run, a breath between its buildings (PERF7 - AUDIT WITCH1 D3)', async () => {

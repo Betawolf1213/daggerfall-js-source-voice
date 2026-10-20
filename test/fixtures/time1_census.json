@@ -1205,13 +1205,13 @@
   },
   {
    "file": "src/scenes/witchesHost.js",
-   "has": "const day = dayOfYearFromMinutes(Math.floor(skyMinutes()));",
+   "has": "const day = dayOfYearFromMinutes(Math.floor(skyMinutes())), night = deadWalk(day, nowMs()) ? day : -1;",
    "clock": "sky",
-   "why": "WITCH1: a night the dead walk - the sky's 13 Frostfall or 3 Hearth Fire, the day the service's own find reads (skyDayAt)"
+   "why": "WITCH1: a night the dead walk - the sky's 13 Frostfall or 3 Hearthfire (the day the service's own find reads, skyDayAt) or the festival's own eve on the relay's clock"
   },
   {
    "file": "src/scenes/witchesHost.js",
-   "has": "night: () => festivalNight(dayOfYearFromMinutes(Math.floor(skyMinutes()))),",
+   "has": "night: () => deadWalk(dayOfYearFromMinutes(Math.floor(skyMinutes())), nowMs()),",
    "clock": "sky",
    "why": "WITCH1: the Wyrd Sister's window says the night the dead walk"
   }

@@ -12,7 +12,8 @@ import { isSoulCake, isHearthOffering, soulCakesHeld, hearthOffering, restackSou
 import { reportPlayerKill } from '../../../src/systems/playerKills.js';
 import { isPackOnly, isBound } from '../../../src/systems/item/itemBound.js';
 import { noteAct } from '../../../src/systems/questlines/qlActs.js';
-import { SESSION_KEY } from '../../../src/net/accountClient.js';
+import { SESSION_KEY, adoptIdentity } from '../../../src/net/accountClient.js';
+import { ownIcon } from '../../../src/systems/ownGlyphs.js';
 import { FESTIVALS, wareById } from '../../../src/net/festivalLaw.js';
 import { isIliacCard } from '../../../src/systems/iliac/iliacItems.js';
 import { MOBILE_TYPES } from '../../../src/characters/mobile/mobileTypes.js';
@@ -91,6 +92,7 @@ test('WITCH1 AN ACT, A QUEST AND A BOUNTY ask by their group: a fish caught is `
   assert.deepEqual(asked.filter(([n]) => n === 'find').map(([, s]) => s), ['gather', 'world', 'world']);
   asked.length = 0;
   noteAct('breach-closed'); noteAct('rite-broken');   // one receipt, two acts (net/gate/gateClaims.js)
+  await new Promise((r) => setTimeout(r, 0));
   noteAct('elite-foe-slain');   // its kill already asked its own
   await new Promise((r) => setTimeout(r, 0));
   noteAct('redoubt-taken');   // a later deed: its own find
@@ -203,6 +205,14 @@ test('WITCH1 THE OFFERING\'S BOWLS: the pack\'s Hearth Offerings are the account
   assert.equal((await offeringMove('set', at)).text, 'You have no Hearth Offering.');
   assert.equal(entity.items.some(isHearthOffering), false);
   assert.equal((await offeringMove('take', at)).text, 'This offering has been taken in.');
+});
+
+test('WITCH1 THE ICON WORN IS KEPT ON THE DEVICE\'S SESSION: this device\'s own corner mark wears it (ownGlyphs.js ownIcon), and the face again once it is taken off (AUDIT WITCH1 B2)', () => {
+  assert.equal(adoptIdentity(mem, { icon: 'twinmoons' }), true);
+  assert.equal(ownIcon(mem), 'twinmoons');
+  assert.equal(adoptIdentity(mem, { icon: 'twinmoons' }), false, 'the same again writes nothing (a write is a storage event every tab hears)');
+  adoptIdentity(mem, { icon: null });
+  assert.equal(ownIcon(mem), null);
 });
 
 test('WITCH1 THE FACES NEVER LEAVE THE PACK: the rows pack-only, and one a save holds anywhere else folded away at load (KEY-FACE\'s law, AUDIT WITCH1 B3)', () => {
