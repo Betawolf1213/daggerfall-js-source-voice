@@ -178,5 +178,77 @@
   "tests": [
    "test/systems/starfall/star4_world.test.js"
   ]
+ },
+ {
+  "name": "AUDIT-STARFALL-R2-the-column-unscaled",
+  "file": "src/render/starfall/starfallPass.js",
+  "old": "const s = b.scale > 0 && b.scale <= 1 ? b.scale : 1;",
+  "new": "const s = 1;",
+  "tests": [
+   "test/systems/starfall/star4_world.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-STARFALL-R3-the-ring-flat",
+  "file": "src/render/starfall/starfallPass.js",
+  "old": "uGround[i * 2 + j] + ${STAR_RING_LIFT_M.toFixed(2)}",
+  "new": "${STAR_RING_LIFT_M.toFixed(2)}",
+  "tests": [
+   "test/systems/starfall/star4_world.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-STARFALL-R3-one-edge-in-the-shader",
+  "file": "src/render/starfall/starfallPass.js",
+  "old": "float r = j == 0 ? max(0.0, uR - uWidth) : uR + uWidth;",
+  "new": "float r = uR;",
+  "tests": [
+   "test/systems/starfall/star4_world.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-STARFALL-R3-no-ground-handed",
+  "file": "src/render/starfall/starfallPass.js",
+  "old": "gl.uniform1fv(U.uGround, r.ground?.length === STAR_RING_SEGS * 2 ? r.ground : FLAT_RING);",
+  "new": "gl.uniform1fv(U.uGround, FLAT_RING);",
+  "tests": [
+   "test/systems/starfall/star4_world.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-STARFALL-R5-the-sky-no-focus",
+  "file": "src/render/starfall/starfallPass.js",
+  "old": "'uLight', 'uTime', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos', 'uFocus', 'uJungleHaze']);",
+  "new": "'uLight', 'uTime', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos']);",
+  "tests": [
+   "test/systems/starfall/star4_world.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-STARFALL-R5-the-ring-no-focus",
+  "file": "src/render/starfall/starfallPass.js",
+  "old": "'uGround', 'uFade', 'uColor', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos', 'uFocus', 'uJungleHaze']);",
+  "new": "'uGround', 'uFade', 'uColor', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos']);",
+  "tests": [
+   "test/systems/starfall/star4_world.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-STARFALL-R6-the-stone-on-its-middle",
+  "file": "src/world/starfall/starModel.js",
+  "old": "const y0 = Math.min(...base.map(([x, z]) => earth(x, z))) - s.s * 0.4;",
+  "new": "const y0 = earth(s.x, s.z) - s.s * 0.4;",
+  "tests": [
+   "test/systems/starfall/star4_world.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-STARFALL-R7-heard-at-once",
+  "file": "src/systems/starfall/starSounds.js",
+  "old": "(Math.max(0, Number.isFinite(d) ? d : 0) / SPEED_OF_SOUND) * 1000;",
+  "new": "0 * SPEED_OF_SOUND;",
+  "tests": [
+   "test/systems/starfall/star4_world.test.js"
+  ]
  }
 ]

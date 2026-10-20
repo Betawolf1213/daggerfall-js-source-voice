@@ -6,6 +6,7 @@
 // A cue with no reach is heard everywhere it is said (the omen's whine, the fall's roar - the sky's); the rest at the
 // star, by distance. Not a DFU member. Ledger A (STARFALL).
 import { SOUND } from '../soundClips.js';
+import { SPEED_OF_SOUND } from '../distantStorms.js';
 
 const cue = (clip, pitch, volume, refDistance = 0, maxDistance = 0) => Object.freeze({ clip, pitch, volume, refDistance, maxDistance });
 
@@ -30,6 +31,11 @@ export const STAR_SOUNDS = Object.freeze({
   /** lost: the light going out */
   dark: cue(SOUND.AmbientWindMoanDeep, 0.5, 1.6, 30, 900),
 });
+
+/** AUDIT STARFALL R7: how long after the landing a cue made at the star reaches a player `d` metres off, ms - the
+ *  storms' own speed of sound (systems/distantStorms.js thunderOf), so the stone's strike comes with its thunder and
+ *  never with its flash. Pure. */
+export const starHeardAfterMs = (/** @type {number} */ d) => (Math.max(0, Number.isFinite(d) ? d : 0) / SPEED_OF_SOUND) * 1000;
 
 /** Play cue `key` - at scene `pos` by its reach, or everywhere for a cue with none (or no `pos`) - `vol` times its own
  *  loudness. False for a key it has not, or an audio that would not. */

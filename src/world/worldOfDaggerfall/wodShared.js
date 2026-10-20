@@ -30,6 +30,13 @@ export const WOD_SITES_MAX = 64;
  *  that spent the encounter allowance was the bug M1 fixed by keeping them home. The biggest shipped camp stands
  *  well under this. */
 export const WOD_CAMP_PUPPETS_MAX = 16;
+/** AUDIT STARFALL C7: a reader's allowance for one owner's fallen-star foes (its three sites, starSiteId), counted apart
+ *  from its camps' - the most of them the Starfall's law calls at once (scenes/starfall/starfallHost.js STAR_LIVE_MAX: a
+ *  wave's nine, the master, two calls of the Heart-Star's circle of ten), which its owner never stands past. Under the
+ *  camps' sixteen the excess of a master's circle stood nowhere but its owner's, and warded the master still. */
+export const WOD_STAR_PUPPETS_MAX = 30;
+/** STAR5: whether a site is a fallen star's - its waves', its master's or its circle's (starSiteId). */
+export const isStarSite = (site) => typeof site === 'string' && /:star\.\d{1,10}\.[0-2](?:\.[mc])?$/.test(site);
 /** Two players who spring one marker inside this window (a frame's latency, generously) are a RACE, settled by id;
  *  past it the one who sprang FIRST keeps it (AUDIT WOD7: each side measured only its own spring's age, so a pair
  *  ten seconds apart doubled or collapsed by id order alone). */

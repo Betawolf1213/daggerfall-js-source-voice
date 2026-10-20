@@ -1,6 +1,8 @@
 // STAR4 (bible/11-Multiplayer/Starfall.md section 3): THE STAR IN THE WORLD - its art painted in code under its own
 // pseudo-archive, its crater and stone made on the land's own heights, the sky's pure path (the omen, the streak, the
 // clamp about the eye, the ring of shock), its shaders' heads, and its sounds out of DAGGER.SND's own records.
+// AUDIT STARFALL (2026-10-20): the rim's stones in its earth (R6), the ring on the land in its shader (R3), the pass's
+// clamped beacon, the ring's ground and the fog's focus (R2, R3, R5), a cue its distance late (R7).
 // tools/mutants/star4.json.
 import '../../modsOff.js';
 import { test } from 'node:test';
@@ -16,8 +18,12 @@ import {
 import {
   streakAt, omenAt, skyClamp, shockRingAt, STAR_SKY_R, STAR_FALL_FROM_M, STAR_FALL_ALT_M, STAR_OMEN_ALT_M, STAR_OMEN_W, STAR_RING_M,
   STAR_RING_MS, STAR_SKY_VS, STAR_SKY_FS, STAR_RING_VS, STAR_RING_FS, STAR_BEACON_COLOR, STAR_HELD_COLOR,
+  StarfallPassRenderer, ringStrip, STAR_RING_SEGS, STAR_RING_WIDTH_M, STAR_RING_LIFT_M, STAR_BEACON_BELOW_M, STAR_BEACON_HEIGHT_M,
 } from '../../../src/render/starfall/starfallPass.js';
-import { STAR_SOUNDS, playStarSound } from '../../../src/systems/starfall/starSounds.js';
+import { BEACON_RADIUS_M } from '../../../src/render/gate/gatePass.js';
+import { STAR_SOUNDS, playStarSound, starHeardAfterMs } from '../../../src/systems/starfall/starSounds.js';
+import { thunderOf } from '../../../src/systems/distantStorms.js';
+import { glslFunctions } from '../../glsl.mjs';
 import { SOUND } from '../../../src/systems/soundClips.js';
 import { PSEUDO_ARCHIVES, pseudoArchiveCollisions, pseudoArchiveOwner } from '../../../src/world/eliteGates/pseudoArchives.js';
 import { STAR_VIOLET_CSS, STAR_GOLD_CSS } from '../../../src/ui/starfall/starMapMark.js';
@@ -234,4 +240,100 @@ test('STAR4 THE SOUNDS: DAGGER.SND\'s own records, pitched - the omen and the fa
   assert.equal(playStarSound(null, 'omen'), false);
   assert.equal(playStarSound({ playOneShot: () => { throw new Error('no context'); } }, 'omen'), false);
   assert.equal(playStarSound({}, 'hum', [0, 0, 0]), false);
+});
+
+// ── AUDIT STARFALL (2026-10-20) ──────────────────────────────────────────────────────────────────────────────────────
+
+/** A GL that answers every call (its programs link, its uniforms are their names) and keeps what it was told. */
+function fakeGl() {
+  const calls = [];
+  const answer = { createProgram: () => ({ program: true }), getProgramParameter: () => true, getShaderParameter: () => true, getUniformLocation: (p, n) => ({ n }) };
+  return new Proxy({ calls }, {
+    get(o, k) {
+      if (k in o) return o[k];
+      if (typeof k === 'string' && /^[A-Z_0-9]+$/.test(k)) return k;
+      return (...a) => { calls.push([k, ...a]); return answer[k] ? answer[k](...a) : {}; };
+    },
+  });
+}
+/** What the pass set each uniform to, in its order: `[name, ...values]`. */
+const uniformsSet = (gl) => gl.calls.filter(([k]) => /^uniform/.test(k)).map(([, loc, ...v]) => [loc?.n, ...v]);
+
+test('AUDIT STARFALL R6 THE RIM\'S STONES SIT IN ITS EARTH: each stone\'s base corners at or under the earth they stand on - the lowest of it, on the rim\'s outer slope and on a slope of the land - its crown over the earth at its middle (mutants: the lowest corner)', () => {
+  const corners = (m) => trisOf(m, STAR_RIM_RECORD).flatMap(([a, b, c]) => [a, b, c]);
+  for (const ground of [() => 0, (x, z) => 0.3 * x - 0.2 * z]) {
+    for (const [n, k] of [[N, K], [N + 7, 0], [N + 31, 2]]) {
+      const m = buildStarModel(n, k, ground);
+      const L = starLayout(n, k);
+      const pts = corners(m);
+      for (const s of L.stones) {
+        // the stone's own points: within its reach of its middle, off the floor's grid (whose points sit on the earth)
+        const own = pts.filter((p) => Math.hypot(p[0] - s.x, p[2] - s.z) <= s.s + 1e-6);
+        const base = own.filter((p) => Math.abs(Math.hypot(p[0] - s.x, p[2] - s.z) - s.s) < 1e-6);
+        assert.ok(base.length >= 5, 'its base ring');
+        for (const p of base) assert.ok(p[1] <= ground(p[0], p[2]) + rimAt(Math.hypot(p[0], p[2])) + 1e-6, `a base corner of ${n}.${k} never over the earth under it`);
+        const top = Math.max(...own.map((p) => p[1]));
+        assert.ok(top > ground(s.x, s.z) + rimAt(Math.hypot(s.x, s.z)), 'its crown out of the earth');
+      }
+    }
+  }
+});
+
+test('AUDIT STARFALL R3 THE RING ON THE LAND, IN ITS SHADER: each bearing\'s inner and outer edge stands on its own ground over the heart (`uGround`) and a hand over it, at the running edge\'s width either side; the strip runs every bearing round to the first (mutants: the ground, the edge)', () => {
+  const strip = ringStrip(4);
+  assert.equal(strip.length, 4 * 12);
+  assert.deepEqual([...strip.slice(0, 12)], [0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]);
+  assert.deepEqual([...strip.slice(-12, -10)], [3, 0]);
+  assert.equal(ringStrip().length, STAR_RING_SEGS * 12);
+  const ground = Array.from({ length: STAR_RING_SEGS * 2 }, (_, i) => (i % 7) * 0.5 - 1.25);
+  const at = [100, 20, -50], r = 40;
+  const f = glslFunctions(STAR_RING_VS, { uAt: at, uR: r, uWidth: STAR_RING_WIDTH_M, uGround: ground, uVP: Array(16).fill(0), aP: [0, 0] });
+  for (const i of [0, 3, 8, 17, 31]) {
+    const a = (i / STAR_RING_SEGS) * 2 * Math.PI;
+    for (const j of [0, 1]) {
+      const p = f.ringPoint([i, j]), rr = j ? r + STAR_RING_WIDTH_M : r - STAR_RING_WIDTH_M;
+      assert.ok(Math.abs(p[0] - (at[0] + Math.sin(a) * rr)) < 1e-6 && Math.abs(p[2] - (at[2] + Math.cos(a) * rr)) < 1e-6, `bearing ${i}, edge ${j}: its place`);
+      assert.ok(Math.abs(p[1] - (at[1] + ground[i * 2 + j] + STAR_RING_LIFT_M)) < 1e-6, `bearing ${i}, edge ${j}: on its own ground`);
+    }
+  }
+  const last = f.ringPoint([STAR_RING_SEGS, 1]), first = f.ringPoint([0, 1]);
+  assert.deepEqual(last, first, 'round to the first');
+  const start = glslFunctions(STAR_RING_VS, { uAt: at, uR: 2, uWidth: STAR_RING_WIDTH_M, uGround: ground, uVP: Array(16).fill(0), aP: [0, 0] }).ringPoint([0, 0]);
+  assert.deepEqual([start[0], start[2]], [at[0], at[2]], 'its inner edge never past the heart');
+});
+
+test('AUDIT STARFALL R2 R3 R5 THE PASS: a beacon\'s width, foot and height scaled with its clamp; a ring handed its ground (flat where none is); the sky\'s and the ring\'s fog handed the travel view\'s focus and the jungle\'s haze, as the beacon\'s is (mutants: the scale, the ground, the focus)', () => {
+  const gl = fakeGl();
+  const pass = new StarfallPassRenderer(gl);
+  const programs = gl.calls.filter(([k]) => k === 'getUniformLocation').map(([, , n]) => n);
+  for (const n of ['uFocus', 'uJungleHaze']) assert.equal(programs.filter((x) => x === n).length, 3, `${n}: the beacon's, the sky's and the ring's`);
+  const I = new Float32Array(16), focus = new Float32Array([1, 2, 3, 1]), haze = new Float32Array(8).fill(0.5);
+  const ground = new Float32Array(STAR_RING_SEGS * 2).fill(1.5);
+  gl.calls.length = 0;
+  const drawn = pass.draw({
+    beacons: [{ origin: [0, 0, 0], scale: 0.5, fade: 1, held: false }, { origin: [9, 0, 0], fade: 1, held: true }],
+    glows: [{ at: [0, 9000, 0], w: 10, light: 1 }], trails: [],
+    rings: [{ at: [0, 0, 0], r: 20, fade: 1, ground }, { at: [5, 0, 0], r: 20, fade: 1 }],
+  }, I, I, [0, 2, 0], 1, { mode: 1, density: 0, range: [0, 1], color: [0, 0, 0], camPos: [0, 2, 0], focus, haze });
+  assert.equal(drawn, 5);
+  const set = uniformsSet(gl);
+  const of = (name) => set.filter(([n]) => n === name).map(([, ...v]) => v);
+  assert.deepEqual(of('uRadius'), [[BEACON_RADIUS_M * 0.5], [BEACON_RADIUS_M]], 'its width with its clamp, a beacon unclamped as it is');
+  assert.deepEqual(of('uBelow'), [[STAR_BEACON_BELOW_M * 0.5], [STAR_BEACON_BELOW_M]]);
+  assert.deepEqual(of('uHeight'), [[STAR_BEACON_HEIGHT_M * 0.5], [STAR_BEACON_HEIGHT_M]]);
+  assert.equal(of('uFocus').length, 3, 'the focus handed to each program drawn');
+  assert.ok(of('uFocus').every(([v]) => v === focus) && of('uJungleHaze').every(([v]) => v === haze));
+  const grounds = of('uGround');
+  assert.equal(grounds[0][0], ground, 'the ring\'s ground');
+  assert.equal(grounds[1][0].length, STAR_RING_SEGS * 2);
+  assert.ok([...grounds[1][0]].every((v) => v === 0), 'flat where none is given');
+  assert.ok(gl.calls.some(([k, , , n]) => k === 'drawArrays' && n === STAR_RING_SEGS * 6), 'the strip drawn whole');
+});
+
+test('AUDIT STARFALL R7 A CUE AT THE STAR IS HEARD ITS DISTANCE LATE: the storms\' own speed of sound (mutants: the delay)', () => {
+  assert.equal(starHeardAfterMs(0), 0);
+  assert.ok(Math.abs(starHeardAfterMs(686) - 2000) < 1e-9);
+  assert.ok(Math.abs(starHeardAfterMs(1500) - thunderOf(1500).delay * 1000) < 1e-9, 'with its thunder');
+  assert.equal(starHeardAfterMs(-5), 0);
+  assert.equal(starHeardAfterMs(NaN), 0);
 });

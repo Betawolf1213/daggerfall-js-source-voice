@@ -41,6 +41,10 @@ export const STAR_FLASH_MS = 1600;
 export const STAR_RING_M = 90;
 export const STAR_RING_MS = 1800;
 export const STAR_RING_WIDTH_M = 6;
+/** AUDIT STARFALL R3: the ring's bearings - its ground read at each, at its inner and its outer edge (the host's
+ *  ringGround, `uGround`) - and how far over that ground it runs. */
+export const STAR_RING_SEGS = 32;
+export const STAR_RING_LIFT_M = 0.6;
 /** The fall's colour, white at its heart. */
 export const STAR_FALL_COLOR = Object.freeze([0.66, 0.5, 1.0]);
 
@@ -131,20 +135,33 @@ void main() {
   // the sky's light is the night's: fogged, never under a floor of it (the beacon's law - a star kilometres off still shows)
   o = vec4(col * light * uLight * max(fogFactorAt(vWorld), 0.35), 1.0);
 }`;
-/** The ring of shock: a flat annulus on the ground at the landing, bright at its running edge. */
-export const STAR_RING_VS = HEAD + `layout(location = 0) in vec2 aP;   // -1..1 over the ring's square
+/** The ring of shock: a band round the landing, bright at its running edge - AUDIT STARFALL R3: ON THE LAND. It was a
+ *  flat square 0.6 m over the heart out to the ring's reach, and the land rises over that plane within 90 m of most of
+ *  the map's ground (the audit's probe: 63.5% of its land pixels): the ring ran under the hills. Now a strip of
+ *  STAR_RING_SEGS bearings, its inner and outer edge each lifted to its own ground (`uGround`, over the heart's, the
+ *  host's read - [bearing * 2 + edge]). `aP` is (the bearing, the edge: 0 inner, 1 outer). */
+export const STAR_RING_VS = HEAD + `layout(location = 0) in vec2 aP;
 uniform mat4 uVP;
 uniform vec3 uAt;
 uniform float uR;
-out vec2 vP;
+uniform float uWidth;
+uniform float uGround[${STAR_RING_SEGS * 2}];
+out float vD;
 out vec3 vWorld;
+vec3 ringPoint(vec2 p) {
+  int i = int(p.x + 0.5) % ${STAR_RING_SEGS};
+  int j = int(p.y + 0.5);
+  float a = float(i) / ${STAR_RING_SEGS}.0 * 6.283185307179586;
+  float r = j == 0 ? max(0.0, uR - uWidth) : uR + uWidth;
+  return uAt + vec3(sin(a) * r, uGround[i * 2 + j] + ${STAR_RING_LIFT_M.toFixed(2)}, cos(a) * r);
+}
 void main() {
-  vP = aP;
-  vec3 w = uAt + vec3(aP.x * (uR + 8.0), 0.6, aP.y * (uR + 8.0));
+  vD = aP.y > 0.5 ? uR + uWidth : max(0.0, uR - uWidth);
+  vec3 w = ringPoint(aP);
   vWorld = w;
   gl_Position = uVP * vec4(w, 1.0);
 }`;
-export const STAR_RING_FS = HEAD + `in vec2 vP;
+export const STAR_RING_FS = HEAD + `in float vD;
 in vec3 vWorld;
 uniform float uR;
 uniform float uWidth;
@@ -153,7 +170,7 @@ uniform vec3 uColor;
 ${FOG}out vec4 o;
 ${FOG_FACTOR_GLSL}
 void main() {
-  float d = length(vP) * (uR + 8.0);
+  float d = vD;
   float band = 1.0 - smoothstep(0.0, uWidth, abs(d - uR));
   if (band <= 0.0) discard;
   float inner = smoothstep(uR - uWidth * 3.0, uR, d);   // brighter at the running edge, a wake behind it
@@ -165,7 +182,14 @@ const NO_FOCUS = new Float32Array(4);
 const NO_HAZE = new Float32Array(8);
 const WHITE = new Float32Array([1, 1, 1]);
 const QUAD = new Float32Array([-1, 0, 1, 0, 1, 1, -1, 0, 1, 1, -1, 1]);
-const SQUARE = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
+/** The ring's strip: each bearing's quad, inner edge to outer, to the next bearing (the last back to the first). */
+export function ringStrip(segs = STAR_RING_SEGS) {
+  const out = new Float32Array(segs * 12);
+  let o = 0;
+  for (let i = 0; i < segs; i++) for (const [u, v] of [[i, 0], [i + 1, 0], [i + 1, 1], [i, 0], [i + 1, 1], [i, 1]]) { out[o++] = u; out[o++] = v; }
+  return out;
+}
+const FLAT_RING = new Float32Array(STAR_RING_SEGS * 2);
 const vao = (gl, verts) => {
   const v = gl.createVertexArray();
   gl.bindVertexArray(v);
@@ -185,13 +209,16 @@ export class StarfallPassRenderer {
     this.beacon = buildProgram(gl, BEACON_DRAW_VS, BEACON_DRAW_FS, 'star beacon');
     this.ub = uniforms(gl, this.beacon, ['uVP', 'uOrigin', 'uEye', 'uRadius', 'uTime', 'uFade', 'uColor', 'uBelow', 'uHeight', 'uFoot', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos', 'uFocus', 'uJungleHaze']);
     this.sky = buildProgram(gl, STAR_SKY_VS, STAR_SKY_FS, 'star sky');
-    this.us = uniforms(gl, this.sky, ['uVP', 'uKind', 'uHead', 'uDir', 'uLen', 'uW', 'uEye', 'uColor', 'uLight', 'uTime', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos']);
+    // AUDIT STARFALL R5: the travel view's focus and the jungle's haze, as the beacon's - the sky's and the ring's fog
+    // read them (render/fogGlsl.js FOG_GLSL) and were never handed them
+    this.us = uniforms(gl, this.sky, ['uVP', 'uKind', 'uHead', 'uDir', 'uLen', 'uW', 'uEye', 'uColor', 'uLight', 'uTime', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos', 'uFocus', 'uJungleHaze']);
     this.ring = buildProgram(gl, STAR_RING_VS, STAR_RING_FS, 'star ring');
-    this.ur = uniforms(gl, this.ring, ['uVP', 'uAt', 'uR', 'uWidth', 'uFade', 'uColor', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos']);
+    this.ur = uniforms(gl, this.ring, ['uVP', 'uAt', 'uR', 'uWidth', 'uGround', 'uFade', 'uColor', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos', 'uFocus', 'uJungleHaze']);
     const col = beaconVertices();
     this.colVao = vao(gl, col); this.colCount = col.length / 2;
     this.quadVao = vao(gl, QUAD);
-    this.squareVao = vao(gl, SQUARE);
+    const strip = ringStrip();
+    this.ringVao = vao(gl, strip); this.ringCount = strip.length / 2;
     this._vp = new Float32Array(16);
     /** what the last draw put up, for the stats and the tests */
     this.drawn = 0;
@@ -208,9 +235,11 @@ export class StarfallPassRenderer {
   }
 
   /**
-   * Draw the frame's Starfall: `sky` `{ beacons: [{ origin, fade, held }], glows: [{ at, w, color, light }], trails:
-   * [{ head, dir, len, w, color, light }], rings: [{ at, r, fade, color }] }` - every place the scene's, every sky thing
-   * already clamped (skyClamp). Answers how many things it drew; nothing to draw, nothing touched.
+   * Draw the frame's Starfall: `sky` `{ beacons: [{ origin, scale, fade, held }], glows: [{ at, w, color, light }], trails:
+   * [{ head, dir, len, w, color, light }], rings: [{ at, r, fade, color, ground }] }` - every place the scene's, every sky
+   * thing already clamped (skyClamp - a beacon's `scale` the clamp's, its column's every length taken by it), a ring's
+   * `ground` its edges' ground over `at` (STAR_RING_SEGS * 2, flat where none is given). Answers how many things it drew;
+   * nothing to draw, nothing touched.
    */
   draw(sky, proj, view, eye, seconds, fog = null) {
     this.drawn = 0;
@@ -231,14 +260,17 @@ export class StarfallPassRenderer {
       gl.useProgram(this.beacon);
       gl.uniformMatrix4fv(U.uVP, false, this._vp);
       gl.uniform1f(U.uTime, gateClock(seconds));
-      gl.uniform1f(U.uRadius, BEACON_RADIUS_M);
       gl.uniform3fv(U.uEye, E);
-      gl.uniform1f(U.uBelow, STAR_BEACON_BELOW_M);
-      gl.uniform1f(U.uHeight, STAR_BEACON_HEIGHT_M);
       gl.uniform1f(U.uFoot, (STAR_BEACON_BELOW_M + STAR_BEACON_START_M) / STAR_BEACON_HEIGHT_M);
       this._fog(U, fog, E);
       gl.bindVertexArray(this.colVao);
       for (const b of beacons) {
+        // AUDIT STARFALL R2: a column clamped about the eye is the same column on the screen - its width, its foot and its
+        // height scaled with its place
+        const s = b.scale > 0 && b.scale <= 1 ? b.scale : 1;
+        gl.uniform1f(U.uRadius, BEACON_RADIUS_M * s);
+        gl.uniform1f(U.uBelow, STAR_BEACON_BELOW_M * s);
+        gl.uniform1f(U.uHeight, STAR_BEACON_HEIGHT_M * s);
         gl.uniform3fv(U.uColor, b.held ? STAR_HELD_COLOR : STAR_BEACON_COLOR);
         gl.uniform3f(U.uOrigin, b.origin[0], b.origin[1], b.origin[2]);
         gl.uniform1f(U.uFade, Math.min(1, b.fade));
@@ -278,12 +310,13 @@ export class StarfallPassRenderer {
       gl.uniformMatrix4fv(U.uVP, false, this._vp);
       gl.uniform1f(U.uWidth, STAR_RING_WIDTH_M);
       this._fog(U, fog, E);
-      gl.bindVertexArray(this.squareVao);
+      gl.bindVertexArray(this.ringVao);
       for (const r of rings) {
         gl.uniform3f(U.uAt, r.at[0], r.at[1], r.at[2]);
         gl.uniform1f(U.uR, r.r); gl.uniform1f(U.uFade, Math.min(1, r.fade));
+        gl.uniform1fv(U.uGround, r.ground?.length === STAR_RING_SEGS * 2 ? r.ground : FLAT_RING);
         gl.uniform3fv(U.uColor, r.color ?? STAR_FALL_COLOR);
-        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        gl.drawArrays(gl.TRIANGLES, 0, this.ringCount);
         this.drawn++;
       }
     }
