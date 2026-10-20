@@ -11,6 +11,8 @@
 //   - the mend sets the purse to nothing and gives what is owed as one letter of credit, witnessed and the service's own
 //     faucet, the act written down, the hold the purse made lifted - and the next checkpoint finds the record clean;
 //   - a hold the purse is not alone in, a timed hold and staff's own stand;
+//   - the lift guarded on the judgement it read (staff's hold laid while a mend is in flight moves nothing), and a mend
+//     of nothing owed gives nothing - no letter, no faucet - and lifts the hold all the same (AUDIT FB1019f A2, A3);
 //   - nobody but a developer, no purse but one below nothing and the one reckoned from, no amount past the law;
 //   - once a ticket, and a ticket names one act;
 //   - the operator's command, and `findings` saying the purse a mend is reckoned from;
@@ -185,6 +187,48 @@ test('PURSE-MEND THE HOLDS THAT STAND: the purse beside another finding - the la
   assert.deepEqual([t.row(held).held, t.row(held).law_sig], ['staff', PURSE_SIG]);
   const r3 = await t.mend(held, { was: p3.goldPieces, gold: 1_000 });
   assert.deepEqual([r3.status, r3.body.held, t.row(held).held], [200, 'staff', 'staff'], 'staff alone lift their own');
+});
+
+test('PURSE-MEND THE LIFT IS GUARDED ON THE JUDGEMENT THE ACT READ (AUDIT FB1019f A2): staff\'s own hold laid through its own route while a mend is in flight - after the mend read the row, before its batch - moves nothing: the hold stays staff\'s, the purse unmended, no row and no faucet, refused `seq` (409: ask again); asked again, the purse is mended under the staff\'s hold, which stands (mutants: the lift\'s guard unread; the lift unenforced)', async () => {
+  const t = await stand();
+  const c = await t.seat('seller');
+  const p = wrapped();
+  await t.put(c, saveOf(p));
+  const before = { row: t.row(c), rec: t.record(c) };
+  assert.deepEqual([before.row.held, before.row.law_sig, before.row.held_until], ['law', PURSE_SIG, null], 'the law\'s hold on the purse alone: the mend reads it as one to lift');
+  // the hold lands while the mend reads the record it seizes (the save's one read, after the row's)
+  const saves = t.s.env.SAVES, get = saves.get.bind(saves);
+  let armed = true, laid = null;
+  saves.get = async (key) => {
+    if (armed) { armed = false; laid = await t.s.call('/v1/mod/realm-hold', { id: c.id, note: 'looking while it mends' }, t.mac.secret); }
+    return get(key);
+  };
+  const r = await t.mend(c, { was: p.goldPieces, gold: 1_000 });
+  saves.get = get;
+  assert.equal(laid?.status, 200, 'staff\'s hold landed between the read and the batch');
+  assert.deepEqual([r.status, r.body.error], [409, 'seq'], 'the judgement it read moved: nothing lands');
+  assert.deepEqual([t.row(c).held, t.row(c).law_sig, t.row(c).seq, t.row(c).obj], ['staff', PURSE_SIG, before.row.seq, before.row.obj], 'staff\'s hold stands, the record where it was');
+  assert.deepEqual(t.record(c), before.rec, 'the purse unmended');
+  assert.deepEqual([t.repairs(c).length, t.faucet()], [0, { gold: 0, n: 0 }], 'no row, no faucet');
+  // asked again, it reads staff's hold: the purse mended, the hold staff's to lift
+  const again = await t.mend(c, { was: p.goldPieces, gold: 1_000 });
+  assert.deepEqual([again.status, again.body.held, t.row(c).held, t.record(c).goldPieces], [200, 'staff', 'staff', 0]);
+});
+
+test('PURSE-MEND NOTHING OWED (AUDIT FB1019f A3): a mend of 0 gold sets the purse to nothing and gives nothing - no letter in the pack, no faucet row - and lifts the hold the purse made all the same, the act written down with its 0 (mutants: a letter of nothing; a faucet row of nothing)', async () => {
+  const t = await stand();
+  const c = await t.seat('seller');
+  const p = wrapped();
+  await t.put(c, saveOf(p));
+  const before = t.row(c);
+  const r = await t.mend(c, { was: p.goldPieces, gold: 0 });
+  assert.deepEqual([r.status, r.body.gold, r.body.held], [200, 0, null], JSON.stringify(r.body));
+  const rec = t.record(c);
+  assert.equal(rec.goldPieces, 0, 'the purse set to nothing');
+  assert.deepEqual(rec.items, saveOf(p).items, 'no letter: the pack as it stood');
+  assert.deepEqual(t.faucet(), { gold: 0, n: 0 }, 'no faucet row');
+  assert.deepEqual([t.row(c).held, t.row(c).law_sig, t.row(c).judge_rev], [null, null, before.judge_rev + 1], 'the hold the purse made lifted');
+  assert.deepEqual(t.repairs(c).map((x) => [x.was, x.gold]), [[p.goldPieces, 0]]);
 });
 
 test('PURSE-MEND THE REFUSALS: only a developer is heard (403, 401 for no session); a mend the law refuses writes nothing - a purse it was reckoned from that is not below nothing or not whole, gold below nothing, past one int or not whole, a ticket of no shape (400); a record whose purse is not below nothing (409 mend-not-negative) or not the one reckoned from (409 mend-moved); no such character (404), the dead (409) (mutants: the developer gate; the purse it names unchecked; the bound; the purse asked not below nothing; the purse asked not the one)', async () => {

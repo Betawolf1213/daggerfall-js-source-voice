@@ -214,5 +214,41 @@
     "tests": [
       "test/net/fb1019f_pursemend.test.js"
     ]
+  },
+  {
+    "name": "AUDIT-FB1019f-A2-the-lift-guard-unenforced",
+    "file": "server-account/src/review.js",
+    "old": "        .bind(row.id, row.judge_rev, row.judged_seq),\n      mustChange(db),\n",
+    "new": "        .bind(row.id, row.judge_rev, row.judged_seq),\n",
+    "tests": [
+      "test/net/fb1019f_pursemend.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-FB1019f-A2-the-lift-guard-unread",
+    "file": "server-account/src/review.js",
+    "old": "WHERE id = ? AND judge_rev = ? AND judged_seq IS ?')",
+    "new": "WHERE id = ? AND (judge_rev = ? OR 1) AND (judged_seq IS ? OR 1)')",
+    "tests": [
+      "test/net/fb1019f_pursemend.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-FB1019f-A3-a-letter-of-nothing",
+    "file": "src/net/repairLaw.js",
+    "old": "  save.goldPieces = 0;\n  if (gold > 0) creditSave",
+    "new": "  save.goldPieces = 0;\n  if (gold >= 0) creditSave",
+    "tests": [
+      "test/net/fb1019f_pursemend.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-FB1019f-A3-a-faucet-row-of-nothing",
+    "file": "server-account/src/review.js",
+    "old": "    ...(mend.gold > 0 ? [faucetStatement",
+    "new": "    ...(mend.gold >= 0 ? [faucetStatement",
+    "tests": [
+      "test/net/fb1019f_pursemend.test.js"
+    ]
   }
 ]

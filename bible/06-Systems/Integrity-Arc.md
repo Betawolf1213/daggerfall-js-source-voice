@@ -323,7 +323,8 @@ coins short and spent the letters first. `realm-findings` now says the purse the
 wealth counts a purse below nothing as none, so nothing else said it), and `realm-mend { id, ticket, was, gold, note? }`
 mends one: the record's purse, still the `was` staff reckoned from (`mend-moved` otherwise: played since, or the wrong
 character), and below nothing (`mend-not-negative` otherwise), is SET to nothing - never added to - and `gold`, what the
-character is owed, 0 to one int's worth, is given as ONE LETTER OF CREDIT at the front of the pack: what the trade window
+character is owed, 0 to one int's worth, is given as ONE LETTER OF CREDIT at the front of the pack (0 gives none, and
+pays no faucet - AUDIT FB1019f A3): what the trade window
 itself pays for a sum the pack cannot carry (`tradeModes.js sellProceeds`), never a purse of coin (a million coins weigh
 2,500 kg). The law is `src/net/repairLaw.js` (`purseMendOf`, `applyPurseMend`), the service's and the tool's. The act is
 the repair's machinery (`review.js staffMend`, which both run): the dead mended never, once a ticket in `realm_repairs`
@@ -332,9 +333,11 @@ and one of the other kind is `repair-ticket`), the record seized one sequence on
 and the `repair` faucet's, the act written among the findings. AND THE HOLD THE PURSE MADE GOES WITH IT: when the
 character's hold is the law's, the finding it stands on is the purse's alone (`PURSE_SIG`, the signature `lawSigOf`
 writes for `gold`) and no timed hold stands, the mend lifts it as the next clean checkpoint would - the hold and its
-signature gone, `judge_rev` one on, guarded on the judgement it read - and the strike stands, fading as every strike does
+signature gone, `judge_rev` one on, guarded on the judgement it read (a hold staff lay while the mend is in flight moves
+nothing - `seq`, asked again it mends under staff's hold; AUDIT FB1019f A2) - and the strike stands, fading as every strike does
 (which strike the purse struck, the row does not say). A hold the purse is not alone in, a timed hold and staff's own stay
-for the next checkpoint and for staff. No migration: the mend's row is `realm_repairs`' own shape. The tool:
+for the next checkpoint and for staff. The service's acct163 (with COMPANION-DROP, `11-Multiplayer/Wild-Zone.md` section 8); no
+migration: the mend's row is `realm_repairs`' own shape. The tool:
 
 ```sh
 node tools/realmReview.mjs findings <realm character id>
@@ -342,7 +345,8 @@ node tools/realmReview.mjs mend <realm character id> <ticket> <was: the purse be
 ```
 
 Pinned by `test/net/fb1019f_pursemend.test.js` over the real Worker, a record the game writes (`save.js snapshotPlayer`)
-after the old counter's sale, checkpointed so the judge holds it; `tools/mutants/fb1019f_pursemend.json` (24, dead).
+after the old counter's sale, checkpointed so the judge holds it; `tools/mutants/fb1019f_pursemend.json` (28, dead - AUDIT FB1019f's four among them: the
+lift's guard unread and unenforced, a letter and a faucet row of nothing).
 
 ### AUTO-HOLD - no hold waits on a person (2026-10-16, `server-account/src/verdict.js`, `ledger.js`, migration 0120)
 
