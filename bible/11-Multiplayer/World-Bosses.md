@@ -2833,7 +2833,8 @@ freeware's blood splash decoded once over four hits); `gatemix_lights.test.js` (
 passing a flash by; the court's landing lights masked, his glow not); `gatemix_peers.test.js` (2: four decibels down in
 the court and as it was out of it; the Spire's scope never taken or cleared). PIN MOVED: `wb4_gate_boss` (its Hellfire's
 two marks now stand 12 m apart - the 8 m it had are one copy now); `wb11_gate_host` (the warm-up asks the night's
-archives too: each archive the host's own once, a frame uploaded once by either). `tools/mutants/gatemix.json` (36 dead
+archives too: each archive the host's own once, a frame uploaded once by either); `lightid` (a burst's flash record
+now carries its mask). `tools/mutants/gatemix.json` (36 dead
 with the limiter's, and one kept alive on purpose: the night's key in the warm-up, a cost and not a law).
 
 ## Shipped
