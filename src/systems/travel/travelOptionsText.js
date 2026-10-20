@@ -76,6 +76,7 @@ export const TRAVEL_OPTIONS_TEXT = Object.freeze({
 export const TRAVEL_NAV_TEXT = Object.freeze({
   MsgBlocked: "Paused the journey since the way ahead is blocked.",
   MsgStuck: "Paused the journey since you're making no headway.",
+  MsgGatesShut: "Paused the journey since the city gates are shut for the night.",   // OW-TOWN-WALK: a walled city's way out behind its gates (DaggerfallCityGate's night, offline)
 });
 
 /** C#'s `string.Format` for the placeholders these strings use: `{0}`,

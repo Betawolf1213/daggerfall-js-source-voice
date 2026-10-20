@@ -39,8 +39,8 @@ const MARK = Object.freeze({ px: 207, py: 213, fx: 12, fy: 250, h: 64, m: 1, tv:
 
 // ── THE WIRE ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-test('TV3 wire: a mark is seven keys and no eighth, each in its range - refused WHOLE otherwise; `tv` absent reads 0', () => {
-  assert.deepEqual(TRAV_KEYS, ['px', 'py', 'fx', 'fy', 'h', 'm', 'tv']);
+test('TV3 wire: a mark is seven keys and no eighth, each in its range - refused WHOLE otherwise; `tv` absent reads 0 (OW-CHASE-RANGE, world224: the eighth is `bd`, its chase word - test/systems/travel/ow_chaserange.test.js)', () => {
+  assert.deepEqual(TRAV_KEYS, ['px', 'py', 'fx', 'fy', 'h', 'm', 'tv', 'bd']);   // PIN MOVED (OW-CHASE-RANGE): "a later field is a new relay version and a new key" - this is that
   assert.deepEqual(validTravellerMark(MARK), MARK);
   assert.deepEqual(validTravellerMark({ ...MARK, tv: undefined }), { ...MARK, tv: 0 });
   assert.deepEqual(TRAV_MODES, ['foot', 'horse', 'cart', 'ship']);
@@ -103,7 +103,7 @@ test('TV3 relay: a mark in a region\'s channel is KEPT on the attachment (stampe
   const { r, ws: [a, b, c] } = await regionRoom(['peer-0001', 'peer-0002', 'peer-0003']);
   for (const s of [a, b, c]) s.sent.length = 0;
   await r.raw(a, JSON.stringify({ t: 'trav', p: MARK }));
-  assert.deepEqual(Object.keys(a.att.tm).sort(), [...TRAV_KEYS, 'at'].sort(), 'kept, stamped');
+  assert.deepEqual(Object.keys(a.att.tm).sort(), [...TRAV_KEYS.filter((k) => k !== 'bd'), 'at'].sort(), 'kept, stamped');   // PIN MOVED (OW-CHASE-RANGE): a mark with no chase carries no `bd`
   for (const s of [b, c]) {
     const t = ofType(s, 'trav');
     assert.equal(t.length, 1);
@@ -127,7 +127,7 @@ test('TV3 relay: a joiner\'s welcome carries the room\'s FRESH marks, badged; a 
     await quiet(() => r.hello(c, 'peer-0003'));
     const tr = ofType(c, 'welcome')[0].tr;
     assert.deepEqual(tr.map((x) => [x.id, x.name, x.p.px]), [['peer-0001', nameOf(0), 207], ['peer-0002', nameOf(1), 300]]);
-    assert.deepEqual(Object.keys(tr[0].p).sort(), [...TRAV_KEYS].sort(), 'the mark as sent - the stamp stays the relay\'s');
+    assert.deepEqual(Object.keys(tr[0].p).sort(), TRAV_KEYS.filter((k) => k !== 'bd').sort(), 'the mark as sent - the stamp stays the relay\'s');   // PIN MOVED (OW-CHASE-RANGE): no chase, no `bd`
     t0 += TRAV_HUB_MIN_MS + 1;
     await r.raw(b, JSON.stringify({ t: 'trav', p: null }));
     assert.equal(b.att.tm, undefined, 'taken out');
@@ -459,9 +459,9 @@ test('TV3 switch: "Show me to travellers in my region" - on by default, the play
 test('TV3 host wiring: the book hoisted above its readers, filled by the Region tab\'s own link; my mark sent when due, on that link, from the open air alone and with the switch on; the view and the map draw the book', () => {
   const w = rd('src/scenes/world.js');
   assert.ok(((i, j) => i >= 0 && j >= 0 && i < j)(w.indexOf('const travellerBook = createTravellerBook();'), w.indexOf('travellers: () => travellerBook.live(Date.now())')), 'BOOT-TDZ: above the map that reads it');
-  assert.match(w, /if \(tab\.id === 'region'\) \{   \/\/ TV3[^\n]*\n\s*link\.onTraveller = \(f\) => travellerBook\.put\(f, Date\.now\(\)\);/);
+  assert.match(w, /if \(tab\.id === 'region'\) \{   \/\/ TV3[^\n]*\n\s*link\.onTraveller = \(f\) => \{ travellerBook\.put\(f, Date\.now\(\)\); regionChaseHear\(f\); \};/);   // PIN MOVED (OW-CHASE-RANGE): and a far traveller's chases heard
   // AUDIT TV C1: a welcome is a fresh socket - the room holds nothing of mine, so the next frame sends my mark again
-  assert.match(w, /link\.onTravellerRoom = \(list\) => \{ travellerBook\.reset\(list, Date\.now\(\)\); travellerSent\.last = null; travellerSent\.at = 0; \};/);
+  assert.match(w, /link\.onTravellerRoom = \(list\) => \{ travellerBook\.reset\(list, Date\.now\(\)\); travellerSent\.last = null; travellerSent\.at = 0;(?: for \(const f of list \?\? \[\]\) regionChaseHear\(f\);)? \};/);
   assert.match(w, /link\.onTravellerLeft = \(id\) => travellerBook\.drop\(id\);/);
   // AUDIT TV C5: offline (another tab has the seat), nobody is seen travelling
   assert.match(w, /for \(const link of chatLinks\?\.values\?\.\(\) \?\? \[\]\) link\.supersede\(\);\n(?:\s*\/\/[^\n]*\n)*\s*try \{ arenaOnline\?\.leaveAll\(\); \}[^\n]*\n\s*travellerBook\.clear\(\); travellerSent\.last = null;/);

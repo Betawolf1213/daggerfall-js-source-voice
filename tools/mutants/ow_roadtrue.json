@@ -1,0 +1,146 @@
+[
+  {
+    "name": "ORT-projection-unclamped",
+    "file": "src/systems/travel/travelAutopilot.js",
+    "old": "const u = Math.max(0, Math.min(1, t + look / len));",
+    "new": "const u = t + look / len;",
+    "tests": [
+      "test/systems/travel/ow_roadtrue.test.js"
+    ]
+  },
+  {
+    "name": "ORT-look-ignored",
+    "file": "src/systems/travel/travelAutopilot.js",
+    "old": "const u = Math.max(0, Math.min(1, t + look / len));",
+    "new": "const u = Math.max(0, Math.min(1, t));",
+    "tests": [
+      "test/systems/travel/ow_roadtrue.test.js"
+    ]
+  },
+  {
+    "name": "ORT-share-wrong-axis",
+    "file": "src/systems/travel/travelAutopilot.js",
+    "old": "const t = ((x - lane.ax) * dx + (z - lane.az) * dz) / (len * len);",
+    "new": "const t = ((x - lane.ax) * dx) / (len * len);",
+    "tests": [
+      "test/systems/travel/ow_roadtrue.test.js"
+    ]
+  },
+  {
+    "name": "ORT-zero-length-not-walked",
+    "file": "src/systems/travel/travelAutopilot.js",
+    "old": "if (!(len > 0)) return { t: 1, x: lane.bx, z: lane.bz };",
+    "new": "if (!(len > 0)) return { t: 0, x: lane.bx, z: lane.bz };",
+    "tests": [
+      "test/systems/travel/ow_roadtrue.test.js"
+    ]
+  },
+  {
+    "name": "ORT-lane-unread",
+    "file": "src/systems/travel/travelAutopilot.js",
+    "old": "    if (this.path) return this.laneUpdate(worldX, worldZ);",
+    "new": "",
+    "tests": [
+      "test/systems/travel/ow_roadtrue.test.js"
+    ]
+  },
+  {
+    "name": "ORT-look-never-grown",
+    "file": "src/systems/travel/travelAutopilot.js",
+    "old": "const look = Math.max(this.lookMin, Math.min(LANE_LOOK_MAX, LANE_LOOK_STEPS * step));",
+    "new": "const look = this.lookMin;",
+    "tests": [
+      "test/systems/travel/ow_roadtrue.test.js"
+    ]
+  },
+  {
+    "name": "ORT-look-no-ceiling",
+    "file": "src/systems/travel/travelAutopilot.js",
+    "old": "const look = Math.max(this.lookMin, Math.min(LANE_LOOK_MAX, LANE_LOOK_STEPS * step));",
+    "new": "const look = Math.max(this.lookMin, LANE_LOOK_STEPS * step);",
+    "tests": [
+      "test/systems/travel/ow_roadtrue.test.js"
+    ]
+  },
+  {
+    "name": "ORT-step-unmeasured",
+    "file": "src/systems/travel/travelAutopilot.js",
+    "old": "    this.lastAt = { x: worldX, z: worldZ };\n    const look",
+    "new": "    const look",
+    "tests": [
+      "test/systems/travel/ow_roadtrue.test.js"
+    ]
+  },
+  {
+    "name": "ORT-end-not-an-arrival",
+    "file": "src/systems/travel/travelAutopilot.js",
+    "old": "if (rectContains(this.destinationWorldRect, worldX, worldZ) || p.end) {",
+    "new": "if (rectContains(this.destinationWorldRect, worldX, worldZ)) {",
+    "tests": [
+      "test/systems/travel/ow_roadtrue.test.js"
+    ]
+  },
+  {
+    "name": "ORT-bearing-latch-kept",
+    "file": "src/systems/travel/travelAutopilot.js",
+    "old": "if (rectContains(this.destinationWorldRect, worldX, worldZ) || p.end) {",
+    "new": "if (rectContains(this.destinationWorldRect, worldX, worldZ) || p.end || Math.abs(calculateYaw(worldX, worldZ, this.destinationCentre.x, this.destinationCentre.z) - calculateYaw(worldX, worldZ, p.x, p.z)) > OVERSHOOT_YAW_DEGREES) {",
+    "tests": [
+      "test/systems/travel/ow_roadtrue.test.js"
+    ]
+  },
+  {
+    "name": "ORT-reinit-keeps-lane",
+    "file": "src/systems/travel/travelAutopilot.js",
+    "old": "    this.path = path?.length >= 2 ? path.map((q) => [q[0] ?? q.x, q[1] ?? q.z]) : lane ? [[lane.ax, lane.az], [lane.bx, lane.bz]] : null;",
+    "new": "    if (path || lane) this.path = path?.length >= 2 ? path.map((q) => [q[0] ?? q.x, q[1] ?? q.z]) : lane ? [[lane.ax, lane.az], [lane.bx, lane.bz]] : null;",
+    "tests": [
+      "test/systems/travel/ow_roadtrue.test.js"
+    ]
+  },
+  {
+    "name": "ORT-open-ground-laned",
+    "file": "src/systems/travel/travelOptions.js",
+    "old": "if (!leg || !prev || leg.at || leg.ring || !ROAD_LEG_KINDS.includes(leg.kind)) return null;",
+    "new": "if (!leg || !prev || leg.at || leg.ring) return null;",
+    "tests": [
+      "test/systems/travel/ow_roadtrue.test.js"
+    ]
+  },
+  {
+    "name": "ORT-join-laned",
+    "file": "src/systems/travel/travelOptions.js",
+    "old": "if (!leg || !prev || leg.at || leg.ring || !ROAD_LEG_KINDS.includes(leg.kind)) return null;",
+    "new": "if (!leg || !prev || !ROAD_LEG_KINDS.includes(leg.kind)) return null;",
+    "tests": [
+      "test/systems/travel/ow_roadtrue.test.js"
+    ]
+  },
+  {
+    "name": "ORT-first-leg-from-nowhere",
+    "file": "src/systems/travel/travelOptions.js",
+    "old": "    const leg = r.legs[i], prev = r.legs[i - 1];\n    if (!leg || !prev ||",
+    "new": "    const leg = r.legs[i], prev = r.legs[i - 1] ?? leg;\n    if (!leg || !prev ||",
+    "tests": [
+      "test/systems/travel/ow_roadtrue.test.js"
+    ]
+  },
+  {
+    "name": "ORT-last-leg-unlaned",
+    "file": "src/systems/travel/travelOptions.js",
+    "old": ", lane: routeLane(r, r.legs.length - 1) });",
+    "new": " });",
+    "tests": [
+      "test/systems/travel/ow_roadtrue.test.js"
+    ]
+  },
+  {
+    "name": "ORT-lane-from-the-joins-point",
+    "file": "src/systems/travel/travelOptions.js",
+    "old": "    const a = legMiddle(prev), b = legMiddle(leg);\n    return { ax: a.x, az: a.z, bx: b.x, bz: b.z };",
+    "new": "    const a = prev.at ?? legMiddle(prev), b = legMiddle(leg);\n    return { ax: a.x, az: a.z, bx: b.x, bz: b.z };",
+    "tests": [
+      "test/systems/travel/ow_roadtrue.test.js"
+    ]
+  }
+]

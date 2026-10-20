@@ -92,8 +92,8 @@
   {
     "name": "TV3-session-no-version-gate",
     "file": "src/net/online.js",
-    "old": "    if (!this.travOk || !isRegionRoom(this.room)) return false;\n    const mark",
-    "new": "    if (!isRegionRoom(this.room)) return false;\n    const mark",
+    "old": "    if (!this.travOk || !isRegionRoom(this.room)) return false;\n    if (p?.bd",
+    "new": "    if (!isRegionRoom(this.room)) return false;\n    if (p?.bd",
     "tests": [
       "test/scenes/tv3_travellers.test.js"
     ],
@@ -202,8 +202,8 @@
   {
     "name": "AUDIT-TV-C1-a-reconnect-is-held",
     "file": "src/scenes/world.js",
-    "old": "        link.onTravellerRoom = (list) => { travellerBook.reset(list, Date.now()); travellerSent.last = null; travellerSent.at = 0; };",
-    "new": "        link.onTravellerRoom = (list) => { travellerBook.reset(list, Date.now()); };",
+    "old": "travellerBook.reset(list, Date.now()); travellerSent.last = null; travellerSent.at = 0; for",
+    "new": "travellerBook.reset(list, Date.now()); for",
     "tests": [
       "test/scenes/tv3_travellers.test.js"
     ],

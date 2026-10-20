@@ -112,7 +112,7 @@ const governorHost = (over = {}) => {
   };
   const scope = {
     travelControlUI: { get isShowing() { return d.journey; } }, travelOptions: { state: { get autopilot() { return d.journey ? {} : null; } } },
-    travellerOnRoad: () => !!d.onRoad, foePaced, foeRate,   // RATE-LAW: the keys' travel's ground; ENEMY-PACE's fixed floor
+    travellerOnRoad: () => !!d.onRoad, foePaced, foeRate, tvInTown: () => false, TOWN_PACE_MAX: 5,   /* OW-TOWN-WALK: out of town */   // RATE-LAW: the keys' travel's ground; ENEMY-PACE's fixed floor
     travelView: { get active() { return d.up; }, get state() { return d.up ? 'up' : 'off'; } }, tvOwnsJourneys: () => d.owns,
     worldTimeScale: () => d.scale, setWorldTimeScale: (n) => { d.scale = n; },
     travelGovernor: createLoadGovernor({ max: 100 }), state: { terrainDistance: 3, localFromWorld: (x, z) => [x, z] },

@@ -215,7 +215,7 @@ export function createTravelSteer(params = TRAVEL_STEER) {
     episodes: 0, flips: 0, holds: 0,   // counted, for the pins
   };
   /** The caller-owned shapes, made once (steerDrive fills `input`). */
-  const input = { key: null, x: 0, z: 0, tx: 0, tz: 0, yaw: 0, goal: Infinity, reach: 0, quantum: 0, asked: 0, manual: false };
+  const input = { key: null, x: 0, z: 0, tx: 0, tz: 0, yaw: 0, goal: Infinity, reach: 0, quantum: 0, asked: 0, manual: false, pathed: false };
   const output = { yaw: 0, forward: 1, stop: null, deflected: false };
   /** This frame's reading of the line - scratch, so the helpers below are
    *  made once rather than closed over afresh every frame. */
@@ -397,8 +397,12 @@ export function createTravelSteer(params = TRAVEL_STEER) {
 
     // 3. THE WAY WANTED. On the line with no detour running: the mod's own
     // bearing, exactly. Otherwise the pursuit point PURSUIT ahead on it.
+    // OW-ROAD-TRUE / OW-TOWN-WALK: a leg that walks a line (a road's lane, a
+    // street's runs) pursues it itself, every frame (travelAutopilot.js
+    // pathPursuit) - its bearing IS the way back to its line, and this one's
+    // line (from where the leg began) is not the road's.
     f.want = inp.yaw;
-    if (s.episode || Math.abs(f.lat) > P.onLine) {
+    if (!inp.pathed && (s.episode || Math.abs(f.lat) > P.onLine)) {
       const ahead = len > 1e-6 ? Math.min(len, f.along + P.pursuit) : f.along + P.pursuit;
       const ax = s.ox + f.ux * ahead - inp.x, az = s.oz + f.uz * ahead - inp.z;
       if (ax * ax + az * az > 1e-8) f.want = Math.atan2(ax, az);
@@ -548,8 +552,10 @@ export function steerDrive(steer, drive, worldX, worldZ, autopilot, frame, probe
   const inp = steer.input;
   inp.key = autopilot;
   inp.x = worldX / r; inp.z = worldZ / r;
-  inp.tx = autopilot.destinationCentre.x / r;
-  inp.tz = autopilot.destinationCentre.z / r;
+  const to = autopilot.steerTarget ?? autopilot.destinationCentre;   // OW-TOWN-WALK: a line's leg, the run it is on
+  inp.tx = to.x / r;
+  inp.tz = to.z / r;
+  inp.pathed = !!autopilot.path;   // OW-ROAD-TRUE / OW-TOWN-WALK: the drive's bearing already keeps the line
   inp.goal = rectDistance(autopilot.destinationWorldRect, worldX, worldZ) / r;
   inp.yaw = drive.yaw * DEG;
   const force = Math.max(0, drive.forward);

@@ -1,0 +1,200 @@
+[
+  {
+    "name": "OCR-cap",
+    "file": "src/net/wire.js",
+    "old": "  if (!Array.isArray(v) || v.length > TRAV_BANDS_MAX) return null;",
+    "new": "  if (!Array.isArray(v)) return null;",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-strangers-id",
+    "file": "src/net/wire.js",
+    "old": "const travChaseId = (id) => typeof id === 'string' && (OW_BAND_ID_RE.test(id) || OW_RAIDER_ID_RE.test(id));",
+    "new": "const travChaseId = (id) => typeof id === 'string';",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-spent-with-a-place",
+    "file": "src/net/wire.js",
+    "old": "    if (flag === 2 && (x !== 0 || z !== 0)) return null;",
+    "new": "",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-place-off-the-world",
+    "file": "src/net/wire.js",
+    "old": "    if (flag === 1 && !(Number.isInteger(x) && Number.isInteger(z) && worldPixelOk(Math.floor(x / PIXEL_UNITS)) && worldPixelOk(499 - Math.floor(z / PIXEL_UNITS)))) return null;",
+    "new": "    if (flag === 1 && !(Number.isInteger(x) && Number.isInteger(z))) return null;",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-twice-named",
+    "file": "src/net/wire.js",
+    "old": "    if (!travChaseId(id) || seen.has(id) || (flag !== 1 && flag !== 2)) return null;",
+    "new": "    if (!travChaseId(id) || (flag !== 1 && flag !== 2)) return null;",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-empty-word-a-key",
+    "file": "src/net/wire.js",
+    "old": "  return bd.length ? { px, py, fx, fy, h, m, tv, bd } : { px, py, fx, fy, h, m, tv };",
+    "new": "  return { px, py, fx, fy, h, m, tv, bd };",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-word-dropped",
+    "file": "src/net/wire.js",
+    "old": "  return bd.length ? { px, py, fx, fy, h, m, tv, bd } : { px, py, fx, fy, h, m, tv };",
+    "new": "  return { px, py, fx, fy, h, m, tv };",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-gate-223",
+    "file": "src/net/wire.js",
+    "old": "export const TRAV_BANDS_RELAY_MIN = 224;",
+    "new": "export const TRAV_BANDS_RELAY_MIN = 223;",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-session-hands-it-old",
+    "file": "src/net/online.js",
+    "old": "    if (p?.bd && !this.travBandsOk) { p = { ...p }; delete p.bd; }",
+    "new": "",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-change-unheard",
+    "file": "src/systems/travellerMarks.js",
+    "old": "  if (chaseWordKey(l.bd) !== chaseWordKey(mark.bd)) return 'send';",
+    "new": "",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-place-a-change",
+    "file": "src/systems/travellerMarks.js",
+    "old": "export const chaseWordKey = (bd) => (Array.isArray(bd) ? bd.map((e) => `${e[0]}:${e[3]}`).join(',') : '');",
+    "new": "export const chaseWordKey = (bd) => (Array.isArray(bd) ? bd.map((e) => `${e[0]}:${e[1]}:${e[2]}:${e[3]}`).join(',') : '');",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-refresh-never",
+    "file": "src/systems/travellerMarks.js",
+    "old": "  if (mark.bd?.some((e) => e[3] === 1) && now - st.at >= TRAV_CHASE_REFRESH_MS) return 'send';",
+    "new": "",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-refresh-for-the-spent",
+    "file": "src/systems/travellerMarks.js",
+    "old": "  if (mark.bd?.some((e) => e[3] === 1) && now - st.at >= TRAV_CHASE_REFRESH_MS) return 'send';",
+    "new": "  if (mark.bd?.length && now - st.at >= TRAV_CHASE_REFRESH_MS) return 'send';",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-spent-first",
+    "file": "src/systems/travel/regionChase.js",
+    "old": "  return [...all.filter((e) => e[3] === 1), ...all.filter((e) => e[3] !== 1)].slice(0, BANDS_WIRE_MAX);",
+    "new": "  return all.slice(0, BANDS_WIRE_MAX);",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-no-cap",
+    "file": "src/systems/travel/regionChase.js",
+    "old": "  return [...all.filter((e) => e[3] === 1), ...all.filter((e) => e[3] !== 1)].slice(0, BANDS_WIRE_MAX);",
+    "new": "  return [...all.filter((e) => e[3] === 1), ...all.filter((e) => e[3] !== 1)];",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-heard-within-the-cell",
+    "file": "src/systems/travel/regionChase.js",
+    "old": "Math.abs(f.p.py - me.y)) > RANGE_PIXELS ? bd : null;",
+    "new": "Math.abs(f.p.py - me.y)) >= 0 ? bd : null;",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-hold-a-cells",
+    "file": "src/systems/travel/regionChase.js",
+    "old": "export const TRAV_BAND_HOLD_MS = 2.5 * TRAV_CHASE_REFRESH_MS;",
+    "new": "export const TRAV_BAND_HOLD_MS = 3000;",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-host-word-unsaid",
+    "file": "src/scenes/world.js",
+    "old": "    if (bd.length) mark.bd = bd;",
+    "new": "",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-host-region-unheard",
+    "file": "src/scenes/world.js",
+    "old": "    if (word) { bandHear(f.id, word, TRAV_BAND_HOLD_MS); seaRaidHear(f.id, word, TRAV_BAND_HOLD_MS); }",
+    "new": "",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-host-welcome-unheard",
+    "file": "src/scenes/world.js",
+    "old": " for (const f of list ?? []) regionChaseHear(f); };",
+    "new": " };",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-host-hold-unread",
+    "file": "src/scenes/world.js",
+    "old": "    if (performance.now() - p.at > p.hold) { _bandPeer.delete(id); return null; }",
+    "new": "    if (performance.now() - p.at > BAND_WORD_MS) { _bandPeer.delete(id); return null; }",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  },
+  {
+    "name": "OCR-host-raider-hold-unread",
+    "file": "src/scenes/world.js",
+    "old": "    if (performance.now() - p.at > p.hold) { tvRaid.peer.delete(id); return null; }",
+    "new": "    if (performance.now() - p.at > RAIDER_WORD_MS) { tvRaid.peer.delete(id); return null; }",
+    "tests": [
+      "test/systems/travel/ow_chaserange.test.js"
+    ]
+  }
+]

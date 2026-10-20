@@ -1,0 +1,93 @@
+[
+  {
+    "name": "OWQ-count-dropped",
+    "file": "src/scenes/travelViewMarks.js",
+    "old": "const more = quests.length > 1 ? ` (+${quests.length - 1})` : '';",
+    "new": "const more = '';",
+    "tests": ["test/ui/travel/owquest.test.js"]
+  },
+  {
+    "name": "OWQ-cut-unmade",
+    "file": "src/scenes/travelViewMarks.js",
+    "old": "if (title.length > QUEST_OW_TITLE_MAX) title =",
+    "new": "if (false) title =",
+    "tests": ["test/ui/travel/owquest.test.js"]
+  },
+  {
+    "name": "OWQ-time-left-dropped",
+    "file": "src/scenes/travelViewMarks.js",
+    "old": "return { label: `${title}${more}`, sub: left ? `${distance} \\u00b7 ${left}` : distance };",
+    "new": "return { label: `${title}${more}`, sub: distance };",
+    "tests": ["test/ui/travel/owquest.test.js"]
+  },
+  {
+    "name": "OWQ-pixel-corner",
+    "file": "src/scenes/travelViewMarks.js",
+    "old": "        const x = o.x + 16384, z = o.z + 16384;   // the pixel's middle, native units\n        let h = _tvQuestHold.get(q.key);",
+    "new": "        const x = o.x, z = o.z;   // the pixel's middle, native units\n        let h = _tvQuestHold.get(q.key);",
+    "tests": ["test/ui/travel/owquest.test.js"]
+  },
+  {
+    "name": "OWQ-every-quest-held",
+    "file": "src/scenes/travelViewMarks.js",
+    "old": "tip: q.tip, edge: q.tracked, pick: true });",
+    "new": "tip: q.tip, edge: true, pick: true });",
+    "tests": ["test/ui/travel/owquest.test.js"]
+  },
+  {
+    "name": "OWQ-followed-not-held",
+    "file": "src/scenes/travelViewMarks.js",
+    "old": "tip: q.tip, edge: q.tracked, pick: true });",
+    "new": "tip: q.tip, edge: false, pick: true });",
+    "tests": ["test/ui/travel/owquest.test.js"]
+  },
+  {
+    "name": "OWQ-not-pressable",
+    "file": "src/scenes/travelViewMarks.js",
+    "old": "tip: q.tip, edge: q.tracked, pick: true });",
+    "new": "tip: q.tip, edge: q.tracked });",
+    "tests": ["test/ui/travel/owquest.test.js"]
+  },
+  {
+    "name": "OWQ-switch-unread",
+    "file": "src/scenes/travelViewMarks.js",
+    "old": "for (const q of marksOn() ? questMapMarks(",
+    "new": "for (const q of true ? questMapMarks(",
+    "tests": ["test/ui/travel/owquest.test.js"]
+  },
+  {
+    "name": "OWQ-a-filter-group",
+    "file": "src/systems/travel/travelViewFilters.js",
+    "old": "  if (k === 'gather') return 'gathering';   // GATHER-OW",
+    "new": "  if (k === 'gather' || k === 'quest') return 'gathering';   // GATHER-OW",
+    "tests": ["test/ui/travel/owquest.test.js"]
+  },
+  {
+    "name": "OWQ-fill-always",
+    "file": "src/ui/travel/travelViewHud.js",
+    "old": "  if (filled) { g.fillStyle = QUEST_MARK_CSS; g.fill(); }",
+    "new": "  { g.fillStyle = QUEST_MARK_CSS; g.fill(); }",
+    "tests": ["test/ui/travel/owquest.test.js"]
+  },
+  {
+    "name": "OWQ-fill-never",
+    "file": "src/ui/travel/travelViewHud.js",
+    "old": "  if (filled) { g.fillStyle = QUEST_MARK_CSS; g.fill(); }",
+    "new": "",
+    "tests": ["test/ui/travel/owquest.test.js"]
+  },
+  {
+    "name": "OWQ-press-unread",
+    "file": "src/scenes/world.js",
+    "old": "const plate = qp ? { summary: tvPlaceSummary(Number(qp[1]), Number(qp[2])) } : ",
+    "new": "const plate = ",
+    "tests": ["test/ui/travel/owquest.test.js"]
+  },
+  {
+    "name": "OWQ-pixel-swapped",
+    "file": "src/scenes/world.js",
+    "old": "summary: tvPlaceSummary(Number(qp[1]), Number(qp[2]))",
+    "new": "summary: tvPlaceSummary(Number(qp[2]), Number(qp[1]))",
+    "tests": ["test/ui/travel/owquest.test.js"]
+  }
+]

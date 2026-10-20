@@ -676,12 +676,14 @@ writes the far plane for every fragment. The build, in order:
   flag draw whatever `tvTrip` holds.
 - **Marks for anything placed on the map.** The readout's keyed marks (`marks`, `pick`,
   `edge`) take a world point and a kind: quest targets, a party leader, a world boss's omen
-  (WB1's ring), a hub (HUB1) can be marks the same way the places and travellers are.
+  (WB1's ring), a hub (HUB1) can be marks the same way the places and travellers are. (OW-QUEST, 2026-10-19: the quest
+  targets are.)
 - **Travellers who say more.** The TV3 mark is seven keys and the relay refuses an eighth -
   on purpose. A later field (a guild tag's colour, "looking for company") is a new relay
   version and a new key, never a squeeze into these.
 - **The weather forecast from the air.** `forecastAt` (WEATHER3) is a pure function of place
-  and minute; the view could hang a system's next hour under its curtain.
+  and minute; the view could hang a system's next hour under its curtain. (OW-FORECAST, 2026-10-19: the way's, here's and
+  a place's card.)
 - **Encounters seen coming.** The governor's unbuilt-ground count is per pixel; the same
   window could carry the foes a Travel Options journey will meet (its `enemiesNearby`).
 
@@ -1148,7 +1150,7 @@ Proof: `test/systems/travel/tv8_party_walk.test.js`, `tools/mutants/tv8.json` (1
   is asked, and set out, only when free (outdoors, alive, no window, no foe, no duel); the question comes down with its
   round, its 30 s or danger; a yes dies with its round; the leader's walk is believed PARTY_WALK_GRACE_MS (10 s)
   without a pose. The wire is unchanged (world124).
-- *Known, not changed:* the relay fans a cell's foes frame 3 pixels out (`RANGE_PIXELS`) while bands are drawn 6
+- *Known, not changed:* (answered: OW-CHASE-RANGE, 2026-10-19, below) the relay fans a cell's foes frame 3 pixels out (`RANGE_PIXELS`) while bands are drawn 6
   (BAND_REACH_PX) - a player 4-6 pixels off hears a chase or a spent band only on coming nearer (the spent list rides
   every full frame). Members' paces are their own clients' (a member at x1 behind a leader at x10 falls behind).
   A band's make reads the viewer's level (TV7 BUILT). A traveller on a plateau ringed by cliffs outside the mountains,
@@ -1721,7 +1723,7 @@ CAMP-SIGHT, CAMP-TRAVEL, CAMP-NOTIMER, TTL1, WORLD1's "True persistance"); the d
   equal to their homes rather than imported (gateLaw.js's own way), so the relay's graph stays flat. RELAY_VERSION
   world127 - 125 was VOICE1's and 126 DISCORD-GATES', never reused; a client reads `relaySupportsOverworld` and says
   nothing to an older relay (which would close the socket on the frame): it needs the relay deploy that ships with it.
-- **Known, not changed.** A live CHASE's place still rides the foes frame alone - the relay fans it three pixels while
+- **Known, not changed.** (The first answered by OW-CHASE-RANGE, 2026-10-19, below: the chaser's region mark carries it.) A live CHASE's place still rides the foes frame alone - the relay fans it three pixels while
   bands are drawn to six (TV7b's own recorded limit) - so a viewer between three and six pixels from a chaser sees the band at its own
   wander; that it was spent reaches them through the cell. The relay cannot verify when a pixel was first seen: a
   modified client could make its cell's spawns run out early (bounded by the margin, the roll, the keep and the bucket).
@@ -1993,7 +1995,8 @@ they were. Down in play nothing changes: the world's own entrance is the model.
   the location's level at 0. An enhanced-only model stands on the enhanced skin alone, as in the build.
 - *The grow* (`owDungeonGrow`): TV_DUNGEON_ICON_K (0.09) of the eye's distance tall, over the model's own height above
   its level; never smaller than itself, never past OW-BIG's twelve (TV_DUNGEON_GROW_MAX = TV_OWN_GROW_MAX). Smooth, not
-  OW-BIG's whole steps: a mesh drawn by a matrix makes no batch again.
+  OW-BIG's whole steps: a mesh drawn by a matrix makes no batch again. (OW-DUNGEON-SIZE, 2026-10-19: one height in the
+  world since, TV_DUNGEON_ICON_M, whatever the distance - "THE OVERWORLD REVISITED" below.)
 - *The matrix* (`grownModelMatrix`): grown about its foot - the middle of its plan on its level - which stands on the
   scene point given, so its base stays where the real one's is and the real one stands inside it.
 - *Over a built pixel* (`owDungeonDrawn`): only once grown past TV_DUNGEON_GROWN_MIN (1.05) - at its own size it is the
@@ -2321,3 +2324,175 @@ The owner: *"fix a pre existing issue where AI can actually use the overworld as
   `tvJourneyUp` and `travelViewCanGo` ask `navalHostileNear()` (NAV-H's enemy nearby) beside the land's foes and a duel.
 
 `test/systems/naval/timedilation.test.js` (3), `tools/mutants/timedilation.json` (16, all dead).
+
+## THE OVERWORLD REVISITED - six slices (2026-10-19, the owner)
+
+Asked how the Overworld could be improved ("Its been awhile since we've touched it"), six gaps were laid out from this
+page's own open notes; the owner's answers, whole: *"1. Do it 2. Actually shrink dungeons slightly, and ensure their size
+doesnt grow.or.shrino based on distance 3. I like this idea, but do it right 4. Fix it 5. Routes should always follow the
+road if planned, it should never offset 6. When in a town, slow down overworld navigation and have it navigate properly
+on town pathways instead of bumping into buildings"*. Every one is the enhanced lane's (the classic skin has no
+Overworld); DFU has no raised travel camera, so each is a departure in the sense THE TRAVEL VIEW's ledger row gives -
+the two that change a DFU member's behaviour (OW-ROAD-TRUE and OW-TOWN-WALK: Travel Options' autopilot,
+PlayerAutoPilot.cs) carry their own `01-Overview/Port-Ledger.md` rows. HOST-SPLIT: `bootWorld` had three logical lines
+of room; OW-DUNGEONS' list, load and draw moved out first (`scenes/travelViewDungeonModels.js`, `tools/hostMove.mjs`,
+86 lines freed), and every slice's behaviour is a module the host wires.
+
+### OW-QUEST - where the quests point, on the Overworld (1)
+
+The held map marked every active quest's place (GUIDE5) and the compass the followed one (TRACK-ONLY); the Overworld,
+where a traveller sets out from, marked none. Now `scenes/travelViewMarks.js` stands the held map's own marks
+(`ui/quest/questMarks.js questMapMarks` - only a place on the player's map, two quests at one place one mark) at their
+pixel's middle - a town's middle, as the bounties stand - a diamond in the journal's gold (`ui/travel/travelViewHud.js
+questGlyph`): the followed quest's filled and held at the screen's edge with its distance, the rest hollow where they
+lie. The words (`questMarkWords`): the first quest's title cut at a word to QUEST_OW_TITLE_MAX (40), how many more stand
+there, and under it the distance and the followed one's time left; the hover card is the held map's. Pressed, a journey
+there by the roads (`scenes/world.js onTravelViewMark`: its place's summary from the pixel, wherever on the map it lies).
+Never filtered by the map's switches (a quest is the point, not clutter); under the quest marks' own switch (`marksOn`).
+The four hosts: `scenes/world.js` WIRED (the one host with the Overworld); `scenes/exterior.js`, `scenes/worldModes.js`
+and `scenes/dungeonContext.js` raise none. Proof: `test/ui/travel/owquest.test.js` (4), `tools/mutants/owquest.json`
+(13, all dead).
+
+### OW-DUNGEON-SIZE - one height in the world (2)
+
+OW-DUNGEONS grew each dungeon's model to TV_DUNGEON_ICON_K (0.09) of the eye's distance - the same size on the screen at
+every zoom, so it swelled as the view drew back and shrank as it came in. Now every dungeon's model stands
+TV_DUNGEON_ICON_M (24 m) tall whatever the distance (`systems/travel/travelDungeonModels.js owDungeonGrow(h, blend)`):
+four fifths of what the old law stood at the view's default (260 m up at 52 degrees, 330 m from the traveller - 30 m),
+so slightly smaller there, and from then on nearer as the view zooms in and farther as it draws back, as the land round
+it is. Still never under its own size nor past OW-BIG's twelve; it grows from the world's own as the view rises and
+shrinks back as it comes down (`blend`, the view frame's own), so no grown model ever stands over a traveller on the
+ground. The four hosts as OW-DUNGEONS. Proof: `test/world/owdungeons.test.js` (the grow and the host's draw re-pinned:
+the same matrix with the eye near or far), `test/scenes/fb1009_travelperf.test.js` and
+`test/systems/travel/ether_ow.test.js` (reading the moved code through `test/hostText.mjs`); `tools/mutants/owdungeons.json`
+(49, all dead - the grow's four re-aimed, four new: the blend unread, unclamped, the host grown by distance, the blend
+unhanded), `fb1009_travelperf.json` and `audit_etherow.json` re-aimed by the move.
+
+### OW-FORECAST - the weather ahead (3)
+
+The owner: *"I like this idea, but do it right"*. Right is TV4's rule: nothing invented. The weather is a map (WEATHER3) -
+a pure function of place and minute - so it can be asked of a place and a minute not yet come, and the answer is the
+one the traveller will stand in. `systems/weather/owForecast.js` (the law) and `scenes/overworldForecastHost.js` (the
+host's half) say it in three places, every word `weatherAt` for its own ground at the minute it names, through the
+host's own ground law (`mapGround`: what falls is the air's), on the shared minute online:
+- **The way ahead**, while a journey runs: the route still to walk (`wayAhead`: a town's streets still ahead, a rejoin,
+  then each leg's point) sampled every ROUTE_STEP_M (1.6 km) to ROUTE_AHEAD_M (40 km) and its end, ROUTE_SAMPLES_MAX
+  (26) at most - each asked at the minute the traveller reaches it: the distance over the PACE MEASURED (`paceMeter`:
+  field metres a real second and the weather's clock a real second, the first measure taken whole, then a mean over
+  PACE_TAU_S) - right offline, where the calendar runs with the journey's rate, and online, where the shared clock does
+  not, without either being assumed. The first change that matters is said ("Rain ahead - 2.4 km, in 20 min"), or what
+  falls now giving out ("Thunderstorm clears 6.4 km ahead"), or the same the whole way ("Fair weather all the way to
+  Daggerfall", "Snow for the next 12 km"). A sky change alone (cloudy to overcast) is no news.
+- **Here**, standing: the next HERE_HOURS (6) at the traveller's place, a word every HERE_STEP_MIN (15) (`forecastAt`) -
+  "Rain - clearing in about 2 h", "Thunderstorm in 45 min", "Fair for the next 6 h".
+- **A place's card**: its own next hours first ("Weather: ..."), then TOWN-ECON's card under it (or the weather alone),
+  kept a HERE_STEP_MIN of the weather's clock (`placeLine`).
+The line stands under the journey's in the Overworld's block (`tview-sky`, shown only when it says something), worked
+out again every FORECAST_EVERY_MS (2 s; a pass reads ~26 places, ~3 ms). Off the map's lane (`weatherMapOn`: the
+classic skin, `?wxmap=off`) the sky is DFU's day roll per climate, which has no tomorrow to read - and nothing is said.
+Proof: `test/systems/weather/ow_forecast.test.js` (9 - among them a traveller flown at a steady pace over the REAL map,
+told the first weather it will meet, and the forecast COMING TRUE where and when it said); `tools/mutants/ow_forecast.json`
+(24, all dead).
+
+### OW-CHASE-RANGE - a chase seen as far as its band is drawn (4)
+
+TV7b's recorded limit (AUDIT OW3's "Known, not changed", OW6's): a chase rode the chaser's cell foes frame, which the
+relay fans RANGE_PIXELS (3) about its sender, while the Overworld draws the bands BAND_REACH_PX (6) about the viewer - a
+player three to six pixels off saw a chased band at its own wander, and its spending only through the cell's ledger.
+The region already has a word that reaches past the cell: each traveller's mark (TV3). Now the chaser's mark carries
+its chase word - an eighth key, `bd` (`net/wire.js`; TV5's own words: "a later field is a new relay version and a new
+key"), TV7b's shape for the bands and OW6's for the raiders together (`systems/travel/regionChase.js regionChaseWord`:
+the chases first, then the spent, BANDS_WIRE_MAX at most - TRAV_BANDS_MAX pinned equal), checked whole at the relay's door
+(`validTravellerMark`: a band's or a raider's id once each, a chase on the world's pixels, a spent one at none) and kept
+and fanned with the mark. The client says it (`systems/travellerMarks.js travellerDue`) when a chase begins or ends or a
+band is spent (`chaseWordKey`: who, never where), and again every TRAV_CHASE_REFRESH_MS (the session's own floor) while
+one runs; a reader hears it (`scenes/world.js regionChaseHear`) only from a traveller past the cell's reach - inside it
+the foes frame says the same every frame - through the bands' and the raiders' own hearing, the word standing
+TRAV_BAND_HOLD_MS (25 s, a missed refresh and still drawn). RELAY_VERSION **world224**: a client hands `bd` only to a
+relay that knows it (`relaySupportsTravBands`, TRAV_BANDS_RELAY_MIN 224); to an older one the mark goes without it. The
+widest mark (eight chases at the longest ids, the longest name) fits the runtime's 2 KiB attachment.
+- **What it is not.** A mark is said only by a traveller who shows themselves to the region ("Show me to travellers",
+  on by default) and only in their region's channel: a chaser who hides, or one across a region's border, is heard as
+  before, within the cell's three pixels. A chase's place is the mark's, refreshed at most once a TRAV_CHASE_REFRESH_MS.
+- **Deploy.** The relay at world224 before the clients that say `bd` matter; nothing breaks in either order.
+Proof: `test/systems/travel/ow_chaserange.test.js` (7: the wire, the relay over a real Room, the session, the client's law,
+the region's word, a word end to end through the real doors, the host's hearing lifted and run); the TV3 pins moved
+(`test/scenes/tv3_travellers.test.js`: the eighth key); `test/net/relayversion.test.js` (the world224 law); every
+`RELAY_VERSION` pin moved to world224; `tools/mutants/ow_chaserange.json` (22, all dead).
+
+### OW-ROAD-TRUE - a planned road is walked on the road (5)
+
+The owner: *"Routes should always follow the road if planned, it should never offset"*. OW-ROADSIDE joined the road at the
+start; the walk after it was still the mod's: PlayerAutoPilot.cs's Update re-aims only when the map pixel under the
+player changes (:92-96), so whatever turned the body off the road's line - the port's steering round a rock, a turn the
+motor took wide, a step past a corner at a hundred times walking pace - was carried at that bearing for up to a pixel
+(819 m) beside the road, and the next pixel's bearing aimed at the far end again from beside it. Measured on the real
+autopilot: a horse at x100 knocked fifteen metres off a straight road walks on more than a road's half-width off it for
+forty frames and more. Now a routed leg on a road or a track walks its LANE (`systems/travel/travelOptions.js routeLane`:
+its last leg's pixel middle to its own - the road's own line, travelPaths.js: middle to middle - the place's own last leg
+up the road into it too): every frame the body aims at the point a short way ahead of its own projection onto the line
+(`systems/travel/travelAutopilot.js lanePursuit`, `pathPursuit`), LANE_LOOK_MIN (a path's width, 512) ahead at the least
+and LANE_LOOK_STEPS (3) frames' steps at speed, never past LANE_LOOK_MAX (a block) - back on the road within a few frames
+and on it to the leg's end, arrived where the line ends (no five-degree bearing latch: a swing is no arrival). The
+steering keeps the walk's own line (`systems/travel/travelSteer.js`: a leg that walks a line hands its run's end for the
+feelers' line, and its bearing is the way wanted - its own line from where the leg began is not the road's). Open
+ground, a join, a town's ring point and the sea walk as before; the mod's own journeys (a place straight, the follow key,
+the coordinates) keep its re-aim exactly. A departure from PlayerAutoPilot.cs Update (:76-105): Port-Ledger row
+OW-ROAD-TRUE. Proof: `test/systems/travel/ow_roadtrue.test.js` (5: the law; the walk flown over the real autopilot - the
+mod's re-aim beside it, the lane back on it; no swing an arrival; the look ahead; the legs handed a lane by the real
+Travel Options); `tools/mutants/ow_roadtrue.json` (16, all dead).
+
+### OW-TOWN-WALK - a town walked by its streets, at a town's pace (6)
+
+The owner: *"When in a town, slow down overworld navigation and have it navigate properly on town pathways instead of
+bumping into buildings"*. A journey aims straight at its next point and the steering feels its way round what stands in
+front - across country enough; in a town, at a hundred times walking pace, a walk into walls: the journey that starts at
+a tavern door, the spot clicked in a market square, the resume in the street a fight stopped it in. DFU walks its
+townsfolk on the town's own grid (CityNavigation.cs: 1.6 m cells, a building's footprint none, the ground weighted by its
+tile), and the port already paths its residents over it (`systems/livingWorld/townPaths.js`, LW1). A journey in a town now
+takes the same way:
+- **The way** (`systems/travel/townWalk.js townWayCells`): from the street cell nearest the traveller (`snapCell`, within
+  TOWN_SNAP_CELLS) to the street cell nearest the leg's point - or, the point outside the town, to the nearest edge
+  street a way reaches (`exitCells`, TOWN_EXIT_TRIES of them, nearest first, of the traveller's own PIECE of the grid -
+  `componentsOf`, the street cells flooded four neighbours at a time as the walkers step, kept on the grid) - by the
+  residents' A* (`findTownPath`, its heuristic weighted TOWN_WAY_H_WEIGHT = 1.5: a way at most 1.5 times the cheapest,
+  measured 2.7% dearer and twice as quick; the residents' own searches stay the cheapest, `hWeight` 1), its
+  four-neighbour staircase STRING-PULLED to the straight runs the grid can see along (`simplifyWay`, `clearLine`: every
+  cell a run touches a street, a diagonal step's corner cells both, so no run shaves a wall). A point in another piece
+  (behind a shut gate) is met at this piece's cell nearest it, the way said not `reached`.
+- **The gates** (`gatePassage`, `carveNav`, `scenes/townWalkHost.js journeyGrid`): a walled city's gate is a closed
+  footprint on its grid (LW-WALLS - its residents never walk out), so its inside and its fields are two pieces and no
+  way left the inside - 1,776 of 1,920 of the game's own ways out found none, each failed search ~200 ms. The JOURNEY's
+  grid is the town's with each OPEN gate (the pixel's `cityGates`, DaggerfallCityGate's placements, open while their
+  model is 446) carved through: from the gate model's middle, the axis along which its covered cells end in a street
+  BOTH sides within GATE_REACH_CELLS (the shorter where both do), the cells between made road (weight 15). A copy, the
+  walkers' occupancy flags left out - the town's grid never written; kept a town and its gates' state
+  (JOURNEY_GRIDS_MAX), so a gate swung at dusk makes it again. A way that falls short with a gate shut (offline at
+  night - online the gates stand open) stops the journey before it walks into the wall: "Paused the journey since the
+  city gates are shut for the night." (TRAVEL_NAV_TEXT.MsgGatesShut). Over every city of the game (410; twelve doors
+  each toward four sides, gates open): all 19,680 ways found, every run clear, 5.3 ms on the mean, 67 ms at the worst.
+- **The town** (`scenes/townWalkHost.js`): a built pixel's populated place - DFU's seven location types, every one whose
+  build stands a CityNavigation on its `population` - in the location frame the pixel's translation carries; `townKey`
+  where a point stands in a grid, `townWay` the way as natives, the traveller's own cell left out.
+- **The walk** (`systems/travel/travelOptions.js streetRun`): at a leg's start in a town - the journey's own start, a
+  resume, or a town walked into on the way (the watch in `update`, a spot clicked in its square) - the street way first,
+  once a leg and a town, walked as ONE line of runs (`pathPursuit`, OW-ROAD-TRUE's law, with STREET_LOOK - a cell and a
+  half - so a corner is turned at the corner, never cut across the building it goes round), then the leg from where it
+  ends. Never on a town's ring (walked round, outside), never at sea, never across the place the journey is bound for
+  (arrived at its edge, as ever). The Overworld's route line is drawn down the streets still ahead.
+- **The pace**: TOWN_PACE_MAX (x5) - a street run asks the clock no more (`applyRate`), and under the view the governor
+  holds the keys' travel (TV-WASD) and any journey to it while the traveller stands in a town, the panel saying why
+  ("in town", TRAVEL_HELD_WHY).
+- **The four hosts**: `scenes/world.js` WIRED (it alone streams towns and walks journeys through them);
+  `scenes/exterior.js` (the fixed city: no Travel Options journey crosses it), `scenes/worldModes.js` (a building) and
+  `scenes/dungeonContext.js` (a dungeon) walk none.
+- **Known, not changed.** A way is searched whole at its leg's start (`findTownPath`, not sliced as the residents' book
+  slices it): the worst of the game's 19,680 measured ways took 67 ms - once a leg, never a frame. Moving bodies
+  (residents, wagons) are no cells of the grid: the steering meets them as before.
+A departure from Travel Options' journeys (PlayerAutoPilot.cs walks straight; DFU's own fast travel never walks a town):
+Port-Ledger row OW-TOWN-WALK. Proof: `test/systems/travel/ow_townwalk.test.js` (12: the law, the way, the line walked, the
+journey over the real Travel Options, a town walked into, the host's half over a real CityNavigation, the steering, the
+wiring, the walls and their gates, the host's gates and the shut stop, the game's own cities over ARENA2, the search's
+reach); the governor's mounts given the town (`ow6_slowdown`, `ow_loadowed`, `ow_queueowed`, `ow_toggle`, `tv_wasd`,
+`fb0929d_toroads`) and `tv2_click_to_move`'s route-line and cap pins moved; `tools/mutants/ow_townwalk.json` (46, all
+dead).
