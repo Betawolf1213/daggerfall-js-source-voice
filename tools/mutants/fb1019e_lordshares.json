@@ -5,7 +5,7 @@
     "old": "else if (p && !L.up2 && Object.values(fs).some((q) => q !== p && !q.retired)) retireShare(L, p);",
     "new": "else if (p && Object.values(fs).some((q) => q !== p && !q.retired)) retireShare(L, p);",
     "tests": [
-      "test/net/eliteGates/fb1019d_lordshares.test.js"
+      "test/net/eliteGates/fb1019e_lordshares.test.js"
     ],
     "why": "EG-ZQ's law, the report: the moment the company fell, Grath shed their shares and the survivor's every blow moved his bar four times as far"
   },
@@ -15,7 +15,7 @@
     "old": "else if (p && !L.up2 && Object.values(fs).some((q) => q !== p && !q.retired)) retireShare(L, p);",
     "new": "else if (false) retireShare(L, p);",
     "tests": [
-      "test/net/eliteGates/fb1019d_lordshares.test.js"
+      "test/net/eliteGates/fb1019e_lordshares.test.js"
     ],
     "why": "a member who fell on the way to a sleeping lord's ring still in his health when he wakes"
   },
@@ -25,7 +25,7 @@
     "old": "  egLordsStand(F, L.filter(([, m]) => m.hereH === B.h).map(([sub]) => sub));   //",
     "new": "  //",
     "tests": [
-      "test/net/eliteGates/fb1019d_lordshares.test.js"
+      "test/net/eliteGates/fb1019e_lordshares.test.js"
     ],
     "why": "the lords stood for members never in their hall: the company there struck a lord sized for the absent until their absence became a fall, 180 s on"
   },
@@ -35,7 +35,7 @@
     "old": "  egLordsStand(F, L.filter(([, m]) => m.hereH === B.h).map(([sub]) => sub));",
     "new": "  egLordsStand(F, L.map(([sub]) => sub));",
     "tests": [
-      "test/net/eliteGates/fb1019d_lordshares.test.js"
+      "test/net/eliteGates/fb1019e_lordshares.test.js"
     ],
     "why": "the members still on the stair counted as standing on the plate: the lords stood for them again"
   },
@@ -45,7 +45,7 @@
     "old": "  egLordsStand(F, L.filter(([, m]) => m.hereH === B.h).map(([sub]) => sub));",
     "new": "  egLordsStand(F, []);",
     "tests": [
-      "test/net/eliteGates/fb1019d_lordshares.test.js"
+      "test/net/eliteGates/fb1019e_lordshares.test.js"
     ],
     "why": "every lord stood for one member whoever stood on the plate - Kyn's Vigil's champion among them"
   },
@@ -55,7 +55,7 @@
     "old": "for (const [s, p] of Object.entries(fs)) if (!p.retired && !on.has(s) && Object.values(fs)",
     "new": "for (const [s, p] of Object.entries(fs)) if (!p.retired && Object.values(fs)",
     "tests": [
-      "test/net/eliteGates/fb1019d_lordshares.test.js"
+      "test/net/eliteGates/fb1019e_lordshares.test.js"
     ],
     "why": "a lord stood for one: every share but the last out, the plate's own with them"
   },
@@ -65,7 +65,7 @@
     "old": "for (const [s, p] of Object.entries(fs)) if (!p.retired && !on.has(s) && Object.values(fs).some((q) => q !== p && !q.retired)) retireShare(L, p);",
     "new": "for (const [s, p] of Object.entries(fs)) if (!p.retired && !on.has(s)) retireShare(L, p);",
     "tests": [
-      "test/net/eliteGates/fb1019d_lordshares.test.js"
+      "test/net/eliteGates/fb1019e_lordshares.test.js"
     ],
     "why": "a hall woken with nobody on its plate (its 30 s wait run out) stood Kyn's Vigil's champion at nought"
   }

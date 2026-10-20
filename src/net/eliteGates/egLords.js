@@ -29,7 +29,7 @@
 // EG-ZQ (2026-10-12; sections 13.2 and 14): THE SHARES - every lord's health is its fighters' shares (egLordsShare, moved by the
 // seam's join: a member the hall did not wake with brings one - the gate's retireShare/restoreShare); the Markynaz's decree
 // folded with the circle's (egMarkynazDecree); and Colossal's size on the lord's body and on the wire (`sz`).
-// FIELD BUGS 2026-10-19d LORD-SHARES (section 13.2; a breach's company: "Felt like he wasnt being damaged ... It felt like the
+// FIELD BUGS 2026-10-19e LORD-SHARES (section 13.2; a breach's company: "Felt like he wasnt being damaged ... It felt like the
 // moment team died difficulty went down"): A LORD WAKES FOR THE COMPANY STANDING IN ITS HALL AND KEEPS WHAT THE FALLEN LEAVE -
 // stood for the members on its hall's arrival plate (egLordsStand; a latecomer brings its share at the fraction), and from its
 // wake no fall takes a share out of it: EG-ZQ retired a fallen member's share at the fall, so a death cost the company
@@ -247,7 +247,7 @@ function sharesOf(F, L) {
  *   a member the hall did not wake with, or one its lords were stood without (egLordsStand), brings `per` x its reference
  *     damage to each lord, at the fraction the lord stands at (the gate's law for a newcomer: a late arrival never heals a
  *     lord) - a share brought as a retired one restored;
- *   FIELD BUGS 2026-10-19d LORD-SHARES: refused (fallen), its share STAYS in every lord awake - the living finish what the
+ *   FIELD BUGS 2026-10-19e LORD-SHARES: refused (fallen), its share STAYS in every lord awake - the living finish what the
  *     fallen left, so a death makes a fight harder for the company, never easier (the Remnant keeps a fallen body's share
  *     too: net/superDungeon/sdRemnant.js) - and leaves a lord still asleep in its ring (retireShare, at the fraction it
  *     stands at), which wakes for the company standing before it; a recall's share comes back with it (restoreShare);
@@ -275,7 +275,7 @@ export function egLordsShare(F, sub, lv, admits) {
   return moved;
 }
 /**
- * FIELD BUGS 2026-10-19d LORD-SHARES (section 13.2) - THE LORDS STAND FOR THE COMPANY ON THEIR HALL'S PLATE: as a hall's fight
+ * FIELD BUGS 2026-10-19e LORD-SHARES (section 13.2) - THE LORDS STAND FOR THE COMPANY ON THEIR HALL'S PLATE: as a hall's fight
  * is stood (net/eliteGates/egBrain.js standFight, once every lord of it stands at its health), the share of every member not on
  * its arrival plate (`here`, the members' accounts - one still on the stair, its socket closed) leaves each lord whole, never its
  * last; each comes in at the fraction the lord stands at when the director first sees its member in the hall (egLordsShare).

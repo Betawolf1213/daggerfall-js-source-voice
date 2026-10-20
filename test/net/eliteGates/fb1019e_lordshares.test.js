@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-19d LORD-SHARES (bible/01-Overview/bugs/Field-Bugs-2026-10-19d.md - a company's word on its Elite Breach,
+// FIELD BUGS 2026-10-19e LORD-SHARES (bible/01-Overview/bugs/Field-Bugs-2026-10-19e.md - a company's word on its Elite Breach,
 // handed over by the owner: "Felt like he wasnt being damaged" and "It wasn't hard actually. It felt like the moment team died
 // difficulty went down"). A lord's health is its fighters' shares (bible/11-Multiplayer/Elite-Gates.md section 13.2), and two
 // laws of the shares were the reports: EG-ZQ retired a fallen member's share at its fall, so the moment the company fell the
@@ -67,7 +67,7 @@ function company(seed, h, { n = 4, present = null, dc = [] } = {}) {
 const GRATH = Object.freeze({ seed: 1, h: 5 });
 const SHARE = egTtkRef(1) * dpsRef(LV);
 
-test('FB1019D LORD-SHARES A LORD KEEPS WHAT THE FALLEN LEAVE (section 13.2): Grath woken by a company of four at level 30 is four shares of 6,300; a minute struck at reference, three fall in one beat by their poses\' word - his health and its whole stand as they stood (the fallen\'s shares kept, not one retired), so the survivor finishes what the company left and its blow takes the 35 of 25,200 it took beside them; the screen holds his whole at 25,200 and his bar never jumps; a fallen member admitted again (a recall) brings nothing it did not hold (mutants: a fall retiring its share from a lord awake)', () => {
+test('FB1019E LORD-SHARES A LORD KEEPS WHAT THE FALLEN LEAVE (section 13.2): Grath woken by a company of four at level 30 is four shares of 6,300; a minute struck at reference, three fall in one beat by their poses\' word - his health and its whole stand as they stood (the fallen\'s shares kept, not one retired), so the survivor finishes what the company left and its blow takes the 35 of 25,200 it took beside them; the screen holds his whole at 25,200 and his bar never jumps; a fallen member admitted again (a recall) brings nothing it did not hold (mutants: a fall retiring its share from a lord awake)', () => {
   assert.deepEqual([egTtkRef(1), dpsRef(LV), SHARE], [180, 35, 6300], 'the law the numbers stand on');
   const C = company(GRATH.seed, GRATH.h);
   assert.deepEqual([C.spec.kind, C.spec.lord, C.spec.c], ['court', 'hound', 1], 'seed 1\'s Hall 5 is Grath\'s Court');
@@ -98,7 +98,7 @@ test('FB1019D LORD-SHARES A LORD KEEPS WHAT THE FALLEN LEAVE (section 13.2): Gra
   assert.equal(L.max, max0);
 });
 
-test('FB1019D LORD-SHARES A LORD STANDS FOR THE COMPANY ON ITS HALL\'S PLATE (section 13.2): a company of five, three of whose sockets closed on the stair - the hall wakes 30 s on for its living five (its legion\'s company) with two on its arrival plate, and Grath stands asleep for the two (12,600), every screen hearing that whole in the wake\'s own word, never a blow; the third reaching the hall while he sleeps brings its share whole; he wakes in his ring for the three; the fourth reaching it mid-fight brings its share at the fraction he stands at (never a heal); the fifth\'s absence, a fall 180 s from the wake, moves nothing - it never stood in the fight; and no screen ever drew a share\'s move as a blow on him (mutants: the lords stood for every living member; the plate unread; the plate\'s own shares let go)', () => {
+test('FB1019E LORD-SHARES A LORD STANDS FOR THE COMPANY ON ITS HALL\'S PLATE (section 13.2): a company of five, three of whose sockets closed on the stair - the hall wakes 30 s on for its living five (its legion\'s company) with two on its arrival plate, and Grath stands asleep for the two (12,600), every screen hearing that whole in the wake\'s own word, never a blow; the third reaching the hall while he sleeps brings its share whole; he wakes in his ring for the three; the fourth reaching it mid-fight brings its share at the fraction he stands at (never a heal); the fifth\'s absence, a fall 180 s from the wake, moves nothing - it never stood in the fight; and no screen ever drew a share\'s move as a blow on him (mutants: the lords stood for every living member; the plate unread; the plate\'s own shares let go)', () => {
   const C = company(GRATH.seed, GRATH.h, { n: 5, present: ['acct-0', 'acct-1'] });
   const { B } = C;
   C.wake();
@@ -130,7 +130,7 @@ test('FB1019D LORD-SHARES A LORD STANDS FOR THE COMPANY ON ITS HALL\'S PLATE (se
   assert.equal(L.max, max1, 'its absence takes nothing out of him: it never stood in his fight');
 });
 
-test('FB1019D LORD-SHARES A FALL BEFORE THE WAKE LEAVES THE LORD ASLEEP (section 13.2): Grath asleep in his ring while a company of four makes its way to it, one of them falls - its share leaves him whole (he wakes for the company standing before him), and he wakes for the three; the fallen member\'s share is kept by him from then on (mutants: no fall leaving a lord asleep; an awake lord letting one go)', () => {
+test('FB1019E LORD-SHARES A FALL BEFORE THE WAKE LEAVES THE LORD ASLEEP (section 13.2): Grath asleep in his ring while a company of four makes its way to it, one of them falls - its share leaves him whole (he wakes for the company standing before him), and he wakes for the three; the fallen member\'s share is kept by him from then on (mutants: no fall leaving a lord asleep; an awake lord letting one go)', () => {
   const C = company(GRATH.seed, GRATH.h);
   const { B } = C;
   C.wake();
@@ -146,7 +146,7 @@ test('FB1019D LORD-SHARES A FALL BEFORE THE WAKE LEAVES THE LORD ASLEEP (section
   assert.equal(L.max, 3 * SHARE, 'awake, he keeps the next fallen\'s share');
 });
 
-test('FB1019D LORD-SHARES KYN\'S VIGIL\'S CHAMPION IS STOOD FOR THE COMPANY ON THE PLATE (sections 13.2 and 14): under Kyn\'s Vigil the Kynreeve stands and wakes on a Rift-Yard\'s arrival plate in the very beat its hall wakes - for the two members on that plate, never the two whose sockets closed (EG_PROVE_HP_S x each one\'s reference), and never for one; a hall that woke with nobody on its plate (its 30 s wait run out) stands him for the one share a lord never lets go - never at nought - and each member reaching it brings its own (mutants: the plate unread; the champion stood for every living member; the last share let go)', () => {
+test('FB1019E LORD-SHARES KYN\'S VIGIL\'S CHAMPION IS STOOD FOR THE COMPANY ON THE PLATE (sections 13.2 and 14): under Kyn\'s Vigil the Kynreeve stands and wakes on a Rift-Yard\'s arrival plate in the very beat its hall wakes - for the two members on that plate, never the two whose sockets closed (EG_PROVE_HP_S x each one\'s reference), and never for one; a hall that woke with nobody on its plate (its 30 s wait run out) stands him for the one share a lord never lets go - never at nought - and each member reaching it brings its own (mutants: the plate unread; the champion stood for every living member; the last share let go)', () => {
   const C = company(1, 1, { present: ['acct-0', 'acct-1'], dc: [[EG_DECREE_BY_KEY.vigil.id, 1]] });
   assert.equal(C.spec.kind, 'yard', 'seed 1\'s Hall 1 is a Rift-Yard');
   const one = EG_PROVE_HP_S * dpsRef(LV);

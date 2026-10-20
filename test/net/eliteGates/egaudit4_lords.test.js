@@ -321,7 +321,7 @@ test('AUDIT EG IV lane1 #2 THE EXAMINATION HOLDS ITS LINE STRICTLY ABOVE THE THI
     strike(C, L, L.max * 0.5, here);
     for (let k = 0; k < 4; k++) C.step(here);
     assert.deepEqual([L.ph, C.F.mem.exam?.kind, L.hp], [2, 'runes', L.hpFloor], `n ${n}: burst past it - held at the line, the second phase, the runes`);
-    // PIN MOVED (FIELD BUGS 2026-10-19d LORD-SHARES, bible/01-Overview/bugs/Field-Bugs-2026-10-19d.md): an awake lord keeps a
+    // PIN MOVED (FIELD BUGS 2026-10-19e LORD-SHARES, bible/01-Overview/bugs/Field-Bugs-2026-10-19e.md): an awake lord keeps a
     // fallen member's share, so the share that moves mid-Examination is one BROUGHT - a member recalled into the hall
     if (n >= 2) {
       const max0 = L.max;

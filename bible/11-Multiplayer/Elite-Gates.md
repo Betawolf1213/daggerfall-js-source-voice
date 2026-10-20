@@ -845,7 +845,7 @@ first written 90-160 m long, 3-4.5 m wide for a company of up to four and 5-6 m 
 | **the Siege-Walk** | the Galleries | as above |
 | **the Falling Wall** | the Galleries | 20 s after the wake, the walkway falls behind the company, segment by segment, at a fixed 1.5 m/s. A member caught is cast to the nearest standing segment ahead, at the cast-back's cost |
 | **the Winch** | the Cairn | the portcullis rises only while `min(2, n)` members stand on its winch plates, over 60 s, under the march - *n* the living company as it stands, so a pair that loses one raises it alone (AUDIT EG V). Each plate stands gold on every screen through the trial, the room's reach (`EG_TOUCH_M`) about it, as a stood-on errand does (`scenes/eliteGates/egFight.js` `winchPlates`; FIELD BUGS 2026-10-18d WINCH-PLATES - the objective named them and nothing marked them) |
-| **the Gauntlet** | the Shade | no march: `2 + ceil(n/2)` caster pillars, each silenced by standing 3 s on its side span's plate |
+| **the Gauntlet** | the Shade | no march: `2 + ceil(n/2)` caster pillars, each silenced by standing 3 s on its side span's plate - or by slaying its Caster (GAUNTLET-SLAIN, `01-Overview/bugs/Field-Bugs-2026-10-19d.md`: its plates are unmarked on the screen (the Winch's are drawn; the Gauntlet's are not), and a company that killed every Caster stood at a door that never gave) |
 | **the Forge Bridge** | the Wellhead | the walkway is a conveyor running toward the arrival plate at a fixed 1.0 m/s, under the march and the vents |
 
 ### 8.4 The Athenaeum (`athenaeum`) - the lock
@@ -1782,8 +1782,8 @@ byte. The Spire's lords are written to it. The gate's brain already exports the 
 - **Health**: `ttkRef(c)` seconds of reference damage per fighter (`dpsRef(lv)`, the gate's level claim), added as the
   gate adds its fighters. `ttkRef(c) = 180 x 1.07^(c-1)` to circle 20, then `x 1.03` a circle (`EG_TTK_S`,
   `EG_TTK_GROWTH`, `EG_TTK_GROWTH_DEEP`).
-- **A lord is stood for the company on its hall's plate, and keeps what the fallen leave** (FIELD BUGS 2026-10-19d
-  LORD-SHARES, `01-Overview/bugs/Field-Bugs-2026-10-19d.md`, after a company's word on its breach: *"Felt like he wasnt
+- **A lord is stood for the company on its hall's plate, and keeps what the fallen leave** (FIELD BUGS 2026-10-19e
+  LORD-SHARES, `01-Overview/bugs/Field-Bugs-2026-10-19e.md`, after a company's word on its breach: *"Felt like he wasnt
   being damaged"* and *"It felt like the moment team died difficulty went down"*).
   - **As its hall wakes** a lord is stood for the members on the arrival plate (`net/eliteGates/egLords.js` egLordsStand,
     called by `net/eliteGates/egBrain.js` standFight once every lord of the hall stands). The hall's fight is still sized
