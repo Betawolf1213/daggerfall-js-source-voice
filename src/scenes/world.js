@@ -571,7 +571,7 @@ import { buildingDataForDoor, locationBuildings, BUILDING_KEY_0, blockBuildingCo
 import { hitSoundFor, swingSoundFor, ENEMY_HIT_VOLUME, PLAYER_HIT_VOLUME } from '../systems/soundClips.js';   // AUDIT 58: DFU's two hit volumes
 import { isInvisible, entityIsParalyzed, concealBits } from '../systems/effects.js';   // AUDIT 39: the S19 gate is host-agnostic in DFU
 import { concealmentFlags } from '../systems/effects.js';   // INVIS-SWING: the traveller's concealment, the wild gate's notice
-import { createSerpentSpell } from './gate/standInSpell.js';   // FIELD BUGS 2026-10-19b BOSS-DOT: my spell on the serpent's hide, its door (AUDIT SCHOOLS L2 F4's telling and its lasting harm with it)
+import { createSerpentSpell } from './gate/standInSpell.js';   // FIELD BUGS 2026-10-19e BOSS-DOT: my spell on the serpent's hide, its door (AUDIT SCHOOLS L2 F4's telling and its lasting harm with it)
 import { hasActiveEffect } from '../systems/effects.js';   // PEERLIGHT2: my Light spell, for the pose
 import { combatVisualsOn, peerDraw } from '../systems/combatVisuals.js';   // INVIS-LOOK: a concealed peer, drawn as the enhanced lane draws a concealed foe
 import { isEntityWaterWalking, assignModBundle, removeBundleNamed, WATER_WALKING_SILENT_KIND } from '../systems/effects.js';   // CSA-I: the boat's water walk
@@ -7680,7 +7680,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (dmg > 0) serpentHost?.handStruck?.(target, dmg);
   }
   /** SERPENT4: a harmful missile of mine on its hide (hostMagic.js boxMarks) - its door, the hurt counted on the stand-in and
-   *  handed to the host (FIELD BUGS 2026-10-19b BOSS-DOT: out of bootWorld to scenes/gate/standInSpell.js createSerpentSpell,
+   *  handed to the host (FIELD BUGS 2026-10-19e BOSS-DOT: out of bootWorld to scenes/gate/standInSpell.js createSerpentSpell,
    *  its Continuous Damage carried on the shared round, a frame of the serpent's fight asking it - serpentFrame). */
   const serpentSpell = createSerpentSpell({ player: playerEntity, standIn: serpentStandIn, land: (box, d) => serpentHost?.handStruck?.(box, d) });
   /** NAV-H: every boat that stands in the mode's collider - mine, and the sea's ships near enough to strike and walk. */
@@ -30905,7 +30905,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     const o = mapPixelToWorldCoords(x, y);
     return ringPassPoints(r.locationRect, r.locationBorderRect, from, to, { x: o.x + 16384, z: o.z + 16384 });
   }
-  /** TOWN-EXIT (FIELD BUGS 2026-10-19b): a journey's legs (systems/travel/townExit.js journeyLegs, moved out whole) - out of
+  /** TOWN-EXIT (FIELD BUGS 2026-10-19e): a journey's legs (systems/travel/townExit.js journeyLegs, moved out whole) - out of
    *  the walled town it starts in by a gate (townExit over the built pixel: its gates, its navgrid), else joined to its
    *  first road (OW-ROADSIDE); null, and said, where every gate is shut for the night. */
   function tvJoinedLegs(from, plan, roads = false) {
@@ -35606,7 +35606,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
           quickUse: (n) => quickUse(n), quickSwap: () => quickSwap(), quickOffHand: () => quickOffHand(), quickSpell: () => quickSpell(), quickSwitchHand: () => quickSwitchHand(),   // QS6   // MAC-R3: the main cell's hand switch
           grip: player.gripShown,   // CLIMB2: the enhanced climb's grip - both HUDs draw it
           steed: _mode() === 'exterior' ? upkeep.bar(player.transportMode) : null,   // STEED1: the ridden horse's breath, in the grip's place
-          healthBar: duelVitality(duelMgr.live, online?.id ?? ''),   // DUEL-BAR (FIELD BUGS 2026-10-19b, the owner: "Bar shows duel vitality"): the referee's vitality on both skins' bar while my duel is live, the save's at its end - display only
+          healthBar: duelVitality(duelMgr.live, online?.id ?? ''),   // DUEL-BAR (FIELD BUGS 2026-10-19e, the owner: "Bar shows duel vitality"): the referee's vitality on both skins' bar while my duel is live, the save's at its end - display only
           weaponSheathed: !!weaponRig.playerWeapon.sheathed });   // AUDIT 28 W2: the arrow counter's drawn-bow gate   // U38 + X4 + U43
       csaDrawWindWidget();   // CSA-E: over the HUD
     }

@@ -173,7 +173,7 @@ test('audit18 hosts: worldModes overlayHeld covers the DUNGEON overlay, and hold
   assert.match(decl, /dungeonCtx/, 'overlayHeld ignores the dungeon overlay - the motor walks under an open window');
   assert.match(decl, /uiOverlayActive/);
   // DFU PauseGame(true) stops the movers too (dungeon.js:"so the mode must" does).
-  assert.match(s, /if \(!overlayHeld\) dungeonCtx\.actions\.update\(dt, player\);/,   // PIN MOVED (FIELD BUGS 2026-10-19b MOVER-BODY): the movers meet the body
+  assert.match(s, /if \(!overlayHeld\) dungeonCtx\.actions\.update\(dt, player\);/,   // PIN MOVED (FIELD BUGS 2026-10-19e MOVER-BODY): the movers meet the body
     'the dungeon movers still travel under an open window');
 });
 
@@ -181,9 +181,9 @@ test('audit18 hosts: worldModes overlayHeld covers the DUNGEON overlay, and hold
 // 4. Platform riding was wired only into the standalone dungeon scene.
 // ---------------------------------------------------------------------
 
-// PIN MOVED (FIELD BUGS 2026-10-19b MOVER-BODY): the ride is the movers' own - the action system carries the body its
+// PIN MOVED (FIELD BUGS 2026-10-19e MOVER-BODY): the ride is the movers' own - the action system carries the body its
 // step meets as it steps (world/actionSystem.js _standMover, player/moverBody.js), and shared.js's ridePlatform, a
-// host-side delta applied the next frame, is gone; test/world/fb1019b_moverbody.test.js holds the law whole.
+// host-side delta applied the next frame, is gone; test/world/fb1019e_moverbody.test.js holds the law whole.
 test('audit18 hosts: the mover carries its rider by its own step, the rider\'s own stance through the resolver - and a body on the static shell beside it is no rider', async () => {
   const { Collider } = await import('../../src/player/collider.js');
   const { ActionSystem } = await import('../../src/world/actionSystem.js');

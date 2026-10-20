@@ -102,7 +102,7 @@ THE LAW is pure (instancePlaces.js):
   dungeon by its map id, a building by its map id and key. A Place names its site before anything stands there:
   S0000018 reveals its crypt thirty days before its mummy is placed. A site unseated from its key (RESEAT-GAPS) names
   none.
-- **remainsWholeAt** (HEIR-WHOLE, FIELD BUGS 2026-10-19b, `01-Overview/bugs/Field-Bugs-2026-10-19b.md`; a player's
+- **remainsWholeAt** (HEIR-WHOLE, FIELD BUGS 2026-10-19e, `01-Overview/bugs/Field-Bugs-2026-10-19e.md`; a player's
   ancestor died in another player's instance, and the inheritance never appeared at the spot): the line's remains still
   lying (`scenes/legacyHost.js` remainsWhere) whose dungeon was built whole, at a dungeon the world lays smaller in public
   (`dungeonSite`'s `relaid`), by its map id. A death records the size its dungeon was built at and its remains stand only
@@ -218,10 +218,10 @@ stands in.
   home; entryFor's rule and what was recorded; atDoor, refused, poseWord, questElsewhere; the funnel and the doors
   executed from their source; the hosts by source; the Recall anchor's dungeon record.
 - `test/net/staffTeleport.test.js`: a staff landing in the player's instance.
-- `test/systems/legacy/fb1019b_heirwhole.test.js` (4, HEIR-WHOLE): a death in another player's instance of a ruin the
+- `test/systems/legacy/fb1019e_heirwhole.test.js` (4, HEIR-WHOLE): a death in another player's instance of a ruin the
   world lays medium, and the heir's door - its popup, their own instance, its build standing the remains under where
   they fell; the room kept while they lie, a quest's room first, the older relay's whole public room; public-room
-  remains as they were; one whole layout whoever builds it. `tools/mutants/fb1019b_heirwhole.json` (13), all dead.
+  remains as they were; one whole layout whoever builds it. `tools/mutants/fb1019e_heirwhole.json` (13), all dead.
 - `tools/mutants/instances.json` (51), all dead; the lists re-aimed by content where this arc moved their lines.
 - PIN MOVED: RELAY_VERSION world208 in every file that names it, and `test/net/relayversion.test.js`'s row and graph; the
   quest stamp and the re-lay; the funnels', the doors' and the identity's shapes; the relay's hello gate; the account

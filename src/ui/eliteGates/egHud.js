@@ -29,7 +29,7 @@ import { egHallOf, egCircleOfHall, egSlotOfHall, egPhase, egTimes, egCountText, 
 import { EG_OPEN_ENDS } from '../../net/eliteGates/egLaw.js';   // AUDIT EG III (section 16.3): the ends that open the Reliquaries
 import { egBossOf, egLordCard } from '../../net/eliteGates/egLaw.js';   // AUDIT EG V (L2-11): the next Court's lord, the law's
 import { egStrataSecond } from '../../net/eliteGates/egBrain.js';   // AUDIT EG V (L2-11): and the second lord its strata stand beside it
-import { EG_SILENCE_MS } from '../../net/eliteGates/egBrain.js';   // FIELD BUGS 2026-10-19b GAUNTLET-PLATES: how long a Gauntlet's plate is held
+import { EG_SILENCE_MS } from '../../net/eliteGates/egBrain.js';   // FIELD BUGS 2026-10-19e GAUNTLET-PLATES: how long a Gauntlet's plate is held
 import { egPanoplyIn, egValkRedoubt } from '../../net/eliteGates/egPay.js';   // AUDIT EG III: the rest's stake line - a Reliquary's Panoply odds
 import { EG_RELIQUARY_PANOPLY_X } from '../../systems/eliteGates/egSpoils.js';
 import { egCountAt, egLivingCount, egMemberOf, egRunOfMember } from '../../net/eliteGates/egLink.js';
@@ -100,13 +100,13 @@ export function egProgressText(spec, pg) {
   if (pg.obj === 'wellspring') return pg.anchors > 0 ? `Anchors standing: ${pg.anchors}` : 'The Wellspring is open to blows';
   if (pg.obj === 'holdfast') return `Hold ${ms(75_000 - (pg.hold ?? 0))} - the relic ${pg.relic ?? 100}%`;
   if (pg.obj === 'winch') return `The winch ${Math.round(((pg.winch ?? 0) / 60_000) * 100)}%`;
-  if (pg.obj === 'gauntlet') return t('eg.progress.gauntlet', 'Plates left: {n} - stand on each for {s} s', { n: pg.left ?? 0, s: EG_SILENCE_MS / 1000 });   // FIELD BUGS 2026-10-19b GAUNTLET-PLATES: the plates named ("Casters left" read as a body count - a slain Caster's plate still asks)
+  if (pg.obj === 'gauntlet') return t('eg.progress.gauntlet', 'Plates left: {n} - stand on each for {s} s', { n: pg.left ?? 0, s: EG_SILENCE_MS / 1000 });   // FIELD BUGS 2026-10-19e GAUNTLET-PLATES: the plates named ("Casters left" read as a body count - a slain Caster's plate still asks)
   if (pg.obj === 'engine') return `Hold the engine ${ms(45_000 - (pg.hold ?? 0))}`;
   if (pg.obj === 'orrery' && Array.isArray(pg.st)) return `Stones true: ${pg.lit ?? 0} of 6 - fray ${pg.f ?? 0}`;
   if (pg.obj === 'quiet') return `The door opens in ${ms(pg.quiet ?? 0)}`;
   return '';
 }
-/** FIELD BUGS 2026-10-19b GAUNTLET-PLATES: a hall's objective as the screen says it (this tracker's line, ui/eliteGates/egSpireHud.js's
+/** FIELD BUGS 2026-10-19e GAUNTLET-PLATES: a hall's objective as the screen says it (this tracker's line, ui/eliteGates/egSpireHud.js's
  *  chip and arrival card) - the Gauntlet's naming its plates, in the player's language, in place of the law's "Silence the
  *  casters." (net/eliteGates/egLaw.js EG_OBJECTIVES - a hall's bytes, kept as laid: section 22's law pin); every other hall's
  *  the law's words as they stand. */

@@ -1,0 +1,225 @@
+[
+  {
+    "name": "TOWN-EXIT-gate-faces-in",
+    "file": "src/systems/travel/townExit.js",
+    "old": "(m[8] > 0 ? 'e' : 'w') : (m[10] > 0 ? 'n' : 's')",
+    "new": "(m[8] > 0 ? 'w' : 'e') : (m[10] > 0 ? 's' : 'n')",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "A gate's side read off the way its model faces IN: every gate's walk goes in through the wall behind it."
+  },
+  {
+    "name": "TOWN-EXIT-gate-flag-not-model",
+    "file": "src/systems/travel/townExit.js",
+    "old": "open: g.gate?.modelId === CITY_GATE_OPEN_MODEL_ID",
+    "new": "open: g.gate?.isOpen === true",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "A gate read open by its flag: a block that laid it shut (its flag born open) is walked into."
+  },
+  {
+    "name": "TOWN-EXIT-gate-unrounded",
+    "file": "src/systems/travel/townExit.js",
+    "old": "x: Math.round(origin.x + m[12] / GLOBAL_SCALE), z: Math.round(origin.z + m[14] / GLOBAL_SCALE)",
+    "new": "x: origin.x + m[12] / GLOBAL_SCALE, z: origin.z + m[14] / GLOBAL_SCALE",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "The gates read through the pixel-local Float32 matrices' noise, never whole units."
+  },
+  {
+    "name": "TOWN-EXIT-streets-never-open",
+    "file": "src/systems/travel/townExit.js",
+    "old": "    if (x === 0 || y === 0 || x === W - 1 || y === H - 1) return { steps, open: true };\n",
+    "new": "",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "The streets never said open: the fields read as a town's streets."
+  },
+  {
+    "name": "TOWN-EXIT-no-street-test",
+    "file": "src/systems/travel/townExit.js",
+    "old": "  if (streets.open) return null;\n",
+    "new": "",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "A town whose streets run out to the edge (its ring not closed) is left by a gate from the fields."
+  },
+  {
+    "name": "TOWN-EXIT-no-street-reach",
+    "file": "src/systems/travel/townExit.js",
+    "old": "export const STREET_REACH = 4;",
+    "new": "export const STREET_REACH = 0;",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "A traveller against a wall, in a cell its automap covers, is on no street."
+  },
+  {
+    "name": "TOWN-EXIT-no-yard-test",
+    "file": "src/systems/travel/townExit.js",
+    "old": "  if (!ways.length) return null;\n",
+    "new": "",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "A yard no gate opens onto reads as a town with every gate shut."
+  },
+  {
+    "name": "TOWN-EXIT-shut-not-said",
+    "file": "src/systems/travel/townExit.js",
+    "old": "  if (!ways.some((w) => w.g.open)) return { shut: true };\n",
+    "new": "",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "Every gate shut: no way out, and the journey leaves as before - into the wall."
+  },
+  {
+    "name": "TOWN-EXIT-through-a-shut-gate",
+    "file": "src/systems/travel/townExit.js",
+    "old": "    if (!g.open) continue;\n",
+    "new": "",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "A shut gate (a wall) is walked to and through."
+  },
+  {
+    "name": "TOWN-EXIT-gate-in-at-the-wall",
+    "file": "src/systems/travel/townExit.js",
+    "old": "export const GATE_IN = P_SIZE;",
+    "new": "export const GATE_IN = 0;",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "The gate's inner and outer points on its wall."
+  },
+  {
+    "name": "TOWN-EXIT-out-on-the-road-line",
+    "file": "src/systems/travel/townExit.js",
+    "old": "      ? { x: Math.min(L.xMax, Math.max(L.xMin, g.x)), z: at[g.side].z }\n",
+    "new": "      ? at[g.side]\n",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "Out of a north or south gate straight to the side's road point, across the fields at a slant."
+  },
+  {
+    "name": "TOWN-EXIT-ring-always-clockwise",
+    "file": "src/systems/travel/townExit.js",
+    "old": "  return lengthOf(start, ccw) < lengthOf(start, cw) ? ccw : cw;",
+    "new": "  return cw;",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "The ring always walked clockwise, the long way round."
+  },
+  {
+    "name": "TOWN-EXIT-gate-by-the-ring-alone",
+    "file": "src/systems/travel/townExit.js",
+    "old": "const len = steps * CELL_NATIVE + lengthOf(",
+    "new": "const len = lengthOf(",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "The gate chosen by the ring alone: across the town to the far gate."
+  },
+  {
+    "name": "TOWN-EXIT-out-to-the-ring-on-the-road",
+    "file": "src/systems/travel/townExit.js",
+    "old": "export const EXIT_ON_FOOT = 3;",
+    "new": "export const EXIT_ON_FOOT = 2;",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "The walk out to the ring's band at the road's rate."
+  },
+  {
+    "name": "TOWN-EXIT-legs-all-the-roads-kind",
+    "file": "src/systems/travel/townExit.js",
+    "old": "kind: i < EXIT_ON_FOOT ? 'open' : ground",
+    "new": "kind: ground",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "The walk in to the gate and through it at the road's rate."
+  },
+  {
+    "name": "TOWN-EXIT-legs-not-in-their-pixel",
+    "file": "src/systems/travel/townExit.js",
+    "old": "...worldCoordToMapPixel(at.x, at.z), kind:",
+    "new": "x: from.x, y: from.y, kind:",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "Every point of the way out aimed in the start pixel: the ring past an eight-block town never arrives."
+  },
+  {
+    "name": "TOWN-EXIT-legs-unmarked",
+    "file": "src/systems/travel/townExit.js",
+    "old": ", ring: true })), ...legs];",
+    "new": "})), ...legs];",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "The way out's legs unmarked: a resume in the town skips them, and joins a road between them."
+  },
+  {
+    "name": "TOWN-EXIT-shut-walked-anyway",
+    "file": "src/systems/travel/townExit.js",
+    "old": "  if (exit && 'shut' in exit) return null;\n",
+    "new": "",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "The town's gates shut, and the journey begun anyway."
+  },
+  {
+    "name": "TOWN-EXIT-host-no-exit",
+    "file": "src/scenes/world.js",
+    "old": "ringAt: tvRingAt, exitAt: (x, y, to, me) => townExit(built.get(`${x},${y}`), tvTownRects(x, y), me, to) });",
+    "new": "ringAt: tvRingAt });",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js",
+      "test/world/worldOfDaggerfall/ow_wod.test.js"
+    ],
+    "note": "The host hands no way out."
+  },
+  {
+    "name": "TOWN-EXIT-host-shut-unsaid",
+    "file": "src/scenes/world.js",
+    "old": "    if (!legs) tvSay(TRAVEL_VIEW_TEXT.gatesShut);\n",
+    "new": "",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js"
+    ],
+    "note": "The shut town refused in silence."
+  },
+  {
+    "name": "TOWN-EXIT-route-begun-shut",
+    "file": "src/scenes/world.js",
+    "old": "    const legs = tvJoinedLegs(from, plan, roads);\n    if (!legs) return false;",
+    "new": "    const legs = tvJoinedLegs(from, plan, roads);",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js",
+      "test/systems/travel/tv2_click_to_move.test.js"
+    ],
+    "note": "A place's journey begun with no legs while the gates are shut - straight at the place, into the wall."
+  },
+  {
+    "name": "TOWN-EXIT-walk-begun-shut",
+    "file": "src/scenes/world.js",
+    "old": "    let legs = tvJoinedLegs(from, plan, roads);\n    if (!legs) return false;",
+    "new": "    let legs = tvJoinedLegs(from, plan, roads);",
+    "tests": [
+      "test/systems/travel/fb1019e_townexit.test.js",
+      "test/systems/travel/tv2_click_to_move.test.js"
+    ],
+    "note": "A spot's walk begun with no legs while the gates are shut (and `legs.length` read off null)."
+  }
+]

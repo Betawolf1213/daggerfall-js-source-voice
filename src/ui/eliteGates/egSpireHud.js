@@ -62,7 +62,7 @@ import { egMarkynazDecree } from '../../net/eliteGates/egLords.js';   // EG-ZS (
 import { EG_CHAMPIONS } from '../../net/eliteGates/egLaw.js';   // EG-ZS: the champion's signature's title
 import { egProgressText, EG_MARK_NAMES, EG_POTIONS_PER_HALL } from './egHud.js';
 import { egNextCircleText } from './egHud.js';   // AUDIT EG V (L2-11): a rest's beacon - the next circle's decrees and lord
-import { egObjectiveText } from './egHud.js';   // FIELD BUGS 2026-10-19b GAUNTLET-PLATES: the objective as the screen says it (the Gauntlet's in the player's language)
+import { egObjectiveText } from './egHud.js';   // FIELD BUGS 2026-10-19e GAUNTLET-PLATES: the objective as the screen says it (the Gauntlet's in the player's language)
 import { egTwistShown } from '../../net/eliteGates/egRun.js';   // AUDIT EG V (L2-4): no Bargain's line when no family is free
 import { EG_PRES_TEXT, EG_BAND_LINES } from './egBeats.js';
 import { EG_PARTY_CSS } from './egParty.js';

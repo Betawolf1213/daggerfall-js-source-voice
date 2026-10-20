@@ -8516,5 +8516,5 @@ never carries a pin.
   EntityEffectManager.cs:2170-2178), for an item DoMagicRound flagged at six hours; the port's reroll runs at the round
   that finds the six hours out (E2's, unchanged - AUDIT 63 F13 above).
 
-Pinned in `test/systems/fb1019b_heldconceal.test.js` (5, on the real equip door, a real blow, a real spell's damage, the
-real magic-round pump and the HUD's icon row); `tools/mutants/fb1019b_heldconceal.json`, 9 mutants, 9 dead.
+Pinned in `test/systems/fb1019e_heldconceal.test.js` (5, on the real equip door, a real blow, a real spell's damage, the
+real magic-round pump and the HUD's icon row); `tools/mutants/fb1019e_heldconceal.json`, 9 mutants, 9 dead.

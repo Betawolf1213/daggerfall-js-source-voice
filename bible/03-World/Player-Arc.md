@@ -2296,7 +2296,7 @@ real collider over real closed rock meshes;
 `tools/mutants/unstuckout.json` (7), all dead. AUDIT FIELD-BUGS 1008 (`01-Overview/Audit-Log.md`): `tvSeaY` declared
 beside `state`, before the boot's own load reads it (the outdoor arm's refusals that audit worded went with the arm).
 
-## DECOR-CLEAR - a late solid never closes on the body (FIELD BUGS 2026-10-19b)
+## DECOR-CLEAR - a late solid never closes on the body (FIELD BUGS 2026-10-19e)
 
 The collider is winding-blind and holds both faces of every triangle, so a solid ADDED where a body already stands holds
 it by its inner walls - or, under 0.9 m, the resolve throws it onto the top. Daggerfall Unity never meets this indoors:
@@ -2325,11 +2325,11 @@ was the port's one guard against a late arrival, a fast-travel landing's alone.
   body is never this collider's: each client's gate guards its own. A mover's bucket (a lift, an action door, a placed
   door hung as one) is MOVER-BODY's (below).
 
-`test/scenes/decor/fb1019b_decorclear.test.js` (7, the real motor and collider), `tools/mutants/decorclear.json` (26 since
+`test/scenes/decor/fb1019e_decorclear.test.js` (7, the real motor and collider), `tools/mutants/decorclear.json` (26 since
 ROCK-CLEAR re-aimed it: 22 dead, 4 equivalent as recorded); `tools/mutants/unstuckout.json`'s head record re-aimed to the
 height (7, all dead).
 
-## ROCK-CLEAR - a rock built after the body stands never closes on it (FIELD BUGS 2026-10-19b)
+## ROCK-CLEAR - a rock built after the body stands never closes on it (FIELD BUGS 2026-10-19e)
 
 A player's private report: a fast travel left the character inside a mountain, and they could not leave. The landing
 pixel builds whole before the body stands (`_teleportToPixel` awaits it), and UNSTUCK-OUT's law reads it: a floor inside
@@ -2356,11 +2356,11 @@ MOUNTAINS WALKABLE crosses massifs - `11-Multiplayer/Wild-Zone.md` section 19).
   the open world's other placed solids - POIs, quays, the Oblivion Gate, merchant yards, shipyards, carts - each its
   own module; each can stand through it with one `add`.
 
-`test/world/worldOfDaggerfall/fb1019b_rockclear.test.js` (6, the real motor, collider and streaming state, the build's
+`test/world/worldOfDaggerfall/fb1019e_rockclear.test.js` (6, the real motor, collider and streaming state, the build's
 own providers), `tools/mutants/rockclear.json` (16, all dead). PIN MOVED: `fb1001_wodrock`, `wod2_loader`, `wodbush`,
-`wod4_privateershold`, `arena1_model` (the pixel build's sites), `fb1019b_decorclear` (the yards name no body).
+`wod4_privateershold`, `arena1_model` (the pixel build's sites), `fb1019e_decorclear` (the yards name no body).
 
-## MOVER-BODY - a mover never closes on the body (FIELD BUGS 2026-10-19b)
+## MOVER-BODY - a mover never closes on the body (FIELD BUGS 2026-10-19e)
 
 Two players' private reports: stuck in a dungeon's lift; out of the map when a floor lowered onto them while they swam
 in a dungeon's water. A mover (`world/actionSystem.js`, DaggerfallAction's Move tween) stood its collider bucket again at
@@ -2405,12 +2405,12 @@ neither carried nor holds a mover (EnemyMotor rides no platform). THE FOUR HOSTS
 dungeon's movers and the building's, for `world.js` and `exterior.js` alike), `scenes/dungeon.js` (the standalone
 dungeon) wired; `scenes/dungeonContext.js` and `scenes/interiorContext.js` build the action systems and need nothing.
 
-Pinned: `test/world/fb1019b_moverbody.test.js` (with VOID-DUNGEON below; the movers minted by `layoutRdbBlock`, the real
+Pinned: `test/world/fb1019e_moverbody.test.js` (with VOID-DUNGEON below; the movers minted by `layoutRdbBlock`, the real
 Collider and motor). PIN MOVED: `test/scenes/audit18_hosts_outer.test.js` (the ride is the movers' own; both hosts
 hand them the body), `test/player/ph1_physics.test.js` (the carry's own stance), `test/scenes/waveD_dungeonHost.test.js`
 (a flat is no platform: no bucket), `test/world/superDungeon/sd7b_steps.test.js` (the Steps ride before the motor).
 
-## VOID-DUNGEON - the dungeon's failsafe (FIELD BUGS 2026-10-19b)
+## VOID-DUNGEON - the dungeon's failsafe (FIELD BUGS 2026-10-19e)
 
 VOID-ENTRY (FIELD BUGS 2026-10-04d) stood a body that fell below everything a building stands on back at its door; a
 dungeon had nothing. Its collider has no ground (`heightAt` -Infinity), so a body out of its floor - the lowering
@@ -2423,4 +2423,4 @@ lowest triangle. Both dungeon hosts' frames ask it (`worldModes.js`, the else of
 shape; `dungeon.js`, where the motor walks) and stand such a body there, its fall cleared, with a line of the port's own
 in the player's language (`player.dungeonVoid`, "There was no floor beneath you. You are back at the entrance."). A
 realm that casts its own void back keeps no record - the Hour's Unmoored Steps (SD7b) and an Elite Breach's spans (EG
-section 8) cost what their own laws say. DFU has no failsafe. Pinned by `test/world/fb1019b_moverbody.test.js`.
+section 8) cost what their own laws say. DFU has no failsafe. Pinned by `test/world/fb1019e_moverbody.test.js`.

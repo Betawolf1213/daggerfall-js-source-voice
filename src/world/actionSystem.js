@@ -1552,7 +1552,7 @@ constructor(collider, { damagePlayer = null, drainMagicka = null, castSpell = nu
     }
   }
 
-  /** MOVER-BODY (FIELD BUGS 2026-10-19b, player/moverBody.js): standing collision follows the mover every frame - its
+  /** MOVER-BODY (FIELD BUGS 2026-10-19e, player/moverBody.js): standing collision follows the mover every frame - its
    *  bucket stood at the new pose - and the body the step meets is carried with it (a rider, and any body the pose would
    *  press, from any side), the frame's step met in MOVER_STEP pieces at the body. A body the carry cannot clear - pinned
    *  between the mover and the world - HOLDS the mover at the last pose that closed on nobody, its `t` with it: the

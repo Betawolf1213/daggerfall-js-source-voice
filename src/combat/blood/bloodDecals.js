@@ -448,7 +448,7 @@ export const isOverkill = (damage, maxHealth) => damagePercent(damage, maxHealth
  */
 export function bloodHit(damage, entity, { fromPlayer = false, weapon = null, swing = null, forward = null } = {}) {
   return Object.freeze({
-    // FIELD BUGS 2026-10-19b STAND-IN-WHOLE: a body the relay runs (`relayHealth` - world/gate/gateBoss.js bossStandIn) has no
+    // FIELD BUGS 2026-10-19e STAND-IN-WHOLE: a body the relay runs (`relayHealth` - world/gate/gateBoss.js bossStandIn) has no
     // whole here: its stand-in's is a count the wire carries (STAND_IN_WHOLE), not its body's, so it measures nothing - the
     // bottom rung, as its 1e9 was (a host body's real whole comes as its `bloodOf`)
     damage: Number.isFinite(damage) ? damage : 0,

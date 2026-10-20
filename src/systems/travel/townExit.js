@@ -1,6 +1,6 @@
 // @ts-check
 // ═══════════════════════════════════════════════════════════════════
-// TOWN-EXIT (FIELD BUGS 2026-10-19b, a player's private report: leaving a town by the Overworld's journey, or walking
+// TOWN-EXIT (FIELD BUGS 2026-10-19e, a player's private report: leaving a town by the Overworld's journey, or walking
 // through one, the way out failed wherever the traveller stood far from a gate, and left them caught in a corner of the
 // wall) - A JOURNEY FROM INSIDE A WALLED TOWN LEAVES BY A GATE. bible/06-Systems/Travel-View.md TOWN-EXIT.
 //

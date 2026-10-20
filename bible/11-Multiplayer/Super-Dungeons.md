@@ -1364,7 +1364,7 @@ player sees the same step in the same place; what a foot breaks is its own.
   first stands on it (its grind heard), then its bucket gone and its draw falling, whole again 5 s after.
 - **Ridden BEFORE the motor**: the mode machine asks the set every frame of the dungeon, before the motor - so the motor
   sweeps against the steps where they now are (the action movers' ride, `ridePlatform` beside it then, is the movers'
-  own update since MOVER-BODY, FIELD BUGS 2026-10-19b: they carry the body as they step) - and a body
+  own update since MOVER-BODY, FIELD BUGS 2026-10-19e: they carry the body as they step) - and a body
   standing on a step (`groundKey`) is carried with the step's own move, as a deck carries one (`player.carryBy`: the
   body and both ends of its render span, so a swing is no lerp). A step that went or came back carries nothing; a frame's
   hitch, or the clock put right, carries the body the step's whole move - it stays on its step.

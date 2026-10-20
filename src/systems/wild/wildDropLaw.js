@@ -158,7 +158,7 @@ const dropWorth = (/** @type {any} */ it) => { const l = liquidWorthOf(it); retu
  * CART-AWAY (Mac, 2026-10-15: "if its parked outside the zone nothing should be lost"): `cart` false - the wagon away
  * from the death, parked off the zone, stabled or none (the service's word, wildCartMayBeAway) - takes nothing of the
  * cart, neither a piece nor its coin's share; the bag and the purse as ever.
- * COMPANION-DROP (FIELD BUGS 2026-10-19b; the owner, 2026-10-19: "Bag drops; no send-off in zone"): AND EVERY PACK AT
+ * COMPANION-DROP (FIELD BUGS 2026-10-19e; the owner, 2026-10-19: "Bag drops; no send-off in zone"): AND EVERY PACK AT
  * THE FALLEN'S SIDE (`packs` - wildPacks: a crew hand's ashore, a sworn one's at the side and its kit; a record's own,
  * wildPacksOf, by default) as the cart is - its pieces in the drop by worth (`from` its word, WILD_PACK), its coin's
  * share in the pile (`gold.packs`, by that word), what does not fit put back in it.
@@ -234,7 +234,7 @@ export function wildCartMayBeAway(rec) {
   return rec.Mode === WAGON_MODE.WithPlayer && rec.WagonStabled === true;
 }
 
-// ── COMPANION-DROP (FIELD BUGS 2026-10-19b; the owner, 2026-10-19: "Bag drops; no send-off in zone") ────────────────
+// ── COMPANION-DROP (FIELD BUGS 2026-10-19e; the owner, 2026-10-19: "Bag drops; no send-off in zone") ────────────────
 // A COMPANION AT THE FALLEN'S SIDE DROPS HIS PACK WITH THEIRS. CART-AWAY's law, for the companions: storage WITH the
 // player drops, storage outside the zone keeps. A crew hand ashore (CREW-COMPANIONS, systems/naval/crewCompanions.js)
 // walks with the player through every door - the sea's record keeps him in its `party` - so he is with them wherever

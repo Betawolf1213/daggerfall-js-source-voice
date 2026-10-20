@@ -65,7 +65,7 @@
 // FB1018D (2026-10-18, FIELD BUGS 2026-10-18d; Boar, #bug-reports): THE CHALLENGE'S RING OF FIRE drawn where the room stands it
 // (duelRing - only the motor was kept to it), A WINCH'S PLATES marked as the stood-on errands are (winchPlates), the open duel
 // said as one at n = 1, the Conquest's word saying what its banners do, and every beat's word past the fold's twelve (beats).
-// FIELD BUGS 2026-10-19b GAUNTLET-PLATES (2026-10-19, a player's private report): A GAUNTLET'S PLATES marked as the Winch's are,
+// FIELD BUGS 2026-10-19e GAUNTLET-PLATES (2026-10-19, a player's private report): A GAUNTLET'S PLATES marked as the Winch's are,
 // on their pillars' tops, each dimmed once its Caster is silenced (gauntletPlates, egPlateY).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
@@ -121,7 +121,7 @@ import { createSpireMix } from '../../systems/eliteGates/egMix.js';   // EG-G2: 
 import { EG_LOOK_BIT } from '../../world/eliteGates/egLook.js';   // EG-ZD: a cut feint's dashed fade
 import { TELL_FEINT_FADE } from '../../ai/blowShapes.js';   // EG-ZD (section 13.2): the feint's fade - Feud-Arc section 7.3's one number
 import { egCensusDr, EG_HEAL_WORD_MS, EG_LIFELINE_MS } from '../../net/eliteGates/egBrain.js';   // EG-ZP (sections 15 and 21): THE CENSUS'S VESTIGES, the relay's own law; Lifeline's window
-import { EG_TOUCH_M } from '../../net/eliteGates/egBrain.js';   // FB1018D WINCH-PLATES: the reach the room counts a member on a winch plate within (FIELD BUGS 2026-10-19b GAUNTLET-PLATES: and on a Gauntlet's)
+import { EG_TOUCH_M } from '../../net/eliteGates/egBrain.js';   // FB1018D WINCH-PLATES: the reach the room counts a member on a winch plate within (FIELD BUGS 2026-10-19e GAUNTLET-PLATES: and on a Gauntlet's)
 import { EG_TRAIL_MS } from '../../net/eliteGates/egFair.js';   // EG-ZP: how long the census keeps a trail - and a Lifeline window
 import { egBlowLandsOn } from '../../net/eliteGates/egFair.js';   // THE ASCENT - HEIGHT: a blow lands on its own storey, on every screen as on the relay
 import { egFightView } from '../../net/eliteGates/egWalkGraph.js';   // EG-ZP: the hall's fight ground, the census's floor
@@ -232,7 +232,7 @@ export const EG_SAY = Object.freeze({
 });
 
 /**
- * FIELD BUGS 2026-10-19b GAUNTLET-PLATES: the height (m) of the ground under a Gauntlet's plate - `q` a pillar's spot, its plate
+ * FIELD BUGS 2026-10-19e GAUNTLET-PLATES: the height (m) of the ground under a Gauntlet's plate - `q` a pillar's spot, its plate
  * `[x, z]` in the hall's frame (net/eliteGates/egLaw.js rampartWalk): the top of the pillar it stands on (from spec law 10,
  * THE BROKEN WAY, beside its stair's head), else its stair's height under it (laws 8 and 9 laid it 3 m up the stair - a flat
  * mark there crosses the slope at its middle), else the walkway's floor (the laws before laid the side span flat, and every
@@ -696,7 +696,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
    *  the floors it lands on (net/eliteGates/egFair.js egBlowLandsOn - the relay's rule) waits while its span lasts, then misses. A hall
    *  that judges in plan alone keeps the verdict as it was. */
   const onStorey = (v, bl, x, y, z, t) => (v !== 'hit' || egBlowLandsOn(egFightView(spec), bl, x, y, z) ? v : t >= bl.at + Math.max(1, bl.sp ?? 0) ? 'miss' : 'wait');
-  /** FIELD BUGS 2026-10-19b STAND-IN-WHOLE: the factor the relay grows my bucket by here (THE TRUST LAW: my Vestiges'
+  /** FIELD BUGS 2026-10-19e STAND-IN-WHOLE: the factor the relay grows my bucket by here (THE TRUST LAW: my Vestiges'
    *  declared factor - net/eliteGates/egRun.js egVestigeX's `bx`), read by what one blow of mine can land on a stand-in of
    *  this hall (world/gate/gateBoss.js standInBlowCap). */
   const myBlowX = () => { const E = link.state(); return E?.ms ? egDeclaredX(egRunOfMember(E, me()).vs) : 1; };
@@ -796,7 +796,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       _shapes.push(sh);
     }
   }
-  /** FIELD BUGS 2026-10-19b GAUNTLET-PLATES (section 8.3, the Gauntlet: "each silenced by standing 3 s on its plate"): each
+  /** FIELD BUGS 2026-10-19e GAUNTLET-PLATES (section 8.3, the Gauntlet: "each silenced by standing 3 s on its plate"): each
    *  caster's plate the room counts (net/eliteGates/egBrain.js trialStep's Gauntlet - a member within EG_TOUCH_M of
    *  `spots.pillar[j].plate`, EG_SILENCE_MS unbroken) drawn as the winch's are (winchPlates - gold, EG_TOUCH_M, its own surface)
    *  through the trial, at its ground's height (egPlateY); one whose Caster is silenced (the room's `pg.silenced[j]`) dimmed as
@@ -1228,7 +1228,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       for (const b of F.bodies) liveBody(b, t);
       for (const g of F.gone) if (t - g.goneAt < FALL_MS) liveBody(g, t);
       winchPlates(F, t);   // FB1018D WINCH-PLATES: the stood-on plates that are no body
-      gauntletPlates(F, t);   // FIELD BUGS 2026-10-19b GAUNTLET-PLATES: and the Gauntlet's, each caster's
+      gauntletPlates(F, t);   // FIELD BUGS 2026-10-19e GAUNTLET-PLATES: and the Gauntlet's, each caster's
       for (const [i, d] of drawn) if (!live.has(i)) { destroy(d); drawn.delete(i); }
       for (const i of crystalSlots.keys()) if (!live.has(i)) crystalSlots.delete(i);
       mix.barks(_barks, cam(), (b) => play3(b.cue, b.at));   // EG-G2: the legion's barks, four a kind, nearest first
@@ -1332,7 +1332,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       const vs = egRunOfMember(E, me()).vs, e = player(), q = blowQ(`e${i}`);
       const dmg = Math.round(egHolderBlow(vs, d, r, { stacks: !tick && mom.i === i ? mom.n : 0, low: !!e && e.health < e.maxHealth * EG_BLOODIED_UNDER }));
       if (!sendHit({ i, q, d: dmg, r })) return false;
-      if (tick) return true;   // FIELD BUGS 2026-10-19b BOSS-DOT: a round of my lasting harm (`tick`) is no blow - it takes no Momentum, builds none and rolls no Echo
+      if (tick) return true;   // FIELD BUGS 2026-10-19e BOSS-DOT: a round of my lasting harm (`tick`) is no blow - it takes no Momentum, builds none and rolls no Echo
       if (q !== mom.q) mom = { i, n: mom.i === i ? mom.n + 1 : 1, q };   // a blow builds one stack, on the first body it met
       // ARCANE ECHO: a damage spell repeats, its share of casts - one roll a cast, a blow of its own on each body. EG-ZS: claimed
       // at the cast's whole; the relay takes its share - half, or the whole in War-Chorus (net/eliteGates/egRun.js egEchoShare)

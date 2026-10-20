@@ -1112,7 +1112,7 @@ export class SpellbookWindow {
       }
     }
 
-    // SPELLSHOP-SAID (FIELD BUGS 2026-10-19b): a box that does not ask - the no-book and no-gold refusals
+    // SPELLSHOP-SAID (FIELD BUGS 2026-10-19e): a box that does not ask - the no-book and no-gold refusals
     // (BuyButton_OnMouseClick's DaggerfallUI.MessageBox, ClickAnywhereToClose) and a note - is the enhanced notice
     // panel, ENH-NOTICE2's seam. Under Enhanced Plus the spell shop is this window inside the port (SHOP-PLUS), whose
     // quiet renderer paints no parchment: the refusal was drawn onto nothing, and Buy did nothing a player could see

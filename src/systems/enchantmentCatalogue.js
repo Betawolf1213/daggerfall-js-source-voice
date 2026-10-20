@@ -434,7 +434,7 @@ export const ITEM_MAKER_FLAGS = Object.freeze({
  *  the same thing. Those five plus SoulBound are the six that can
  *  appear on an item only ONCE.
  *
- *  SIDE-ONCE (FIELD BUGS 2026-10-19b; the owner, 2026-10-19: "One copy
+ *  SIDE-ONCE (FIELD BUGS 2026-10-19e; the owner, 2026-10-19: "One copy
  *  per setting") - A DEPARTURE, Port-Ledger A. DFU gives UserTakesDamage
  *  and ItemDeteriorates AllowMultipleSecondaryInstances beside the
  *  primary flag (UserTakesDamage.cs:35, ItemDeteriorates.cs:37), so the
@@ -547,7 +547,7 @@ export function primaryPickerList(selectingPowers, { item = null, powers = [], s
       && own.some((e) => e.type === type)) return false;
     if (hasItemMakerFlag(type, ITEM_MAKER_FLAGS.WeaponOnly) && item?.group !== 'Weapons') return false;
     if (isExclusiveTo(type, powers) || isExclusiveTo(type, sideEffects)) return false;
-    // SIDE-ONCE (FIELD BUGS 2026-10-19b; the owner, 2026-10-19): an effect with no setting left to offer is not listed.
+    // SIDE-ONCE (FIELD BUGS 2026-10-19e; the owner, 2026-10-19): an effect with no setting left to offer is not listed.
     // DFU lists it and opens an empty chooser (DaggerfallItemMakerWindow.cs:644/:689 ask of the effect, never of its
     // settings) - Health Leech with all three of its settings on (HealthLeech.cs:37 allows more than one, never one
     // setting twice), User Takes Damage with both. A departure, Port-Ledger A, with the flags' above.

@@ -5,7 +5,7 @@
     "old": "export const diseaseIncubating = (a) => a?.kind === 'disease' && !a.ended && !a.incubationOver && a.disease != null;\n",
     "new": "export const diseaseIncubating = (a) => a?.kind === 'disease' && !a.ended && a.disease != null;\n",
     "tests": [
-      "test/ui/fb1019b_unwell.test.js",
+      "test/ui/fb1019e_unwell.test.js",
       "test/ui/enhanced/ui3_status.test.js",
       "test/systems/bookshelf.test.js"
     ]
@@ -16,7 +16,7 @@
     "old": "export const diseaseIncubating = (a) => a?.kind === 'disease' && !a.ended && !a.incubationOver && a.disease != null;\n",
     "new": "export const diseaseIncubating = (a) => a?.kind === 'disease' && !a.incubationOver && a.disease != null;\n",
     "tests": [
-      "test/ui/fb1019b_unwell.test.js",
+      "test/ui/fb1019e_unwell.test.js",
       "test/ui/enhanced/ui3_status.test.js",
       "test/systems/bookshelf.test.js"
     ]
@@ -27,7 +27,7 @@
     "old": "export const diseaseIncubating = (a) => a?.kind === 'disease' && !a.ended && !a.incubationOver && a.disease != null;\n",
     "new": "export const diseaseIncubating = (a) => a?.kind === 'disease' && !a.ended && !a.incubationOver;\n",
     "tests": [
-      "test/ui/fb1019b_unwell.test.js",
+      "test/ui/fb1019e_unwell.test.js",
       "test/ui/enhanced/ui3_status.test.js",
       "test/systems/bookshelf.test.js"
     ]
@@ -38,7 +38,7 @@
     "old": "    } else if (!unwell && diseaseIncubating(a)) {\n",
     "new": "    } else if (false) {\n",
     "tests": [
-      "test/ui/fb1019b_unwell.test.js",
+      "test/ui/fb1019e_unwell.test.js",
       "test/ui/enhanced/ui3_status.test.js"
     ]
   },
@@ -48,7 +48,7 @@
     "old": "    } else if (!unwell && diseaseIncubating(a)) {\n",
     "new": "    } else if (diseaseIncubating(a)) {\n",
     "tests": [
-      "test/ui/fb1019b_unwell.test.js",
+      "test/ui/fb1019e_unwell.test.js",
       "test/ui/enhanced/ui3_status.test.js"
     ]
   },
@@ -58,7 +58,7 @@
     "old": "      out.push({ key: 'unwell', name: unwellTileText(), glyph: 'disease' });\n",
     "new": "      out.push({ key: 'unwell', name: DISEASE_NAMES[a.disease], glyph: 'disease' });\n",
     "tests": [
-      "test/ui/fb1019b_unwell.test.js",
+      "test/ui/fb1019e_unwell.test.js",
       "test/ui/enhanced/ui3_status.test.js"
     ]
   },
@@ -68,7 +68,7 @@
     "old": "      out.push({ key: 'unwell', name: unwellTileText(), glyph: 'disease' });\n",
     "new": "      out.push({ key: 'unwell', name: unwellTileText(), glyph: 'poison' });\n",
     "tests": [
-      "test/ui/fb1019b_unwell.test.js",
+      "test/ui/fb1019e_unwell.test.js",
       "test/ui/enhanced/ui3_status.test.js"
     ]
   },
@@ -78,7 +78,7 @@
     "old": "  if (poisoned) out.unshift({ key: 'poison', name: 'Poisoned', glyph: 'poison' });\n",
     "new": "  if (poisoned) out.unshift({ key: 'poison', name: 'Poisoned', glyph: 'poison' });\n  { const i = out.findIndex((r) => r.key === 'unwell'); if (i >= 0) out.push(...out.splice(i, 1)); }\n",
     "tests": [
-      "test/ui/fb1019b_unwell.test.js",
+      "test/ui/fb1019e_unwell.test.js",
       "test/ui/enhanced/ui3_status.test.js"
     ]
   },
@@ -88,7 +88,7 @@
     "old": "export const unwellTileText = () => t('hud.status.unwell', UNWELL_TILE_TEXT);\n",
     "new": "export const unwellTileText = () => UNWELL_TILE_TEXT;\n",
     "tests": [
-      "test/ui/fb1019b_unwell.test.js"
+      "test/ui/fb1019e_unwell.test.js"
     ]
   },
   {
@@ -97,7 +97,7 @@
     "old": "    if (!unwell && diseaseIncubating(a)) {\n",
     "new": "    if (false) {\n",
     "tests": [
-      "test/ui/fb1019b_unwell.test.js",
+      "test/ui/fb1019e_unwell.test.js",
       "test/ui/enhanced/ui3_status.test.js",
       "test/systems/bookshelf.test.js"
     ]
@@ -108,7 +108,7 @@
     "old": "    if (!unwell && diseaseIncubating(a)) {\n",
     "new": "    if (diseaseIncubating(a)) {\n",
     "tests": [
-      "test/ui/fb1019b_unwell.test.js",
+      "test/ui/fb1019e_unwell.test.js",
       "test/ui/enhanced/ui3_status.test.js",
       "test/systems/bookshelf.test.js"
     ]
@@ -119,7 +119,7 @@
     "old": "      tokens = [...(tokens ?? []), like && typeof like === 'object' ? { ...like, text } : text];\n",
     "new": "      tokens = [...(tokens ?? []), text];\n",
     "tests": [
-      "test/ui/fb1019b_unwell.test.js",
+      "test/ui/fb1019e_unwell.test.js",
       "test/ui/enhanced/ui3_status.test.js",
       "test/systems/bookshelf.test.js"
     ]
@@ -130,7 +130,7 @@
     "old": "      const text = t('status.health.unwell', UNWELL_LINE_TEXT);\n",
     "new": "      const text = UNWELL_LINE_TEXT;\n",
     "tests": [
-      "test/ui/fb1019b_unwell.test.js"
+      "test/ui/fb1019e_unwell.test.js"
     ]
   }
 ]

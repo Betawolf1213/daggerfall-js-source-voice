@@ -408,7 +408,7 @@ reads digits.
 Pinned: `test/ui/hud/fb1018f_dungeondigits.test.js` (3). Mutants: `tools/mutants/fb1018f_dungeondigits.json` (11, all
 dead).
 
-## DISEASE-UNWELL - a disease incubating shows an unnamed tile (FIELD BUGS 2026-10-19b)
+## DISEASE-UNWELL - a disease incubating shows an unnamed tile (FIELD BUGS 2026-10-19e)
 
 A player's private report: after catching a disease, the rest's and the journey's warnings said they were diseased, and
 no disease's tile or name appeared until the character had died of it.
@@ -436,6 +436,6 @@ hudStatus.js:"export const unwellTileText", healthStatus.js:"export const UNWELL
 whole language. The classic skin keeps DFU's: no disease icon, named or not; its Status box says unwell as the
 enhanced skin's does. The warnings are unchanged - they were right.
 
-Pinned: `test/ui/fb1019b_unwell.test.js` (5: on the real producer, the character's own clock and the rest's magic
+Pinned: `test/ui/fb1019e_unwell.test.js` (5: on the real producer, the character's own clock and the rest's magic
 rounds); PIN MOVED: `test/ui/enhanced/ui3_status.test.js` (the afflictions' law), `test/systems/bookshelf.test.js`
 (F198's incubating arm). Mutants: `tools/mutants/disease_unwell.json`.

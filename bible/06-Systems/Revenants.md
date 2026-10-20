@@ -305,7 +305,7 @@ enhanced plus UI feature."
   (Call - refused, and saying why, while the slots are full or it is still hurt; its rest), **Release** asked twice.
 - **Its words**: as it arrives when called, as it is sent away or released, when it falls, now and then as it goes into
   a fight or over a kill (a minute between each one's, twenty seconds between any) - all in its voice.
-- **In the open zone (COMPANION-DROP, FIELD BUGS 2026-10-19b; the owner, 2026-10-19: "Bag drops; no send-off in
+- **In the open zone (COMPANION-DROP, FIELD BUGS 2026-10-19e; the owner, 2026-10-19: "Bag drops; no send-off in
   zone")**: the one at my side there - `swornAtYourSide`, the first walking with me as the record lists it, the one the
   zone stands (PVPDUNGEONS; the rest wait outside the zone) - carries its pack and its kit at stake with mine: a death
   there drops them as it drops my bag (`11-Multiplayer/Wild-Zone.md` section 4,
@@ -521,7 +521,7 @@ it never takes one. "Gold" was read as the coin alone, so a letter - worth hundr
 valuable piece - was in every draw. A letter one took before is the player's again at the next load; a deserter's
 letter comes back with its gold.
 
-STEED-KEPT (FIELD BUGS 2026-10-19b, a player's private report - their horse gone after a death in a dungeon; the owner,
+STEED-KEPT (FIELD BUGS 2026-10-19e, a player's private report - their horse gone after a death in a dungeon; the owner,
 2026-10-19: "Exclude, and return taken ones"): it never takes what never changes hands, as the open zone's death reads
 it - a horse or a cart (owning one is having it in the pack), a deed (Daggerfall's, and a ship's deed or her packed
 parts) or the spellbook (`revenant.js:"export const revenantMayTake = (item) =>"`); a bound piece stays its own (AUDIT
@@ -807,7 +807,7 @@ A sworn revenant wears what the player gives it. `systems/revenant/revenantGear.
   itself moves gold and letters, never a piece) and the realm's own (`systems/item/possessedItems.js`) - a release hands
   it back with its pack, and a deserter or a betrayer weighs it with its pack (`splitPack` - it keeps the more valuable
   half). Abroad, its kit goes with it: nothing is given or taken back (AUDIT RVN F10). COMPANION-DROP (FIELD BUGS
-  2026-10-19b, section 13): in the open zone the kit of the one at my side drops with my bag at a death there, as its pack
+  2026-10-19e, section 13): in the open zone the kit of the one at my side drops with my bag at a death there, as its pack
   does - DECIDED there, named: its pieces are mine, given from the pack and taken back at will, worn by it and never by me,
   so my own worn law is not theirs - and nothing of mine is given to one waiting outside the zone.
 - **Its weight abroad** (`gearPower`, section 42): a twentieth of a point a piece worn, and its tier's share more (Magic

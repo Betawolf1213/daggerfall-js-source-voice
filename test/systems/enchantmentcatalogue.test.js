@@ -401,7 +401,7 @@ test('M4: the flags, four of which are NONE and one of which is missing entirely
   // NONE allows the same secondary twice. DFU gives it to two - the two
   // that can deteriorate or hurt you under more than one condition at
   // once (UserTakesDamage.cs:35, ItemDeteriorates.cs:37) - and SIDE-ONCE
-  // (FIELD BUGS 2026-10-19b, the owner) took it from both: a setting is
+  // (FIELD BUGS 2026-10-19e, the owner) took it from both: a setting is
   // picked once. PIN MOVED from ['ItemDeteriorates', 'UserTakesDamage'];
   // both still allow more than one primary (`once` above)
   const twice = enchantmentTypes().filter((t) => hasItemMakerFlag(t, ITEM_MAKER_FLAGS.AllowMultipleSecondaryInstances));
@@ -540,7 +540,7 @@ test('M4: the secondary list alpha-sorts when flagged, and filters what is alrea
   const taken = [enchantmentSettings('PotentVs', 0)];
   const left = primaryPick('PotentVs', { powers: taken }).options.map((o) => o.param);
   assert.deepEqual(left, [1, 2, 3], 'Undead is gone, the rest remain');
-  // ...and a side effect's too: SIDE-ONCE (FIELD BUGS 2026-10-19b, the
+  // ...and a side effect's too: SIDE-ONCE (FIELD BUGS 2026-10-19e, the
   // owner) took AllowMultipleSecondaryInstances from the two DFU gives
   // it, so "all the time" leaves and the other two settings stay. PIN
   // MOVED from [0, 1, 2], 'all three stay'

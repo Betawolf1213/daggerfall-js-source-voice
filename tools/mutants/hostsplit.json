@@ -7,7 +7,7 @@
     "tests": [
       "test/scenes/hostceiling.test.js"
     ],
-    "note": "PIN MOVED (FIELD BUGS 2026-10-16b GRAVE-PARTY): world.js's ceiling lowered 21,676 -> 21,638 on main's count (21,679 -> 21,641 on its branch before the merge; activateGrave out). Re-aimed by content (FIELD BUGS 2026-10-19b DISENCHANT-SAID): 36,233 -> 36,225 logical lines, the enchanting station's list out to profPages.js disenchantableOf. Re-aimed by content (FIELD BUGS 2026-10-19b BOSS-DOT): 36,219 -> 36,195, the serpent's spell door out to scenes/gate/standInSpell.js."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-16b GRAVE-PARTY): world.js's ceiling lowered 21,676 -> 21,638 on main's count (21,679 -> 21,641 on its branch before the merge; activateGrave out). Re-aimed by content (FIELD BUGS 2026-10-19e DISENCHANT-SAID): 36,233 -> 36,225 logical lines, the enchanting station's list out to profPages.js disenchantableOf. Re-aimed by content (FIELD BUGS 2026-10-19e BOSS-DOT): 36,219 -> 36,195, the serpent's spell door out to scenes/gate/standInSpell.js."
   },
   {
     "name": "HOST-SPLIT-a-ceiling-left-high",

@@ -99,8 +99,8 @@ test('F2 F5 F6 F9 F10 F11: one press per dialog or list; Escape puts the menu aw
   assert.match(inv, /function hideTip\(\) \{ tipEl\?\.remove\(\); tipEl = null; tipFor = null; tipRow = null; \}/);   // AUDIT VIRT: and the row it stood beside
   assert.match(inv, /row\.oncontextmenu = \(e\) => \{ e\.preventDefault\(\); if \(drag\) return; openMenu\(/);
   const port = rd('src/ui/enhanced/enhancedPort.js');
-  // PIN MOVED, SPELLSHOP-SAID (FIELD BUGS 2026-10-19b): the notice is the panel the window raised, not a `box` field four
-  // of the ported windows kept (test/ui/fb1019b_spellshopsaid.test.js drives it)
+  // PIN MOVED, SPELLSHOP-SAID (FIELD BUGS 2026-10-19e): the notice is the panel the window raised, not a `box` field four
+  // of the ported windows kept (test/ui/fb1019e_spellshopsaid.test.js drives it)
   assert.match(port, /if \(noticeShown\(win\)\) \{ win\.click\?\.\(-1, -1\); return; \}\n\s*if \(!b \|\| b\.disabled\) return;/);
   assert.match(port, /win\.inPort = true;\n\s*const proxy = new Proxy\(win, \{/);
   assert.match(rd('src/ui/bankPurchaseWindow.js'), /if \(modelIdNum != null && !this\.inPort\) \{/);

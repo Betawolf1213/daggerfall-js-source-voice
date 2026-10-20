@@ -481,7 +481,7 @@ test('SD7b the hosts by source: the dungeon host makes the Steps in the Hour alo
   assert.match(D, /sdSteps\?\.clear\(\);/);
   const W = read('src/scenes/worldModes.js');
   const ride = W.indexOf("const sdBack = mode === 'dungeon' ? dungeonCtx?.sdStepsRide?.(dt, player, !overlayHeld) ?? null : null;\n    if (sdBack) sdCastBack(sdBack);");
-  // PIN MOVED (FIELD BUGS 2026-10-19b MOVER-BODY): the action movers' ride is their own update now (they carry the body
+  // PIN MOVED (FIELD BUGS 2026-10-19e MOVER-BODY): the action movers' ride is their own update now (they carry the body
   // as they step) - the frame's axes are the line before the Steps' ride
   const axes = W.indexOf('const axes = overlayHeld ? { forward: moveAxes.vertical, strafe: moveAxes.horizontal } : moveAxes.update(dt, { ...mv, autorun: player.toggleAutorun });');
   const motor = W.indexOf('player.update(dt, paralyzed ?', axes);

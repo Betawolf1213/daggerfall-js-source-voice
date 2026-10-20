@@ -1177,7 +1177,7 @@ export function drawEnhancedHud(vitals, heading01, dt = 0, opts = {}) {
   // and my branch returns BEFORE that snapshot is built, so it was
   // reading the raw entity while the classic read the law. The same
   // law, from the same module, is the fix.
-  // DUEL-BAR (FIELD BUGS 2026-10-19b; the owner: "Bar shows duel vitality"): the health is drawHud's (`opts.health`,
+  // DUEL-BAR (FIELD BUGS 2026-10-19e; the owner: "Bar shows duel vitality"): the health is drawHud's (`opts.health`,
   // ui/hud/hudVitals.js hudHealth) - a duel's referee's vitality while one is live, else the save's. Turned to the other
   // source, the bar's held loss and its last reading start afresh: the turn is no wound to break off and no heal to float
   // (the save's heal under a duel is the save's, never shown as the duel's).

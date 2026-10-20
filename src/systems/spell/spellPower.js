@@ -92,7 +92,7 @@ export function spellPowerMult(caster, target, opts = {}) {
  *  (`{ cost }`, the magicka it took - one token for every landing of one cast; null for a landing no cast released, a
  *  Cast When Strikes proc's). The cast engine tells them (scenes/hostMagic.js applySpellToFoe, applySpellToPlayer) - the
  *  one engine every host casts through - and the relay's stand-ins (scenes/gate/standInSpell.js tellStandIn - what can land
- *  there, FIELD BUGS 2026-10-19b STAND-IN-WHOLE; scenes/world.js serpentSpellOn). A non-function removes the name; one that throws is skipped. */
+ *  there, FIELD BUGS 2026-10-19e STAND-IN-WHOLE; scenes/world.js serpentSpellOn). A non-function removes the name; one that throws is skipped. */
 const _landed = new Map();
 export function registerSpellLandedListener(name, fn) { if (typeof fn === 'function') _landed.set(name, fn); else _landed.delete(name); }
 export function tellSpellLanded(info) {

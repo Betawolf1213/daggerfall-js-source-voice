@@ -10024,7 +10024,7 @@ four real interiors crossed no face. Pinned in `test/scenes/decor/decorshell.tes
 Not done: the first push off a face near a triangle's diagonal nudges the eye sideways (2.2 cm in the audit's probe
 flying forward 0.1 m under a ceiling) - cosmetic.
 
-**DECOR-CLEAR (FIELD BUGS 2026-10-19b) - a piece never closes on the player.** Two players' private reports: walking
+**DECOR-CLEAR (FIELD BUGS 2026-10-19e) - a piece never closes on the player.** Two players' private reports: walking
 into an online home, its furniture moved and boxed them in; inside one, talking to its hired trader, a table stood round
 them and held them. Daggerfall Unity lays an interior out before the body stands in it
 (`PlayerEnterExit.TransitionInterior`: `interior.DoLayout`, "This needs to be done first", then the landing and
@@ -10061,7 +10061,7 @@ a body under a piece 0.9 m tall or lower is thrown onto its top. The same for a 
   fade would bound one arrival of the five, and keep every visitor at the door for the service's round trip. The gate
   stands where every late solid passes.
 
-Pinned: `test/scenes/decor/fb1019b_decorclear.test.js` (7, on the real motor and collider: out of a wardrobe and solid
+Pinned: `test/scenes/decor/fb1019e_decorclear.test.js` (7, on the real motor and collider: out of a wardrobe and solid
 behind; a low piece round the feet and a piece stood again under them; a piece too big for any face to be near, and the
 crouched body's height, a canopy over the head; a recentre and a removal while withheld; the room's own put back; the
 gate's body laws; the hosts' wiring). PIN MOVED: `test/server/decor1.test.js` (the room's host's createDecorRoom call, and

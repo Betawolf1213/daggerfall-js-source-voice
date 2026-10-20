@@ -76,7 +76,7 @@ export const GETTING_QUESTS_2 = 'Please have patience and wait here a moment, %p
 export const ACTIVE_QUESTOR = 'activeQuestor';
 
 /**
- * QUESTOR-SAID (FIELD BUGS 2026-10-19b, players' private reports: a guild - the Fighters Guild, the Knights of the
+ * QUESTOR-SAID (FIELD BUGS 2026-10-19e, players' private reports: a guild - the Fighters Guild, the Knights of the
  * Dragon - answered "That service is not available yet." while one of its quests was still open). A popup's door that
  * closes on IsLastNPCClickedAnActiveQuestor says WHY, and names the quest still open: `{ kind: 'close', reason, quest }`
  * (the quest null where the scan cannot be asked). DFU closes the window and says nothing - the guild's GetQuest

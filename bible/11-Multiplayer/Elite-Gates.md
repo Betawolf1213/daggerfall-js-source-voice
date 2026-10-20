@@ -365,7 +365,7 @@ real relay instance, so the key is a service-side balance and the item is its fa
   staked, and those a lost open's answer took unseen (section 22) - says *The key turns to rust.*, and the stack is
   restacked (AUDIT EG IV).
 - It is bound to the account, never traded, and never lost to a death.
-- **The face is the pack's alone** (FIELD BUGS 2026-10-19b KEY-FACE). The restack reads the pack and nothing else
+- **The face is the pack's alone** (FIELD BUGS 2026-10-19e KEY-FACE). The restack reads the pack and nothing else
   (`weirKey.js:"  const held = items.filter(isWeirKey);"`), so a face anywhere else is a key it cannot see. The row was
   bound and not pack-only, and a bound piece goes to the wagon and the player's own storage (`itemBound.js`
   `BOUND_KEEPS`): a face stowed there left the pack showing none, the next answer gave it a new one, and the stowed ones,
@@ -381,7 +381,7 @@ real relay instance, so the key is a service-side balance and the item is its fa
   on a body and the player never took up is folded the same way at the next load. OPEN: that throw is the one face
   still made outside the pack - taken up only after a later answer restacked the pack to the whole balance, it leaves
   the pack one over, and the next answer says the rust line for it (the account loses nothing). Pinned:
-  `test/net/eliteGates/fb1019b_keyface.test.js` (5), `tools/mutants/fb1019b_keyface.json` (13, all dead).
+  `test/net/eliteGates/fb1019e_keyface.test.js` (5), `tools/mutants/fb1019e_keyface.json` (13, all dead).
 
 **Where they come from.** The service rolls every one with its own `rand`, at a claim it already verifies. This is
 the `sdHonoursRoll` way: AUDIT SD III R4 moved the Hour's honours off the receipt seed because the page can read the
@@ -863,7 +863,7 @@ first written 90-160 m long, 3-4.5 m wide for a company of up to four and 5-6 m 
 | **the Siege-Walk** | the Galleries | as above |
 | **the Falling Wall** | the Galleries | 20 s after the wake, the walkway falls behind the company, segment by segment, at a fixed 1.5 m/s. A member caught is cast to the nearest standing segment ahead, at the cast-back's cost |
 | **the Winch** | the Cairn | the portcullis rises only while `min(2, n)` members stand on its winch plates, over 60 s, under the march - *n* the living company as it stands, so a pair that loses one raises it alone (AUDIT EG V). Each plate stands gold on every screen through the trial, the room's reach (`EG_TOUCH_M`) about it, as a stood-on errand does (`scenes/eliteGates/egFight.js` `winchPlates`; FIELD BUGS 2026-10-18d WINCH-PLATES - the objective named them and nothing marked them) |
-| **the Gauntlet** | the Shade | no march: `2 + ceil(n/2)` caster pillars, each silenced by standing 3 s (`EG_SILENCE_MS`) on its plate - from spec law 10 on its pillar's top beside its stair's head (laws 8 and 9: 3 m up the stair). A blow or a spell silences no Caster: one slain leaves its plate still to hold (whether a slain Caster should count is the owner's call, open). Each plate in play stands gold on every screen through the trial, on its own ground's height (`egPlateY`), the room's reach (`EG_TOUCH_M`) about it, and dims once its Caster is silenced - the room says each plate's word (`pg.silenced`, in `spots.pillar`'s order; relay world224 - a screen facing an older relay draws every plate the hall lays while a Caster is left); the objective and its line name the plates (section 27.3) (`scenes/eliteGates/egFight.js` `gauntletPlates`; FIELD BUGS 2026-10-19b GAUNTLET-PLATES - from a player's private report: a company slew every Caster, the line still counted three, and nothing marked a plate) |
+| **the Gauntlet** | the Shade | no march: `2 + ceil(n/2)` caster pillars, each silenced by standing 3 s (`EG_SILENCE_MS`) on its plate - from spec law 10 on its pillar's top beside its stair's head (laws 8 and 9: 3 m up the stair). A blow or a spell silences no Caster: one slain leaves its plate still to hold (whether a slain Caster should count is the owner's call, open). Each plate in play stands gold on every screen through the trial, on its own ground's height (`egPlateY`), the room's reach (`EG_TOUCH_M`) about it, and dims once its Caster is silenced - the room says each plate's word (`pg.silenced`, in `spots.pillar`'s order; relay world224 - a screen facing an older relay draws every plate the hall lays while a Caster is left); the objective and its line name the plates (section 27.3) (`scenes/eliteGates/egFight.js` `gauntletPlates`; FIELD BUGS 2026-10-19e GAUNTLET-PLATES - from a player's private report: a company slew every Caster, the line still counted three, and nothing marked a plate) |
 | **the Forge Bridge** | the Wellhead | the walkway is a conveyor running toward the arrival plate at a fixed 1.0 m/s, under the march and the vents |
 
 ### 8.4 The Athenaeum (`athenaeum`) - the lock
@@ -3796,7 +3796,7 @@ Pinned at 1280x720, 390x844 and 844x390.
 - **The objective**, from `EG_TEXT.objective`, stays as a chip with its progress: *Close the rifts.* (*Rifts 3 of 5*),
   *Fell the standard.*, *Hold the relic.* (*1:12*), *Cross.*, *Break the wards at the portcullis.*, *Turn the Orrery
   true.*, *Fell the champion.*, *Find the way down.*
-  FIELD BUGS 2026-10-19b GAUNTLET-PLATES: the Gauntlet's names its plates, *Stand on each caster's plate to silence it.*
+  FIELD BUGS 2026-10-19e GAUNTLET-PLATES: the Gauntlet's names its plates, *Stand on each caster's plate to silence it.*
   (*Plates left: 3 - stand on each for 3 s*) - *Silence the casters.* (*Casters left: 3*) sent a company to kill them, and a
   slain Caster is not silenced (section 8.3). They are the first objective's words in the player's language
   (`eg.objective.gauntlet`, `eg.progress.gauntlet` - `ui/eliteGates/egHud.js` `egObjectiveText`, both trackers and the

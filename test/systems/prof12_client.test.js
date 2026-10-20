@@ -455,7 +455,7 @@ test('AUDIT PROF12 E2 client: the Enchanting Station says a piece\'s XP by its r
   assert.match(page.text(), /Iron Longsword600 points - 6 Arcane Essence, \+7 Enchanting XP/, 'AUDIT PROF12 E2: the Iron sword\'s tier 1, quartered at 7 - 30 / 4');
   page.done();
   setProfessionsPages(null);
-  // PIN MOVED (FIELD BUGS 2026-10-19b DISENCHANT-SAID): the list is made by the page's module (profPages.js
+  // PIN MOVED (FIELD BUGS 2026-10-19e DISENCHANT-SAID): the list is made by the page's module (profPages.js
   // disenchantableOf) and the host wires it - each piece its recipe, a Disenchanter's twice, from the real producer
   const ring = mintPiece({ recipe: 'ring:gold:ruby', quality: 1, seed: 1, maker: 'Mac' }, 'dddddddddddddddd');
   assert.deepEqual(disenchantableOf([ring]), [{ provenance: 'dddddddddddddddd', name: 'Gold Ruby Ring', points: 2160, essence: 21, recipe: 'ring:gold:ruby' }]);

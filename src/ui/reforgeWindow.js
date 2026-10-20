@@ -87,7 +87,7 @@ export const CODEX_SUB = 'Every Gilded, Legendary and Aetheric piece you have fo
 export const IMPRINTED = (name, rec, power) => `Imprinted: ${name} - ${power} (of ${rec}).`;
 export const IMPRINT_NONE = 'Your codex holds no Legendary of its kind yet - find one, and its power may be taken.';
 export const IMPRINT_ONCE = 'A Rare takes one power, once.';
-/** PURSE-MEND (FIELD BUGS 2026-10-19b): the gold the window says - the coins and the letters (court.js totalGoldAmount),
+/** PURSE-MEND (FIELD BUGS 2026-10-19e): the gold the window says - the coins and the letters (court.js totalGoldAmount),
  *  whole and never below nothing; `| 0` wrapped a total past 2^31 (letters past one int's worth) to nothing. */
 const goldSaid = (gold) => Math.max(0, Math.trunc(gold) || 0);
 /** The purse: the shards a press may spend, and the gold. */

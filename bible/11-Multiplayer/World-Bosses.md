@@ -2651,7 +2651,7 @@ languages that cover the catalog, and two pins that read the court's words moved
 GOLDEN FRAMES (the gate's hash - the two answers' `me`, every frame else word for word: taken out, the old hash to the
 byte) and `sd8c_remnant_page.test.js` (`me: 1` said in two answers, the court's beside the Hour's). Not a DFU member.
 
-## 25. A whole blow on a body the relay runs (STAND-IN-WHOLE, FIELD BUGS 2026-10-19b)
+## 25. A whole blow on a body the relay runs (STAND-IN-WHOLE, FIELD BUGS 2026-10-19e)
 
 A player's private report: a Disintegrate on an online breach's boss popped a huge number, and his bar never moved.
 
@@ -2701,19 +2701,19 @@ the fix is the stand-in's, as a duel's was (`combat/duelCombat.js` DUEL_STAND_IN
 What it does not do: the serpent's door raises no number (BOSS-DOT, section 26, brought it into the module and tells its
 riders what a hand's purse can land); a swing's number is not capped (no swing reaches the cap but the Razor's, which stays passed by).
 A departure from DFU (`Disintegrate.MagicRound` kills outright): on a body the relay runs it is the most one blow lands.
-Pins: `test/net/gate/fb1019b_standinwhole.test.js` (5: the whole against the real constants, every wire and the purses;
+Pins: `test/net/gate/fb1019e_standinwhole.test.js` (5: the whole against the real constants, every wire and the purses;
 a real Disintegrate on every factory's stand-in, out through the real court to the brain; the number on each door at two
 levels, a breach's and a bout's; the readers; the hosts - the context's wiring and an Elite Breach's real fight handing its
 bodies my Vestiges' factor). PIN MOVED: `wb4b_gate_blows.test.js` (his whole; his spell door in the module),
 `fb1018f_relayshare.test.js` (the placeholder's value), `auditwbx.test.js` (the Razor on his real stand-in, the trap's
 door), `audit_wb11.test.js`, `wb9c_gate_reckoning.test.js`, `wb8a_never_swayed.test.js`, `wbx_gate_fixes.test.js`,
 `audit_schools.test.js` (L2 F4 - the riders told what can land), `arena4b_blows.test.js` and `fb1018f_turnedblow.test.js`
-(the three doors' numbers by the body they met, driven on the module). `tools/mutants/fb1019b_standinwhole.json` (20, all
+(the three doors' numbers by the body they met, driven on the module). `tools/mutants/fb1019e_standinwhole.json` (20, all
 dead). Re-aimed by content (13, all dead): `arena4b_blows.json`, `audit_schools.json`, `audit_wb11.json`, `wb8a.json` (3),
 `fb1018f_turnedblow.json` (the host's number; the crystal's and the Warden's retired with the copies they named), `blood1.json`,
 `fb1018f_relayshare.json` (5).
 
-## 26. A spell's lasting harm, carried (BOSS-DOT, FIELD BUGS 2026-10-19b; the owner, 2026-10-19: "Carry DoTs")
+## 26. A spell's lasting harm, carried (BOSS-DOT, FIELD BUGS 2026-10-19e; the owner, 2026-10-19: "Carry DoTs")
 
 Section 25's door counted a spell on a stand-in and wiped the stand-in at once - "continuous families are not his to carry",
 WB4b's comment, never a decision (WBX7 named it, "his stand-in forgets every lasting effect", and carried the Soul Trap
@@ -2751,12 +2751,12 @@ alone). So a Continuous Damage spell on any body a relay runs landed its cast's 
 A departure from DFU, which has no relay: its ContinuousDamageHealth runs on the target's own manager each magic round and
 takes the health there; on a body the relay runs it runs on this machine against the stand-in, and each round is a claim
 the relay's caps decide. No relay or wire change: a round is a spell's claim on the wire as it stands.
-Pins: `test/net/gate/fb1019b_bossdot.test.js` (7: round for round what DoMagicRound deals; the round's law - a stall, a
+Pins: `test/net/gate/fb1019e_bossdot.test.js` (7: round for round what DoMagicRound deals; the round's law - a stall, a
 renewal, the ward, a refused claim, a body gone, my death, health alone, the bout; the keeper's clock; the real court -
 him and his host in one sequence, the wire, his fall; the serpent; an Elite Breach's real fight - no Momentum, no Echo; the
-hosts by source). PIN MOVED: `arena4b_blows`, `audit_wb11`, `fb1019b_standinwhole`, `wb11_gate_host`, `fb1012g_openhand`,
-`wb4b_gate_blows`, `wb9c_gate_reckoning`, `audit_schools` (the serpent's riders), `serpent4`. `tools/mutants/fb1019b_bossdot.json`
-(23, all dead); re-aimed by content (all dead): `fb1019b_standinwhole.json`'s the-claim-clipped and the-count-takes,
+hosts by source). PIN MOVED: `arena4b_blows`, `audit_wb11`, `fb1019e_standinwhole`, `wb11_gate_host`, `fb1012g_openhand`,
+`wb4b_gate_blows`, `wb9c_gate_reckoning`, `audit_schools` (the serpent's riders), `serpent4`. `tools/mutants/fb1019e_bossdot.json`
+(23, all dead); re-aimed by content (all dead): `fb1019e_standinwhole.json`'s the-claim-clipped and the-count-takes,
 `egz_vestiges.json`'s EGZR-stacks-any-body.
 
 ## Shipped

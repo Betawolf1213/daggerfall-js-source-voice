@@ -35,7 +35,7 @@
 //                            a ticket (`realm_repairs`); the record moves one sequence on with its seat taken from any tab
 //                            (realm.js seizeRealmRecord - the rollback's way), so the playing tab writes it over never and
 //                            its next join plays it. The gold is the service's own faucet (`repair`) and witnessed
-//   /v1/mod/realm-mend       PURSE-MEND (FIELD BUGS 2026-10-19b): a purse a wrapped sale left below nothing set to nothing
+//   /v1/mod/realm-mend       PURSE-MEND (FIELD BUGS 2026-10-19e): a purse a wrapped sale left below nothing set to nothing
 //                            and what the character is owed given as one letter of credit (net/repairLaw.js), the
 //                            repair's way and once a ticket with it - and the law's hold lifted when the purse was all
 //                            it held on (`realm-findings` says the purse a mend is reckoned from)
@@ -279,7 +279,7 @@ async function repairAct(ctx, row, by, note, body) {
 }
 
 /**
- * PURSE-MEND (FIELD BUGS 2026-10-19b): A PURSE A WRAPPED SALE LEFT BELOW NOTHING, MENDED BY STAFF (net/repairLaw.js) -
+ * PURSE-MEND (FIELD BUGS 2026-10-19e): A PURSE A WRAPPED SALE LEFT BELOW NOTHING, MENDED BY STAFF (net/repairLaw.js) -
  * `{ ticket, was, gold }` as the body names them, checked by the law: the record's purse, still the `was` staff reckoned
  * from, set to nothing and `gold` given as one letter of credit - the repair's machinery (staffMend), its row in
  * `realm_repairs` naming no faction and no bit (0 and 0), `was` the purse it found and `gold` the letter.

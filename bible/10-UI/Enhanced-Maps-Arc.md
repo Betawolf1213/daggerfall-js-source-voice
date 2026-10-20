@@ -692,5 +692,5 @@ the bay, on the enhanced skin alone (the held map's own row, `01-Overview/Port-L
 street, never out, and blinks the cross.
 
 Code: `ui/heldMap.js` (`_findMe`, `_paint`, the world sheet's `me`/`findMe`), `ui/town/townSheet.js`,
-`ui/automap/automapSheet.js`. Pins: `test/ui/town/fb1019b_findme_town.test.js` (6). Mutants:
-`tools/mutants/findme_town.json` (20, all dead). The record is `01-Overview/bugs/Field-Bugs-2026-10-19b.md` FINDME-TOWN.
+`ui/automap/automapSheet.js`. Pins: `test/ui/town/fb1019e_findme_town.test.js` (6). Mutants:
+`tools/mutants/findme_town.json` (20, all dead). The record is `01-Overview/bugs/Field-Bugs-2026-10-19e.md` FINDME-TOWN.

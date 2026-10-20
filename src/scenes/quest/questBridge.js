@@ -264,7 +264,7 @@ export function shelfRefusalText(reason) {
     default: return 'That cannot be done now.';
   }
 }
-/** QUESTOR-SAID (FIELD BUGS 2026-10-19b): a questor's close in words - the quest still open, by the name the journal
+/** QUESTOR-SAID (FIELD BUGS 2026-10-19e): a questor's close in words - the quest still open, by the name the journal
  *  gives it (its DisplayName, a translation's -LOC one where it has one); with none, the work alone. The player's
  *  language (L10N4). */
 export function questorBusyRows(quest) {

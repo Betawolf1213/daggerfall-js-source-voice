@@ -1,5 +1,5 @@
 // @ts-check
-// FIELD BUGS 2026-10-19b DUEL-BAR (a player's private report: in a duel, their own health bar did not drop when the other
+// FIELD BUGS 2026-10-19e DUEL-BAR (a player's private report: in a duel, their own health bar did not drop when the other
 // player hit them; the owner, 2026-10-19: "Bar shows duel vitality"): MY VITALITY AS THE REFEREE SAYS IT, the HUD's
 // health bar's source for the length of a duel (ui/hud/hudVitals.js hudHealth, handed in by the world host). DISPLAY
 // ONLY: nothing writes it to the save, whose health a duel never touches (INT8, bible/06-Systems/Integrity-Arc.md

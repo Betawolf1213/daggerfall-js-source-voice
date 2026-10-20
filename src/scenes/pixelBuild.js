@@ -105,7 +105,7 @@ export function createPixelBuild(host) {
     townEcon, townPlacesFor, townSeats, verges, waterOn, waterSheetOf, wod, wodForgetPeerSites, wodOpened, wodPathsPoint,
     worldHeight
   } = host;
-  // ROCK-CLEAR (FIELD BUGS 2026-10-19b): the world collider's one gate - every solid the build files below goes through
+  // ROCK-CLEAR (FIELD BUGS 2026-10-19e): the world collider's one gate - every solid the build files below goes through
   // it, so a part standing round the body (a neighbour's mountain reaching into the body's pixel, a pixel built round a
   // body that outran the stream) is drawn and solid only once the body is clear of it (player/lateSolid.js); the body
   // is the world's, the one its frame settles the gate with (none while a jump's landing builds - its law reads it whole)

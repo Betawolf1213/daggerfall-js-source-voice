@@ -360,7 +360,7 @@ ROSE-SEEN (`01-Overview/bugs/Field-Bugs-2026-10-15e.md`): a follow-up blow -
 Open Hand's second, Many Endings' echo - runs no formula, so the seam
 never heard it and the Rose looked like nothing. It raises its own
 number through `showFollowUp`, tagged with the power's name, under the
-same enhanced-only gate. CHAIN-SEEN (FIELD BUGS 2026-10-19b,
+same enhanced-only gate. CHAIN-SEEN (FIELD BUGS 2026-10-19e,
 `06-Systems/Loot-Arc.md` LOOT5): a blow's reach on another foe -
 Chain Lightning's arc, Earthshaker's quake, Dragonfire's burst - ran
 no formula either, and said nothing; each raises its number so now.
@@ -700,7 +700,7 @@ it. Eight mutants over the hooks (a hook dropped, a decision handed
 to the panel, `_close` and the field step not releasing, the seam's
 null and classic arms), each killed.
 
-#### SPELLSHOP-SAID - THE NINTH WINDOW, AND THE NOTICE TAKES ITS CLICK (FIELD BUGS 2026-10-19b)
+#### SPELLSHOP-SAID - THE NINTH WINDOW, AND THE NOTICE TAKES ITS CLICK (FIELD BUGS 2026-10-19e)
 
 Two players' private reports: at the Mages Guild's spell shop, Buy did
 nothing - no confirmation, no gold spent. Buy refused: no spellbook in
@@ -738,7 +738,7 @@ maker, which kept `box`, answer as before. The other ported windows
 (the house and ship lists, the transport picker, the daedra) raise no
 box.
 
-**Tests**: `test/ui/fb1019b_spellshopsaid.test.js` (7) - through the
+**Tests**: `test/ui/fb1019e_spellshopsaid.test.js` (7) - through the
 real port on the repo's DOM, the records through the real TEXT.RSC
 reader: a no-book Buy and a no-gold Buy put up the record as the
 notice (no parchment, BOX1's read once), the next click - Leave, or
@@ -6834,7 +6834,7 @@ Pins: 16 in `enchantmentcatalogue.test.js` (18 mutations, 16 dead,
 2 recorded equivalent) and 3 added to `enchanting.test.js`.
 
 **SIDE-ONCE - A SIDE EFFECT'S SETTING IS PICKED ONCE (FIELD BUGS
-2026-10-19b; the owner, 2026-10-19: "One copy per setting").** A
+2026-10-19e; the owner, 2026-10-19: "One copy per setting").** A
 DEPARTURE, Port-Ledger A. DFU gives User Takes Damage and Item
 Deteriorates `AllowMultipleSecondaryInstances` beside the primary flag
 (`UserTakesDamage.cs:35`, `ItemDeteriorates.cs:37`), and the secondary
@@ -6873,7 +6873,7 @@ law (`server-account/src/judge.js`, the market's and the vault's
 does not yet tell a piece made after SIDE-ONCE from one made before;
 that waits on the owner.
 
-Pinned: `test/systems/fb1019b_sideonce.test.js` (4, on the real
+Pinned: `test/systems/fb1019e_sideonce.test.js` (4, on the real
 window, both skins: a taken setting gone from its chooser and the
 other settings still offered; "in holy places" asked for ten times
 landing once at -1000/1800; each of four effects gone from the list
@@ -6881,7 +6881,7 @@ with every setting taken; the item maker's own write of a setting
 taken nine times passing the law). PIN MOVED:
 `enchantmentcatalogue.test.js` (no effect carries the secondary flag;
 Item Deteriorates' chooser without its taken setting).
-`tools/mutants/fb1019b_sideonce.json` (6, all dead).
+`tools/mutants/fb1019e_sideonce.json` (6, all dead).
 ## U41 - THE TRAVEL MAP (2026-08-24)
 
 The classic world map, at last: the province art on V, the region

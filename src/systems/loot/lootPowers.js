@@ -307,7 +307,7 @@ function again(target, damage, word) {
   if (f) { if (!f.dead) door.hurtFoe(f, n); return; }
   oweFoe(target, n);   // FIELD BUGS 2026-10-12g OPEN-HAND: a body the relay runs (the gate's Warden) - its host's claim carries it
 }
-/** FIELD BUGS 2026-10-19b CHAIN-SEEN: A BLOW'S REACH LANDS ON ANOTHER FOE (Chain Lightning's arc, Earthshaker's quake,
+/** FIELD BUGS 2026-10-19e CHAIN-SEEN: A BLOW'S REACH LANDS ON ANOTHER FOE (Chain Lightning's arc, Earthshaker's quake,
  *  Dragonfire's burst) - through its own pool's door, which runs no formula, so HN1's seam never hears it: its number
  *  rises, tagged `word` (the power's name), as again()'s follow-up does (ROSE-SEEN). `f` a living record of the door's. */
 function reachOn(door, f, n, word) {
@@ -322,7 +322,7 @@ function arc(target, amount, metres, word) {
   let best = null, bestD = metres;
   for (const f of near(door, struck.ai.feet, metres, target)) { const d = flat2(f.ai.feet, struck.ai.feet); if (d <= bestD) { best = f; bestD = d; } }
   const n = best ? Math.floor(amount * elementShare(best.entity, 'shock')) : 0;
-  if (best && n > 0) reachOn(door, best, n, word);   // FIELD BUGS 2026-10-19b CHAIN-SEEN: the arc said nothing - no number, no word
+  if (best && n > 0) reachOn(door, best, n, word);   // FIELD BUGS 2026-10-19e CHAIN-SEEN: the arc said nothing - no number, no word
 }
 /** GILDED2: Dragonfire - the struck one takes `amount` again, and every other foe of `group` within `metres` of it as much, no
  *  element's share of it: Akatosh's fire, which no Daedra resists. AUDIT WORLD-REWARDS B1: the struck one's burn goes as
@@ -331,7 +331,7 @@ function arc(target, amount, metres, word) {
  *  body the relay runs has no record, and no other is in reach of it (the gate's court, an Elite Gate's legion). */
 function dragonfire(target, amount, metres, group, word) {
   if (!(amount > 0)) return;
-  again(target, amount, word);   // FIELD BUGS 2026-10-19b CHAIN-SEEN: its number tagged with its name, as Many Endings' is
+  again(target, amount, word);   // FIELD BUGS 2026-10-19e CHAIN-SEEN: its number tagged with its name, as Many Endings' is
   const door = playerDoor();
   const struck = recordOf(door, target);
   if (!struck?.ai?.feet) return;

@@ -99,7 +99,7 @@ export const INTERIOR_VOID_TEXT = 'There was no floor beneath you. You are back 
  *  the void - nothing can stand it there, and a room's collider has no ground of its own to catch it. A dungeon's
  *  collider has none either (VOID-DUNGEON, dungeonVoidRescue). */
 export const INTERIOR_VOID_DROP = 10;
-/** FIELD BUGS 2026-10-19b VOID-DUNGEON: the failsafe's line underground (the port's - DFU has no failsafe). */
+/** FIELD BUGS 2026-10-19e VOID-DUNGEON: the failsafe's line underground (the port's - DFU has no failsafe). */
 export const DUNGEON_VOID_TEXT = 'There was no floor beneath you. You are back at the entrance.';
 export const dungeonVoidText = () => t('player.dungeonVoid', DUNGEON_VOID_TEXT);
 
@@ -449,7 +449,7 @@ export function interiorVoidRescue(collider, at) {
   return box ? { at, belowY: box.min[1] - INTERIOR_VOID_DROP } : null;
 }
 
-/** FIELD BUGS 2026-10-19b VOID-DUNGEON: VOID-ENTRY's record for a dungeon, as its context keeps it - a function that
+/** FIELD BUGS 2026-10-19e VOID-DUNGEON: VOID-ENTRY's record for a dungeon, as its context keeps it - a function that
  *  answers it, made the first time a frame asks (so every floor a host stands into the dungeon after its build, the
  *  court's, is under it) and kept: `at()`, where the dungeon stands a body it places (the context's startSpawn - the
  *  start marker's landing, by the way in, else the enter marker's), and `belowY` INTERIOR_VOID_DROP under its lowest

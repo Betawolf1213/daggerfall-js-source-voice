@@ -2320,7 +2320,7 @@ The owner: *"fix a pre existing issue where AI can actually use the overworld as
 
 `test/systems/naval/timedilation.test.js` (3), `tools/mutants/timedilation.json` (16, all dead).
 
-## TOWN-EXIT - out of a walled town by a gate (FIELD BUGS 2026-10-19b, a player's private report)
+## TOWN-EXIT - out of a walled town by a gate (FIELD BUGS 2026-10-19e, a player's private report)
 
 A player's private report: leaving a town by the Overworld's journey, or walking through one, the way out failed
 wherever the traveller stood far from a gate, and left them caught in a corner of the wall.
@@ -2374,9 +2374,9 @@ it at four metres, a narrow guess.
 **The four hosts.** `scenes/world.js` wired - it alone raises the Overworld and plans its routes. `scenes/exterior.js`
 (the fixed city's host) plans no route; `scenes/worldModes.js` and `scenes/dungeonContext.js` begin no journey indoors.
 
-`test/systems/travel/fb1019b_townexit.test.js` (8: Kaloguja and Mesajer as the pixel's build mints them - their gates,
+`test/systems/travel/fb1019e_townexit.test.js` (8: Kaloguja and Mesajer as the pixel's build mints them - their gates,
 the streets, the way out, the gates shut, the legs, Travel Options walking them, the host's own `tvJoinedLegs`, and the
 flight). PIN MOVED: `tv2_click_to_move` (the join pinned by what `journeyLegs` makes; both journeys' guard),
 `ow_wod` (the ring handed through `journeyLegs`), `fb0929d_toroads` (its lifted host given the module).
-`tools/mutants/fb1019b_townexit.json`; re-aimed by content: `ow2.json` OW-ROADSIDE-alongside, `owwod.json`
+`tools/mutants/fb1019e_townexit.json`; re-aimed by content: `ow2.json` OW-ROADSIDE-alongside, `owwod.json`
 OW-TOWN-RING-host-no-ring, `ow3j.json` OW3-J8-roadside-reverted.

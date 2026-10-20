@@ -5,7 +5,7 @@
     "old": "            late.add(key, BODY.positions, BODY.indices, local,\n",
     "new": "            collider.addMesh(key, BODY.positions, BODY.indices, local,\n",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1019b_rockclear.test.js"
+      "test/world/worldOfDaggerfall/fb1019e_rockclear.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "          late.add(gateKey, cpu.positions, cpu.indices, local,\n",
     "new": "          collider.addMesh(gateKey, cpu.positions, cpu.indices, local,\n",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1019b_rockclear.test.js"
+      "test/world/worldOfDaggerfall/fb1019e_rockclear.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "            late.add(key, cpuB.positions, cpuB.indices, local, { translation: onFloatingFrame(host.state, ((o) => () => host.state.pixelTranslation(px, py, o))([0, 0, 0])) });",
     "new": "            collider.addMesh(key, cpuB.positions, cpuB.indices, local, onFloatingFrame(host.state, ((o) => () => host.state.pixelTranslation(px, py, o))([0, 0, 0])));",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1019b_rockclear.test.js"
+      "test/world/worldOfDaggerfall/fb1019e_rockclear.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "late.add(key, cpu.positions, cpu.indices, m.matrix, { translation: wodBucket });",
     "new": "collider.addMesh(key, cpu.positions, cpu.indices, m.matrix, wodBucket);",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1019b_rockclear.test.js"
+      "test/world/worldOfDaggerfall/fb1019e_rockclear.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "late.add(key, cpu.positions, cpu.indices, local, { translation: holdBucket });",
     "new": "collider.addMesh(key, cpu.positions, cpu.indices, local, holdBucket);",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1019b_rockclear.test.js"
+      "test/world/worldOfDaggerfall/fb1019e_rockclear.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "        lateSolidsOf(collider)?.settle(() => (walkMode && playerSpawned && !worldMoveBusy() ? player : null));",
     "new": "        void 0;",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1019b_rockclear.test.js"
+      "test/world/worldOfDaggerfall/fb1019e_rockclear.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "(walkMode && playerSpawned && !worldMoveBusy() ? player : null)",
     "new": "(walkMode && playerSpawned ? player : null)",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1019b_rockclear.test.js"
+      "test/world/worldOfDaggerfall/fb1019e_rockclear.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "    this.late?.forget(bucketKey);",
     "new": "    void 0;",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1019b_rockclear.test.js"
+      "test/world/worldOfDaggerfall/fb1019e_rockclear.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    if (collider instanceof Collider) collider.late = gate;",
     "new": "    void 0;",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1019b_rockclear.test.js"
+      "test/world/worldOfDaggerfall/fb1019e_rockclear.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "h.probe.addMesh(PROBE, h.positions, h.indices, h.matrix, h.translation);",
     "new": "h.probe.addMesh(PROBE, h.positions, h.indices, h.matrix);",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1019b_rockclear.test.js"
+      "test/world/worldOfDaggerfall/fb1019e_rockclear.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "    for (let i = 0; i < 6; i++) BOX[i] = b[i] + (t ? t[i % 3] : 0);",
     "new": "    for (let i = 0; i < 6; i++) BOX[i] = b[i];",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1019b_rockclear.test.js"
+      "test/world/worldOfDaggerfall/fb1019e_rockclear.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "  const stand = (key, h) => collider.addMesh?.(key, h.positions, h.indices, h.matrix, h.translation);",
     "new": "  const stand = (key, h) => collider.addMesh?.(key, h.positions, h.indices, h.matrix);",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1019b_rockclear.test.js"
+      "test/world/worldOfDaggerfall/fb1019e_rockclear.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "      const h = partOf(positions, indices, matrix, translation);\n      const now = bodyNow(body);",
     "new": "      const h = partOf(positions, indices, matrix, null);\n      const now = bodyNow(body);",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1019b_rockclear.test.js"
+      "test/world/worldOfDaggerfall/fb1019e_rockclear.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "      if (parts) parts.push(h); else held.set(key, [h]);",
     "new": "      held.set(key, [h]);",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1019b_rockclear.test.js"
+      "test/world/worldOfDaggerfall/fb1019e_rockclear.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "  const now = typeof b === 'function' ? b() : b;",
     "new": "  const now = b;",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1019b_rockclear.test.js"
+      "test/world/worldOfDaggerfall/fb1019e_rockclear.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "merge = null, body = undefined,\n}) {",
     "new": "merge = null, body = null,\n}) {",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1019b_rockclear.test.js"
+      "test/world/worldOfDaggerfall/fb1019e_rockclear.test.js"
     ]
   }
 ]

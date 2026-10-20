@@ -1,6 +1,6 @@
 // @ts-check
 // ═══════════════════════════════════════════════════════════════════
-// DECOR-CLEAR (FIELD BUGS 2026-10-19b) — A LATE SOLID NEVER CLOSES ON A BODY.
+// DECOR-CLEAR (FIELD BUGS 2026-10-19e) — A LATE SOLID NEVER CLOSES ON A BODY.
 //
 // Two players' private reports: walking into an online home, its furniture
 // moved and boxed them in; inside one, talking to its hired trader, a table
@@ -34,7 +34,7 @@
 // moves. Another player in the home walks on their own client, where their
 // own gate holds the same piece back from them.
 //
-// ROCK-CLEAR (FIELD BUGS 2026-10-19b; the owner, 2026-10-19: "Apply to rocks
+// ROCK-CLEAR (FIELD BUGS 2026-10-19e; the owner, 2026-10-19: "Apply to rocks
 // too"): and the open world's. A pixel's statics - World of Daggerfall's
 // rocks, mountains scaled by hundreds that reach past their own pixel, the
 // town's models, its mills, the Hold's camp - go into ONE bucket a pixel,

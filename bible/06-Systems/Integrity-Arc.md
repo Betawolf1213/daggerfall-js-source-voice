@@ -306,7 +306,7 @@ node tools/realmReview.mjs repair <realm character id> <ticket> <faction id> <0x
 Pinned by `test/net/fb1014_summonrepair.test.js` over the real Worker and the playing tab's own session and join;
 `tools/mutants/fb1014_summonrepair.json` (16, dead).
 
-PURSE-MEND (FIELD BUGS 2026-10-19b, a player's private report: a purse of -8,000,000 and a carry weight of -19,995 kg
+PURSE-MEND (FIELD BUGS 2026-10-19e, a player's private report: a purse of -8,000,000 and a carry weight of -19,995 kg
 after a sale at 0.0.235) added a third. TRADE-WRAP (FIELD BUGS 2026-10-18b) stopped the counter paying below nothing,
 and left a record it had already paid that way to "a staff repair" - which `realm-repair`, a faction's flag and a refund,
 could not reach: the purse stayed below nothing, the judge's `gold` finding held the trade, and every payment found the
@@ -332,8 +332,8 @@ node tools/realmReview.mjs findings <realm character id>
 node tools/realmReview.mjs mend <realm character id> <ticket> <was: the purse below nothing> <gold owed> [note]
 ```
 
-Pinned by `test/net/fb1019b_pursemend.test.js` over the real Worker, a record the game writes (`save.js snapshotPlayer`)
-after the old counter's sale, checkpointed so the judge holds it; `tools/mutants/fb1019b_pursemend.json` (24, dead).
+Pinned by `test/net/fb1019e_pursemend.test.js` over the real Worker, a record the game writes (`save.js snapshotPlayer`)
+after the old counter's sale, checkpointed so the judge holds it; `tools/mutants/fb1019e_pursemend.json` (24, dead).
 
 ### AUTO-HOLD - no hold waits on a person (2026-10-16, `server-account/src/verdict.js`, `ledger.js`, migration 0120)
 
@@ -746,7 +746,7 @@ Mac, on "Equipped items Disappear after looting in PvP zone" (`01-Overview/bugs/
 ### Decisions (2026-10-19, FIELD BUGS DUEL-BAR)
 
 Mac, asked on a player's private report - in a duel, their own health bar did not drop when the other player hit them
-(`01-Overview/bugs/Field-Bugs-2026-10-19b.md` DUEL-BAR). It was the 2026-10-09 decision above working as built: the
+(`01-Overview/bugs/Field-Bugs-2026-10-19e.md` DUEL-BAR). It was the 2026-10-09 decision above working as built: the
 bar read the save's health, which a duel never touches, and the referee's vitality stood in a line of its own under the
 battles' readout ("Your vitality: n / m"). **"Bar shows duel vitality."**
 
@@ -778,7 +778,7 @@ battles' readout ("Your vitality: n / m"). **"Bar shows duel vitality."**
   purpose (offline, no other player).
 
 A departure from DFU, whose vitals read PlayerEntity alone (HUDVitals.Update) - DFU has no other player to duel.
-Pinned: `test/ui/fb1019b_duelbar.test.js` (the real relay refereeing the bout into the real duel manager, read by the
+Pinned: `test/ui/fb1019e_duelbar.test.js` (the real relay refereeing the bout into the real duel manager, read by the
 real drawHud on both skins); `tools/mutants/duel_bar.json`.
 
 ### What lane 2 leaves open
