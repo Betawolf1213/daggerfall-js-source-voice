@@ -77,7 +77,7 @@ import { FOOTSTEP_VOLUME } from '../systems/footsteps.js';   // AUDIT 58: Player
 import { flashPlayerDamage } from '../ui/damageFlash.js';   // AUDIT 24 (wave 39): ShowPlayerDamage
 import { SOUND } from '../systems/soundClips.js';
 import { surfacePlayer, hurtPlayer, duelSpare, staffFly, levitateWarded, freeFlight } from '../characters/playerEntity.js';   // DUEL1: the duel's floor, for its damage over time   // AUDIT-SEATS G5: a siege's ward on Levitate   // AUDIT-SEATS G4: a spectator's flight
-import { readSpellsStd, spellsByIndexMap } from '../formats/spellsStd.js';   // G4: the two magic registries, one home
+import { standardSpellsByIndex } from '../systems/spell/standardSpells.js';   // G4: the two magic registries, one home; DEX4a: a mod's SpellRecords.json merged, as RebuildClassicSpellsDict merges it
 import { readMagicDef } from '../formats/magicDef.js';
 import { setMagicItemTemplates, setSpellRecordsByIndex } from '../systems/loot/loot.js';
 import { PaintFile } from '../formats/paintFile.js';   // F156: PAINT.DAT, the painting descriptions' file
@@ -152,7 +152,7 @@ export async function loadMagicRegistries(fetch = fetchBytes) {
   let spellsByIndex = null;
   let magicItemTemplates = null;
   try {
-    const byIndex = spellsByIndexMap(readSpellsStd(await fetch('SPELLS.STD')));   // AUDIT 68 S12-spellsstd-dup: the one first-wins fold
+    const byIndex = standardSpellsByIndex(await fetch('SPELLS.STD'));   // AUDIT 68 S12-spellsstd-dup: the one first-wins fold (DEX4a: after the mods' merge)
     spellsByIndex = byIndex;
     setSpellRecordsByIndex(byIndex);
   } catch { /* data absent: casts no-op, and a CastWhen* slot prices at 0 - DFU's own answer */ }

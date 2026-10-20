@@ -11,7 +11,8 @@
 //     table rolls it, no quest names it, no hook of the mod's runs), so the save loads and the world is DFU's.
 //   WHILE LOADED: the sixteen classic rows and the two classic classes edited (written into the table, and again at a
 //     foe's mint over Meaner Monsters' and the overhaul's - DFU's order: their Init, then this Start), and the quest
-//     foes added, and its encounter tables picked (DEX3). (DEX4: the hooks; DEX5: the troll; DEX6: the equipment.)
+//     foes added, its encounter tables picked (DEX3), its spells and spellbooks (DEX4a). (DEX4b: the hit's hooks; DEX5: the
+//     troll; DEX6: the equipment.)
 
 import { DEX_TABLE_TEXT } from './dexTableText.js';
 import { classicCareers, readCareerTable, readEnemyTables, careerFromSpec, writeEnemyLine, readEncounterTables, addDefaultEncounterTables } from './dexTables.js';
@@ -26,6 +27,9 @@ import { addIntoQuestTables } from '../quest/tables.js';
 import { modSetting, latchModLoaded, modLatchedOn } from '../modSettings.js';
 import { installDexSprites } from './dexSprites.js';   // DEX2: the fifty's pictures, whatever the switch
 import { registerFoeGhost } from '../../characters/enemy/foeLook.js';   // DEX2: the Transparent property's ghost shader
+import { registerSpellRecordsAsset } from '../spell/standardSpells.js';   // DEX4a: its SpellRecords.json, merged into the standard list
+import { registerEnemySpellbook } from '../enemySpells.js';
+import { createDexSpellbooks } from './dexSpells.js';   // DEX4a: its spellbook tables
 
 export const DEX_VENDOR = 'daggerfall-enemy-expansion';
 /** The mod as loaded for this game: the latch its install set, else (before the install, or in a test) its switch. */
@@ -139,6 +143,10 @@ export function installEnemyExpansion({ on = modSetting(DEX_VENDOR, 'Enabled') =
     registerMintRowEditor((mobileType, row) => (read.classic.get(mobileType)?.row ? editedClassicRow(mobileType, row, read) : row));
     // EnemyEntity.OnLootSpawned's Transparent arm (:1394-1402): the ghost shader on a non-spectral enemy the mod marks
     registerFoeGhost((id) => dexProperties(id)?.isTransparent === true);
+    // DEX4a: its spells in the standard list (TextAssetReader.Merge, as RebuildClassicSpellsDict merges an enabled mod's
+    // SpellRecords.json), and its spellbooks over DFU's lists (OnLootSpawned's SetEnemySpells, :1358-1361)
+    registerSpellRecordsAsset(DEX_VENDOR, JSON.parse(DEX_TABLE_TEXT['SpellRecords.json']));
+    registerEnemySpellbook(createDexSpellbooks(read.spellbooks, dexProperties, { ids: [...read.enemies.keys(), ...read.classic.keys()], log }).spellbook);
     // DEX3: the encounter tables, picked on the dungeon's transition and PlayerGPS's events (BestiaryMod.cs:1728-1871)
     const encounters = createDexEncounterSelector(read.encounters);
     registerEncounterTableSelector(encounters);

@@ -170,3 +170,9 @@ through the texture door these register on, so neither draws the other's.
   (`src/systems/enemyExpansion/dexEncounters.js`, `src/world/playerGps.js`),
   on a door every reader asks (`src/characters/encounterTableDoor.js`).
   Section 7.
+- **DEX4a** (2026-10-20): the spells - `SpellRecords.json` merged into the
+  standard list as DFU's RebuildClassicSpellsDict merges it
+  (`src/systems/spell/standardSpells.js`), the spellbook tables cast at a
+  foe's spawn (`src/systems/enemyExpansion/dexSpells.js`, through
+  `src/systems/enemySpells.js`), a cast's spell index a u16 on the wire.
+  Section 8.

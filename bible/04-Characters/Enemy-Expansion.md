@@ -60,7 +60,7 @@ The mod in DFU's terms (`BestiaryMod.cs`, cited below by line):
 | DEX1 | the enemy registry: rows past the classic 0-42 and 128-146, the careers, the classic replacements, the names, the quest foes | SHIPPED (section 5) |
 | DEX2 | the sprites on the texture door: a non-classic archive's real frame counts, the xml scales, the emission maps, NoShadow and the ghost shader by behaviour (DFU's own rows too) - section 6 | SHIPPED (the glow's light routed, Ledger C) |
 | DEX3 | the encounter tables in all four hosts: the dungeon's seeded choice, the water's, the climates' - on a door every reader asks, the climates' on PlayerGPS's events | SHIPPED (section 7) |
-| DEX4 | combat: the on-hit effects, spells 500-503 and the spellbook tables, the skeletal rule, groups and languages, forced gender, ranged | open |
+| DEX4 | combat: the on-hit effects, spells 500-503 and the spellbook tables, the skeletal rule, groups and languages, forced gender, ranged | DEX4a SHIPPED (section 8: the spells, the spellbooks); DEX4b open (the hit's effects, the skeletal rule, groups and languages, forced gender) - ranged rode DEX1's rows |
 | DEX5 | the Troll's corpse: up again after ten seconds unless struck, saved with the game, the cheat | open |
 | DEX6 | DEX_RRICompat: the new classes equipped by their tables under Roleplay & Realism: Items | open |
 | DEX7 | the Morrowind bodies (section 4) | open |
@@ -254,3 +254,42 @@ Tests: `test/systems/enemyExpansion/dex3_encounters.test.js` (the reading line f
 against the C#'s LCG and with ARENA2 over every dungeon, PlayerGPS's edges, the climates' picks, the door's two reads,
 every reader through it - the decision, the rest, the camps, a group's one table, a granted species, the population -
 and the install), mutants `tools/mutants/dex3.json`.
+
+## 8. DEX4a - the spells and the spellbooks
+
+**The standard spells** (`systems/spell/standardSpells.js`). DFU builds them once - `EntityEffectBroker
+.RebuildClassicSpellsDict` reads SPELLS.STD, merges every enabled mod's `SpellRecords.json` into the list
+(`TextAssetReader.Merge`, matched by index), and folds it first-wins - and every list reads that one. The port read
+SPELLS.STD and folded it in two places (the hosts' magic registries, chargen's); both build it in the one place now.
+The merge, item by item in the mod's order: the first record of the item's index takes the item's fields over its
+own; an index the list lacks is a new record off SpellRecordData's defaults (a name of `""`, every number -1, three
+blank effects) with the item's fields on it, appended; `effects`, where named, is the item's array whole, each effect
+EffectRecordData's zeros under its fields. The mod's four are new indices - 500 `!Blood Leech`, 501 `!Daemon Touch`,
+502 `!Wrack`, 503 `!Bolt of Vengeance` - hidden from every shop by their `!`, as DFU hides them. Their cost is the
+default -1, which nothing reads: a cast is priced off its effects (`spellcost.js` calculateCastCost), as DFU's is.
+
+**The spellbooks** (`systems/enemyExpansion/dexSpells.js`). `ParseSpellbookTables` (BestiaryMod.cs:1884-1954) names
+thirteen one-book tables - DFU's own thirteen career lists, which the C# restates - and `Class`, a ladder of seven
+books by level that is DFU's `EnemyClassSpells[min(6, level / 3)]`; a row's raw `Spellbook` cell is a table named
+after its id. At a foe's spawn (`SetEnemySpells`, :1404-1447, on EnemyEntity.OnLootSpawned) a row naming a table
+casts the table's book for its level - the last whose `minLevel` the level reaches - in place of DFU's list; a level
+no book reaches, or a table no one made, leaves DFU's. The port's door is `systems/enemySpells.js`
+registerEnemySpellbook, asked first by `enemySpellIndices` - the one source every reader of what a foe casts reads:
+its spawn, a peer's puppet cast resolved, a grant's copy at its owner's level. Of 1.3.4: the Homunculus, the Medusa,
+the Snow Wolf, the Hell Hound, King Lysandus (503, the Bolt of Vengeance), the Dremora Churl and the Scamp cast raw
+books; the Fire Daemon the FireDaedra table; the six spellcasting classes the ladder, which casts what DFU's would.
+
+**The wire** (`net/wire.js` SPELL_INDEX_MAX): a cast's spell index rode as a u8, SPELLS.STD's; a foe casting one of
+the mod's spells was refused whole. It is a u16 now - relay world230, grown in place (not yet deployed).
+
+Departures (Port-Ledger A, the DEX row):
+
+- **An unknown table is said once**, at the install, for each row naming one; the C# says it at each spawn. The door
+  is asked by every reader of a foe's spells, not the spawn alone. No row of 1.3.4 names one.
+- **A class that does not cast magic and names a table** would have its magicka set by the port's `setEnemySpells`
+  (10 x level + 100, its magic skills at 80), where DFU leaves a class's that never went through `SetEnemySpells`. No
+  row of 1.3.4 is one: every class naming a table casts magic.
+
+Tests: `test/systems/enemyExpansion/dex4a_spells.test.js` (the merge field for field, the list with ARENA2, the tables
+against the C#'s own arrays, the door, the install, the wire), mutants `tools/mutants/dex4a.json`.
+
