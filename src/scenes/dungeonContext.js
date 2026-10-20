@@ -10762,7 +10762,6 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     colliderTris,
     destroy() {
       _ctxDead = true;   // NT1 (F213): before anything frees - the warm-window continuations read it
-      corpsePrefabs.destroy();   // DEX5: its prefabs' bodies with it (OnDestroy)
       _unregisterPresenter();   // ENH-NOTICE3: the registration leaves with the context (the dead latch above is what REFUSES a box in the meantime - pushDungeonWindow reads it, AUDIT ENH-NOTICE3 F2)
       // PX21c: the plaque leaves with the host that raised it - AFTER
       // the latch, which NT1 pins as the first act of this function.
@@ -10788,6 +10787,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       for (const f of foes) f.questBehaviour?.notifyDestroyed();
       _npcLane?.destroy(); _npcLane = null;   // MWNPC5b: the foes' bodies leave with the context
       _peopleLane.destroy();   // MWNPC8b: and the people's
+      corpsePrefabs.destroy();   // DEX5: and the troll bodies' prefabs (OnDestroy)
       // AUDIT 59 F2: the nav worker leaves with the context. Every
       // dungeon entry made a new NavClient (one worker) and nothing
       // terminated it, so each visit left a live worker behind once

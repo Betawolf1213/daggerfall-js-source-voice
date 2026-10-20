@@ -280,7 +280,7 @@ test('DEX5-8 THE HOSTS WIRE IT: the dungeon and the street mint a body\'s prefab
   assert.match(dc, /function lootableBody\(f\) \{ return !!f\?\.dead && !!f\.corpse && f\._ownFrom == null && !f\.corpseDisabled; \}/);
   assert.match(dc, /roomClaimTick\(_ecvT \* 1000\);[^\n]*\n\s*corpsePrefabs\.frame\(foes, dt\);/);
   assert.equal((dc.match(/if \(f\.dead\) \{ f\.corpsePrefab\?\.rounds\?\.\(/g) ?? []).length, 2, 'both of the dungeon\'s foe round loops');
-  assert.match(dc, /_ctxDead = true;[^\n]*\n\s*corpsePrefabs\.destroy\(\);/);
+  assert.match(dc, /_peopleLane\.destroy\(\);[^\n]*\n\s*corpsePrefabs\.destroy\(\);/);
   assert.match(dc, /\.\.\.\(f\.dead && f\.corpseDestroyed \? \{ noBody: true \} : \{\}\),/);
   assert.match(ext, /corpsePrefabs\.mint\(f, ct\);[^\n]*\n\s*mintCorpseMarker\(\{/);
   assert.match(ext, /corpsePrefabs\.frame\(foes, dt\);/);
