@@ -58,7 +58,7 @@ The mod in DFU's terms (`BestiaryMod.cs`, cited below by line):
 |---|---|---|
 | DEX0 | the record: the vendored files, the art in its three places, the doctrine's fourth exception, the registry row, the credit, the switch (on), the online decision (the room's, whole: Meaner Monsters' reading) | SHIPPED |
 | DEX1 | the enemy registry: rows past the classic 0-42 and 128-146, the careers, the classic replacements, the names, the quest foes | SHIPPED (section 5) |
-| DEX2 | the sprites on the texture door: a non-classic archive's real frame counts, the xml scales, the emission maps (section 6, SHIPPED); glow, no-shadow, the ghost's transparency (DFU's own rows too - section 6) | in part |
+| DEX2 | the sprites on the texture door: a non-classic archive's real frame counts, the xml scales, the emission maps, NoShadow and the ghost shader by behaviour (DFU's own rows too) - section 6 | SHIPPED (the glow's light routed, Ledger C) |
 | DEX3 | the encounter tables in all four hosts: the dungeon's seeded choice, the water's, the climates' | open |
 | DEX4 | combat: the on-hit effects, spells 500-503 and the spellbook tables, the skeletal rule, groups and languages, forced gender, ranged | open |
 | DEX5 | the Troll's corpse: up again after ten seconds unless struck, saved with the game, the cheat | open |
@@ -170,15 +170,21 @@ own, the fourth exception's repaints, or rebuilt from the player's files (`deriv
   the frame's own key and lit white, as DFU's material is; an archive whose xml asks for emission lights a frame with no
   map of its own by its albedo (1614_20-2) - the registration hands the albedo in as the map.
 
-**Still open in DEX2** - and DFU's own rows want them as much as the mod's (the port has never drawn them for a classic
-enemy either; `SetupDemoEnemy.cs` :129-151):
+**SetupDemoEnemy's renderer** (`SetupDemoEnemy.cs` :129-151), for DFU's own rows as much as the mod's - the port had
+never drawn either for a classic enemy:
 
-- `GlowColor` - a `LightAura` light at (0, 0.3, 0.2) on the mobile in the row's colour, and the billboard receiving no
-  shadow (the fire atronach, the fire daedra, the mod's Fire Daemon and Will-o'-wisp);
-- `NoShadow` - the billboard casts none;
-- the ghost shader - DFU's by the row's `Spectral` behaviour (cutoff 0.1, the alpha blended), where the port's renderer
-  keys it to the classic ghost archives (`render/renderer.js` billboardBlended); the mod's `Transparent` property lays
-  the same shader on a non-spectral enemy (BestiaryMod.cs:1394-1402).
+- **The ghost shader by behaviour** (`characters/enemy/foeLook.js` setupFoeLook, `render/renderer.js` ghostShaded): DFU
+  lays it on a Spectral row's mobile (cutoff 0.1, alpha blended); the port keyed it to the classic ghosts' archives, which
+  a mod's spectral enemy - the Gloom Wraith, the Faded Ghost, King Lysandus, the Will-o'-wisp, each on an archive of its
+  own - never matched. The classic Ghost and Wraith are the only Spectral rows, on exactly those archives, so nothing
+  classic moves. The mod's `Transparent` property lays it on a non-spectral enemy (BestiaryMod.cs:1394-1402, while the
+  mod is loaded - `registerFoeGhost`); no row of 1.3.4 sets it. The shadow pass casts no ghost, as it cast no classic one.
+- **NoShadow**: the mobile's batch casts none (the shadow pass's own `noShadow`).
+- The hosts wear both where they make the batch (`setupFoeLook(renderer.createBillboardBatch(...))`, the dungeon's two
+  arms and the street's pool) - an expression, so no host grows.
+- **GlowColor's light is routed** (Port-Ledger C, AN ENEMY'S GLOW): a `LightAura` light at (0, 0.3, 0.2) in the row's
+  colour, whose range and intensity are the prefab's - the editor asset, which no copy of DFU this work could reach
+  carries. It is read before it is built, never guessed.
 
 Tests: `test/systems/enemyExpansion/dex2_sprites.test.js` (every imported picture from its one place, none past a gap;
 the stand-in's frames; the xml ungated on a stand-in only; the emission's two sources), `dex0_record.test.js` (the

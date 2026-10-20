@@ -58,6 +58,7 @@ import { addQuestResourceObjects, markerScenePosition, siteMarkerSpots, standSpo
 import { createExteriorFoes } from '../../../src/scenes/exteriorFoes.js';
 import { effectiveLevel } from '../../../src/systems/mentorMode.js';
 import { ROOM_LOOT_OFF } from '../../roomLootOff.mjs';   // PARTY-LOOT: the room's seams with no room
+import { setupFoeLook } from '../../../src/characters/enemy/foeLook.js';   // DEX2: the arms' free name - SetupDemoEnemy's renderer
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8').replace(/^﻿/, '');
@@ -205,7 +206,7 @@ function context(collider, { idleH = 3.2, batH = 1, playerFeet = [25.6, 0, 22.4]
   const foes = [], bound = [];
   const state = {
     ...ROOM_LOOT_OFF,   // PIN MOVED (PARTY-LOOT): the dungeon's room-loot seams, answering as an offline dungeon's (test/roomLootOff.mjs)
-    ENEMY_BASICS, enemyEntityType, isClassEnemyId, collider, foes, flyerStandFeet, enemyControllerHeight, keepRebuiltSpawn,   // DEX1: DFU's entity type and class test, the arms' free names
+    ENEMY_BASICS, enemyEntityType, isClassEnemyId, setupFoeLook, collider, foes, flyerStandFeet, enemyControllerHeight, keepRebuiltSpawn,   // DEX1: DFU's entity type and class test, the arms' free names
     freeLodgedFeet, clearPast, floorLanding,
     SEARCH_FOE_SPACING, SEARCH_DOOR_REACH_M, lastPlayerFeet: playerFeet, actions: { objects: new Map() }, objectAabb: () => null,
     MobileUnit: class { static resolveGender(g) { return g === 'female' ? 'female' : 'male'; } },

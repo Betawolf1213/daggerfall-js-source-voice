@@ -182,8 +182,8 @@
  {
   "name": "MWNPC5b-castonly-veiled-drawn",
   "file": "src/render/renderer.js",
-  "old": "export const billboardBlended = (b) => !!b && !b.castOnly && !!(b.conceal || isSpectralArchive(b.archive));",
-  "new": "export const billboardBlended = (b) => !!b && !!(b.conceal || isSpectralArchive(b.archive));",
+  "old": "export const billboardBlended = (b) => !!b && !b.castOnly && !!(b.conceal || ghostShaded(b));",
+  "new": "export const billboardBlended = (b) => !!b && !!(b.conceal || ghostShaded(b));",
   "tests": [
    "test/render/mwnpc5_dungeon.test.js"
   ]

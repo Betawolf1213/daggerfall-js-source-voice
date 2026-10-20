@@ -48,5 +48,35 @@
   "tests": [
    "test/systems/enemyExpansion/dex2_sprites.test.js"
   ]
+ },
+ {
+  "name": "DEX2-the-ghost-by-archive-alone",
+  "file": "src/render/renderer.js",
+  "old": "export const ghostShaded = (b) => isSpectralArchive(b.archive) || b.ghost === true;",
+  "new": "export const ghostShaded = (b) => isSpectralArchive(b.archive);",
+  "why": "a mod's spectral enemy, on an archive of its own, drawn opaque",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ },
+ {
+  "name": "DEX2-a-spectral-row-no-ghost",
+  "file": "src/characters/enemy/foeLook.js",
+  "old": "row?.behaviour === 'Spectral' || _ghosts",
+  "new": "_ghosts",
+  "why": "the ghost shader by the behaviour gone - DFU's test",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ },
+ {
+  "name": "DEX2-noshadow-ignored",
+  "file": "src/characters/enemy/foeLook.js",
+  "old": "  if (row?.noShadow === true) batch.noShadow = true;\n",
+  "new": "",
+  "why": "a NoShadow row's mobile casts a shadow",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
  }
 ]

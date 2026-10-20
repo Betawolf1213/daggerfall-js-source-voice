@@ -14,6 +14,7 @@
 // 13 fixed-list casters do not cast up here yet.
 
 import { ENEMY_BASICS, enemyEntityType, isClassEnemyId } from '../characters/enemy/enemyBasics.js';
+import { setupFoeLook } from '../characters/enemy/foeLook.js';   // DEX2: SetupDemoEnemy.cs:129-151, the mobile's renderer
 import { KNIGHT_CITY_WATCH } from '../characters/mobile/mobileTypes.js';   // HALT-ONE: a peer's watchman, silent in the living watch's lane
 import { foeTitle } from '../systems/foeTitle.js';   // FOE-TITLE: what a revenant, a champion or an elite is called
 import { effectiveLevel } from '../systems/mentorMode.js';   // SOFTCAP2: mentor mode - the level the world is built around
@@ -582,7 +583,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       if (sbi) assignEnemySpells(entity, sbi);
       const caster = entity.spells?.length && !puppet ? new EnemyCaster(entity, rolls) : null;   // a puppet decides nothing (its owner's foe does)
       const mobile = new MobileUnit(mobileType, basics, (rec) => tex.getFrameCount(rec), Math.random, gender);
-      const batch = renderer.createBillboardBatch(archive, 0, { w: 1, h: 1 }, [[0, 0, 0]]);
+      const batch = setupFoeLook(renderer.createBillboardBatch(archive, 0, { w: 1, h: 1 }, [[0, 0, 0]]), mobileType);   // DEX2: SetupDemoEnemy's renderer - the ghost shader, NoShadow
       const f = { mobile, ai, attack, entity, caster, batch, tex, archive, mobileType, gender, idleH, dead: false, _encounter: true, _swingSeq: 0, _mout: null, placed, site,   // WOD3; WOD7: the World of Daggerfall marker it stood for (shared online)
         transient,   // DW-E4: CreateEnemy's LoadID 0 - SerializableEnemy registers nothing, so no save carries it
         managed,   // DW-E4: its spawner owns its life (Iliac Puddle No More's groups release their own) - the relevance cull passes it by

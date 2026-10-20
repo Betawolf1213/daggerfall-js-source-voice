@@ -1357,7 +1357,10 @@ export const CHAR_PIXEL = 9;
 /** GRASS-PORTAL (FIELD BUGS 2026-10-12b): WHETHER A BILLBOARD BATCH IS DRAWN IN drawBillboards' BLENDED PHASE - concealed
  *  (a portal's vortex, a veiled foe) or spectral, and drawn (never cast-only). Blended, it writes no depth: whatever a
  *  later pass draws behind it paints over it. The phase's own test, and the one a host asks to hold such a batch back. */
-export const billboardBlended = (b) => !!b && !b.castOnly && !!(b.conceal || isSpectralArchive(b.archive));
+/** DEX2: a billboard that wears the ghost shader - a classic ghost's archive, or a batch its host marked (`ghost`: a
+ *  Spectral row's mobile, characters/enemy/foeLook.js - SetupDemoEnemy.cs:132-136, by the behaviour). */
+export const ghostShaded = (b) => isSpectralArchive(b.archive) || b.ghost === true;
+export const billboardBlended = (b) => !!b && !b.castOnly && !!(b.conceal || ghostShaded(b));
 /** GRASS-PORTAL: the blended batches taken out of `batches` (in place, the rest kept in order) into `out` - emptied
  *  first, so a frame that never reached its late draw leaves nothing for the next - to be drawn in a drawBillboards of
  *  their own, after the passes that would otherwise paint over them (the grass). */
@@ -8468,7 +8471,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     // one this pass never saw, and so never keyed.
     for (const b of batches) {
       if (b.castOnly) continue;   // MWNPC5b: a foe stood in its Morrowind body - its billboard draws nothing (recorded above, the shadow pass passes it over - MWNPC16: the body casts)
-      if (isSpectralArchive(b.archive) || b.conceal) continue;
+      if (ghostShaded(b) || b.conceal) continue;
       if (bbCull && !this._bbVisible(b)) { this.stats.bbCulled++; continue; }   // PERF-CROWD2
       billboardKey(b);
       opaque.push(b);
@@ -8518,7 +8521,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       gl.depthMask(false);
       for (const b of blended) {
         const c = b.conceal;
-        gl.uniform1i(this.bbUSpectral, isSpectralArchive(b.archive) ? 1 : 0);
+        gl.uniform1i(this.bbUSpectral, ghostShaded(b) ? 1 : 0);
         gl.uniform4f(this.bbUConceal, c ? c.mode : 0, c ? c.alpha : 0, c ? c.t : 0, c ? c.phase : 0);
         drawOne(b);
       }

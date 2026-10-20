@@ -21,6 +21,7 @@ import { loadMonsterCareer, loadClassCareer, registerMintRowEditor } from '../..
 import { addIntoQuestTables } from '../quest/tables.js';
 import { modSetting, latchModLoaded, modLatchedOn } from '../modSettings.js';
 import { installDexSprites } from './dexSprites.js';   // DEX2: the fifty's pictures, whatever the switch
+import { registerFoeGhost } from '../../characters/enemy/foeLook.js';   // DEX2: the Transparent property's ghost shader
 
 export const DEX_VENDOR = 'daggerfall-enemy-expansion';
 /** The mod as loaded for this game: the latch its install set, else (before the install, or in a test) its switch. */
@@ -130,6 +131,8 @@ export function installEnemyExpansion({ on = modSetting(DEX_VENDOR, 'Enabled') =
     }
     // and at a foe's mint, over Meaner Monsters' and the overhaul's rows (their Init, then this Start)
     registerMintRowEditor((mobileType, row) => (read.classic.get(mobileType)?.row ? editedClassicRow(mobileType, row, read) : row));
+    // EnemyEntity.OnLootSpawned's Transparent arm (:1394-1402): the ghost shader on a non-spectral enemy the mod marks
+    registerFoeGhost((id) => dexProperties(id)?.isTransparent === true);
     // QuestMachine.FoesTable.AddIntoTable (:1344): the new names the Foes table lacks, when it loads
     addIntoQuestTables({ foes: read.questFoes.map(([id, name]) => ({ line: `${id}, ${name}`, unlessKey: name })) });   // `if (!FoesTable.HasValue(questName))` - asked of the table as it stands when the rows land
   }

@@ -270,6 +270,7 @@ import { createEgSpan, egSpanCollider } from './eliteGates/egSpan.js';   // EG-P
 import { realmToDungeon } from '../net/superDungeon/sdBrain.js';   // SD5a: the realm's frame
 import { dungeonTier } from '../systems/dungeon/dungeonTier.js';   // SD4a: the location's tier, the one law (TIER1)
 import { ENEMY_BASICS, enemyDisplayName, enemyEntityType, isClassEnemyId } from '../characters/enemy/enemyBasics.js';
+import { setupFoeLook } from '../characters/enemy/foeLook.js';   // DEX2: SetupDemoEnemy.cs:129-151, the mobile's renderer
 import { foeTitle } from '../systems/foeTitle.js';   // FOE-TITLE: what a revenant, a champion or an elite is called
 import { revenantFleeStep, revenantFleeHealth, revenantDeed, revenantSlain, revenantSay, revenantFleeEvent, revenantCorneredEvent, revenantEscapeEvent, revenantSlainEvent, revenantUnbrokenEvent, revenantFlinch, revenantSignatureEvent, revenantById, applyRevenant, grantRevenantLoot, revenantForLair, releaseRevenantStand, revenantSpawnOptions, revenantTauntEvent, revenantWakeEvent, revenantToReturn, REVENANT_TAUNT_DISTANCE, revenantStale } from '../systems/revenant/revenant.js';   // RVN7d: a revenant in its lair, its taunt, its band, a rest's return
 import { revenantMayYield, beginYield, yieldStep, slipEvent, kneelPose, beginExecution, executionStep, finishExecution, beginSpare, spareDone, fateDissolve, fateModel, dropFateHeld, revenantWillHolds, beginTearAway, revenantLastStandDue, beginLastStand, roarStep, ownersWholeKill } from '../systems/revenant/revenantFate.js';   // REVENANT-FATE: beaten, it yields - kill it or spare it (the open world's law, one home); RVN-OWNERS-CHOICE: a whole blow closes it only as its owner's
@@ -1576,7 +1577,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       // because AssignEnemyStartingEquipment never rolls a bow).
       attack.rangedAttack = hasBowAttack(basics);
       const mobile = new MobileUnit(e.mobileType, basics, (rec) => t.getFrameCount(rec), Math.random, e.gender);
-      const batch = renderer.createBillboardBatch(archive, 0, { w: 1, h: 1 }, [[0, 0, 0]]);
+      const batch = setupFoeLook(renderer.createBillboardBatch(archive, 0, { w: 1, h: 1 }, [[0, 0, 0]]), e.mobileType);   // DEX2: SetupDemoEnemy's renderer - the ghost shader, NoShadow
       const rec = asCandidate({ mobile, mobileArchive: archive, mobileTex: t, batch, ai, attack, entity, mobileType: e.mobileType, gender: e.gender, idleH, marker: [e.x, e.y, e.z], src: e });   // REVIEW 2026-09-05: the layout marker, for a pre-fix save's ghost
       rec._lootBuilt = lootBuiltOf(entity);   // PARTY-LOOT: the list its build left, so its body tells what reached it alive (a lodged shaft)
       assignFoeSpells(rec);   // SetEnemyCareer's tail, on every spawn
@@ -1663,7 +1664,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       // One live billboard batch per foe: record/size/origin mutate
       // per frame (the batch geometry is a unit quad; size is a
       // uniform, origin a live translation - zero rebuilds).
-      const batch = renderer.createBillboardBatch(archive, 0, { w: 1, h: 1 }, [[0, 0, 0]]);
+      const batch = setupFoeLook(renderer.createBillboardBatch(archive, 0, { w: 1, h: 1 }, [[0, 0, 0]]), e.mobileType);   // DEX2: SetupDemoEnemy's renderer - the ghost shader, NoShadow
       const rec = asCandidate({ mobile, mobileArchive: archive, mobileTex: t, batch, ai, attack, entity, mobileType: e.mobileType, gender: e.gender, idleH, marker: [e.x, e.y, e.z], src: e });   // REVIEW 2026-09-05: the layout marker, for a pre-fix save's ghost
       rec._lootBuilt = lootBuiltOf(entity);   // PARTY-LOOT: the list its build left, so its body tells what reached it alive (a lodged shaft)
       assignFoeSpells(rec);   // SetEnemyCareer's tail, on every spawn

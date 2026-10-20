@@ -897,8 +897,8 @@ held there by `test/scenes/citedrift.test.js` - the wave that wrote this
 section moved every one of them by inserting rows above section C, and
 a line number nobody re-resolves is a pointer at a stranger.
 
-Section C's table is **248 rows** between `Port-Ledger.md:717` and `:964`
-(`awk '/^\|/ && !/^\|---/'`). **229 are struck.** Of the 19 that are not,
+Section C's table is **249 rows** between `Port-Ledger.md:717` and `:965`
+(`awk '/^\|/ && !/^\|---/'`). **229 are struck.** Of the 20 that are not,
 four are VidFile quirks filed under the wrong section (ported-as-is, no
 route), three carry a **Kept** verdict (the climate swap dimensions, the
 secondary picker's cancel path, the rep window's stale-bar quirk), one is
@@ -911,11 +911,12 @@ generation, to the enhanced lane)~~ (**it read 226 and 21 until `:761` was
 STRUCK: SHIPPED at AUDIT 28 W4**), and two say inside their own text that
 they are closed (`RegionPowerAndConditionsUpdate`, vampirism/lycanthropy).
 
-That accounts for 15 of the 19, leaving **4 unstruck rows that carry a
-route** (the fourth, `:948`, A MOD'S MATERIALS, added by VE1 and routed to
-the Rendering arc) - plus `:834`, struck at its head but carrying a live
-PENDING clause in its tail, for **six rows that still owe work: items 1-4
-and 6 below, and the Materials row** (item 5 was the sixth, OT1 struck it; item 7 the seventh, DR1). The measurement this section was first written over read 246
+That accounts for 15 of the 20, leaving **5 unstruck rows that carry a
+route** (the fourth, `:964`, A MOD'S MATERIALS, added by VE1 and routed to
+the Rendering arc; the fifth, `:965`, AN ENEMY'S GLOW, added by DEX2 and
+routed to the LightAura prefab's values) - plus `:834`, struck at its head but carrying a live
+PENDING clause in its tail, for **seven rows that still owe work: items 1-4
+and 6 below, the Materials row and the Glow row** (item 5 was the sixth, OT1 struck it; item 7 the seventh, DR1). The measurement this section was first written over read 246
 rows, 216 struck and fourteen still owing; what closed the gap is the
 work the entries themselves argued for - the closeout tail struck the
 six STALE rows (items 9-14), E8 struck item 8, and E4 added one new
