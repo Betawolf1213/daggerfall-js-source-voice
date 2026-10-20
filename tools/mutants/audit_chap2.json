@@ -1179,9 +1179,10 @@
       "test/net/audit_chap1.test.js",
       "test/net/audit_chap2.test.js",
       "test/systems/guild/chap1_roll.test.js",
-      "test/net/chap2_halls.test.js"
+      "test/net/chap2_halls.test.js",
+      "test/server/lean_witness.test.js"
     ],
-    "note": "AUDIT CHAP2: re-aimed by content at the code the audit's fixes moved."
+    "note": "AUDIT CHAP2: re-aimed by content at the code the audit's fixes moved. LEAN-READS: the full read is the developers' audit list's and the oracle's (lean_witness), which holds the judged read to it."
   },
   {
     "name": "T-HALLS-SORT",
