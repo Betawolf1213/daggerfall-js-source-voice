@@ -3,7 +3,7 @@
 // :2121-2131): while Roleplay & Realism: Items' realisticEnemyEquipment is on (read at the mod's start,
 // DEX_RRICompat.OnStart) the mod's own copy of RRI's class arm kits a foe (DEX_RRICompat.cs), and otherwise ItemHelper's
 // arm does. Start runs after every mod's Init - RRI writes the delegate in its Awake - so the mod's is the one that
-// stands whichever loads first. The copy is RRI's arm (combat/rriEnemyEquipment.js) with three reads of its own:
+// stands whichever loads first. The copy is RRI's arm (combat/rriEnemyEquipment.js) with four reads of its own:
 //   - THE CLASS BY ITS TABLE (HasClassTable, :77-93): a row's EquipmentTable names the class whose kit it takes
 //     ("Guard" the City Watch's, any other a class's own name, OrdinalIgnoreCase), and a row with none is its own id -
 //     so a Knight Rider fights as a Knight, and a table that names no class is a class the arm does not know.
@@ -12,6 +12,11 @@
 //     nothing (CreateArmor mints none for -1). RRI's reads the class's preference instead.
 //   - AN ARM FOR THE UNKNOWN (:388-393): a longblade, armored 50 - RRI's switch has no default, and a class it does not
 //     name holds nothing.
+//   - THE SECOND WEAPON PUT ON (AUDIT DEX E1, :333/:385): a combat class's left-hand weapon (variant 0, no shield) and a
+//     sneaky class's second go through AddAndEquipWornItem - RRI's arm carries both (RoleplayRealismItemsMod.cs:573,
+//     :626). EquipItem's hand rules then keep what they keep (the arm's `add`): beside a one-hander it is held left, after
+//     a two-hander it takes the right hand, and a Short Bow takes both (under BowLeftHandWithSwitching the left, taking
+//     a two-hander off the right).
 // The id tests stay the id's (the City Watch's item level, the Ranger's longblade, the Barbarian's raised legs and
 // head); the poison's Assassin is the table's (:432-433 - the arm's answer carries it, hostCombat.equipEnemy reads it).
 // RRI's newWeapons and newArmor are read as its arm reads them (rriModule) - DEX_RRICompat reads the same two settings.
@@ -62,6 +67,7 @@ export const dexKitRead = (propsOf) => Object.freeze({
   classOf: (entity) => dexClassTable(entity.mobileType, propsOf),
   armorTemplate: (slot, { career }, rolls) => dexArmorTemplateIndex(slot, career, rolls),
   unknownArmed: true,
+  equipsSecondary: true,
 });
 
 /** BestiaryMod.AssignEnemyStartingEquipment, the delegate the mod installs: the copy while realisticEnemyEquipment is

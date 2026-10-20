@@ -1,9 +1,10 @@
 // DEX6 (2026-10-20, Mac: "I want to implement this as our next mod 1:1") - DAGGERFALL ENEMY EXPANSION'S EQUIPMENT.
 // BestiaryMod.Start takes EnemyEntity.AssignEnemyEquipment over: while Roleplay & Realism: Items' realisticEnemyEquipment
 // is on, the mod's copy of RRI's class arm (DEX_RRICompat.cs) kits a class foe - its class read off the row's
-// EquipmentTable, its armor off its career's forbidden armor, an unknown class armed with a longblade - and ItemHelper's
-// arm does while it is off (systems/enemyExpansion/dexEquipment.js over combat/rriEnemyEquipment.js). Each pinned
-// against the C#, and each with a mutation it must fail under (tools/mutants/dex6.json).
+// EquipmentTable, its armor off its career's forbidden armor, an unknown class armed with a longblade, its second weapon
+// put on - and ItemHelper's arm does while it is off (systems/enemyExpansion/dexEquipment.js over
+// combat/rriEnemyEquipment.js). Each pinned against the C#, and each with a mutation it must fail under
+// (tools/mutants/dex6.json).
 import '../../modsOff.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -16,8 +17,10 @@ import { assignRriEnemyEquipment, RRI_ITEM } from '../../../src/combat/rriEnemyE
 import { ARMOR_ENUM as A, assignEnemyStartingEquipment, setEnemyEquipmentAssigner, enemyEquipmentAssigner } from '../../../src/combat/enemyEquipment.js';
 import { equipEnemy } from '../../../src/scenes/hostCombat.js';
 import { setModSetting } from '../../../src/systems/modSettings.js';
+import { setValue } from '../../../src/systems/settings/settings.js';
+import { equipTableOf, EQUIP_SLOTS } from '../../../src/systems/equip.js';
 import { MOBILE_TYPES as M } from '../../../src/characters/mobile/mobileTypes.js';
-import { WEAPONS } from '../../../src/characters/weapons.js';
+import { WEAPONS, WEAPON_MATERIALS } from '../../../src/characters/weapons.js';
 import { clearCustomEnemies } from '../../../src/characters/enemy/customEnemies.js';
 import { _resetMintRowEditors } from '../../../src/characters/enemy/enemyEntity.js';
 import { _resetFoeGhosts } from '../../../src/characters/enemy/foeLook.js';
@@ -33,6 +36,7 @@ import { _resetDexTroll } from '../../../src/systems/enemyExpansion/dexTroll.js'
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const COMPAT = readFileSync(join(ROOT, 'vendor/daggerfall-enemy-expansion/Scripts/Compatibility/DEX_RRICompat.cs'), 'utf8');
 const BESTIARY = readFileSync(join(ROOT, 'vendor/daggerfall-enemy-expansion/Scripts/BestiaryMod.cs'), 'utf8');
+const RRI_CS = readFileSync(join(ROOT, 'vendor/roleplay-realism-items/Scripts/RoleplayRealismItemsMod.cs'), 'utf8');
 const silent = () => {};
 const RRI = 'roleplay-realism-items';
 const DEX = 'daggerfall-enemy-expansion';
@@ -50,6 +54,7 @@ const reset = () => {
   mods();
 };
 const counted = (r) => { const f = () => { f.calls++; return r(); }; f.calls = 0; return f; };
+const seq = (...vals) => { let i = 0; return () => vals[Math.min(i++, vals.length - 1)]; };
 const player = { level: 5, gender: 'male', race: 'Breton' };
 /** A class foe as the spawn hands it over: its id, level and career (the bits that forbid armor, `<< 6`). */
 const foe = (mobileType, forbid = 0) => ({ mobileType, isClass: true, level: 5, careerIndex: mobileType, career: { weaponArmorShieldsBitfield: forbid << 6 } });
@@ -168,4 +173,89 @@ test('DEX6-5 THE DELEGATE: the mod\'s Start takes AssignEnemyEquipment over (aft
   assert.equal(enemyEquipmentAssigner(), rriOwn, 'not loaded: RRI\'s stands');
   _resetEnemyExpansion();
   setEnemyEquipmentAssigner(null);
+});
+
+test('DEX6-6 THE SECOND WEAPON PUT ON (AUDIT DEX E1/E2): a combat class\'s left-hand weapon and a sneaky class\'s second go on where RRI\'s arm carries them, and EquipItem\'s hand rules keep what they keep - beside a one-hander held left, after a two-hander in the right hand, a Short Bow in both (the left, under BowLeftHandWithSwitching)', () => {
+  reset();
+  assert.match(COMPAT, /else if \(Dice100\.SuccessRoll\(chance\)\)\s*AddAndEquipWornItem\(enemyEntity, CreateWeapon\(SecondaryWeapon\(\), FormulaHelper\.RandomMaterial\(itemLevel\)\)\);/);
+  assert.match(COMPAT, /if \(Dice100\.SuccessRoll\(chance\)\)\s*AddAndEquipWornItem\(enemyEntity, CreateWeapon\(SecondaryWeapon\(\), FormulaHelper\.RandomMaterial\(itemLevel \/ 2\)\)\);/);
+  assert.match(RRI_CS, /else if \(Dice100\.SuccessRoll\(chance\)\)\s*AddOrEquipWornItem\(enemyEntity, CreateWeapon\(SecondaryWeapon\(\), FormulaHelper\.RandomMaterial\(itemLevel\)\)\);/, 'RRI\'s own: carried');
+  assert.match(RRI_CS, /if \(Dice100\.SuccessRoll\(chance\)\)\s*AddOrEquipWornItem\(enemyEntity, CreateWeapon\(SecondaryWeapon\(\), FormulaHelper\.RandomMaterial\(itemLevel\/2\)\)\);/);
+  dexRead({ log: silent });
+  const dex = createDexEquipmentAssigner((id) => dexProperties(id));
+  const held = (eq) => [eq.rightHand?.templateIndex ?? null, eq.leftHand?.templateIndex ?? null];
+  const off = (eq, t) => eq.items.some((it) => it.templateIndex === t) && !eq.worn.some((it) => it.templateIndex === t);
+  // variant 0, the Knight's draws: the coin (blunt), RandomBlunt's pick, the material, the condition; the shield's
+  // Dice100 at 60 fails, the left-hand weapon's at 0 lands; SecondaryWeapon's Range(0, 4), its material, its condition
+  const rider = (blunt, second) => seq(0, blunt, 0, 0, 0.6, 0, second, 0, 0, 0);
+  let eq = dex(foe(386), 0, 5, { player, rolls: rider(0, 0) });
+  assert.deepEqual(held(eq), [WEAPONS.Mace, WEAPONS.Dagger], 'a Mace and the Dagger held left (GetFirstSlot: the right taken)');
+  assert.ok(eq.worn.some((it) => it.templateIndex === WEAPONS.Dagger), 'worn');
+  const rri = assignRriEnemyEquipment(foe(M.Knight), 0, 5, { player, rolls: rider(0, 0) });
+  assert.deepEqual(held(rri), [WEAPONS.Mace, null], 'RRI\'s own Knight on the same draws: the Dagger carried');
+  assert.ok(off(rri, WEAPONS.Dagger));
+  eq = dex(foe(386), 0, 5, { player, rolls: rider(0.25, 0) });
+  assert.deepEqual(held(eq), [WEAPONS.Dagger, null], 'after a Flail (two-handed) the Dagger takes the right hand (GetWeaponSlot :439-441)');
+  assert.ok(off(eq, WEAPONS.Flail), 'the Flail comes off - in Items, the corpse\'s, not worn');
+  eq = dex(foe(386), 0, 5, { player, rolls: rider(0, 0.9) });
+  assert.deepEqual(held(eq), [WEAPONS.Short_Bow, null], 'a Short Bow takes both hands (ItemHands.Both): the Mace comes off');
+  assert.ok(off(eq, WEAPONS.Mace));
+  setValue('Enhancements', 'BowLeftHandWithSwitching', true);
+  try {
+    eq = dex(foe(386), 0, 5, { player, rolls: rider(0, 0.9) });
+    assert.deepEqual(held(eq), [WEAPONS.Mace, WEAPONS.Short_Bow], 'BowLeftHandWithSwitching: the bow is LeftOnly, held left beside the Mace');
+    eq = dex(foe(386), 0, 5, { player, rolls: rider(0.25, 0.9) });
+    assert.deepEqual(held(eq), [null, WEAPONS.Short_Bow], 'and a LeftOnly piece takes a two-hander off the right (:125-132): bare-handed');
+    assert.ok(off(eq, WEAPONS.Flail));
+  } finally { setValue('Enhancements', 'BowLeftHandWithSwitching', false); }
+  // the sneaky classes: the Thief Rider (its table the Thief's) - RandomShortblade's Dice100(40) at 0, the Shortsword;
+  // its material and condition; the second's Dice100 at 0 lands, SecondaryWeapon at 0 the Dagger
+  eq = dex(foe(392), 0, 5, { player, rolls: () => 0 });
+  assert.deepEqual(held(eq), [WEAPONS.Shortsword, WEAPONS.Dagger], 'the second blade held left');
+  const thief = assignRriEnemyEquipment(foe(M.Thief), 0, 5, { player, rolls: () => 0 });
+  assert.deepEqual(held(thief), [WEAPONS.Shortsword, null], 'RRI\'s own Thief: carried');
+  assert.ok(off(thief, WEAPONS.Dagger));
+});
+
+test('DEX6-7 THE ID\'S TESTS AND THE TABLE\'S (AUDIT DEX E4): the City Watch\'s item level asks the id (the mod\'s Guard, a City Watch by its table, rolls at its own level), the Ranger\'s longblade the id (a row whose table names the Ranger carries the shortblade), a fighter the table (a Knight Rider\'s big weapon at armored 100)', () => {
+  reset();
+  assert.match(COMPAT, /int itemLevel = \(enemyEntity\.MobileEnemy\.ID == \(int\)MobileTypes\.Knight_CityWatch\) \? 1 : enemyEntity\.Level;/);
+  assert.match(COMPAT, /AddWornItem\(enemyEntity, CreateWeapon\(\(enemyEntity\.MobileEnemy\.ID == \(int\)MobileTypes\.Ranger\) \? RandomLongblade\(\) : RandomShortblade\(\)/);
+  assert.match(COMPAT, /AddAndEquipWornItem\(enemyEntity, CreateWeapon\(RandomBigWeapon\(\), FormulaHelper\.RandomMaterial\(itemLevel\)\)\);\s*if \(!IsFighter\(enemyEntity\.MobileEnemy\.ID\)\)\s*armored = 90;/);
+  assert.match(COMPAT, /static bool IsFighter\(int mobileId\)\s*\{\s*return HasClassTable\(mobileId, MobileTypes\.Knight\) \|\| HasClassTable\(mobileId, MobileTypes\.Warrior\);/);
+  dexRead({ log: silent });
+  const dex = createDexEquipmentAssigner((id) => dexProperties(id));
+  // at 0.99 the City Watch's RandomAxeOrBlade is a Longsword, and RandomMaterial's Range(0, 256) = 253: at level 20
+  // (20 - 10) * 2 + 253 clamps to 256 - Daedric; at item level 1, -36 + 253 = 217 - Elven
+  const at20 = (mobileType) => ({ ...foe(mobileType), level: 20 });
+  assert.equal(dexClassTable(385, dexProperties), M.Knight_CityWatch, 'the Guard kits as the City Watch');
+  assert.equal(dex(at20(385), 0, 20, { player, rolls: () => 0.99 }).rightHand.material, WEAPON_MATERIALS.Daedric, 'the Guard (385): its own level');
+  assert.equal(dex(at20(M.Knight_CityWatch), 0, 20, { player, rolls: () => 0.99 }).rightHand.material, WEAPON_MATERIALS.Elven, 'the City Watch (146): item level 1');
+  // a row whose table names the Ranger: the bow, then the sidearm by the id - RandomShortblade's Dice100(40) at 0, the Shortsword
+  const ranger = createDexEquipmentAssigner((id) => (id === 398 ? { equipmentTable: 'Ranger' } : null));
+  const sidearm = (eq) => eq.items.find((it) => it.group === 'Weapons' && it !== eq.rightHand && it.templateIndex !== WEAPONS.Arrow)?.templateIndex;
+  let eq = ranger(foe(398), 0, 5, { player, rolls: () => 0 });
+  assert.equal(eq.rightHand.templateIndex, WEAPONS.Short_Bow, 'kitted as a Ranger');
+  assert.equal(sidearm(eq), WEAPONS.Shortsword, 'not the Ranger by id: the shortblade');
+  assert.equal(sidearm(ranger(foe(M.Ranger), 0, 5, { player, rolls: () => 0 })), WEAPONS.Broadsword, 'the Ranger itself: RandomLongblade at 0');
+  // variant 1 at 0.95: the War Axe, then the torso's Dice100 = 95 - under 100 (a fighter, by the table), not under 90
+  eq = dex(foe(386), 1, 5, { player, rolls: () => 0.95 });
+  assert.equal(eq.rightHand.templateIndex, WEAPONS.War_Axe);
+  assert.deepEqual(armorOf(eq), [A.Cuirass], 'the Knight Rider is a fighter: armored 100');
+  assert.deepEqual(armorOf(assignRriEnemyEquipment(foe(M.Spellsword), 1, 5, { player, rolls: () => 0.95 })), [], 'a Spellsword is not: armored 90');
+});
+
+test('DEX6-8 THE POISON\'S FALLBACK (AUDIT DEX E4): a class the arm does not know answers no poison class, and the spawn\'s roll asks its own id - 5%, as DEX_RRICompat\'s does for every class', () => {
+  reset();
+  assert.match(COMPAT, /int chanceToPoison = 5;\s*if \(HasClassTable\(enemyEntity\.MobileEnemy\.ID, MobileTypes\.Assassin\)\)/);
+  setEnemyEquipmentAssigner(createDexEquipmentAssigner(() => ({ equipmentTable: 'Druid' })));
+  try {
+    // every draw 0.04: Range(0, 2) = 0 the variant; the unknown's longblade; Dice100's Range(0, 100) = 4 - the 5% lands,
+    // and Range(128, 136) at 0.04 is 128
+    const druid = { ...foe(384), items: [] };
+    const eq = equipEnemy(druid, 384, 5, () => 0.04, { player });
+    assert.equal(eq.poisonClass, null, 'no class the arm knows');
+    assert.ok(druid.weapon, 'the longblade');
+    assert.equal(druid.weapon.poisonType, 128, 'poisoned through its own id (384, a class by the 128 bit)');
+  } finally { setEnemyEquipmentAssigner(null); }
 });

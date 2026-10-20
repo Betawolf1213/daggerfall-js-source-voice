@@ -158,5 +158,79 @@
   "tests": [
    "test/systems/enemyExpansion/dex6_equipment.test.js"
   ]
+ },
+ {
+  "name": "AUDIT-DEX-E1-secondary-carried",
+  "file": "src/systems/enemyExpansion/dexEquipment.js",
+  "old": "  equipsSecondary: true,",
+  "new": "  equipsSecondary: false,",
+  "why": "the copy carries its second weapon as RRI's arm does - DEX_RRICompat.cs:333/:385 put it on",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-E1-combat-second-carried",
+  "file": "src/combat/rriEnemyEquipment.js",
+  "old": "randomMaterial(itemLevel, rolls), rolls), read.equipsSecondary);",
+  "new": "randomMaterial(itemLevel, rolls), rolls));",
+  "why": "a combat class's left-hand weapon carried whatever the read says - the Knight Rider's Dagger never held",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-E1-sneaky-second-carried",
+  "file": "src/combat/rriEnemyEquipment.js",
+  "old": "randomMaterial(Math.trunc(itemLevel / 2), rolls), rolls), read.equipsSecondary);",
+  "new": "randomMaterial(Math.trunc(itemLevel / 2), rolls), rolls));",
+  "why": "a sneaky class's second blade carried whatever the read says - the Thief Rider's Dagger never held",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-E4a-itemlevel-by-table",
+  "file": "src/combat/rriEnemyEquipment.js",
+  "old": "  const itemLevel = mob === M.Knight_CityWatch ? 1 : (entity.level ?? playerLevel);",
+  "new": "  const itemLevel = read.classOf(entity) === M.Knight_CityWatch ? 1 : (entity.level ?? playerLevel);",
+  "why": "the item level asks the table - the mod's Guard (a City Watch by its table) held to iron and steel; DEX_RRICompat.cs:297 tests the id",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js",
+   "test/systems/rri2_realism.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-E4b-fighter-by-id",
+  "file": "src/combat/rriEnemyEquipment.js",
+  "old": "        if (!isFighter(cls)) { prefChain = true; armored = 90; }",
+  "new": "        if (!isFighter(mob)) { prefChain = true; armored = 90; }",
+  "why": "variant 1's fighter test asks the id - a Knight Rider at armored 90; IsFighter is HasClassTable's (:95-98, :341)",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js",
+   "test/systems/rri2_realism.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-E4c-ranger-by-table",
+  "file": "src/combat/rriEnemyEquipment.js",
+  "old": "add(mintWeapon(mob === M.Ranger ? randomLongblade(rolls)",
+  "new": "add(mintWeapon(cls === M.Ranger ? randomLongblade(rolls)",
+  "why": "the Ranger's longblade asks the table - a row whose table names the Ranger carries a longblade; :309 tests the id",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js",
+   "test/systems/rri2_realism.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-E4d-poison-fallback-dropped",
+  "file": "src/scenes/hostCombat.js",
+  "old": "rollEnemyWeaponPoison(eq.poisonClass ?? mobileType, playerLevel, rolls)",
+  "new": "rollEnemyWeaponPoison(eq.poisonClass ?? 0xffff, playerLevel, rolls)",
+  "why": "a class the arm does not know rolls no poison - its own id never asked (the 5% every class rolls, :431)",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js",
+   "test/systems/rri2_realism.test.js"
+  ]
  }
 ]

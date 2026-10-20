@@ -236,8 +236,10 @@ export function equipEnemy(entity, mobileType, playerLevel, rolls = Math.random,
   entity.armorValues = eq.armorValues;
   entity.weapon = eq.rightHand;
   // S19b: ItemHelper's poisoned-weapon roll rides the spawn -
-  // class enemies + Orc/Centaur/OrcSergeant, 5% (Assassin 60%)
-  if (entity.weapon) {
+  // class enemies + Orc/Centaur/OrcSergeant, 5% (Assassin 60%) - unless
+  // the arm rolled it in its own place (AUDIT DEX E3: RRI's monster arm,
+  // ahead of ConvertOrcish); a bare right hand rolls none (`mainWeapon != null`)
+  if (entity.weapon && !eq.poisonRolled) {
     const pt = rollEnemyWeaponPoison(eq.poisonClass ?? mobileType, playerLevel, rolls);   // PARTY-LOOT: and its poison; DEX6: its Assassin asked as the kit's arm asks it (DEX_RRICompat: by the equipment table)
     if (pt != null) entity.weapon.poisonType = pt;
   }
@@ -278,6 +280,8 @@ export function equipEnemy(entity, mobileType, playerLevel, rolls = Math.random,
   // DamageEquipment reads the table, and a break unequips through
   // DaggerfallUnityItem.UnequipItem's identity scan (equip.js's
   // unequipItem), which is how DFU finds the slot too.
+  // AUDIT DEX E2: `worn` is the table as the arm's EquipItems left it (a two-hander a shield took off is not in it), so
+  // GetEquipSlot over it, in AddItem order, lays each piece where it stood.
   const slots = equipTableOf(entity);
   for (const it of worn) {
     const slot = getEquipSlot(entity, it);   // GetEquipSlot routes the shield to LeftHand and each piece to its own slot
