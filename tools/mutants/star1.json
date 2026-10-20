@@ -45,19 +45,19 @@
     ]
   },
   {
-    "name": "STAR1-the-window-end-kept-open",
+    "name": "STAR1-the-festival-unread",
     "file": "src/net/starfall/starfallLaw.js",
-    "old": "nowMs >= STARFALL_FROM_MS && nowMs < STARFALL_TO_MS",
-    "new": "nowMs >= STARFALL_FROM_MS && nowMs <= STARFALL_TO_MS",
+    "old": "export const starfallRuns = (/** @type {number} */ nowMs) => festivalOpen(nowMs);",
+    "new": "export const starfallRuns = (/** @type {number} */ nowMs) => Number.isFinite(nowMs);",
     "tests": [
       "test/net/starfall/star1_law.test.js"
     ]
   },
   {
-    "name": "STAR1-the-kinds-read-as-anything",
+    "name": "STAR1-a-star-outside-the-festival",
     "file": "src/net/starfall/starfallLaw.js",
-    "old": "!!ev && STARFALL_EVENT_KINDS.includes(ev.kind)",
-    "new": "!!ev",
+    "old": "export const starInWindow = (n, k) => starOk(n, k) && starfallRuns(starTimes(n, k).fallAt);",
+    "new": "export const starInWindow = (n, k) => starOk(n, k);",
     "tests": [
       "test/net/starfall/star1_law.test.js"
     ]

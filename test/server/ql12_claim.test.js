@@ -17,7 +17,7 @@ import { mintEgReceipt } from '../../src/net/eliteGates/egReceipt.js';
 import { mintSdReceipt } from '../../src/net/superDungeon/sdReceipt.js';
 import { mintSerpentReceipt } from '../../src/net/serpent/serpentReceipt.js';
 import { mintStarReceipt } from '../../src/net/starfall/starReceipt.js';   // STAR8: the fallen stars' witness
-import { STARFALL_FROM_MS, STAR_HOUR_MS } from '../../src/net/starfall/starfallLaw.js';
+import { STAR_HOUR_MS } from '../../src/net/starfall/starfallLaw.js';
 import { egValkRedoubt } from '../../src/net/eliteGates/egPay.js';
 import { QL_SERVICE_LINES, QL_TITLES, QL_WITNESS_KINDS, qlTitleBit, qlStepClaimed } from '../../src/net/questlineClaims.js';
 import { claimQl, QL_WITNESS_SQL, QL_STATUS, qlTitleSteps, qlSwitchOf, questlinesOpenFor } from '../../server-account/src/questlines.js';
@@ -31,6 +31,8 @@ import { createLineRunner, STEP_GAP_S, CLAIM_RETRY_MS, CLAIM_TRIES, CLAIM_SLOW_M
 import { setPref } from '../../src/systems/uiPrefs.js';
 import { QUESTLINES_PREF } from '../../src/systems/questlines/qlLaw.js';
 import { ACCEPTED } from '../../src/net/legalLaw.js';
+import { FESTIVALS } from '../../src/net/festivalLaw.js';
+const FESTIVAL_FROM_MS = FESTIVALS[0].fromMs;   // the Witches' Festival's first day, the Starfall's own (net/festivalLaw.js)
 
 const { subtle } = globalThis.crypto;
 const read = (p) => readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
@@ -86,7 +88,7 @@ async function stood(t, extra = {}) {
   /** STAR8: a fallen star held - its receipt claimed (its `stars_held` row), each one a star of its own, a night's three
    *  and the next night's after them. */
   let held = 0;
-  const STAR_N = Math.ceil(STARFALL_FROM_MS / STAR_HOUR_MS) + 5;
+  const STAR_N = Math.ceil(FESTIVAL_FROM_MS / STAR_HOUR_MS) + 5;
   const star = async (who) => {
     const i = held++;
     const receipt = await mintStarReceipt({ n: STAR_N + Math.floor(i / 3), k: i % 3, s: who.id, c: 7, l: 14 }, S.gatePriv, { subtle, nowS: now() });

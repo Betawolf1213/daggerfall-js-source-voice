@@ -8,7 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createStarfallHost, STAR_BLOWS_STORE } from '../../../src/scenes/starfall/starfallHost.js';
 import {
-  starNightAt, starTimes, starCircleSize, STARFALL_FROM_MS, STAR_ORPHAN_MS, STAR_CIRCLE_AT, STAR_LOST_DARK,
+  starNightAt, starTimes, starCircleSize, STAR_ORPHAN_MS, STAR_CIRCLE_AT, STAR_LOST_DARK,
   P_WAVE, P_MASTER, P_HELD, P_LOST,
 } from '../../../src/net/starfall/starfallLaw.js';
 import { starCovenOf, covenWitches, STAR_COVENS } from '../../../src/systems/starfall/starfallCovens.js';
@@ -21,8 +21,10 @@ import { STAR_SOUNDS } from '../../../src/systems/starfall/starSounds.js';
 import { starSiteId } from '../../../src/world/worldOfDaggerfall/wodShared.js';
 import { midScreenText } from '../../../src/ui/midScreenText.js';
 import { renownFoeStruck } from '../../../src/net/renownTracker.js';
+import { FESTIVALS } from '../../../src/net/festivalLaw.js';
+const FESTIVAL_FROM_MS = FESTIVALS[0].fromMs;   // the Witches' Festival's first day, the Starfall's own (net/festivalLaw.js)
 
-const N = starNightAt(STARFALL_FROM_MS) + 30;
+const N = starNightAt(FESTIVAL_FROM_MS) + 30;
 const COVEN = starCovenOf(N);
 const settle = async () => { for (let i = 0; i < 8; i++) await new Promise((r) => setImmediate(r)); };
 
@@ -75,7 +77,6 @@ function world({ storage = memStorage(), t = starTimes(N, 0).omenAt - 1000 } = {
     storage,
   };
   w.host = createStarfallHost(bindings);
-  w.host.setEvent({ kind: 'witchfest', at: 0 });
   w.frame = () => w.host.frame();
   w.beat = async () => { w.host.frame(); await settle(); w.host.frame(); };
   w.star = (k) => w.host.state().find((s) => s.key.startsWith(`${N}.${k}@`));
@@ -93,29 +94,27 @@ test.after(() => { Date.now = realNow; });
 const mids = [];
 const watchMids = () => { mids.length = 0; midScreenText.onMessage = (m) => mids.push(m); };
 
-test('STAR5 THE NIGHT\'S STARS: three in the coven\'s region, each from its omen; none while the hub says no festival, none outside its window; a star whose landing is before the window is no star (mutants: the event\'s word, the window filter)', () => {
+test('STAR5 THE NIGHT\'S STARS: three in the coven\'s region, each from its omen; none outside the Witches\' Festival\'s days; a star whose landing is before they open is no star (mutants: the festival\'s days, the window filter)', () => {
   const w = world();
   clockOf(w);
   assert.equal(sitesOf(N).length, 3);
-  w.host.setEvent(null);
-  w.t = starTimes(N, 0).omenAt;
+  w.t = FESTIVALS[0].toMs;
   assert.equal(w.frame(), null);
-  assert.deepEqual(w.host.state(), [], 'no festival, no stars');
-  w.host.setEvent({ kind: 'witchfest' });
+  assert.deepEqual(w.host.state(), [], 'the festival over, no stars');
+  w.t = starTimes(N, 0).omenAt;
   w.frame();
   assert.deepEqual(w.host.state().map((s) => s.phase), ['omen']);
   w.t = starTimes(N, 2).fallAt + 1000;
   w.frame();
   assert.deepEqual(w.host.state().map((s) => s.phase), ['after', 'fallen', 'fallen'], 'the first\'s deadline the last\'s landing');
   // the window's first night: its first two stars land before it opens - none on this screen; its last at the opening
-  const first = starNightAt(STARFALL_FROM_MS);
-  const w2 = world({ t: STARFALL_FROM_MS + 1000 });
+  const first = starNightAt(FESTIVAL_FROM_MS);
+  const w2 = world({ t: FESTIVAL_FROM_MS + 1000 });
   clockOf(w2);
-  w2.host.setEvent({ kind: 'witchfest' });
   w2.region = -9;
   w2.frame();
   assert.deepEqual(w2.host.state().map((s) => s.key.split('@')[0]), [`${first}.2`]);
-  w2.t = STARFALL_FROM_MS - 1;
+  w2.t = FESTIVAL_FROM_MS - 1;
   assert.equal(w2.frame(), null);
   assert.deepEqual(w2.host.state(), [], 'before the window, nothing');
   Date.now = realNow;
@@ -385,7 +384,7 @@ test('STAR6 THE READINGS: the Timers\' rows (the standing star and the next fall
   w.host.destroyAll();
   assert.equal(w.host.active(), false);
   assert.deepEqual(w.host.state(), []);
-  w.host.setEvent(null);
+  w.t = FESTIVALS[0].toMs;   // the festival over: no rows, no marks
   assert.deepEqual(w.host.timerRows(), []);
   assert.deepEqual(w.host.mapMarks(), []);
   Date.now = realNow;

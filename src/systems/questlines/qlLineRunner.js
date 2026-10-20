@@ -27,21 +27,20 @@ import { KINGS_GAMBIT_KEY } from '../features.js';
 import { modSetting } from '../modSettings.js';
 import { revenantHeld } from '../revenant/revenant.js';
 import { starfallRuns } from '../../net/starfall/starfallLaw.js';   // STAR8: the Witches' Festival's stars falling
-import { liveEventNow } from '../../net/liveEventNow.js';   // STAR8: the hub's live event, as last said
 
 /** AUDIT QUESTLINES ACTS-2, LINES-3, LINES-6: WHAT A STEP'S DEED NEEDS, read where the game reads it - Loot rarity's own
  *  switch (a socket, a reforge refuse 'off' without it), The King's Gambit's (no table offers the game), the sea's
  *  (scenes/world.js navalOn: the Naval Combat row and Come Sail Away's own switch), and the Renown a revenant comes at
- *  (revenant.js revenantHeld - online, below it none rises). STAR8: and the Starfall - the hub's live event (the leaf
- *  net/liveEventNow.js, which the hub socket writes) under the Festival's word inside its dated window, at `nowMs` (the
- *  runner's clock), exactly as the starfall host reads it (scenes/starfall/starfallHost.js). A step that needs what is
+ *  (revenant.js revenantHeld - online, below it none rises). STAR8: and the Starfall - the Witches' Festival's own calendar
+ *  (net/festivalLaw.js, through starfallLaw.js starfallRuns) at `nowMs`, the runner's clock, exactly as the starfall host
+ *  and the relay read it. A step that needs what is
  *  off waits, saying so. */
 export const NEED_CHECKS = Object.freeze({
   lootRarity: () => lootRarityOn(),
   kingsGambit: () => !!getPref(KINGS_GAMBIT_KEY),
   naval: () => getPref('naval') !== false && (() => { try { return modSetting('come-sail-away', 'Enabled') !== false; } catch { return false; } })(),
   renown: () => !revenantHeld(),
-  starfall: (/** @type {number} */ nowMs) => starfallRuns(nowMs, liveEventNow()),
+  starfall: (/** @type {number} */ nowMs) => starfallRuns(nowMs),
 });
 
 /** The game seconds a line waits between one step's end and the next step's start - an hour of the character's time,

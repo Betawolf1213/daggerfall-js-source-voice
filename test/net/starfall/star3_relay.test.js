@@ -8,7 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
-  STARFALL_FROM_MS, STAR_HOUR_MS, STAR_PER_NIGHT, STAR_WAVES, STAR_LEVEL_MAX, STAR_KILLS_WIRE_MAX, STAR_BLOWS_WIRE_MAX,
+  STAR_HOUR_MS, STAR_PER_NIGHT, STAR_WAVES, STAR_LEVEL_MAX, STAR_KILLS_WIRE_MAX, STAR_BLOWS_WIRE_MAX,
   STAR_TOP_MAX, STAR_ACCOUNTS_MAX, STAR_LIGHT, STAR_PHASES, STAR_WORD_MS, STAR_GRACE_MS, STAR_REACH_M, STAR_UNITS_PER_M,
   STAR_ORPHAN_MS, STAR_LOST_DAWN, P_GATHER, P_WAVE, P_BREATH, P_MASTER, P_HELD, P_LOST, starTimes, starNativeOf, starLedgerId,
   starWaveSize, starNightGoneAt, STAR_WAVE_MAX, newStarLedger, starLedgerSane, starHeldWord, STAR_LIFE_MS, STAR_AFTER_MS,
@@ -24,6 +24,8 @@ import {
 import { fakeRooms } from '../../fakeRoom.mjs';
 import { fakeSocketClass } from '../../fakeSocket.mjs';
 import { OnlineSession } from '../../../src/net/online.js';
+import { FESTIVALS } from '../../../src/net/festivalLaw.js';
+const FESTIVAL_FROM_MS = FESTIVALS[0].fromMs;   // the Witches' Festival's first day, the Starfall's own (net/festivalLaw.js)
 
 const subtle = globalThis.crypto.subtle;
 const quiet = async (fn) => { const w = console.warn, i = console.info; console.warn = () => {}; console.info = () => {}; try { return await fn(); } finally { console.warn = w; console.info = i; } };
@@ -31,7 +33,7 @@ const quiet = async (fn) => { const w = console.warn, i = console.info; console.
 // ═══ THE RIG ══════════════════════════════════════════════════════════════════════════════════════
 
 /** A night inside the window, its first star, and a pixel of the Bay. */
-const N = Math.ceil(STARFALL_FROM_MS / STAR_HOUR_MS) + 5, K = 0;
+const N = Math.ceil(FESTIVAL_FROM_MS / STAR_HOUR_MS) + 5, K = 0;
 const PX = 100, PY = 200, CELL = worldRoom(PX, PY);
 const T = starTimes(N, K);
 /** A pose at the star the law places in (px, py) - `east` metres east of it. */
@@ -75,7 +77,7 @@ async function defend({ say, step }, owner, others, { until = (st) => st.p === P
 
 // ═══ THE WIRE ═════════════════════════════════════════════════════════════════════════════════════
 
-test('STAR3 THE WIRE: a star word projected whole and bounded; each word a cell or the hub says, projected - a receipt by its shape, the held list by its entries; the law\'s bounds written again and pinned equal; an older relay is said none; the Witches\' Festival is a live event of its own from world235 (mutants: the star\'s index unbounded; the light unbounded; a junk name hiding the held list\'s count; the relay floor off)', () => {
+test('STAR3 THE WIRE: a star word projected whole and bounded; each word a cell or the hub says, projected - a receipt by its shape, the held list by its entries; the law\'s bounds written again and pinned equal; an older relay is said none; the Starfall rides the festival\'s days, no live event of its own (mutants: the star\'s index unbounded; the light unbounded; a junk name hiding the held list\'s count; the relay floor off)', () => {
   assert.deepEqual(validStarIn({ ...word(), junk: 1 }), word(), 'projected: nothing the law does not read rides on');
   for (const bad of [{ n: 0 }, { n: 1.5 }, { k: STAR_PER_NIGHT }, { k: -1 }, { px: 1000 }, { py: 500 }, { lv: 0 }, { lv: STAR_LEVEL_MAX + 1 }, { s: 2 }, { o: -1 }, { mf: 2 }, { kn: STAR_KILLS_WIRE_MAX + 1 }, { wc: STAR_WAVES + 1 }, { hb: STAR_BLOWS_WIRE_MAX + 1 }]) {
     assert.equal(validStarIn(word(bad)), null, JSON.stringify(bad));
@@ -113,15 +115,12 @@ test('STAR3 THE WIRE: a star word projected whole and bounded; each word a cell 
   assert.equal(STAR_PHASE_MAX, STAR_PHASES.length - 1);
   assert.equal(STAR_RECEIPT_WIRE_MAX, STAR_RECEIPT_MAX);
   assert.equal(STAR_RECEIPT_V, 'j1');
-  // the relay that speaks it, and the live event
+  // the relay that speaks it - and no live event to stage: the stars fall on the festival's own days (net/festivalLaw.js)
   assert.equal(STAR_RELAY_MIN, 235);   // world233 on the branch, renumbered past SD-SEA's world233 and DEX1's world234 at the merge - neither keeps a star
   assert.equal(relaySupportsStar(`world${STAR_RELAY_MIN - 1}`), false);
   assert.equal(relaySupportsStar(`world${STAR_RELAY_MIN}`), true);
   assert.equal(relaySupportsStar(RELAY_VERSION), true, 'this build\'s relay keeps a star');
-  assert.equal(LIVE_EVENTS.at(-1), 'witchfest');
-  assert.equal(LIVE_EVENT_RELAY_MIN.witchfest, STAR_RELAY_MIN);
-  assert.equal(relayKnowsLiveEvent('world234', 'witchfest'), false, 'an older relay would close the socket on the word');
-  assert.equal(relayKnowsLiveEvent('world235', 'witchfest'), true);
+  assert.ok(!LIVE_EVENTS.includes('witchfest') && !Object.hasOwn(LIVE_EVENT_RELAY_MIN, 'witchfest'), 'no word of the hub\'s gates a star');
 });
 
 test('STAR3 THE STORED LEDGER: a ledger is what the law made, read back - its star, pixel, phase, accounts and receipts - and nothing else under a star\'s key is read as one (a word makes the star anew) or kept (the sweep forgets a value under a key not its own); the held word is the wire\'s; a night\'s held stars stand until its last star is gone (mutants: a phase past the law\'s read; a ledger without its receipts read; a value under another star\'s key kept; the night gone with its first star)', async () => {
@@ -163,7 +162,7 @@ test('STAR3 THE WORD: heard in the star\'s own cell alone (another cell\'s pixel
     step(1000); set(T.endAt + STAR_GRACE_MS); await say(a);
     assert.deepEqual(ledgers(r), [], 'nothing read, kept or said before its landing or past its grace');
     // a night outside the window
-    const early = Math.ceil(STARFALL_FROM_MS / STAR_HOUR_MS) - 3;
+    const early = Math.ceil(FESTIVAL_FROM_MS / STAR_HOUR_MS) - 3;
     set(starTimes(early, K).fallAt + 1000); await say(a, { n: early });
     assert.deepEqual(ledgers(r), [], 'a night before the window');
     assert.equal(r.room._meterOf(a).junk, 1, 'and nobody struck for them');

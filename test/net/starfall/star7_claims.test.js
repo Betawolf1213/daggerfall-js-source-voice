@@ -10,16 +10,18 @@ import { mintStarReceipt } from '../../../src/net/starfall/starReceipt.js';
 import { importReceiptKey } from '../../../src/net/gate/gateReceipt.js';
 import { createStarRewards } from '../../../src/scenes/starfall/starRewards.js';
 import { STAR_SPOILS_KEYS } from '../../../src/systems/starfall/starSpoils.js';
-import { starNightAt, STARFALL_FROM_MS } from '../../../src/net/starfall/starfallLaw.js';
+import { starNightAt } from '../../../src/net/starfall/starfallLaw.js';
 import { playerEntity } from '../../../src/characters/playerEntity.js';
 import { characterIdOf } from '../../../src/systems/characterId.js';
 import { setActSink } from '../../../src/systems/questlines/qlActs.js';
 import { profileStarLine } from '../../../src/ui/profileWindow.js';
 import { CLAIM_SOURCE, claimHauls } from '../../../src/ui/haulCards.js';
+import { FESTIVALS } from '../../../src/net/festivalLaw.js';
+const FESTIVAL_FROM_MS = FESTIVALS[0].fromMs;   // the Witches' Festival's first day, the Starfall's own (net/festivalLaw.js)
 
 const { subtle } = globalThis.crypto;
 const T0S = 1_800_000_000, A = 'acct-aaaa', B = 'acct-bbbb', CH = 'char-0001';
-const N = starNightAt(STARFALL_FROM_MS) + 30;
+const N = starNightAt(FESTIVAL_FROM_MS) + 30;
 let PRIV = null;
 async function receipt({ n = N, k = 1, s = A, c = 99, l = 12 } = {}, { signed = true, nowS = T0S } = {}) {
   if (!PRIV) {

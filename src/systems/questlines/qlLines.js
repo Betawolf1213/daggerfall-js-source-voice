@@ -34,8 +34,8 @@ import { REVENANT_MIN_RENOWN } from '../revenant/revenant.js';   // AUDIT QUESTL
  * @typedef {'lootRarity'|'kingsGambit'|'naval'|'renown'|'starfall'} LineNeed
  *   `lootRarity` Loot rarity on (a socket, a reforge); `kingsGambit` The King's Gambit on (its table); `naval` Naval
  *   Combat on (the sea's own deeds); `renown` the Renown a revenant comes at (revenant.js REVENANT_MIN_RENOWN, online);
- *   `starfall` (STAR8) the Starfall running - the Witches' Festival staged inside its window (net/starfall/starfallLaw.js
- *   starfallRuns), when stars fall to be held
+ *   `starfall` (STAR8) the Starfall running - the Witches' Festival's days (net/festivalLaw.js, through
+ *   net/starfall/starfallLaw.js starfallRuns), when stars fall to be held
  * @typedef {{ level?: number, after?: string, online?: boolean, account?: boolean, event?: LineNeed }} LineOpens
  *   `level` the character's level at least; `after` another line finished first; `online` only where the account
  *   service answers (every endgame line: its witnesses are the service's rows); `account` a registered account, never a

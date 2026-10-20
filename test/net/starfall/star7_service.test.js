@@ -7,11 +7,13 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { standService, T0 } from '../../accountDb.mjs';
 import { mintStarReceipt } from '../../../src/net/starfall/starReceipt.js';
-import { STARFALL_FROM_MS, STAR_HOUR_MS, starTimes } from '../../../src/net/starfall/starfallLaw.js';
+import { STAR_HOUR_MS, starTimes } from '../../../src/net/starfall/starfallLaw.js';
 import { MARKS_FAUCETS, MARKS_COMBAT } from '../../../src/net/marksLaw.js';
 import { STAR_CLAIMS_DAY_MAX, starKeyOf, starDayOf } from '../../../server-account/src/stars.js';
 import { progressSpentOf } from '../../../server-account/src/progress.js';
 import { renownRaidXp } from '../../../src/net/renown.js';
+import { FESTIVALS } from '../../../src/net/festivalLaw.js';
+const FESTIVAL_FROM_MS = FESTIVALS[0].fromMs;   // the Witches' Festival's first day, the Starfall's own (net/festivalLaw.js)
 
 const { subtle } = globalThis.crypto;
 const src = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
@@ -22,7 +24,7 @@ test.after(() => { Date.now = realNow; });
 clock(T0);
 
 /** A night inside the window, and the stars of the four nights from it - one UTC day's (05:00 to 08:00). */
-const N = Math.ceil(STARFALL_FROM_MS / STAR_HOUR_MS) + 5;
+const N = Math.ceil(FESTIVAL_FROM_MS / STAR_HOUR_MS) + 5;
 const STARS = Array.from({ length: 12 }, (_, i) => [N + Math.floor(i / 3), i % 3]);
 const CH = 'char-0001';
 const CID = '0123456789abcdef', CID2 = 'fedcba9876543210';

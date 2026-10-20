@@ -16,23 +16,19 @@
 // foes are the owner's machine's (the camp law), so the owner's word moves the waves, the light and the master's fall;
 // the law bounds each (section 10).
 //
-// PURE, and the relay's too: it imports the wire's and the gate's law alone (both already the relay's). An edit here is an
+// PURE, and the relay's too: it imports the wire's and the gate's law (both already the relay's) and the festival's
+// calendar (net/festivalLaw.js, a leaf but for the holiday tables). An edit here is an
 // edit to the relay's law (test/net/relayversion.test.js). Not a DFU member. Ledger A (STARFALL).
 import { PIXEL_UNITS } from '../wire.js';
 import { gateHash, PIXEL_M, GATE_SPOT_SPREAD_M } from '../gate/gateLaw.js';
+import { festivalOpen } from '../festivalLaw.js';   // the festival's one calendar (a leaf beside the holiday tables)
 
-// ═══ THE WINDOW AND THE EVENT ════════════════════════════════════════════════════════════════════════════════════════
-/** The Starfall's dated window (relay ms, UTC) - the relay checks it, never the staging (a cell cannot read the hub's
- *  stored event, section 10). The Halloween event's own dates at the merge (section 12). */
-export const STARFALL_FROM_MS = Date.UTC(2026, 9, 20);
-export const STARFALL_TO_MS = Date.UTC(2026, 10, 8);
-/** THE MERGE SEAM (section 12): the live-event words (net/wire.js LIVE_EVENTS) under which stars fall and the questline
- *  opens. `witchfest` is the Starfall's own, so it can be staged before the Halloween event's word joins this list. */
-export const STARFALL_EVENT_KINDS = Object.freeze(['witchfest']);
-/** Whether the Starfall runs at `nowMs` under the live event the hub says (`{kind, at}` or null) - the client's whole
- *  test; the relay reads the window alone (starfallWindowHolds). */
-export const starfallWindowHolds = (nowMs) => Number.isFinite(nowMs) && nowMs >= STARFALL_FROM_MS && nowMs < STARFALL_TO_MS;
-export const starfallRuns = (nowMs, ev) => starfallWindowHolds(nowMs) && !!ev && STARFALL_EVENT_KINDS.includes(ev.kind);
+// ═══ THE WINDOW ══════════════════════════════════════════════════════════════════════════════════════════════════════
+/** THE WITCHES' FESTIVAL'S DAYS - the Starfall is the festival's (bible/06-Systems/Witches-Festival.md), so it runs while
+ *  the festival is open on its one calendar (net/festivalLaw.js FESTIVALS, a row a year), read off the clock alike by the
+ *  relay, every client and the questline's need - a cell reads no hub, and no word has to be staged for the stars to
+ *  fall (section 12). */
+export const starfallRuns = (/** @type {number} */ nowMs) => festivalOpen(nowMs);
 
 // ═══ THE NIGHT AND ITS STARS ═════════════════════════════════════════════════════════════════════════════════════════
 /** A sky day, real ms: TimeScale 24 (net/skyLaw.js SKY_SEGMENTS - the test reads the sky itself). */
@@ -69,7 +65,7 @@ export function starTimes(n, k) {
   return { omenAt: fallAt - STAR_OMEN_MS, streakAt: fallAt - STAR_STREAK_MS, fallAt, endAt: fallAt + STAR_LIFE_MS, goneAt: fallAt + STAR_LIFE_MS + STAR_AFTER_MS };
 }
 /** Whether a star of night `n` falls inside the window: its landing is the window's. */
-export const starInWindow = (n, k) => starOk(n, k) && starfallWindowHolds(starTimes(n, k).fallAt);
+export const starInWindow = (n, k) => starOk(n, k) && starfallRuns(starTimes(n, k).fallAt);
 /** Whether a word about star (n, k) is heard at `nowMs`: from its landing to its deadline and the grace - inside the
  *  window. Before it lands there is nothing to defend; after its deadline nothing to move. */
 export function starHeard(n, k, nowMs) {

@@ -45,15 +45,6 @@
   ]
  },
  {
-  "name": "STAR3-the-live-event-floor-off",
-  "file": "src/net/wire.js",
-  "old": "sunbaby: 163, witchfest: 235 }",
-  "new": "sunbaby: 163, witchfest: 234 }",
-  "tests": [
-   "test/net/starfall/star3_relay.test.js"
-  ]
- },
- {
   "name": "STAR3-the-cell-unchecked",
   "file": "server/src/index.js",
   "old": "if (worldRoom(m.px, m.py) !== a.key) { this._junk(ws); return; }\n    // NO STAR IN A LAYER",

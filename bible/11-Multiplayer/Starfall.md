@@ -22,8 +22,8 @@ So, as decided here:
 - **Online only.** Like the gate, the serpent and the raids, the Starfall is a fact about the shared world: the relay
   keeps each star's ledger, signs each defender's receipt, and the account service pays it. Offline there is no
   Starfall.
-- **The event's own.** It runs while the Halloween live event is staged (section 12 - the merge seam), inside a dated
-  window the relay can check (`STARFALL_FROM_MS`, `STARFALL_TO_MS`).
+- **The event's own.** It runs on the Witches' Festival's own days (section 12 - `06-Systems/Witches-Festival.md`,
+  `net/festivalLaw.js` `FESTIVALS`), the calendar the relay, every client and the questline read alike.
 - **Three stars a night, in one coven's land.** Every real hour is a night on the sky (TimeScale 24, `Online-Time-Arc.md`),
   and each night one of the Bay's covens works the rite: three stars fall in the wilds of its region, one after another,
   near three different towns.
@@ -88,9 +88,10 @@ Starglass.
 
 ## 1. When - the festival's window, the night, the stars
 
-**The window.** The Starfall runs while the live event is staged (section 12) and inside `STARFALL_FROM_MS` to
-`STARFALL_TO_MS` (2026-10-20 to 2026-11-08, UTC). The relay checks the window, never the staging (a cell cannot read
-the hub's stored event - section 10).
+**The window.** The Starfall runs on the Witches' Festival's days - 20 October to the end of 7 November 2026, UTC
+(`net/festivalLaw.js` `FESTIVALS`, a row a year; `net/starfall/starfallLaw.js` `starfallRuns` asks `festivalOpen`). The
+relay, every client and the questline read the same calendar off the clock; nothing is staged, and a cell needs no word
+from the hub (section 10). A star counts only if it LANDS inside the festival (`starInWindow`).
 
 **The night.** The sky turns once a real hour, its midnight on the hour (`net/skyLaw.js` SKY_SEGMENTS: TimeScale 24
 since 2026-10-03, aligned). Night N is the sky's night whose midnight falls at `N * STAR_HOUR_MS`: from the sky's 18:00
@@ -318,7 +319,7 @@ and a quarter of the time a piece of **the Starspun Weave** - the Starfall's own
 `starspun`, its powers through SET2's seams, `11-Multiplayer/Sigil-Sets.md` 6f). The Heart-Star doubles the gold and
 the Starglass, and always gives a Starspun piece.
 
-**As built (STAR7).** The service (`server-account/src/stars.js`, migration 0140, acct165) counts a (night, star,
+**As built (STAR7).** The service (`server-account/src/stars.js`, migration 0141, acct165) counts a (night, star,
 account) once in `stars_held`, at most 9 on the UTC day the star FELL (a receipt claimed a day late counts on its own
 day), pays the Renown on the raid's measure charged to its hour, and strikes 30 silver (`net/marksLaw.js` MARKS `star`,
 `MARKS_COMBAT`'s kinds) under the day's combat cap; a guest's claim writes the spoils row alone (`star_spoils`, keyed by
@@ -355,11 +356,10 @@ of the Bluff are #423, the Order of Arkay #82.
 **THE SEASON.** `opens.event` names a step need; the line opens only while it holds
 (`systems/questlines/qlLines.js:"export const eventHolds = (l, probe) =>"`), and the window's rows leave out a line not
 begun while it does not (`systems/questlines/qlLineRunner.js:"return QL_LINES.filter((l) => lines[l.id] ||"`). The need
-`starfall` is the dated window and the hub's word together
-(`systems/questlines/qlLineRunner.js:"starfall: (/** @type {number} */ nowMs) => starfallRuns(nowMs, liveEventNow()),"`).
-The hub's word is kept in a leaf, `net/liveEventNow.js`, written where the hub socket takes it
-(`net/online.js:"setLiveEventNow(ev, this);"`), so the runner reads it with no socket of its own; only the socket that
-said the word unsays it, and a cell's socket closing leaves the hub's word standing.
+`starfall` is the festival's calendar at the runner's clock
+(`systems/questlines/qlLineRunner.js:"starfall: (/** @type {number} */ nowMs) => starfallRuns(nowMs),"`) - the same answer
+the Starfall's host and the relay give. (As first built the need also waited on a staged live event, kept for the runner
+in a leaf of its own; the festival's calendar made both unneeded when its pull request was folded in, and they are gone.)
 
 **THE COVENS ARE OPEN AIR - the departure.** In ARENA2 both covens are location type 13 (Glenmoril Coven, locationId
 0xc358, region 60; the Coven on the Bluff, 0xc360, the Daggerfall region): one RMB block, no building, no dungeon, so no
@@ -459,8 +459,8 @@ burning, the dark.
 | `{t:'star', k:'hds', l: [...]}` | hub -> a hello | the night's held stars |
 
 `STAR_RELAY_MIN` names the first relay that speaks it (`relaySupportsStar`), and an older relay is never sent a word.
-`STAR_HZ_MAX` bounds a socket's words (the rite's bucket, deeper than the client's burst). `LIVE_EVENTS` gains
-`witchfest` (section 12) with its own `LIVE_EVENT_RELAY_MIN`.
+`STAR_HZ_MAX` bounds a socket's words (the rite's bucket, deeper than the client's burst). No live event gates it: the
+stars keep the festival's own days (section 12).
 
 ## 10. Trust and its bounds
 
@@ -497,21 +497,33 @@ are made by the host on the same adapter; `bootWorld` keeps three hooks for them
 realm save's two), and the spoils' one lock moved out of it to `scenes/spoilsPool.js` (`spoilsLock`). `bootWorld` stood at
 36,170 of its 36,183 on the branch, and at 36,174 of 36,187 with main merged (2026-10-20).
 
-## 12. The merge seam with the Halloween event
+## 12. The festival it belongs to (WITCH1)
 
-The Halloween live event is another session's, not yet pushed when this was written. These add-ons hang off it at ONE
-place: `STARFALL_EVENT_KINDS` (`net/starfall/starfallLaw.js`) - the live-event words under which stars fall and the
-questline opens. It holds `witchfest`, a live event of its own (`/event witchfest`) so the Starfall can be staged and
-tested before the merge. When the Halloween pull request is taken over, its word joins the list (or replaces
-`witchfest`, which no build has shipped), and the window's two dates are set to its own.
+The Halloween live event is the Witches' Festival (`06-Systems/Witches-Festival.md`, WITCH1), built beside this in
+another session and folded into this pull request (2026-10-20), so the event and its add-ons ship as one release. Where
+they meet:
+
+- **The days.** The Starfall keeps the festival's own calendar (`net/festivalLaw.js` `FESTIVALS`, `festivalOpen`) - the
+  relay, the host and the questline's need read it; the first build's staged `witchfest` live event, its own two dates
+  and the leaf that carried the hub's word to the questline were taken out with the merge (no build shipped them).
+- **The Soul Cakes.** A held star is the act `star-held`, of the endgame family (`systems/questlines/qlActs.js` - each a
+  receipt the service holds), so the festival's finds hear it as they hear a breach closed: the service's die, the
+  endgame's four cakes, twice on the nights the dead walk (`FIND_SOURCES.endgame`, `deadWalk`). One deed, one find.
+- **The night.** The Heart-Star falls on the sky's 13th of Frostfall - the festival's own day in Daggerfall, and one of
+  the two nights its finds give twice (`FESTIVAL_NIGHTS`).
+- **The Glenmoril Wyrd.** The questline's giver, Morwen, is a witch of the Glenmoril Wyrd, the coven whose sisters stand
+  at the taverns' doors with the festival's wares; the Starfall's covens are the rite's, never Glenmoril (section 2).
+- **One release.** One relay version (world235), one account version (acct165); the festival keeps migration 0140 and
+  the stars' is 0141. The titles: the questlines' six together (the Starwarden after the five), then the festival's two.
+  The Aetheric sets: the Wyrd's Raiment, then the Starspun Weave.
 
 ## 13. Versions and deploy order
 
 Relay first (it signs), then the account service (its migration first), then the client. The relay's version moves for
-the frame, the live-event word, the receipt and the hub's door - world235 (world233 on the branch, renumbered past
-SD-SEA's world233 and DEX1's world234 at the merge with main; `STAR_RELAY_MIN` and the `witchfest` floor with it, so
-neither of those relays is ever sent a star's word); the account service's moves to acct165 for the claim and the
-questline's witness. The item law's version does not move: Starglass and the Starspun Weave are new records, never
+the frame, the receipt and the hub's door - world235 (world233 on the branch, renumbered past SD-SEA's world233 and
+DEX1's world234 at the merge with main, `STAR_RELAY_MIN` with it, so neither of those relays is ever sent a star's word;
+then one release with WITCH1's world235); the account service's moves to acct165 for the claim and the questline's
+witness (one release with WITCH1's acct165; the stars' migration 0141, after the festival's 0140). The item law's version does not move: Starglass and the Starspun Weave are new records, never
 minted before this, so no finding a law made could be a finding to ask again (its leaf is read beside the registry from the first).
 
 ## 14. The slices
@@ -526,7 +538,7 @@ minted before this, so no finding a law made could be a finding to ask again (it
 | STAR5 | the defense on the client: the camp, the waves, the ward, the master, the circle, the words to the cell |
 | STAR6 | what a player sees: the tracker, the bar, the map, the compass, the timers, the words |
 | STAR7 | the rewards: the claim, the service, the spoils, Starglass, the Starspun Weave |
-| STAR8 | the questline: The Thirteenth of Frostfall - four scripts and sheets, the `festival` group, `opens.event`, the `starfall` need over the hub's word (`net/liveEventNow.js`), the `star-held` act, the `star`/`stars3` witnesses, Starwarden; `ql name` names a foe (`star8_frostfall`, `ql12_claim`) |
+| STAR8 | the questline: The Thirteenth of Frostfall - four scripts and sheets, the `festival` group, `opens.event`, the `starfall` need on the festival's calendar, the `star-held` act, the `star`/`stars3` witnesses, Starwarden; `ql name` names a foe (`star8_frostfall`, `ql12_claim`) |
 
 ## 15. Not done, and why
 

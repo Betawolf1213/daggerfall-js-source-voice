@@ -149,6 +149,15 @@ a door on its box's middle line once faced into its building, one in seven). The
 (`scenes/pixelBuild.js`): they batch, stand solid, light the street at night (a fire is a hearth) and keep through a
 season's re-skin.
 
+## The Starfall and The Thirteenth of Frostfall
+
+The festival's world event and its questline (`11-Multiplayer/Starfall.md`, STAR0-STAR8), folded into this release:
+each real hour one of the Bay's covens pulls three stars down into its region's wilds, and the players at one hold it
+against four waves and their master. The stars fall on THESE days - `net/starfall/starfallLaw.js` `starfallRuns` is
+`festivalOpen` - and a held star is the act `star-held` (the endgame family), so it is a find like a breach closed: the
+endgame's four cakes, twice on the nights the dead walk. The Heart-Star falls on the sky's 13th of Frostfall, the
+festival's own day. The questline's giver, Morwen, is of the Glenmoril Wyrd, the Wyrd Sisters' own coven.
+
 ## The four hosts
 
 `scenes/world.js` WIRED (`createWitchesHost`: its frame, the offerings' targets and names; the Soul Harvest's sound);

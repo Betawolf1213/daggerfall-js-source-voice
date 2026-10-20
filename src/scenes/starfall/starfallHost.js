@@ -3,8 +3,8 @@
 // defend the objective in a wave based format with a boss topping off the encounter at the end", and "multiple encounters
 // spread throughout the region, not just one"): THE STARFALL IN THE WORLD. Design: bible/11-Multiplayer/Starfall.md.
 //
-// WHILE THE WITCHES' FESTIVAL RUNS (net/starfall/starfallLaw.js starfallRuns - the hub's live event, inside the dated
-// window) a coven's rite pulls three stars a night down into its region's wilds (systems/starfall/starfallSites.js -
+// WHILE THE WITCHES' FESTIVAL RUNS (net/starfall/starfallLaw.js starfallRuns - the festival's own calendar, net/festivalLaw.js)
+// a coven's rite pulls three stars a night down into its region's wilds (systems/starfall/starfallSites.js -
 // found over this client's own map files, every client the same). Each star lives on the clock alone: its omen burns over
 // the region, it tears loose and falls (render/starfall/starfallPass.js), lands with a flash, a ring of shock and the
 // storms' own thunder at its distance, and stands in its crater (world/starfall/starModel.js) with its beacon over it
@@ -149,7 +149,7 @@ export function createStarfallHost(host) {
   /** starHeldKey -> the hub's word of a hold: `{ top, c, at }` */
   const held = new Map();
   const blows = blowStore(storage);
-  let liveEvent = null, pass = null, passTried = false, artUp = false, frameN = 0, barUp = false, trackerUp = false;
+  let pass = null, passTried = false, artUp = false, frameN = 0, barUp = false, trackerUp = false;
   const thunders = [];   // [{ due, clip, volume, x, z }]
   const glow = { x: 0, y: 0, z: 0, range: STAR_GLOW_RANGE }, glowList = Object.freeze([glow]);
   const flashLight = { x: 0, y: 0, z: 0, range: STAR_FLASH_LIGHT_M, color: STAR_FALL_COLOR };
@@ -497,7 +497,7 @@ export function createStarfallHost(host) {
     step() {
       frameN++;
       const t = now();
-      if (!starfallRuns(t, liveEvent)) { this.destroyAll(); return null; }
+      if (!starfallRuns(t)) { this.destroyAll(); return null; }
       const f = feet();
       const seen = new Set();
       for (const site of nightSites(t)) {
@@ -551,8 +551,6 @@ export function createStarfallHost(host) {
       }
       return best;
     },
-    /** THE LIVE EVENT the hub says (net/online.js onEvent) - the Starfall runs under its word (STARFALL_EVENT_KINDS). */
-    setEvent(ev) { liveEvent = ev ?? null; },
     /**
      * A STAR WORD (net/wire.js validStarOut): a cell's ledger (`st`), a hold (`hd`, the cell's or the hub's), the night's
      * held stars at a hello (`hds`), my receipt (`rc`).
@@ -628,7 +626,7 @@ export function createStarfallHost(host) {
       return sky;
     },
     /** The map's cards for the night's stars (ui/eventMapMarks.js's shape). */
-    mapMarks() { return starfallRuns(now(), liveEvent) ? starMapMarks(nightSites(now()), now(), { held, led: ledgers, localTime }) : NONE; },
+    mapMarks() { return starfallRuns(now()) ? starMapMarks(nightSites(now()), now(), { held, led: ledgers, localTime }) : NONE; },
     /** The compass's mark: the nearest star of the night in this player's region, from its omen until it is gone - the
      *  scene's [x, z] - or null. */
     compassMark() {
@@ -646,7 +644,7 @@ export function createStarfallHost(host) {
      *  next night's first once this night's last is down. */
     timerRows() {
       const t = now();
-      if (!starfallRuns(t, liveEvent)) return NONE;
+      if (!starfallRuns(t)) return NONE;
       const decided = (key) => held.has(key) || ledgers.get(key)?.p === P_HELD || ledgers.get(key)?.p === P_LOST;
       return starTimerRows([...nightSites(t), ...sitesOf(starNightAt(t) + 1)], t, decided);
     },

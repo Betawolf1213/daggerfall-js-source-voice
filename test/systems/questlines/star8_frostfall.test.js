@@ -1,8 +1,8 @@
 // STAR8 (bible/11-Multiplayer/Starfall.md section 7): THE THIRTEENTH OF FROSTFALL - the Starfall's questline. Its shape
 // and its law on both ends (the first star and three more witnessed, the Starwarden on the three); its season - the line
-// begins only while the Witches' Festival is staged (the hub's live event, net/liveEventNow.js, inside the Starfall's
-// window) and the window draws none not begun outside it (UI-Calm's law), while a begun line's star steps wait for the
-// next Festival and the rest go on; the hub's word kept by the socket that said it; a quest's foe named and stood as a
+// begins only on the Witches' Festival's days (net/festivalLaw.js, the Starfall's own calendar) and the window draws none
+// not begun outside them (UI-Calm's law), while a begun line's star steps wait for the next Festival and the rest go on;
+// a quest's foe named and stood as a
 // woman (`ql name _foe_ <Name> female`); the three stars' step run through the real bridge to its outcome.
 // tools/mutants/star8.json.
 import '../../modsOff.js';
@@ -13,8 +13,7 @@ import { QL_LINES, lineById, lineOpens, opensWords } from '../../../src/systems/
 import { createLineRunner, NEED_CHECKS, STEP_GAP_S } from '../../../src/systems/questlines/qlLineRunner.js';
 import { QL_SERVICE_LINES, QL_WITNESS_KINDS, qlStepClaimed, QL_TITLES, qlTitleBit } from '../../../src/net/questlineClaims.js';
 import { ACT_KINDS } from '../../../src/systems/questlines/qlActs.js';
-import { liveEventNow, setLiveEventNow } from '../../../src/net/liveEventNow.js';
-import { STARFALL_FROM_MS, STARFALL_TO_MS, STARFALL_EVENT_KINDS } from '../../../src/net/starfall/starfallLaw.js';
+import { FESTIVALS } from '../../../src/net/festivalLaw.js';
 import { TITLES } from '../../../src/net/identityToken.js';
 import { TITLE_TEXT } from '../../../src/ui/playerBadge.js';
 import { sheetFor } from '../../../src/systems/questlines/qlSheets.js';
@@ -25,8 +24,9 @@ import { GENDERS } from '../../../src/characters/nameHelper.js';
 import { packMachine, QUEST_FILES } from '../../qlSources.mjs';
 import { HAS_ARENA2, loadMaps } from '../../arena1Data.mjs';
 
-const IN = STARFALL_FROM_MS + 86_400_000;   // a day into the Festival's window
-const FESTIVAL = Object.freeze({ kind: STARFALL_EVENT_KINDS[0], at: STARFALL_FROM_MS });
+const { fromMs: FROM_MS, toMs: TO_MS } = FESTIVALS[0];   // the Witches' Festival's days, the Starfall's
+const IN = FROM_MS + 86_400_000;   // a day into the Festival
+const OUT = TO_MS + 86_400_000;   // a day after it
 const LINE = lineById('thirteenthFrostfall');
 const read = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
 
@@ -74,45 +74,39 @@ test('STAR8 THE WITNESSES on the service: a star held - a row of stars_held insi
   assert.match(sql, /stars3: `\(SELECT s\.at FROM stars_held s WHERE s\.account = \?1 AND \$\{WINDOW\('s'\)\} ORDER BY s\.at, s\.star LIMIT 1 OFFSET 2\)`,/);
 });
 
-test('STAR8 THE SEASON: the line begins only while the Festival is staged inside the Starfall\'s window - the hub\'s word and the clock both; out of season the window draws it not at all, in season locked with what it waits on, and it begins (mutants: the opener unread; the window\'s law; the event\'s word)', () => {
-  setLiveEventNow(null);
-  const probe = (o = {}) => ({ level: () => 10, online: () => true, registered: () => true, lineDone: () => false, need: (n) => !!NEED_CHECKS[n]?.(IN), ...o });
-  assert.equal(lineOpens(LINE, probe()), false, 'no Festival staged');
-  assert.equal(lineOpens({ ...LINE, steps: [{ quest: 'QLTF02', title: () => 'x' }] }, probe()), false, 'the opener its own, whatever the first step needs');
-  assert.equal(opensWords(LINE, probe()), 'Opens during the Witches’ Festival.', 'said once, though the first step needs it too');
-  const out = runnerAt();
+test('STAR8 THE SEASON: the line begins only on the Festival\'s days - the festival\'s own calendar, read off the runner\'s clock; out of season the window draws it not at all, in season locked with what it waits on, and it begins (mutants: the opener unread; the calendar unread)', () => {
+  const probe = (ms, o = {}) => ({ level: () => 10, online: () => true, registered: () => true, lineDone: () => false, need: (n) => !!NEED_CHECKS[n]?.(ms), ...o });
+  assert.equal(lineOpens(LINE, probe(OUT)), false, 'the Festival over');
+  assert.equal(lineOpens({ ...LINE, steps: [{ quest: 'QLTF02', title: () => 'x' }] }, probe(OUT)), false, 'the opener its own, whatever the first step needs');
+  assert.equal(opensWords(LINE, probe(OUT)), 'Opens during the Witches’ Festival.', 'said once, though the first step needs it too');
+  const out = runnerAt({ ms: OUT });
   out.settle();
   assert.equal(out.runner.lineState(LINE.id), null, 'not begun');
   assert.equal(row(out.runner), null, 'UI-Calm: nothing drawn that cannot be taken');
-  setLiveEventNow(FESTIVAL, 'hub');
-  try {
-    assert.equal(lineOpens(LINE, probe()), true);
-    assert.equal(lineOpens(LINE, probe({ level: () => 5 })), false, 'level 6');
-    assert.equal(opensWords(LINE, probe({ level: () => 5 })), 'Opens at level 6.');
-    assert.equal(NEED_CHECKS.starfall(STARFALL_FROM_MS - 1), false, 'before its window');
-    assert.equal(NEED_CHECKS.starfall(STARFALL_TO_MS), false, 'after it');
-    assert.equal(NEED_CHECKS.starfall(IN), true);
-    const low = runnerAt({ level: 5 });
-    low.step();
-    assert.deepEqual([row(low.runner).state, row(low.runner).opens], ['locked', 'Opens at level 6.'], 'in season: drawn, and what it waits on said');
-    const r = runnerAt();
-    r.settle();
-    assert.ok(r.machine.scheduled.includes('QLTF01'), 'it begins');
-    // out of the window with the word still standing: nothing begins
-    const late = runnerAt({ ms: STARFALL_TO_MS + 1 });
-    late.settle();
-    assert.equal(late.runner.lineState(LINE.id), null);
-    assert.equal(row(late.runner), null);
-  } finally { setLiveEventNow(null, 'hub'); }
+  assert.equal(lineOpens(LINE, probe(IN)), true);
+  assert.equal(lineOpens(LINE, probe(IN, { level: () => 5 })), false, 'level 6');
+  assert.equal(opensWords(LINE, probe(IN, { level: () => 5 })), 'Opens at level 6.');
+  assert.equal(NEED_CHECKS.starfall(FROM_MS - 1), false, 'before the Festival');
+  assert.equal(NEED_CHECKS.starfall(FROM_MS), true, 'its first instant');
+  assert.equal(NEED_CHECKS.starfall(TO_MS), false, 'after it');
+  assert.equal(NEED_CHECKS.starfall(IN), true);
+  const low = runnerAt({ level: 5 });
+  low.step();
+  assert.deepEqual([row(low.runner).state, row(low.runner).opens], ['locked', 'Opens at level 6.'], 'in season: drawn, and what it waits on said');
+  const r = runnerAt();
+  r.settle();
+  assert.ok(r.machine.scheduled.includes('QLTF01'), 'it begins');
+  const early = runnerAt({ ms: FROM_MS - 1 });
+  early.settle();
+  assert.equal(early.runner.lineState(LINE.id), null, 'before the Festival opens, nothing begins');
+  assert.equal(row(early.runner), null);
 });
 
 test('STAR8 A BEGUN LINE OUT OF SEASON: drawn, its star step waiting for the next Festival and saying so; the spindle\'s steps go on without it (mutants: a star step begun out of season; the words)', () => {
-  setLiveEventNow(FESTIVAL, 'hub');
   const r = runnerAt();
-  try {
-    r.settle();
-    r.runner.ended(r.machine.end('QLTF01'), { id: 'met', failure: false });
-  } finally { setLiveEventNow(null, 'hub'); }
+  r.settle();
+  r.runner.ended(r.machine.end('QLTF01'), { id: 'met', failure: false });
+  r.clock.ms = OUT;   // the Festival over
   r.clock.s += STEP_GAP_S;
   r.step();
   assert.ok(r.machine.scheduled.includes('QLTF02'), 'the Bluff is no star: it begins out of season');
@@ -122,23 +116,9 @@ test('STAR8 A BEGUN LINE OUT OF SEASON: drawn, its star step waiting for the nex
   assert.ok(!r.machine.scheduled.includes('QLTF03'), 'three stars wait for stars');
   const w = row(r.runner);
   assert.deepEqual([w.state, w.opens], ['waiting', 'Opens during the Witches’ Festival.']);
-  setLiveEventNow(FESTIVAL, 'hub');
-  try { r.step(); } finally { setLiveEventNow(null, 'hub'); }
+  r.clock.ms = IN;   // the next Festival
+  r.step();
   assert.ok(r.machine.scheduled.includes('QLTF03'), 'the next Festival: it begins');
-});
-
-test('STAR8 THE HUB\'S WORD: kept as said, frozen; cleared by the socket that said it and by no other - a hub socket made anew says the event before the old one\'s leave is heard (mutants: any socket clears it)', () => {
-  setLiveEventNow({ kind: 'witchfest', at: 5, extra: 1 }, 'a');
-  assert.deepEqual(liveEventNow(), { kind: 'witchfest', at: 5 });
-  assert.ok(Object.isFrozen(liveEventNow()));
-  setLiveEventNow({ kind: 'witchfest', at: 6 }, 'b');
-  setLiveEventNow(null, 'a');
-  assert.deepEqual(liveEventNow(), { kind: 'witchfest', at: 6 }, 'the old socket\'s leave is no word');
-  setLiveEventNow(null, 'b');
-  assert.equal(liveEventNow(), null);
-  setLiveEventNow({ kind: 7 }, 'c');
-  assert.equal(liveEventNow(), null, 'no kind, no event');
-  assert.match(read('src/net/online.js'), /this\.liveEvent = ev;\n\s+setLiveEventNow\(ev, this\);/, 'the hub socket\'s one door writes it');
 });
 
 test('STAR8 `ql name` NAMES A FOE: every one of it wears the name and a class foe stands as the gender named - the Coven on the Bluff\'s Spinner and her sisters are women; the name and the gender ride a save; a monster takes a name and no gender, with a warning (mutants: the gender unread; the foe unnamed; the class guard)', () => {

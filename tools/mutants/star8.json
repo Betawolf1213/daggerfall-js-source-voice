@@ -72,19 +72,10 @@
   ]
  },
  {
-  "name": "STAR8-the-window-ignored",
+  "name": "STAR8-the-calendar-ignored",
   "file": "src/systems/questlines/qlLineRunner.js",
-  "old": "  starfall: (/** @type {number} */ nowMs) => starfallRuns(nowMs, liveEventNow()),",
-  "new": "  starfall: () => !!liveEventNow(),",
-  "tests": [
-   "test/systems/questlines/star8_frostfall.test.js"
-  ]
- },
- {
-  "name": "STAR8-the-word-ignored",
-  "file": "src/systems/questlines/qlLineRunner.js",
-  "old": "  starfall: (/** @type {number} */ nowMs) => starfallRuns(nowMs, liveEventNow()),",
-  "new": "  starfall: (/** @type {number} */ nowMs) => starfallRuns(nowMs, { kind: 'witchfest', at: 0 }),",
+  "old": "  starfall: (/** @type {number} */ nowMs) => starfallRuns(nowMs),",
+  "new": "  starfall: () => true,",
   "tests": [
    "test/systems/questlines/star8_frostfall.test.js"
   ]
@@ -94,24 +85,6 @@
   "file": "src/systems/questlines/qlLineRunner.js",
   "old": "      return QL_LINES.filter((l) => lines[l.id] || ((!l.opens.online || online()) && eventHolds(l, probe))).map((l) => {",
   "new": "      return QL_LINES.filter((l) => lines[l.id] || !l.opens.online || online()).map((l) => {",
-  "tests": [
-   "test/systems/questlines/star8_frostfall.test.js"
-  ]
- },
- {
-  "name": "STAR8-any-socket-clears",
-  "file": "src/net/liveEventNow.js",
-  "old": "  if (!next && _by !== null && by !== _by) return;\n",
-  "new": "",
-  "tests": [
-   "test/systems/questlines/star8_frostfall.test.js"
-  ]
- },
- {
-  "name": "STAR8-the-word-unkept",
-  "file": "src/net/online.js",
-  "old": "    setLiveEventNow(ev, this);   // STAR8",
-  "new": "    // STAR8",
   "tests": [
    "test/systems/questlines/star8_frostfall.test.js"
   ]

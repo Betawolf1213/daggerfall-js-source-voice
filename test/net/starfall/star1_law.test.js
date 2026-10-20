@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
 import {
-  STARFALL_FROM_MS, STARFALL_TO_MS, STARFALL_EVENT_KINDS, starfallRuns, starfallWindowHolds,
+  starfallRuns,
   STAR_HOUR_MS, STAR_FALLS_MS, STAR_PER_NIGHT, STAR_OMEN_MS, STAR_STREAK_MS, STAR_LIFE_MS, STAR_GRACE_MS, STAR_AFTER_MS,
   starNightAt, starOk, starTimes, starInWindow, starHeard, starSpotLocal, starNativeOf, starNear, STAR_REACH_M, STAR_UNITS_PER_M,
   STAR_WAVES, STAR_GATHER_MS, STAR_WAVE_MAX_MS, STAR_KILL_MIN_MS, STAR_BREATH_MS, STAR_MASTER_MIN_MS, starWaveSize, starCircleSize,
@@ -16,12 +16,14 @@ import {
 } from '../../../src/net/starfall/starfallLaw.js';
 import { mintStarReceipt, readStarReceipt, verifyStarReceipt, starReceiptValid, STAR_RECEIPT_TTL_S } from '../../../src/net/starfall/starReceipt.js';
 import { skyClassicMinutes } from '../../../src/net/skyLaw.js';
-import { PIXEL_UNITS } from '../../../src/net/wire.js';
+import { PIXEL_UNITS, LIVE_EVENTS } from '../../../src/net/wire.js';
+import { FESTIVALS, festivalOpen } from '../../../src/net/festivalLaw.js';
 import { PIXEL_M, GATE_SPOT_SPREAD_M } from '../../../src/net/gate/gateLaw.js';
 
 const SKY_HOUR = (ms) => (Math.floor(skyClassicMinutes(ms)) % 1440) / 60;
-/** A night inside the window. */
-const N0 = Math.ceil(STARFALL_FROM_MS / STAR_HOUR_MS) + 3;
+/** The Witches' Festival's days (net/festivalLaw.js FESTIVALS - the Starfall's own), and a night inside them. */
+const { fromMs: FROM_MS, toMs: TO_MS } = FESTIVALS[0];
+const N0 = Math.ceil(FROM_MS / STAR_HOUR_MS) + 3;
 const word = (o = {}) => ({ lv: 10, s: 0, o: 0, kn: 0, wc: 0, hb: 0, mf: 0, ...o });
 
 test('STAR1 THE NIGHT: three stars a night, the sky\'s 18:00, 21:00 and midnight, each standing fifteen minutes - the last to dawn (mutants: a fall moved; the life lengthened; the omen shortened)', () => {
@@ -56,17 +58,16 @@ test('STAR1 THE NIGHT AN INSTANT STANDS IN: from the first omen to the last dead
   assert.ok(starTimes(N0 + 1, 0).omenAt > t2.endAt, 'two nights never overlap');
 });
 
-test('STAR1 THE WINDOW: stars fall from the window\'s first instant to its last, and the client runs them only under the event\'s word (mutants: the window\'s end kept open; the kinds read as anything)', () => {
-  assert.equal(STARFALL_FROM_MS, Date.UTC(2026, 9, 20));
-  assert.equal(STARFALL_TO_MS, Date.UTC(2026, 10, 8));
-  assert.deepEqual(STARFALL_EVENT_KINDS, ['witchfest']);
-  assert.ok(starfallWindowHolds(STARFALL_FROM_MS) && !starfallWindowHolds(STARFALL_FROM_MS - 1));
-  assert.ok(starfallWindowHolds(STARFALL_TO_MS - 1) && !starfallWindowHolds(STARFALL_TO_MS));
+test('STAR1 THE WINDOW: stars fall on the Witches\' Festival\'s own days - its first instant to its last, read off the festival\'s one calendar by the relay and every client alike, staged by nobody (mutants: the festival\'s calendar unread; a star outside it)', () => {
+  assert.deepEqual([FROM_MS, TO_MS], [Date.UTC(2026, 9, 20), Date.UTC(2026, 10, 8)], 'the festival\'s 2026 days');
+  for (const t of [FROM_MS - 1, FROM_MS, FESTIVALS[0].eveFromMs, TO_MS - 1, TO_MS]) assert.equal(starfallRuns(t), festivalOpen(t), `the festival's own answer at ${t}`);
+  assert.ok(starfallRuns(FROM_MS) && !starfallRuns(FROM_MS - 1));
+  assert.ok(starfallRuns(TO_MS - 1) && !starfallRuns(TO_MS));
+  assert.ok(!starfallRuns(NaN));
+  assert.ok(!LIVE_EVENTS.includes('witchfest'), 'no live event to stage: the calendar is the festival\'s');
   assert.ok(starInWindow(N0, 1));
-  assert.ok(!starInWindow(Math.ceil(STARFALL_TO_MS / STAR_HOUR_MS) + 2, 1));
-  assert.ok(starfallRuns(STARFALL_FROM_MS + 1, { kind: 'witchfest', at: 1 }));
-  assert.ok(!starfallRuns(STARFALL_FROM_MS + 1, { kind: 'dread', at: 1 }));
-  assert.ok(!starfallRuns(STARFALL_FROM_MS + 1, null));
+  assert.ok(!starInWindow(Math.ceil(TO_MS / STAR_HOUR_MS) + 2, 1));
+  assert.ok(!starInWindow(Math.floor(FROM_MS / STAR_HOUR_MS) - 2, 1), 'a star that fell before the festival opened');
   assert.ok(!starOk(N0, 3) && !starOk(N0, -1) && !starOk(0, 0) && starOk(N0, 0));
   const t = starTimes(N0, 1);
   assert.ok(!starHeard(N0, 1, t.fallAt - 1), 'nothing to defend before it lands');
