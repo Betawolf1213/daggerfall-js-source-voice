@@ -158,5 +158,25 @@
   "tests": [
    "test/systems/enemyExpansion/dex7_bodies.test.js"
   ]
+ },
+ {
+  "name": "DEX7-the-body-casts-for-a-noshadow-row",
+  "file": "src/net/peer/peerBodies.js",
+  "old": " && !dissolveShadowless(fx?.dissolve) && !fx?.noShadow;",
+  "new": " && !dissolveShadowless(fx?.dissolve);",
+  "why": "AUDIT DEX B2: a NoShadow row's Morrowind body casts its shadow (SetupDemoEnemy.cs:137-140 turns the mobile's off)",
+  "tests": [
+   "test/systems/enemyExpansion/dex7_bodies.test.js"
+  ]
+ },
+ {
+  "name": "DEX7-foefx-drops-the-flats-noshadow",
+  "file": "src/characters/foeBodies.js",
+  "old": "  const noShadow = batch.noShadow === true;",
+  "new": "  const noShadow = false;",
+  "why": "AUDIT DEX B2: the flat's noShadow never reaches the body standing in its place",
+  "tests": [
+   "test/systems/enemyExpansion/dex7_bodies.test.js"
+  ]
  }
 ]

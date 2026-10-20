@@ -349,15 +349,22 @@ export function rosterLook(rec, { mobileType, gender = 'male', seed = 0, race = 
 /** The tells the host has dressed the foe's billboard in this frame, for its body's quad (renderer.js
  *  drawCharacterSpriteQuad `fx`): the glint, the elite's pulse and clock, the dissolve - one object on the foe, rewritten
  *  in place each frame (no allocation a frame). Null when it wears none. `batch` the one to read - a corpse's flat for
- *  the dead (an elite's corpse keeps its rim). */
+ *  the dead (an elite's corpse keeps its rim).
+ *  AUDIT DEX B2: and `noShadow`, the flat's - the body standing in its place casts where the flat would have
+ *  (net/peer/peerBodies.js `cast`). A NoShadow row's mobile (SetupDemoEnemy.cs:137-140 `if (dfMobile.Enemy.NoShadow)
+ *  meshRenderer.shadowCastingMode = Off`, characters/enemy/foeLook.js setupFoeLook - the classic vampires, the frost and
+ *  fire daedra, the fire atronach, the mod's NoShadow rows) cast its Morrowind body's shadow while its billboard, cast-only,
+ *  was passed over. A corpse's flat carries none of the row's: DFU's NoShadow is the mobile's renderer, and a corpse is
+ *  another billboard. */
 export function foeFx(f, batch = f?.batch) {
   if (!batch) return null;
   const glint = batch.glint && batch.glint[3] > 0 ? batch.glint : null;
   const elite = batch.eliteGlow || 0;
   const dissolve = batch.dissolve && batch.dissolve[0] > 0 ? batch.dissolve : null;
-  if (!glint && !elite && !dissolve) return null;
-  const fx = f._mwFx ?? (f._mwFx = { glint: null, elite: 0, time: 0, dissolve: null });
-  fx.glint = glint; fx.elite = elite; fx.time = batch.eliteTime || 0; fx.dissolve = dissolve;
+  const noShadow = batch.noShadow === true;
+  if (!glint && !elite && !dissolve && !noShadow) return null;
+  const fx = f._mwFx ?? (f._mwFx = { glint: null, elite: 0, time: 0, dissolve: null, noShadow: false });
+  fx.glint = glint; fx.elite = elite; fx.time = batch.eliteTime || 0; fx.dissolve = dissolve; fx.noShadow = noShadow;
   return fx;
 }
 

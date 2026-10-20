@@ -10,7 +10,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { DEX_CREATURE_MATCH, DEX_PERSON_FOES, installDexBodies, _resetDexBodies } from '../../../src/systems/enemyExpansion/dexBodies.js';
 import { CREATURE_MATCH, creatureLook, creatureMatch, registerCreatureMatches, SPECTRAL_VEIL } from '../../../src/characters/creatureBodies.js';
-import { isPersonFoe, isBodyFoe, foeLook, foeActor, rosterLook, registerPersonFoes } from '../../../src/characters/foeBodies.js';
+import { isPersonFoe, isBodyFoe, foeLook, foeActor, rosterLook, registerPersonFoes, foeFx } from '../../../src/characters/foeBodies.js';
+import { setupFoeLook } from '../../../src/characters/enemy/foeLook.js';
+import { PeerBodies } from '../../../src/net/peer/peerBodies.js';
+import { perspective, lookAt } from '../../../src/world/mat4.js';
 import { installEnemyExpansion, _resetEnemyExpansion, dexRead } from '../../../src/systems/enemyExpansion/dexInstall.js';
 import { ENEMY_BASICS, isClassEnemyId } from '../../../src/characters/enemy/enemyBasics.js';
 import { MOBILE_TYPES } from '../../../src/characters/mobile/mobileTypes.js';
@@ -187,4 +190,67 @@ test('DEX7-6 once a page: the install puts both tables on their doors once (a se
   assert.equal(isPersonFoe(foe(392)), true);
   assert.equal(installDexBodies(), true, 'registers again after the seam');
   reset();
+});
+
+// AUDIT DEX B2: A NOSHADOW ROW'S BODY CASTS NONE. SetupDemoEnemy.cs:137-140 (`if (dfMobile.Enemy.NoShadow)
+// meshRenderer.shadowCastingMode = Off`) is setupFoeLook's `noShadow` on the billboard - but a body standing in the
+// billboard's place casts for it (MWNPC16: the flat cast-only, the shadow pass passes it over), and the body's cast read
+// the dissolve and never the row, so the classic vampires, the frost and fire daedra and the fire atronach - and the mod's
+// NoShadow rows - threw their Morrowind bodies' shadows. foeFx carries the flat's noShadow to the body (net/peer/peerBodies.js
+// `cast`); a corpse's flat carries none of it (DFU's NoShadow is the mobile's renderer; a corpse is another billboard).
+const settle = async (n = 8) => { for (let i = 0; i < n; i++) await new Promise((r) => setTimeout(r, 0)); };
+/** A body rig that records what the lane asks of it: each draw's `cast`, each unseen cast. */
+const recordingRig = (rigs) => () => {
+  const r = { mode: 'first', draws: [], casts: [], skinned: false,
+    attach() {}, async build() { await settle(1); return { ok: true }; },
+    canThirdPerson: () => true, raceHeightScale: () => 1, setViewMode(m) { r.mode = m; return true; },
+    thirdActive: () => r.mode === 'third' && r.skinned,
+    update(dt, opts) { if (opts?.pose !== false) r.skinned = true; },
+    drawThird(_c, o) { r.draws.push(o.cast); return r.thirdActive(); },
+    castThird(o) { r.casts.push(o); return true; },
+    unload() {}, setSheathed() {}, revive() {},
+  };
+  rigs.push(r);
+  return r;
+};
+const PROJ = perspective(1.2, 1.5, 0.1, 200), VIEW = lookAt([0, 1.6, 0], [0, 1.6, -1], [0, 1, 0]);   // looking down -z
+const standing = (id, z) => ({ id, name: '', told: true, look: { race: 'Breton', gender: 'male', faceIndex: 0, items: [] }, shown: { x: 0, y: 0, z, yaw: 0, pitch: 0, mv: 0, wd: 0, an: 0, as: 0, cn: 0 } });
+/** The lane's bodies for one foe's fx, one in the view and one behind the eye: what each was asked to cast. */
+async function castsFor(fx) {
+  const rigs = [];
+  const pb = new PeerBodies({ renderer: {}, createRig: recordingRig(rigs), buildOpts: () => ({}), now: () => 1000, casts: true });
+  for (let i = 0; i < 4; i++) { pb.sync([standing('seen', -5), standing('unseen', 5)], (p) => [p.x, p.y, p.z], 1 / 60, [0, 0, 0]); await settle(); pb.draw({}, { proj: PROJ, view: VIEW, eye: [0, 1.6, 0], fxOf: () => fx }); }
+  const [seen, unseen] = rigs;
+  return { drawn: seen.draws, cast: seen.draws.length > 0 && seen.draws.every((c) => c === true), unseenCast: unseen.casts.length > 0 };
+}
+
+test('DEX7-7 A NOSHADOW ROW\'S BODY CASTS NONE (AUDIT DEX B2): the flat setupFoeLook dresses carries the row\'s NoShadow to the body through foeFx, and the body casts nothing, seen or not; a casting row\'s body casts, and a corpse\'s flat carries none of the row\'s (mutants: the body\'s cast blind to the row; foeFx drops it)', async (t) => {
+  t.after(reset);
+  reset();
+  installEnemyExpansion({ on: true, log: silent });
+  const NO_SHADOW = [MOBILE_TYPES.Vampire, MOBILE_TYPES.VampireAncient, MOBILE_TYPES.FrostDaedra, MOBILE_TYPES.FireDaedra, MOBILE_TYPES.FireAtronach];
+  assert.deepEqual(NO_SHADOW, [28, 30, 25, 26, 35]);
+  for (const id of [...NO_SHADOW, 273, 274, 275, 283]) assert.equal(ENEMY_BASICS[id].noShadow, true, `${id}: a NoShadow row`);
+  const vampire = { ...foe(MOBILE_TYPES.Vampire), batch: setupFoeLook({ archive: ENEMY_BASICS[28].maleTexture }, MOBILE_TYPES.Vampire) };
+  assert.equal(vampire.batch.noShadow, true, 'SetupDemoEnemy: the row\'s NoShadow on the mobile\'s renderer');
+  const fx = foeFx(vampire);
+  assert.ok(fx && fx.noShadow === true, 'the flat\'s noShadow, handed to the body');
+  assert.equal(foeFx(vampire), fx, 'in one object a foe, rewritten in place');
+  const dark = await castsFor(fx);
+  assert.ok(dark.drawn.length > 0 && dark.drawn.every((c) => c === false), 'seen: drawn, casting nothing');
+  assert.equal(dark.unseenCast, false, 'unseen: not cast either');
+  // a casting row: no tell at all, and the body casts
+  const orc = { ...foe(MOBILE_TYPES.Orc), batch: setupFoeLook({ archive: ENEMY_BASICS[MOBILE_TYPES.Orc].maleTexture }, MOBILE_TYPES.Orc) };
+  assert.equal(orc.batch.noShadow, undefined);
+  assert.equal(foeFx(orc), null, 'a plain foe wears no tell');
+  const lit = await castsFor(foeFx(orc));
+  assert.equal(lit.cast, true, 'seen: drawn casting');
+  assert.equal(lit.unseenCast, true, 'and unseen');
+  // the same foe once its row's NoShadow is gone from its flat casts again - the field is read each frame
+  vampire.batch.noShadow = undefined;
+  assert.equal(foeFx(vampire), null, 'nothing left to tell');
+  // a corpse is another billboard: the dead vampire's corpse flat carries none of the row's
+  const corpse = { archive: ENEMY_BASICS[28].maleTexture };
+  assert.equal(foeFx(vampire, corpse), null, 'the corpse\'s flat: no NoShadow of the mobile\'s');
+  assert.equal((await castsFor(foeFx(vampire, corpse))).cast, true, 'the body on the corpse casts, as DFU\'s corpse billboard does');
 });
