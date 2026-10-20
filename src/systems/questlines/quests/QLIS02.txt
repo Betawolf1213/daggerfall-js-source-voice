@@ -9,7 +9,7 @@ DisplayName: A Hold Full
 QRC:
 
 QuestFail:  [1003]
-<ce>        The harbourmaster's cargoes have gone to other ships.
+<ce>        The harbormaster's cargoes have gone to other ships.
 
 QuestComplete:  [1004]
 <ce>          The runner counts _gold_ gold into your hand, on
@@ -17,9 +17,9 @@ QuestComplete:  [1004]
 
 QuestLogEntry:  [1010]
 %qdt:
- The harbourmaster who sent me to sea has written
+ The harbormaster who sent me to sea has written
  again: a captain who can sail can carry. I am to
- take a cargo off a harbourmaster's board, at the
+ take a cargo off a harbormaster's board, at the
  helm lying to any quay, and deliver it. A bonus
  waits where the cargo comes in.
 
@@ -27,26 +27,26 @@ Message:  1011
 Captain,
 
      Any fool can sail. A captain carries. Lie to a
- quay, take the helm, and look at the harbourmaster's
+ quay, take the helm, and look at the harbormaster's
  board: every port posts cargoes for other ports.
  Take one, and bring it in whole.
 
-     The harbourmaster where it comes in will have a
+     The harbormaster where it comes in will have a
  bonus for you, on top of the contract. I have
  friends up and down the coast.
 
-<ce>                                  the harbourmaster
+<ce>                                  the harbormaster
 
 Message:  1012
 <ce>           A runner from the docks catches you up with
-<ce>              another folded note. "Same harbourmaster,"
+<ce>              another folded note. "Same harbormaster,"
 <ce>                    the runner grins. "More work."
 
 Message:  1013
 <ce>         As the cargo comes ashore, a runner from the
-<ce>         harbour office finds you. "You're the one the
-<ce>         harbourmaster wrote about? Then this is yours,
-<ce>               with the harbourmaster's thanks."
+<ce>         harbor office finds you. "You're the one the
+<ce>         harbormaster wrote about? Then this is yours,
+<ce>               with the harbormaster's thanks."
 
 QBN:
 Item _note_ letter used 1011

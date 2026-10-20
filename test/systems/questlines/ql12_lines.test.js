@@ -151,7 +151,8 @@ test('AUDIT QUESTLINES LINES-4: the Covens\' Hoard kept pays the Guild\'s fee in
   assert.equal(st.offers.length, 1, 'and the choice of gear');
   assert.doesNotMatch(words(1040), /slides the key/);
   assert.match(words(1040), /A house has it once/);
-  assert.match(sheetFor('QLCH03').outcomes.find((o) => o.id === 'keep').text, /a house has it once/);
+  // PIN MOVED (AUDIT QUESTLINES VOICE-QL): the house's once said as a sentence of its own, no dash aside (Voice.md rule 5)
+  assert.match(sheetFor('QLCH03').outcomes.find((o) => o.id === 'keep').text, /A house is given that key only once/);
 });
 
 test('AUDIT QUESTLINES LINES-8, ACTS-7: the watch\'s letter waits for a town by day, as a courier\'s does, and the purse and the end wait for the letter - a revenant that kneels in the wild ends nothing there; the sheet\'s word is heard when they are (mutants: the purse and the end in the letter\'s own tick; the word bound to `_heard_`)', async () => {

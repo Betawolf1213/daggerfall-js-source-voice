@@ -78,7 +78,7 @@ Message:  1015
 Message:  1016
 Prior Anselm Vey is at _temple_. He has not slept since the bells went wrong.
 <--->
-The Prior? He asks travellers which crown they serve, and does not say why.
+The Prior? He asks travelers which crown they serve, and does not say why.
 <--->
 A priest of Akatosh waits at _temple_ for someone to go down into the brass.
 

@@ -2775,7 +2775,7 @@
   "by": "claude-in-session"
  },
  "account.refusal.qlClosed": {
-  "en": "e6eecb70e3cf",
+  "en": "82559da325b1",
   "tr": "3c916f2cd3ab",
   "by": "claude-in-session"
  },
@@ -8825,8 +8825,8 @@
   "by": "claude-in-session"
  },
  "features.questlines.note": {
-  "en": "7eb5d281775f",
-  "tr": "1406ca424549",
+  "en": "d92d4045f843",
+  "tr": "75f908a4a731",
   "by": "claude-in-session"
  },
  "features.questlines.title": {
@@ -22675,7 +22675,7 @@
   "by": "claude-in-session"
  },
  "ql.journal.armour": {
-  "en": "fab9348c4fd9",
+  "en": "b1fc5d10fc8c",
   "tr": "7dc0ec5fc5c8",
   "by": "claude-in-session"
  },
@@ -22710,7 +22710,7 @@
   "by": "claude-in-session"
  },
  "ql.journal.jewel": {
-  "en": "4360cc060e67",
+  "en": "1fd8cfa3550c",
   "tr": "a17ba1b543fb",
   "by": "claude-in-session"
  },
@@ -22850,7 +22850,7 @@
   "by": "claude-in-session"
  },
  "ql.journal.pieceArmour": {
-  "en": "7037a516af74",
+  "en": "b1183a283c92",
   "tr": "babf22c575eb",
   "by": "claude-in-session"
  },
@@ -22915,8 +22915,8 @@
   "by": "claude-in-session"
  },
  "ql.journal.stepWitnessedTitle": {
-  "en": "c9b35e8240b6",
-  "tr": "22a29563960a",
+  "en": "63a853bda2fc",
+  "tr": "c906735a03f9",
   "by": "claude-in-session"
  },
  "ql.journal.take": {
@@ -23085,12 +23085,12 @@
   "by": "claude-in-session"
  },
  "ql.line.introGear.giver": {
-  "en": "845fa1d709d4",
+  "en": "55a081e7d569",
   "tr": "fec0305fdab6",
   "by": "claude-in-session"
  },
  "ql.line.introGear.lead": {
-  "en": "5ea1c640711a",
+  "en": "303a30574720",
   "tr": "c17cfac31a2f",
   "by": "claude-in-session"
  },
@@ -23110,17 +23110,17 @@
   "by": "claude-in-session"
  },
  "ql.line.introSea": {
-  "en": "604d7ca27821",
+  "en": "9a49578e2a6c",
   "tr": "4b9d539957f8",
   "by": "claude-in-session"
  },
  "ql.line.introSea.giver": {
-  "en": "921f576f1a26",
+  "en": "02f7c353baec",
   "tr": "67ffe909a635",
   "by": "claude-in-session"
  },
  "ql.line.introSea.lead": {
-  "en": "eb8853affded",
+  "en": "e810ccf7c98c",
   "tr": "0c39d3b09f18",
   "by": "claude-in-session"
  },
@@ -23355,7 +23355,7 @@
   "by": "claude-in-session"
  },
  "ql.step.QLIS03": {
-  "en": "18ec0972d4bc",
+  "en": "970f1b53cd61",
   "tr": "7c877c92c496",
   "by": "claude-in-session"
  },
@@ -23435,13 +23435,13 @@
   "by": "claude-in-session"
  },
  "quest.share.questline": {
-  "en": "0e52880d3f25",
-  "tr": "4f110143a548",
+  "en": "64807357b849",
+  "tr": "d4c64d8a5af1",
   "by": "claude-in-session"
  },
  "quest.share.questline.receiver": {
-  "en": "7eec42ec9002",
-  "tr": "7eec42ec9002",
+  "en": "eacd41dfc09d",
+  "tr": "eacd41dfc09d",
   "by": "claude-in-session"
  },
  "realm.held.until": {
@@ -26930,7 +26930,7 @@
   "by": "claude-in-session"
  },
  "tutorials.questlines.gearBody": {
-  "en": "f183c78d1f73",
+  "en": "6bfbbfeb90a1",
   "tr": "9f26e024b0eb",
   "by": "claude-in-session"
  },

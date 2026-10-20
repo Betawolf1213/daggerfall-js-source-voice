@@ -8,48 +8,48 @@
 -- AUDIT QUESTLINES LINES-26: the letter signs off on one line, its sender's name and calling - DFU's pack names a
 -- quest letter by its last line (ItemHelper.cs:335-348, itemInfo.js questLetterName).
 Quest: QLIS03
-DisplayName: Strike Your Colours
+DisplayName: Strike Your Colors
 -- Message panels
 QRC:
 
 QuestFail:  [1003]
-<ce>          The harbourmaster has hired a navy captain instead.
+<ce>          The harbormaster has hired a navy captain instead.
 
 QuestComplete:  [1004]
 <ce>         "You'll do, captain. You'll more than do." The
-<ce>       harbourmaster counts _gold_ gold into your hand.
+<ce>       harbormaster counts _gold_ gold into your hand.
 
 QuestLogEntry:  [1010]
 %qdt:
- A note came from _master_, harbourmaster at
+ A note came from _master_, harbormaster at
  _tavern_ here in __tavern_ and a friend of the
  one who sent me to sea. Pirates are taking ships
  off this coast. I am to meet one at sea and make
- her strike her colours, then come to _tavern_.
+ her strike her colors, then come to _tavern_.
 
 Message:  1011
 Captain,
 
-     The harbourmaster who sent you to sea says you
+     The harbormaster who sent you to sea says you
  can sail and you can carry. Now the hard part.
  There are ships off this coast that take other
  ships, and the navy is never where they are.
 
      Find one. Fight her. Make her strike her
- colours - a ship that has struck is beaten, and her
+ colors - a ship that has struck is beaten, and her
  crew know it. Then come and find me at _tavern_,
- and drink on the harbour's purse.
+ and drink on the harbor's purse.
 
-<ce>                             _master_, harbourmaster
+<ce>                             _master_, harbormaster
 
 Message:  1012
 <ce>           A runner from the docks hands you a note sealed
-<ce>              with tar. "From the harbourmaster," the
+<ce>              with tar. "From the harbormaster," the
 <ce>              runner says, and then, quietly, "Good luck."
 
 Message:  1013
 %qdt:
- I have made a ship strike her colours. _master_
+ I have made a ship strike her colors. _master_
  waits at _tavern_ in __tavern_ to hear of it.
 
 Message:  1014
@@ -58,17 +58,17 @@ Message:  1014
 <ce>          and then we drink."
 
 Message:  1015
-<ce>         "Struck her colours to you! The whole harbour is
-<ce>          talking of it." The harbourmaster stands and
+<ce>         "Struck her colors to you! The whole harbor is
+<ce>          talking of it." The harbormaster stands and
 <ce>          raises a cup. "To the captain. This coast has
 <ce>          one more than it had, and the pirates one fewer."
 
 Message:  1016
-The harbourmaster at _tavern_ wants someone to fight the pirates the navy won't.
+The harbormaster at _tavern_ wants someone to fight the pirates the navy won't.
 <--->
-_master_? Runs the harbour. Lost three ships to pirates this season.
+_master_? Runs the harbor. Lost three ships to pirates this season.
 <--->
-There's talk at _tavern_ of a new captain, sent up the coast by another harbourmaster.
+There's talk at _tavern_ of a new captain, sent up the coast by another harbormaster.
 
 QBN:
 Item _note_ letter used 1011

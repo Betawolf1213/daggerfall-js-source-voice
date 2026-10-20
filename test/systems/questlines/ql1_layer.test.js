@@ -329,7 +329,7 @@ test('QL1/QL3 the bridge\'s doors (AUDIT QUESTLINES REWARD-13, REWARD-8, LAW-11)
   assert.deepEqual(walk.call(full, { windows: false }).lines, []);
 });
 
-test('QL12 the ladders\' titles are kept while the text stands and read again when it moves - a locale switched (AUDIT QUESTLINES UI-19) (mutants: the titles kept for the page\'s life)', () => {
+test('QL12 the ladders\' titles - and a waiting reward\'s - are kept while the text stands and read again when it moves - a locale switched (AUDIT QUESTLINES UI-19) (mutants: the titles kept for the page\'s life; the reward named in the words it was rolled in)', () => {
   setPref(QUESTLINES_PREF, true);
   let renamed = false;
   const lines = (name) => (renamed && name === 'M0B00Y06' ? questLines(name).map((l) => (/^\s*DisplayName:/i.test(l) ? 'DisplayName: The Renamed Beast' : l)) : questLines(name));
@@ -337,14 +337,25 @@ test('QL12 the ladders\' titles are kept while the text stands and read again wh
     data: { readListTable: (name) => { try { return read(join(VENDOR, 'Tables', `QuestList-${name}.txt`)); } catch { return null; } }, getQuestSourceLines: lines },
     playerEntity: { name: 'Hero', level: 8, gender: 'male', career: { weaponArmorShieldsBitfield: 0, forbiddenMaterialsFlags: 0 }, skills: new Array(35).fill(10),
       guildMemberships: { mortal: { 41: { guild: 'FightersGuild', rank: 1 } }, vampire: {} } },
+    offerReward: () => {},
   });
+  const quest = bridge.machine.startQuestByName('M0B00Y06', 0);
+  quest.getTask({ name: 'mondead' }).start();
+  quest.getTask({ name: 'qgclicked' }).start();
+  bridge.machine.tick();
+  const offerTitle = () => bridge.journalClean.offers()[0]?.title;
   const title = () => bridge.questLog().ladders.find((l) => l.key === 'FightersGuild').rungs.flatMap((r) => r.quests).find((q) => q.name === 'M0B00Y06').title;
   const was = title();
   assert.notEqual(was, 'The Renamed Beast');
+  assert.equal(offerTitle(), was, 'the reward named as the ladder names its quest');
   renamed = true;
   assert.equal(title(), was, 'kept while the text stands');
+  assert.equal(offerTitle(), was, 'kept with it');
   setLocale('de');
-  try { assert.equal(title(), 'The Renamed Beast', 'a locale switched reads it again'); } finally { setLocale(BASE_LOCALE); }
+  try {
+    assert.equal(title(), 'The Renamed Beast', 'a locale switched reads it again');
+    assert.equal(offerTitle(), 'The Renamed Beast', 'and the waiting reward\'s name with it');
+  } finally { setLocale(BASE_LOCALE); }
 });
 
 test('QL1 the bridge leaves a quest begun with the switch off as DFU\'s: no objectives, no reward added', () => {

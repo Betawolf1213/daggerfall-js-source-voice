@@ -184,7 +184,10 @@ fourteen families of `src/systems/questlines/qlFamilies.js` and the Questlines' 
 read in a translation's words where a pack carries them (TextQuests `QL.<QUEST>.o.<id>` for an objective, `.r.<id>` an
 outcome, `.b.<id>` a branch and `.b.<id>.<choice>` its choice, `qlLayer.js` sheetTextKey - the `-LOC` route a DFU quest's
 own messages take; AUDIT QUESTLINES LAW-10: keyed by id alone, 21 keys in 19 sheets named two lines), never a string of
-the port's interface. M0B00Y06 as filed:
+the port's interface. Written in the game's voice (`10-UI/Voice.md`): American spelling, and no dash aside in an
+objective, a choice or an outcome - a second sentence, a comma or a colon (AUDIT QUESTLINES VOICE-QL, at the merge of
+main: the sheets, the questline scripts, the patches' own messages and the questlines' t() words were written before
+the voice page was; `test/systems/questlines/qlvoice.test.js` holds them to it). M0B00Y06 as filed:
 
 ```json
 {"quest":"M0B00Y06","objectives":[
@@ -545,7 +548,7 @@ close. The road's introduction is DFU's own delivery instead. "A set's second bo
 
 **The introductions** (online where their feature is): THE COURT CRAFTER (`introCrafts` - fish and plants, ore and
 timber, a piece made; online: the Professions' harvests are the service's to answer), THE SMITH'S SECRETS (`introGear` -
-a gem socketed, a piece reforged), THE HARBOURMASTER'S WORD (`introSea` - a port reached, a cargo delivered, a ship
+a gem socketed, a piece reforged), THE HARBORMASTER'S WORD (`introSea` - a port reached, a cargo delivered, a ship
 struck), THE MERCHANT'S ROAD (`introRoad` - a load carried to a merchant and back), A SEAT AT THE TABLE (`introTables` -
 a hand of cards, the King's Gambit), THE HERALD'S CALL (`introArena`), THE BAY'S TROUBLES (`introBay` - a raid driven
 off, a revenant made to kneel), WRITTEN IN THE STARS (`introFirmament`). Two or three short steps each, an unnamed giver
@@ -553,7 +556,7 @@ in the player's town, a named piece at the end. The Tutorials explain; an introd
 No introduction for the groups that are the game itself (Getting Started, Combat, Your Character, Quests, Family).
 AUDIT QUESTLINES ACTS-2, LINES-2, LINES-3, LINES-6: an introduction whose feature was off never moved, and one a guest
 could not finish was offered for ever. THE COURT CRAFTER opens only for a registered account (the Professions refuse a
-guest); THE SMITH'S SECRETS' steps need Loot rarity, THE HARBOURMASTER'S WORD's Naval Combat (and Come Sail Away's own
+guest); THE SMITH'S SECRETS' steps need Loot rarity, THE HARBORMASTER'S WORD's Naval Combat (and Come Sail Away's own
 switch), A SEAT AT THE TABLE's second The King's Gambit, and THE BAY'S TROUBLES' second the Renown a revenant comes at
 online (10) - each step waits, saying so ("Opens with Loot rarity on.", "Opens at Renown 10.").
 
@@ -659,7 +662,11 @@ nothing paid - and on the client a line the service pays opens only for a regist
   Hour (the Hour) and Satakal's Witness (the Old Coil) - the badge's words (`ui/playerBadge.js` TITLE_TEXT; the vocabulary
   spells the last two `hourwitness` and `satakalwitness` - AUDIT QUESTLINES SERVICE-9, DOC-2: this named them by those
   keys); the relay knows them from world224 (`src/net/identityToken.js` TITLES). A title paid is the house's
-  HONOUR-BANNER and a HUD line, as every title grant is (AUDIT QUESTLINES SERVICE-7: it was a HUD line alone).
+  HONOUR-BANNER and a HUD line, as every title grant is (AUDIT QUESTLINES SERVICE-7: it was a HUD line alone). A title
+  step's later end answers the line's title HELD (`titleHeld`) where this claim did not lay it, and the runner tells it
+  only for a claim an earlier attempt of which went unanswered - offline, a timeout, a 5xx, or an end a load asks again
+  unanswered - so an answer lost after the commit is told on its retry, once, and an answer that arrived is never told
+  twice (SERVICE-7 (c): the retry answered without the title, and its banner never showed).
 - **The Weir Key once an account.** The Covens' Hoard's last step done by an end whose own choice is `keep` pays it:
   `eg_keys` + 1 and `ql_key` = 1 in one statement, only while `ql_key` is 0 - `{ key: true, keys }`, `keys` the balance
   after, which restacks the pack's keys at once (SERVICE-7). The step's `choice` stays the first one said, its record;
@@ -683,7 +690,10 @@ A window redesigned on purpose: it cites this page, not DFU (SCOPE1). The rail, 
   again to take") and takes on the second, as Abandon, Remove and Clear do, the focus kept on that Take (UI-10: one
   press gave a choice away, and the focus fell on the next reward's Take). A reward waiting is told in the HUD with the
   way to it on the skin worn, and the pause door's Quests landing (`pauseDoor.js` `at: 'quests'`) opens the enhanced
-  pause on either skin (UI-6: a classic-skin player was sent to a tab the classic journal lacks).
+  pause on either skin (UI-6: a classic-skin player was sent to a tab the classic journal lacks). Each is named in the
+  language of the page that draws it - the quest's title as the ladders name it (AUDIT QUESTLINES UI-19: the words it
+  was rolled in); a step's outcome and the filed "Outcome:" line keep the words they were filed in, as DFU's notebook
+  files its own (the quest whose resources expand them is gone).
 - **Main Quests**, **Side Quests** - as before; a stamped quest's page draws under its entry WHAT TO DO (its objectives
   as the machine opened them: done struck, failed crossed, optional marked, alternatives joined by "or"), YOUR
   CHOICES, HOW IT ENDED, and what finishing it pays (the tier's floor in words, read off TIER_FLOORS - only where the

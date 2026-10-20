@@ -783,7 +783,7 @@ const REFUSAL_WORDS = {
   'no-clean': () => t('account.refusal.noClean', 'That character has no save the realm judged clean to roll back to.'),   // INT6: the review's rollback (tools/realmReview.mjs)
   // FIRM1 (bible/06-Systems/Firmament.md): the Firmament's own (server-account/src/firmament.js)
   'firm-closed': () => t('account.refusal.firmClosed', 'The Firmament isn\'t available to you right now.'),
-  'ql-closed': () => t('account.refusal.qlClosed', 'The questlines\' rewards aren\'t available to you right now.'),   // QL12: QUESTLINES_OPEN shut
+  'ql-closed': () => t('account.refusal.qlClosed', 'The questlines\' rewards are not available to you right now.'),   // QL12: QUESTLINES_OPEN shut (AUDIT QUESTLINES VOICE-QL: "are not", the voice's plain word - Voice.md)
   'ql-body': () => t('account.refusal.qlBody', 'That questline step could not be claimed.'),   // QL12: a claim the shared law refuses
   'firm-character': () => t('account.refusal.firmCharacter', 'This character could not be named to the Firmament.'),
   'firm-rid': () => t('account.refusal.firmRid', 'That request could not be read. Try again.'),

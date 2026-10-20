@@ -29,10 +29,10 @@ QuestLogEntry:  [1010]
 Message:  1011
 %pcn,
 
-     They say in the harbours that you are not afraid
+     They say in the harbors that you are not afraid
  of deep water. Good. I have sailed the packet lanes
  between Sentinel and every port of the Bay for
- thirty years, and this last year the harbour bells
+ thirty years, and this last year the harbor bells
  have rung for something that is not a storm.
 
      I am lodging at _inn_ in __inn_ while my packet

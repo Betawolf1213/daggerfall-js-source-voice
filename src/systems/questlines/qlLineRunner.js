@@ -89,9 +89,11 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
   /** A claim to ask: the `open` of every step of a line the service pays (its first is the witness's window - AUDIT
    *  QUESTLINES SERVICE-2), the `end` of a step it pays. */
   function queueClaim(lineId, step, phase, choice = null) {
-    if (!service || !(phase === 'open' ? Object.hasOwn(QL_SERVICE_LINES, lineId) : qlStepClaimed(lineId, step))) return;
-    if (pending.some((c) => c.line === lineId && c.step === step && c.phase === phase)) return;
-    pending.push({ line: lineId, step, choice, phase, next: 0, tries: 0 });
+    if (!service || !(phase === 'open' ? Object.hasOwn(QL_SERVICE_LINES, lineId) : qlStepClaimed(lineId, step))) return null;
+    if (pending.some((c) => c.line === lineId && c.step === step && c.phase === phase)) return null;
+    const c = { line: lineId, step, choice, phase, next: 0, tries: 0 };
+    pending.push(c);
+    return c;
   }
 
   async function ask(c) {
@@ -109,9 +111,15 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
     if (answered) {
       pending = pending.filter((x) => x !== c);
       rec.claims[c.step] = d.why === 'unpaid' ? 'refused:unpaid' : c.phase === 'open' ? (rec.claims[c.step] ?? 'opened') : 'witnessed';
-      if (d.title || d.key || d.keyHeld) ctx.onHonour?.({ line: c.line, title: d.title ?? null, key: !!d.key, keys: Number.isSafeInteger(d.keys) ? d.keys : null, keyHeld: !!d.keyHeld });
+      // AUDIT QUESTLINES SERVICE-7 (c): a title the service answers HELD (`titleHeld` - laid by an earlier attempt) is told
+      // only for a claim an earlier attempt of which went unanswered: its answer may have carried the title, lost after the
+      // commit. An answer that arrived told it then, or another character's line laid it
+      const title = d.title ?? (c.lost ? d.titleHeld ?? null : null);
+      if (title || d.key || d.keyHeld) ctx.onHonour?.({ line: c.line, title, key: !!d.key, keys: Number.isSafeInteger(d.keys) ? d.keys : null, keyHeld: !!d.keyHeld });
       return;
     }
+    // SERVICE-7 (c): no service's answer (offline, a timeout, a 5xx, a body that never came) - it may have committed
+    if (!d && !(a?.status >= 400 && a?.status < 500)) c.lost = true;
     if (d && c.phase === 'end') rec.claims[c.step] = d.why === 'guest' ? 'refused:guest' : 'unseen';
     // AUDIT QUESTLINES UI-19: a claim the service REFUSED - its switch shut (`ql-closed`), a claim its law refuses
     // (`ql-body`) - is the step's to say (rows: `refused`), never swallowed; kept on the claim (unsaved), asked again all the
@@ -270,7 +278,9 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
         for (let i = 0; i <= Math.min(rec.step, l.steps.length - 1); i++) {
           const ended = i < rec.step;
           const said = rec.claims[i];
-          if (ended && said !== 'witnessed' && said !== 'refused:unpaid') queueClaim(id, i, 'end', rec.outcomes[i]?.id ?? null);
+          // SERVICE-7 (c): an end the save never heard answered (nothing said, or only its opening) may have been answered
+          // and lost - its held title is told when its retry answers it
+          if (ended && said !== 'witnessed' && said !== 'refused:unpaid') { const c = queueClaim(id, i, 'end', rec.outcomes[i]?.id ?? null); if (c && (said == null || said === 'opened')) c.lost = true; }
           else if (!ended && !rec.done && !said) queueClaim(id, i, 'open');
         }
       }

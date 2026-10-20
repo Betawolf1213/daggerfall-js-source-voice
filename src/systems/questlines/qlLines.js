@@ -118,11 +118,13 @@ export const QL_LINES = Object.freeze([
       { quest: 'QLIP03', title: () => t('ql.step.QLIP03', 'Made by Hand') },
     ],
   }),
+  // AUDIT QUESTLINES VOICE-QL: American spelling in the words (Voice.md rule 8) - armorer, harbormaster, Colors (QLIS03's
+  // DisplayName with it, ql12_lines' one word); the keys stay
   line({
     id: 'introGear', group: 'intro', tier: 1,
     title: () => t('ql.line.introGear', 'The Smith’s Secrets'),
-    lead: () => t('ql.line.introGear.lead', 'An armourer offers to show you what a good piece of gear can still be made into.'),
-    giver: () => t('ql.line.introGear.giver', 'an armourer'),
+    lead: () => t('ql.line.introGear.lead', 'An armorer offers to show you what a good piece of gear can still be made into.'),
+    giver: () => t('ql.line.introGear.giver', 'an armorer'),
     opens: { level: 4 },
     steps: [
       { quest: 'QLIG01', title: () => t('ql.step.QLIG01', 'A Stone in the Setting'), needs: ['lootRarity'] },
@@ -131,14 +133,14 @@ export const QL_LINES = Object.freeze([
   }),
   line({
     id: 'introSea', group: 'intro', tier: 2,
-    title: () => t('ql.line.introSea', 'The Harbourmaster’s Word'),
-    lead: () => t('ql.line.introSea.lead', 'A harbourmaster needs a captain. Any captain. Even you.'),
-    giver: () => t('ql.line.introSea.giver', 'a harbourmaster'),
+    title: () => t('ql.line.introSea', 'The Harbormaster’s Word'),
+    lead: () => t('ql.line.introSea.lead', 'A harbormaster needs a captain. Any captain. Even you.'),
+    giver: () => t('ql.line.introSea.giver', 'a harbormaster'),
     opens: { level: 5 },
     steps: [
       { quest: 'QLIS01', title: () => t('ql.step.QLIS01', 'Under Sail'), needs: ['naval'] },
       { quest: 'QLIS02', title: () => t('ql.step.QLIS02', 'A Hold Full'), needs: ['naval'] },
-      { quest: 'QLIS03', title: () => t('ql.step.QLIS03', 'Strike Your Colours'), needs: ['naval'] },
+      { quest: 'QLIS03', title: () => t('ql.step.QLIS03', 'Strike Your Colors'), needs: ['naval'] },
     ],
   }),
   line({

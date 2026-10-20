@@ -11,7 +11,8 @@ Eight cold lanes on a frozen snapshot of the branch (fe033c256, a detached workt
 each an adversarial reader told to prove a finding by a repro (a node script over the snapshot's own modules, its output
 pasted) or a trace, and a missing test only by a probe mutant the suite leaves alive. Then six fixers, each on files no
 other held, in the live tree, and the author on the rest: every finding reproduced in the live tree before it was
-fixed, and pinned by a test whose probe mutant dies.
+fixed, and pinned by a test whose probe mutant dies. At the merge of main a seventh, VOICE, brought the overhaul's own
+text into the game's voice (main's `10-UI/Voice.md`, VOICE1 and VOICE2, cut after this branch was - VOICE-QL below).
 
 | Lane | Over | How |
 |---|---|---|
@@ -32,6 +33,7 @@ fixed, and pinned by a test whose probe mutant dies.
 | ACTS | ACTS-3 to ACTS-9 | `qlActs.js`, the producers, `src/systems/questlines/qlEliteFoe.js` (new) |
 | REWARD | REWARD-3, -5, -6 and -12 (the code), -7, -9, -10, -11, -13, -15; LAW-6, LAW-10, LAW-11 (the layer); LINES-20; DOC-5 to DOC-14 | `qlRewards.js`, `qlLayer.js`, GivePc, `itemInfo.js`, `test/honestItems.mjs`; `test/systems/questlines/ql3_rewards.test.js` |
 | UI | UI-4 (the window), UI-5, UI-6, UI-8 to UI-11, the rest of UI-12, UI-13, the rest of UI-14, UI-18, the rest of UI-19 | `qlJournal.js`, `enhancedMenu.js`, `enhancedChronicle.js`, `enhancedStyle.js`, `pauseDoor.js`, `notebook.js`, `tutorialCatalogue.js`, the qlLayer's tutorial site and the runner's refusal; `test/ui/questlines/ql2_pause.test.js` (new) |
+| VOICE | VOICE-QL (the author's, at the merge) | the sheets' text, `quests/QL*.txt`, `qlLines.js`, the questlines' t() words; `test/systems/questlines/qlvoice.test.js` (new) |
 | the author | SERVICE-1 to -9; ACTS-1, -2, -10, -11; LINES-1 to -3, -5 to -7, -11 to -22, -25; LAW-1 (the code), -12, -15; UI-1, -2, -7, -12 (witnessed), -14 (offline), -16, -19 (the titles), -20; DOC-15 to -18, -20, -21, -31; the hand-offs (REWARD-8's and REWARD-13's bridge doors, REWARD-14, LAW-11's look); the record | the service, the runner, the lines, the bridge; `test/systems/questlines/ql1_law.test.js` (new) |
 
 Severity (the lanes' brief): **HIGH** a player can lose progress or pay, a quest or line cannot be finished, a stuck
@@ -39,8 +41,8 @@ state, an exploit that mints gear or titles, a wrong answer from the service; **
 case, text a player reads that is wrong, or a test gap a probe mutant proves; **LOW** an edge, a cosmetic flaw, a
 record sentence the code contradicts; **NIT** a word, a dead line, a stale comment.
 
-151 findings: 149 from the lanes (7 HIGH, 67 MED, 53 LOW, 22 NIT, by their tables) and two the author found applying
-them (ACTS-10, ACTS-11). Four of the HIGH are one defect read from three sides - a witnessed step's opening lost to a
+152 findings: 149 from the lanes (7 HIGH, 67 MED, 53 LOW, 22 NIT, by their tables) and three the author found applying
+them (ACTS-10, ACTS-11) and merging main (VOICE-QL). Four of the HIGH are one defect read from three sides - a witnessed step's opening lost to a
 guest's answer (LINES-1, SERVICE-1, ACTS-1) or to an outage (SERVICE-2), so its deed could never pay.
 
 ## Findings
@@ -129,9 +131,9 @@ guest's answer (LINES-1, SERVICE-1, ACTS-1) or to an outage (SERVICE-2), so its 
 | SERVICE-4 | LOW | The Weir Key behind one plain breach, not the Burning Doors witnessed whole | FIXED: the Covens' Hoard's `after` is the Burning Doors' title held (Doorwarden); pinned |
 | SERVICE-5 | LOW | "A receipt from before the line asked opens nothing" false: a held receipt counts for its life, and one receipt witnessed every open step | FIXED: one receipt, one step, in the line's order (`seen_at`); the record states the true bound; pinned |
 | SERVICE-6 | LOW | Covenbane paid when QLCH03 STARTS (an opening asked again laid its `done_at`) | FIXED: a claim says its phase; only an `end` pays; pinned |
-| SERVICE-7 | LOW | The pay's telling: (a) the answer's `keys` dropped; (b) no HONOUR-BANNER for a questline title; (c) a title answer lost to a timeout after the commit - the retry answers without `title`, never told | FIXED (a), (b): the balance restacks the pack's keys at once; a title is the HONOUR-BANNER and a HUD line; pinned. (c) OPEN - no change found: the title is held and the line's page says so, but the banner of a lost answer never shows (the author's call) |
+| SERVICE-7 | LOW | The pay's telling: (a) the answer's `keys` dropped; (b) no HONOUR-BANNER for a questline title; (c) a title answer lost to a timeout after the commit - the retry answers without `title`, never told | FIXED (a), (b): the balance restacks the pack's keys at once; a title is the HONOUR-BANNER and a HUD line; pinned. (c) FIXED: a title step's end answers the line's title HELD (`titleHeld`) when this claim did not lay it, and the runner tells it - banner and line - only for a claim an earlier attempt of which went unanswered (offline, a timeout, a 5xx), or one a load re-asks unanswered; an answer that arrived is never told twice, and another character of the account finishing the line again hears nothing; pinned through the real runner and Worker (QL12-held-title-never-told, -told-every-answer, QL12-restored-end-never-lost, QL12-service-answers-no-held-title) |
 | SERVICE-8 | LOW | A title once an account, not a character; after a `seal` on one character a `keep` on another never paid, unsaid | FIXED: the record; the key on the end's own choice, `keyHeld` told (LINES-4) |
-| SERVICE-9 | NIT | relayversion's comment "world222"; record 5.3's "Hourwitness"/"Satakalwitness" against the badge's words; accountQuestlines' docstring without `keys`; the refusals' words shown nowhere | FIXED: the record's words are the badge's; the docstring names `keys` and `keyHeld`. The refusals' words drawn on the step (UI-19). OPEN: `test/net/relayversion.test.js`'s TITLES note still says world222 (the author's) |
+| SERVICE-9 | NIT | relayversion's comment "world222"; record 5.3's "Hourwitness"/"Satakalwitness" against the badge's words; accountQuestlines' docstring without `keys`; the refusals' words shown nowhere | FIXED: the record's words are the badge's; the docstring names `keys` and `keyHeld`. The refusals' words drawn on the step (UI-19). And relayversion's TITLES note, at the merge that numbered the relay world226 (`world222 on its branch`) |
 | ACTS-1 | HIGH | = SERVICE-1/-2, from the act: the client counts a deed the service never witnesses, and the window tagged the step "witnessed" whatever the service said | FIXED with SERVICE-1 and SERVICE-2; the step's mark is the service's answer - "needs a witness", "witnessed", "not yet seen" - and a line's title waits on every deed seen; pinned |
 | ACTS-2 | MED | Lines open whose only producer cannot fire: The King's Gambit off, Loot rarity off, the sea off, a guest's crafts | FIXED with LINES-2 and LINES-6 |
 | ACTS-3 | MED | 19 of 31 producer sites driven by no test; 15 probes lived | FIXED: a driven case per site, through the real producer; the lane's 15 and 12 more die |
@@ -161,7 +163,7 @@ guest's answer (LINES-1, SERVICE-1, ACTS-1) or to an outage (SERVICE-2), so its 
 | UI-16 | LOW | A finished line's page printed its last step's outcome twice | FIXED: said once, under "How it ended"; pinned |
 | UI-17 | LOW | = REWARD-13 | FIXED with REWARD-13 |
 | UI-18 | NIT | Misplaced comments; qlObjectivesBlock's `{ended}` passed by no caller | FIXED: the comments beside their imports; `{ended}` dropped |
-| UI-19 | NIT | The refusals' words drawn nowhere; an offer's title, a step's outcome and the "Outcome:" line saved in the language of the moment; the ladders' titles cached for the page's life | FIXED: the ladders' titles kept while the text stands, read again when a language or a pack moves it (`questBridge.js`); a claim the service refuses (`ql-closed`, `ql-body`) is said under its step in the service's words; pinned. LEFT by the UI fixer, no reason given: the words saved in the language of the moment (the author's) |
+| UI-19 | NIT | The refusals' words drawn nowhere; an offer's title, a step's outcome and the "Outcome:" line saved in the language of the moment; the ladders' titles cached for the page's life | FIXED: the ladders' titles kept while the text stands, read again when a language or a pack moves it (`questBridge.js`); a claim the service refuses (`ql-closed`, `ql-body`) is said under its step in the service's words; pinned. And a waiting reward is named in the language of the page that draws it (the bridge's `offers`, the ladders' `questTitle`); pinned (AUDIT-QL-UI-19-reward-named-in-its-rolled-words). DECIDED: a step's outcome and the filed "Outcome:" line keep the words they were filed in, as DFU's notebook files its own entries - the quest whose resources expand them is gone by then, so nothing could read them again |
 | UI-20 | NIT | bg's "Вземи" informal; pt-BR's "foi trocada"; id's introGear lead | FIXED in the locales (the author's) |
 | DOC-1 | MED | = SERVICE-2 | FIXED with SERVICE-2 |
 | DOC-2 | MED | The pull request's patch notes and record 5.3 name "Hourwitness" and "Satakalwitness" - the badge shows "Witness of the Hour" and "Satakal's Witness" | FIXED in the record. OPEN: pull request #1047's description (the release reads it) - the author's |
@@ -198,6 +200,7 @@ guest's answer (LINES-1, SERVICE-1, ACTS-1) or to an outage (SERVICE-2), so its 
 | DOC-33 | NIT | Record 4: "A line the service pays waits, offline" - every online line does | FIXED in the record |
 | DOC-34 | NIT | A line's `tier` dead data | FIXED: pinned to its sheets' |
 | DOC-35 | NIT | qlFormat's `--file` unsaid; a dead `?? head[3]`; an unknown quest exits 0 | FIXED |
+| VOICE-QL | MED | (the author's, merging main) Main's game voice (`10-UI/Voice.md`, VOICE1 and VOICE2 - American spelling, no dash aside in an instruction, no modern game word) arrived after the branch was cut, and the overhaul's own text broke it: British spelling in 96 lines (armour, harbourmaster, colours, favour, honour, grey...), 117 dash asides in the sheets' objectives, choices and outcomes, "an endgame place" in the witnessed step's words, "aren't" in the closed door's; and the Features row still promised "each one finished offers a piece of gear" though UI-4 had made it some | FIXED: every word in text only - never an id (`N0B00Y17`'s outcome `favour`), a symbol (`_harbour_`), a key (`ql.journal.armour`) or a monster's own name (Sabretooth); the 117 asides rewritten by hand, each meaning kept; the witnessed places named (a Dagon's Breach, an Elite Breach's Redoubts, the Abyss Dungeon's Shattered Hour, the Sea Serpent); the row's promise made true; the patches' own 19xx messages too (the scripts' and patches' speech keeps its dashes, as the voice page exempts spoken lines). The 13 languages: 11 keys' records moved (their meaning kept), four redrafted. `test/systems/questlines/qlvoice.test.js` holds the rules over every sheet, script, patch message and line |
 
 ### Measured, then and now
 
@@ -233,15 +236,11 @@ guest's answer (LINES-1, SERVICE-1, ACTS-1) or to an outage (SERVICE-2), so its 
   splices it after an English "... but you", as its siblings are.
 - REWARD-7: the measure of a played hour is still owed to the first week of play (record 5.2).
 
-### Open - the author's
+### Closed by the author after the lanes
 
-- SERVICE-7 (c): a title answer lost after the service's commit is never told (the banner).
-- SERVICE-9: `test/net/relayversion.test.js`'s TITLES note says world222 (the relay is world224).
-- UI-19: an offer's title, a step's outcome and the filed outcome line keep the language they were saved in - left by the
-  UI fixer with no reason given.
-- DOC-2, DOC-30: pull request #1047's description - "Hourwitness", "Satakalwitness", "13 named pieces", "133 new
-  strings", "a title is paid once a character", and "a turned-down reward ends with `ql paid`, never `give pc nothing`"
-  (BRANCH-6 keeps DFU's `give pc nothing` where DFU pays nothing).
+SERVICE-7 (c), SERVICE-9's relayversion note and UI-19's waiting reward (above), and DOC-2 and DOC-30: pull request
+#1047's description rewritten from the code - the badge's words, the named pieces and the strings counted again, a
+title once an account, and pattern C's refusal as BRANCH-6 left it (`give pc nothing` where DFU pays nothing).
 
 ### Not this arc's
 

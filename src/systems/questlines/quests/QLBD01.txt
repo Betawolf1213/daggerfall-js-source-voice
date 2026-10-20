@@ -37,7 +37,7 @@ Message:  1011
 <ce>                 Ysolde Marnhel, Master Conjurer of Wayrest
 
 Message:  1012
-<ce>             A courier in the Mages Guild's grey steps out
+<ce>             A courier in the Mages Guild's gray steps out
 <ce>               of the crowd and presses a sealed letter
 <ce>                 into your hand. "From Wayrest," is all
 <ce>                     the courier says, and is gone.

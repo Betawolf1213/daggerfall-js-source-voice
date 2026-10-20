@@ -19,9 +19,9 @@ QuestComplete:  [1004]
 
 QuestLogEntry:  [1010]
 %qdt:
- _smith_, an armourer at _shop_ in __shop_,
+ _smith_, an armorer at _shop_ in __shop_,
  sent me a note. A good piece of gear can still be
- made into something better, and the armourer will
+ made into something better, and the armorer will
  pay me to learn how. I am to set a gem in a socket,
  any gem in any piece, then go to _shop_ to say so.
 
@@ -30,7 +30,7 @@ Message:  1011
 
      Every weapon worth carrying has room in it for
  a stone - one socket, two, three on the big ones.
- Every piece of armour has one. Most fighters never
+ Every piece of armor has one. Most fighters never
  fill them. Most fighters are fools.
 
      Set a gem in a socket. It costs you nothing but
@@ -38,12 +38,12 @@ Message:  1011
  The mines give gems up, and so do the dead. Then
  come to _shop_ in __shop_ and tell me.
 
-<ce>                               _smith_, armourer
+<ce>                               _smith_, armorer
 
 Message:  1012
 <ce>         An apprentice in a scorched leather apron
 <ce>          catches your sleeve and hands you a note.
-<ce>         "From _smith_, at _shop_. The armourer
+<ce>         "From _smith_, at _shop_. The armorer
 <ce>               says you look under-dressed."
 
 Message:  1013
@@ -56,7 +56,7 @@ Message:  1013
 <ce>        that is a lesson for another day."
 
 Message:  1014
-The armourer at _shop_? Knows more about steel than anyone in __shop_.
+The armorer at _shop_? Knows more about steel than anyone in __shop_.
 <--->
 _smith_? Sets gems in blades, they say. Swears it is worth it.
 <--->

@@ -394,7 +394,7 @@ export const SHARE_REFUSAL_TEXT = Object.freeze({
   tooLarge: 'This quest is too complex to share.',
   mainQuest: 'The main quest cannot be shared.',
   // AUDIT QUESTLINES REWARD-2: the sender's word for a questline's step (world.js reads this table by the reason)
-  get questline() { return t('quest.share.questline', 'A questline is your own road - its steps cannot be shared.'); },
+  get questline() { return t('quest.share.questline', 'A questline is your own road. Its steps cannot be shared.'); },   // AUDIT QUESTLINES VOICE-QL: two sentences, no dash aside (bible/10-UI/Voice.md rule 5)
   // DISC22-F: the fragments below are said to the RECEIVER, after "... but you" (scenes/world.js) - second person
   active: 'already have this quest.',
   done: 'have already done this quest.',
@@ -430,7 +430,7 @@ export const RECEIVER_REFUSAL_TEXT = Object.freeze({
   gone: 'no longer have a copy of it to bring up to date.',
   tooLarge: 'were sent a quest too large to read.',
   mainQuest: 'cannot be given the main quest.',
-  get questline() { return t('quest.share.questline.receiver', 'cannot be given a step of a questline - each walks their own.'); },   // AUDIT QUESTLINES REWARD-2
+  get questline() { return t('quest.share.questline.receiver', 'cannot be given a step of a questline. Each player walks their own.'); },   // AUDIT QUESTLINES REWARD-2; VOICE-QL: still a fragment after "... but you", its aside a second sentence (Voice.md rule 5)
   restore: 'could not rebuild it in your world.',
   shelved: 'have abandoned it - reclaim it from your journal to take it up again.',   // QUEST-SHELF's audit: a deliberate share is answered
 });

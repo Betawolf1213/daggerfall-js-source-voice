@@ -35,7 +35,7 @@ Message:  1011
 
 Message:  1012
 <ce>         "Gathering is half of it. Make something.
-<ce>         The forge at an armourer's, the loom at a
+<ce>         The forge at an armorer's, the loom at a
 <ce>         clothier's, the mason's bench here - any
 <ce>         station will do. A pot on the fire is supper,
 <ce>              not a piece. Then come back to me."

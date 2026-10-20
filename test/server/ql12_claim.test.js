@@ -418,11 +418,13 @@ function runnerOn(S, who, lines) {
   const kv = new Map([[SESSION_KEY, JSON.stringify({ secret: who.secret, id: who.id, kind: who.handle ? 'account' : 'guest' })], [SERVICE_KEY, 'https://accounts.invalid']]);
   const storage = { getItem: (k) => kv.get(k) ?? null, setItem: (k, v) => kv.set(k, v), removeItem: (k) => kv.delete(k) };
   const door = accountQuestlines({ fetch: S.fetch, storage });
-  const R = { wire: [], down: 0, honours: [], clock: { s: 1000, ms: 0 }, inflight: new Set() };
+  const R = { wire: [], down: 0, lose: 0, honours: [], clock: { s: 1000, ms: 0 }, inflight: new Set() };
   const claim = async (b) => {
     if (!lines.includes(b.line)) return { ok: true, data: { why: 'unpaid' } };
     if (R.down > 0) { R.down--; R.wire.push([b.line, b.step, b.phase, 'down']); return { ok: false, error: 'offline' }; }
     const a = await door.claim(b);
+    // AUDIT QUESTLINES SERVICE-7 (c): an answer lost AFTER the service committed it (a timeout on the way back)
+    if (R.lose > 0) { R.lose--; R.wire.push([b.line, b.step, b.phase, 'lost', a?.ok ? a.data : a]); return { ok: false, error: 'offline' }; }
     R.wire.push([b.line, b.step, b.phase, a?.ok ? a.data : a]);
     return a;
   };
@@ -487,6 +489,41 @@ test('AUDIT QUESTLINES SERVICE-1/-3, LINES-2: a guest\'s page begins no line the
   assert.deepEqual(R.honours, [{ line: 'oldCoil', title: 'satakalwitness', key: false, keys: null, keyHeld: false }], 'told once');
   assert.equal(H.row(me).ql_titles, qlTitleBit('satakalwitness'));
   assert.equal(R.runner.lineState('oldCoil').claims[2], 'witnessed');
+});
+
+test('AUDIT QUESTLINES SERVICE-7 (c): a title whose answer was lost after the service laid it is told when its retry answers it HELD - once, and after a load too; a held title is never told for an answer that arrived (another character of the account finishing the line again) (mutants: the held title never told; told for every answer; a restored end never lost)', async (t) => {
+  setPref(QUESTLINES_PREF, true);
+  const H = await stood(t);
+  let day = 330;   // a serpent's day, each fight its own
+  const toTheEnd = async (R, who, lose, load = false) => {
+    await R.begin('oldCoil');
+    for (const q of ['QLOC01', 'QLOC02']) { R.done(q); R.wait(STEP_GAP_S); await R.tick(); }
+    await H.serpent(who, day++);
+    R.lose = lose;
+    R.done('QLOC03', 'scale');
+    await R.tick();
+    if (load) R.load();
+    R.wait(0, CLAIM_RETRY_MS);
+    await R.tick();
+  };
+  const me = await H.S.registered('LostAnswer', { character: CH });
+  H.at(T0 + 10);
+  const R = runnerOn(H.S, me, ['oldCoil']);
+  await toTheEnd(R, me, 1);
+  assert.equal(H.row(me).ql_titles, qlTitleBit('satakalwitness'), 'laid by the answer that was lost');
+  assert.deepEqual(R.wire.at(-2).slice(0, 4), ['oldCoil', 2, 'end', 'lost']);
+  assert.deepEqual(R.wire.at(-1), ['oldCoil', 2, 'end', { witnessed: true, titleHeld: 'satakalwitness' }]);
+  assert.deepEqual(R.honours.map((h) => h.title), ['satakalwitness'], 'told on the retry, once');
+  // the same loss, and a load before the retry: the save never heard the end answered
+  const two = await H.S.registered('LostThenLoaded', { character: CH });
+  const R2 = runnerOn(H.S, two, ['oldCoil']);
+  await toTheEnd(R2, two, 1, true);
+  assert.deepEqual(R2.honours.map((h) => h.title), ['satakalwitness'], 'told after the load');
+  // another character of the first account finishes the line: the title held, its answer arrived - nothing told
+  const R3 = runnerOn(H.S, me, ['oldCoil']);
+  await toTheEnd(R3, me, 0);
+  assert.ok(R3.wire.some(([l, s, ph, d]) => l === 'oldCoil' && s === 2 && ph === 'end' && d?.titleHeld === 'satakalwitness'), 'answered held');
+  assert.deepEqual(R3.honours, [], 'an answer that arrived: never told again');
 });
 
 test('AUDIT QUESTLINES SERVICE-2/-3: a claim is never given up - the Hour\'s opening cut for longer than CLAIM_TRIES, the Hour broken meanwhile, the line\'s first letter its window: the end witnesses it; an end the service has not seen is `unseen` and asked again until a deed is; a load asks a current step\'s unanswered opening again (mutants: the open dropped after CLAIM_TRIES; the slow cadence; restore\'s open)', async (t) => {

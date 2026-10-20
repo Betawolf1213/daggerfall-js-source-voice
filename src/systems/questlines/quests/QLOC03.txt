@@ -18,7 +18,7 @@ QuestComplete:  [1004]
 
 QuestLogEntry:  [1010]
 %qdt:
- Hamid al-Rasheen has written: the harbour bells
+ Hamid al-Rasheen has written: the harbor bells
  ring for the Old Coil now. When a great serpent is
  sighted, I am to sail out and slay it, and then
  find Hamid at _inn_ in __inn_.
@@ -26,8 +26,8 @@ QuestLogEntry:  [1010]
 Message:  1011
 %pcn,
 
-     The bells. Every harbour from Sentinel to
- Wayrest. The harbourmasters call it a great serpent
+     The bells. Every harbor from Sentinel to
+ Wayrest. The harbormasters call it a great serpent
  and ring its waters on the charts. We know its name.
 
      When the bells ring, sail out. Do not go alone if
@@ -84,7 +84,7 @@ Keep the scale
 
 Message:  1033
 <ce>         Hamid takes the flask in both hands. "At Sentinel,
-<ce>          then, at the harbour mouth, where my grandmother
+<ce>          then, at the harbor mouth, where my grandmother
 <ce>          poured hers. Satakal will have his skin back."
 <ce>
 <ce>         "The sailors will hear of this in every port, and

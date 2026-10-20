@@ -40,7 +40,7 @@ Message:  1011
 <ce>                              Ysolde Marnhel
 
 Message:  1012
-<ce>          A courier in the Guild's grey falls into step
+<ce>          A courier in the Guild's gray falls into step
 <ce>        beside you. "The Master Conjurer heard what you
 <ce>          did at the breach," the courier says, and is
 <ce>                   gone before you can answer.

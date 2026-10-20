@@ -19,11 +19,11 @@ QuestComplete:  [1004]
 
 QuestLogEntry:  [1010]
 %qdt:
- Word from the armourer who taught me to set a
+ Word from the armorer who taught me to set a
  stone: the mages can do what no smith can, and
  roll a piece's virtue again at the Reforge. I am
  to have a piece reforged at a Mages Guild, then
- tell _smith_, an armourer at _shop_ in __shop_
+ tell _smith_, an armorer at _shop_ in __shop_
  who knows the Reforge, how it went.
 
 Message:  1011
@@ -47,7 +47,7 @@ Message:  1013
 <ce>        know everything I know about gear."
 
 Message:  1014
-The armourer at _shop_? Sends customers to the mages now, would you believe it.
+The armorer at _shop_? Sends customers to the mages now, would you believe it.
 <--->
 _smith_? Says a smith's best tool is a mage's press. Odd thing for a smith to say.
 <--->

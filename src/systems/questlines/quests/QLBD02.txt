@@ -124,7 +124,7 @@ Message:  1027
 <ce>
 <ce>       "Still shut. Good. Most would have looked - I
 <ce>        would have, at your age, and been sorry." She
-<ce>        wraps it in the Guild's grey cloth.
+<ce>        wraps it in the Guild's gray cloth.
 <ce>
 <ce>       "The Guild will know who brought this to it
 <ce>        whole. That counts for something in Wayrest,

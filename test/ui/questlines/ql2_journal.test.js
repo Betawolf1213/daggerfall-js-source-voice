@@ -78,7 +78,8 @@ test('QL3 a reward waiting: its pieces as cards - name, tier and kind, their mag
   const cards = box.querySelectorAll('.px-qpiece');
   assert.equal(cards.length, 3);
   assert.deepEqual(cards.map((c) => c.dataset.rarity), ['rare', 'magic', 'magic'], 'the ladder\'s colour by the sheet');
-  assert.deepEqual(cards.map((c) => text(c.querySelector('.px-qpiece-tier'))), ['Rare · Weapon', 'Magic · Armour', 'Magic · Jewellery']);
+  // PIN MOVED (AUDIT QUESTLINES VOICE-QL): Armor, Jewelry - American spelling in the game's own words (Voice.md rule 8)
+  assert.deepEqual(cards.map((c) => text(c.querySelector('.px-qpiece-tier'))), ['Rare · Weapon', 'Magic · Armor', 'Magic · Jewelry']);
   const take = cards[1].querySelector('.act');
   assert.equal(text(take), 'Take this');
   assert.match(take.title, /Sturdy Cuirass/, 'a press explains what a hover would (plain words, law 5)');
@@ -119,7 +120,8 @@ test('QL12 a questline\'s page: what a questline is, its story and giver, its st
   assert.ok(text(rows[0]).includes('done') && text(rows[1]).includes('now'));
   // AUDIT QUESTLINES UI-12 (PIN MOVED): a hover explained "witnessed" - no press, no pad; the page says it once
   assert.equal(text(rows[2].querySelector('.px-qobj-tag')), 'needs a witness', 'a step still to do needs one');
-  assert.match(text(box), /the account service checks it against that place.s own record before it pays/);
+  // PIN MOVED (AUDIT QUESTLINES VOICE-QL): the places by name, a sentence of its own - never "an endgame place" (Voice.md rule 3)
+  assert.match(text(box), /A witnessed step is done in a Dagon.s Breach, an Elite Breach.s Redoubts, the Abyss Dungeon.s Shattered Hour or against the Sea Serpent\. The account service checks it against that place.s own record before it pays\./);
   assert.equal(text(box.querySelector('.px-qline-said')), 'Ysolde told you how.', 'a done step says how it ended');
   assert.match(text(box), /Finish it to earn the title Doorwarden/);
   const done = qlLineDetail(doc, { ...line, state: 'done', opens: null, outcome: 'The embers went to the Guild.' }, { titleText: () => 'Doorwarden' });
@@ -257,7 +259,7 @@ test('AUDIT QUESTLINES UI-10, UI-11: each Take carries its own key and says when
   const stat = cards.map((c) => text(c.querySelector('.px-qpiece-stat')));
   assert.ok(stat[0].startsWith(`Damage ${weaponDamageString(w)} · `) && stat[0].endsWith(` · ${weightString(w)} kg`), stat[0]);
   assert.match(stat[0], / · (One|Two)-handed · /, 'and how it is held');
-  assert.equal(stat[1], `Armour ${armourModString(a)} · ${weightString(a)} kg`);
+  assert.equal(stat[1], `Armor ${armourModString(a)} · ${weightString(a)} kg`);   // PIN MOVED (AUDIT QUESTLINES VOICE-QL): Armor (Voice.md rule 8)
   assert.equal(stat[2], `${weightString(j)} kg`);
   assert.equal(pieceStatWords({ name: 'a test piece', affixes: [] }), '', 'no template, nothing to read');
   assert.equal(qlOfferDetail(doc, { id: 6, title: 'X', pieces: [{ kind: 'jewel', tier: 'magic', item: { name: 'Ring', affixes: [] } }] }, () => {}).querySelector('.px-qpiece-stat'), null);
@@ -288,7 +290,8 @@ test('AUDIT QUESTLINES UI-19: a claim the service refuses - its switch shut, a c
   assert.equal(bd().steps[0].refused, 'ql-closed', 'the opening the service shut its door on');
   assert.ok(bd().steps.slice(1).every((s) => s.refused === null), 'the steps no claim was asked for say nothing');
   const page = qlLineDetail(fakePage(), bd());
-  assert.match(text(page), /The questlines' rewards aren't available to you right now\./, 'net/accountClient.js account.refusal.qlClosed, drawn');
+  // PIN MOVED (AUDIT QUESTLINES VOICE-QL): "are not", the voice's plain word (Voice.md)
+  assert.match(text(page), /The questlines' rewards are not available to you right now\./, 'net/accountClient.js account.refusal.qlClosed, drawn');
   answer = { ok: false, error: 'ql-body', status: 400 };
   clock.ms += 60_000; runner.look(); await settle();
   assert.match(text(qlLineDetail(fakePage(), bd())), /That questline step could not be claimed\./, 'account.refusal.qlBody');

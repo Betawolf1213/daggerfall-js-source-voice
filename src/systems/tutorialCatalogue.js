@@ -378,8 +378,10 @@ export const TUTORIALS = Object.freeze([
       return [
         t('tutorials.questlines.body1', 'The Quests tab lists what each quest asks of you and ticks off each step. Some quests make you choose, and end differently for each choice.'),
         // AUDIT QUESTLINES UI-4 (REWARD-6): not every quest pays gear - 24 sheets' outcomes pay none - so the page promises it
-        // only where the quest's own page does (ui/questlines/qlJournal.js qlObjectivesBlock, its row's `gear`)
-        t('tutorials.questlines.gearBody', 'Some quests, once finished, let you pick one of three pieces of gear: the quest\u2019s page says so. Questlines are longer stories, quest after quest, listed in the same tab.'),
+        // only where the quest's own page does (ui/questlines/qlJournal.js qlObjectivesBlock, its row's `gear`). AUDIT
+        // QUESTLINES VOICE-QL: "longer stories, quest after quest, listed in the same tab" said plainly (Voice.md rule 4),
+        // in the questline page's own words (qlJournal.js ql.journal.lineWhat)
+        t('tutorials.questlines.gearBody', 'Some quests, once finished, let you pick one of three pieces of gear: the quest\u2019s page says so. Questlines are longer stories told in several quests, one after another. The same tab lists them.'),
       ];
     },
   }),

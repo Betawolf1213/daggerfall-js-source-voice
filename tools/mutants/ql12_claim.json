@@ -286,5 +286,45 @@
       "test/server/ql12_claim.test.js"
     ],
     "why": "AUDIT QUESTLINES SERVICE-2: the LINE's first opening is the window, never the step's own"
+  },
+  {
+    "name": "QL12-held-title-never-told",
+    "file": "src/systems/questlines/qlLineRunner.js",
+    "old": "const title = d.title ?? (c.lost ? d.titleHeld ?? null : null);",
+    "new": "const title = d.title ?? null;",
+    "tests": [
+      "test/server/ql12_claim.test.js"
+    ],
+    "why": "AUDIT QUESTLINES SERVICE-7 (c)"
+  },
+  {
+    "name": "QL12-held-title-told-every-answer",
+    "file": "src/systems/questlines/qlLineRunner.js",
+    "old": "const title = d.title ?? (c.lost ? d.titleHeld ?? null : null);",
+    "new": "const title = d.title ?? d.titleHeld ?? null;",
+    "tests": [
+      "test/server/ql12_claim.test.js"
+    ],
+    "why": "AUDIT QUESTLINES SERVICE-7 (c)"
+  },
+  {
+    "name": "QL12-restored-end-never-lost",
+    "file": "src/systems/questlines/qlLineRunner.js",
+    "old": "if (c && (said == null || said === 'opened')) c.lost = true;",
+    "new": "",
+    "tests": [
+      "test/server/ql12_claim.test.js"
+    ],
+    "why": "AUDIT QUESTLINES SERVICE-7 (c)"
+  },
+  {
+    "name": "QL12-service-answers-no-held-title",
+    "file": "server-account/src/questlines.js",
+    "old": "    ...(titled ? { title: law.title } : held ? { titleHeld: law.title } : {}),",
+    "new": "    ...(titled ? { title: law.title } : {}),",
+    "tests": [
+      "test/server/ql12_claim.test.js"
+    ],
+    "why": "AUDIT QUESTLINES SERVICE-7 (c)"
   }
 ]

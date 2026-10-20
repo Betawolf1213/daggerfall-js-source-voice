@@ -793,7 +793,9 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
       /** QL3 (bible/06-Systems/Questlines-Arc.md section 5.2): the rewards waiting to be chosen, and the take - beside the
        *  journal's tidy-ups, so every host that hands its pause window `journalClean` hands these too (the four hosts,
        *  through the one door). */
-      offers: () => questlines.offers(),
+      // AUDIT QUESTLINES UI-19: a waiting reward is named in the language of the page that draws it - the quest's title as
+      // the ladders name it (questTitle: a translation's, else the pack's DisplayName), never the words it was rolled in
+      offers: () => questlines.offers().map((o) => ({ ...o, title: questTitle(o.questName) || o.title })),
       takeOffer: (id, index) => questlines.take(id, index),
     },
 

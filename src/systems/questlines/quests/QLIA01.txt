@@ -43,7 +43,7 @@ Message:  1011
 <ce>              The Herald of the Arena of Daggerfall
 
 Message:  1012
-<ce>          A crier in the Arena's colours slaps a broadsheet
+<ce>          A crier in the Arena's colors slaps a broadsheet
 <ce>             into your hand and is off down the street,
 <ce>                bellowing, "New blood! New blood!"
 

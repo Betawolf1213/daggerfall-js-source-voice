@@ -452,5 +452,14 @@
     "tests": [
       "test/systems/questlines/ql1_layer.test.js"
     ]
+  },
+  {
+    "name": "AUDIT-QL-UI-19-reward-named-in-its-rolled-words",
+    "file": "src/scenes/quest/questBridge.js",
+    "old": "offers: () => questlines.offers().map((o) => ({ ...o, title: questTitle(o.questName) || o.title })),",
+    "new": "offers: () => questlines.offers(),",
+    "tests": [
+      "test/systems/questlines/ql1_layer.test.js"
+    ]
   }
 ]
