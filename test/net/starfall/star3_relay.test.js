@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import {
   STAR_HOUR_MS, STAR_PER_NIGHT, STAR_WAVES, STAR_LEVEL_MAX, STAR_KILLS_WIRE_MAX, STAR_BLOWS_WIRE_MAX,
   STAR_TOP_MAX, STAR_ACCOUNTS_MAX, STAR_LIGHT, STAR_PHASES, STAR_WORD_MS, STAR_GRACE_MS, STAR_REACH_M, STAR_UNITS_PER_M,
-  STAR_ORPHAN_MS, STAR_LOST_DAWN, P_GATHER, P_WAVE, P_BREATH, P_MASTER, P_HELD, P_LOST, starTimes, starNativeOf, starLedgerId,
+  STAR_ORPHAN_MS, STAR_LOST_DAWN, STAR_LOST_DARK, P_GATHER, P_WAVE, P_BREATH, P_MASTER, P_HELD, P_LOST, starTimes, starNativeOf, starLedgerId,
   starWaveSize, starNightGoneAt, STAR_WAVE_MAX, newStarLedger, starLedgerSane, starHeldWord, STAR_LIFE_MS, STAR_AFTER_MS,
 } from '../../../src/net/starfall/starfallLaw.js';
 import { readStarReceipt, verifyStarReceipt, mintStarReceipt, STAR_RECEIPT_MAX, STAR_RECEIPT_V } from '../../../src/net/starfall/starReceipt.js';
@@ -39,7 +39,7 @@ const T = starTimes(N, K);
 /** A pose at the star the law places in (px, py) - `east` metres east of it. */
 const at = (px = PX, py = PY, east = 0) => { const [x, z] = starNativeOf(N, K, px, py); return { x: x + east * STAR_UNITS_PER_M, y: 0, z, yaw: 0, pitch: 0 }; };
 const ON = at(), OFF = at(PX, PY, STAR_REACH_M + 5);
-const word = (o = {}) => ({ n: N, k: K, px: PX, py: PY, lv: 12, s: 0, o: 0, kn: 0, wc: 0, hb: 0, mf: 0, ...o });
+const word = (o = {}) => ({ n: N, k: K, px: PX, py: PY, lv: 12, s: 0, o: 0, kw: 0, kn: 0, wc: 0, hb: 0, mf: 0, ...o });
 const ID = (o = {}) => starLedgerId(word(o));
 const LED = (o = {}) => starLedgerKey(ID(o));
 const stars = (ws, k) => ws.sent.filter((m) => m.t === 'star' && (!k || m.k === k));
@@ -58,9 +58,10 @@ const signing = async () => {
   return { kp, pkcs8: Buffer.from(await subtle.exportKey('pkcs8', kp.privateKey)).toString('base64') };
 };
 
-/** An honest owner's word off what its screen last heard: this wave's foes dead and the wave cleared (the relay believes
- *  it once it may), the master fallen, and its foes' blows on the star - one more a word while a wave stands. */
-const ownerWord = (st, hb) => ({ o: 1, s: 1, kn: st?.p === P_WAVE ? st.wz : 0, wc: st?.p === P_WAVE ? st.w : 0, hb, mf: st?.p === P_MASTER ? 1 : 0 });
+/** An honest owner's word off what its screen last heard: this wave's foes dead, named by their wave, and the wave
+ *  cleared (the relay believes it once it may), the master fallen, and its foes' blows on the star - one more a word
+ *  while a wave stands. */
+const ownerWord = (st, hb) => ({ o: 1, s: 1, kw: st?.p === P_WAVE ? st.w : 0, kn: st?.p === P_WAVE ? st.wz : 0, wc: st?.p === P_WAVE ? st.w : 0, hb, mf: st?.p === P_MASTER ? 1 : 0 });
 /** The defense, a word every STAR_WORD_MS from each defender, until `until` holds of what the owner last heard (or
  *  `beats` pass). `others` are [socket, () => word] pairs; the owner's blows ride `blows`. */
 async function defend({ say, step }, owner, others, { until = (st) => st.p === P_HELD, beats = 400, blows = { hb: 0 } } = {}) {
@@ -77,9 +78,10 @@ async function defend({ say, step }, owner, others, { until = (st) => st.p === P
 
 // ═══ THE WIRE ═════════════════════════════════════════════════════════════════════════════════════
 
-test('STAR3 THE WIRE: a star word projected whole and bounded; each word a cell or the hub says, projected - a receipt by its shape, the held list by its entries; the law\'s bounds written again and pinned equal; an older relay is said none; the Starfall rides the festival\'s days, no live event of its own (mutants: the star\'s index unbounded; the light unbounded; a junk name hiding the held list\'s count; the relay floor off)', () => {
+test('STAR3 THE WIRE: a star word projected whole and bounded - the wave its deaths belong to among it; each word a cell or the hub says, projected - the speaker\'s own blows on its ledger, bounded, a receipt by its shape, the held list by its entries; the law\'s bounds written again and pinned equal; an older relay is said none; the Starfall rides the festival\'s days, no live event of its own (mutants: the star\'s index unbounded; the deaths\' wave unbounded; the light unbounded; my blows unbounded; a junk name hiding the held list\'s count; the relay floor off)', () => {
   assert.deepEqual(validStarIn({ ...word(), junk: 1 }), word(), 'projected: nothing the law does not read rides on');
-  for (const bad of [{ n: 0 }, { n: 1.5 }, { k: STAR_PER_NIGHT }, { k: -1 }, { px: 1000 }, { py: 500 }, { lv: 0 }, { lv: STAR_LEVEL_MAX + 1 }, { s: 2 }, { o: -1 }, { mf: 2 }, { kn: STAR_KILLS_WIRE_MAX + 1 }, { wc: STAR_WAVES + 1 }, { hb: STAR_BLOWS_WIRE_MAX + 1 }]) {
+  assert.equal(validStarIn(word({ kw: STAR_WAVES, kn: 3 })).kw, STAR_WAVES, 'the deaths\' wave, to the last');
+  for (const bad of [{ n: 0 }, { n: 1.5 }, { k: STAR_PER_NIGHT }, { k: -1 }, { px: 1000 }, { py: 500 }, { lv: 0 }, { lv: STAR_LEVEL_MAX + 1 }, { s: 2 }, { o: -1 }, { mf: 2 }, { kw: STAR_WAVES + 1 }, { kw: -1 }, { kw: undefined }, { kn: STAR_KILLS_WIRE_MAX + 1 }, { wc: STAR_WAVES + 1 }, { hb: STAR_BLOWS_WIRE_MAX + 1 }]) {
     assert.equal(validStarIn(word(bad)), null, JSON.stringify(bad));
   }
   assert.deepEqual(parseClient(JSON.stringify({ t: 'star', ...word() })), { error: 'star before hello' });
@@ -88,6 +90,9 @@ test('STAR3 THE WIRE: a star word projected whole and bounded; each word a cell 
   // what a cell and the hub say
   const st = { k: 'st', n: N, s: K, px: PX, py: PY, p: P_WAVE, w: 2, wz: 5, kn: 3, wl: 40_000, lt: 88, nd: 3, b: 2, ow: 1, hc: 12, hd: 0, lo: 0, why: 0 };
   assert.deepEqual(validStarOut({ ...st, extra: 1 }), st);
+  assert.deepEqual(validStarOut({ ...st, hm: 7 }), { ...st, hm: 7 }, 'the speaker\'s own blows ride its copy');
+  assert.equal(validStarOut({ ...st, hm: STAR_BLOWS_WIRE_MAX }).hm, STAR_BLOWS_WIRE_MAX);
+  for (const hm of [STAR_BLOWS_WIRE_MAX + 1, -1, 1.5, '3', null]) assert.equal(validStarOut({ ...st, hm }), null, `hm ${hm} bounded as a count of blows`);
   assert.equal(validStarOut({ ...st, lt: STAR_LIGHT + 1 }), null, 'the light bounded');
   assert.equal(validStarOut({ ...st, p: STAR_PHASES.length }), null);
   assert.equal(validStarOut({ ...st, s: STAR_PER_NIGHT }), null);
@@ -149,7 +154,7 @@ test('STAR3 THE STORED LEDGER: a ledger is what the law made, read back - its st
 
 // ═══ THE CELL ═════════════════════════════════════════════════════════════════════════════════════
 
-test('STAR3 THE WORD: heard in the star\'s own cell alone (another cell\'s pixel is junk), never in a layer, and inside the star\'s life and the window; its ledger made only at the star, by a word from its pose; a word from off the star is heard and counts nothing (mutants: the cell unchecked; a layer\'s ledger; the life unchecked; a ledger made from anywhere; a word off the star counted)', async () => {
+test('STAR3 THE WORD: heard in the star\'s own cell alone (another cell\'s pixel is junk), never in a layer, and inside the star\'s life and the window; its ledger made only at the star, by a word from its pose, and only before its deadline - the grace hears its last words; a word from off the star is heard and counts nothing (mutants: the cell unchecked; a layer\'s ledger; the life unchecked; a ledger made from anywhere; a ledger made past the deadline; a word off the star counted)', async () => {
   await withStar(async ({ world, r, say, set, step }) => {
     const by = r.connect(); await r.hello(by, 'peer-0009', at(PX, PY, 2000));   // a bystander in the cell, far from the star
     const a = r.connect(); await r.hello(a, 'peer-0001', ON);
@@ -194,6 +199,15 @@ test('STAR3 THE WORD: heard in the star\'s own cell alone (another cell\'s pixel
     assert.equal(led.a['acct-peer-0002'].s, 0, 'its strike not counted');
     assert.equal(led.own, '', 'nor its claim to the foes');
     assert.equal(seen(off).nd, 1, 'answered with the ledger');
+    // the grace hears a ledger's last words; it never makes one
+    const late = r.connect(); await r.hello(late, 'peer-0004', at(PX + 1));
+    set(T.endAt); await say(late, { px: PX + 1, s: 1, o: 1 });
+    assert.equal(r.store.has(LED({ px: PX + 1 })), false, 'no star made at its deadline - it would stand already lost');
+    const told = stars(a).length;
+    set(T.endAt + STAR_GRACE_MS - 1); await say(a, { s: 1 });
+    assert.equal(stars(a).length, told + 1, 'its own ledger\'s last word heard in the grace');
+    set(T.endAt + STAR_GRACE_MS); await say(a, { s: 1 });
+    assert.equal(stars(a).length, told + 1, 'past the grace, nothing read, kept or said - the alarm says the dawn');
   });
 });
 
@@ -299,14 +313,14 @@ test('STAR3 THE OWNER\'S WORD ALONE: a wave cleared, the deaths, the blows and t
   });
 });
 
-test('STAR3 DAWN: a star nobody holds by its deadline is lost at dawn by the cell\'s alarm - nobody need stand there to step it - and said to the cell; the ledger kept STAR_KEEP_MS past it, the cell forgetting nothing else meanwhile, then forgotten (mutants: the deadline never swept; the cell\'s forgetting runs over a kept star)', async () => {
+test('STAR3 DAWN: a star nobody holds by its deadline and the grace is lost at dawn by the cell\'s alarm, armed there - nobody need stand there to step it - and said to the cell; the ledger kept STAR_KEEP_MS past its deadline, the cell forgetting nothing else meanwhile, then forgotten (mutants: the deadline never swept; the alarm past the deadline; the cell\'s forgetting runs over a kept star)', async () => {
   await withStar(async ({ r, say, set }) => {
     const by = r.connect(); await r.hello(by, 'peer-0009', at(PX, PY, 2000));
     const a = r.connect(); await r.hello(a, 'peer-0001', ON);
     await say(a, { s: 1, o: 1 });
     await r.drop(a);
-    assert.equal(r.alarm.at, T.endAt, 'the alarm armed for the deadline');
-    set(T.endAt);
+    assert.equal(r.alarm.at, T.endAt + STAR_GRACE_MS, 'the alarm armed for the deadline and the grace - a fall said in flight still holds');
+    set(T.endAt + STAR_GRACE_MS);
     await r.fire();
     const st = seen(by);
     assert.equal(st.p, P_LOST);
@@ -325,35 +339,165 @@ test('STAR3 DAWN: a star nobody holds by its deadline is lost at dawn by the cel
   });
 });
 
-test('STAR3 THE CELL\'S PLACES: a cell keeps STAR_LEDGERS_MAX stars and one account makes STAR_LEDGERS_BY_MAX; full, a new star takes the place of the one stood at least lately, idle STAR_IDLE_MS - never a star held or lost, and never one being fought; with none, it waits (mutants: the account unbounded; a fought star evicted; an over star evicted)', async () => {
-  await withStar(async ({ r, say, step }) => {
-    const p = (i) => ({ px: PX + i });   // five stars' pixels in the one cell
-    for (let i = 0; i < 5; i++) assert.equal(worldRoom(PX + i, PY), CELL);
-    const a = r.connect(), b = r.connect(), c = r.connect(), d = r.connect(), e = r.connect();
-    await r.hello(a, 'peer-0001', at(PX)); await r.hello(b, 'peer-0002', at(PX + 2)); await r.hello(c, 'peer-0003', at(PX + 4)); await r.hello(d, 'peer-0004', at(PX + 1)); await r.hello(e, 'peer-0005', at(PX + 3));
-    await say(a, p(0));
-    await r.pose(a, at(PX + 1)); step(600); await say(a, p(1));
-    await r.pose(a, at(PX + 2)); step(600); await say(a, p(2));
-    assert.deepEqual(ledgers(r), [LED(p(0)), LED(p(1))], 'one account makes two');
-    await say(b, p(2));
-    await r.pose(b, at(PX + 3)); step(600); await say(b, p(3));
-    assert.equal(ledgers(r).length, STAR_LEDGERS_MAX);
-    await say(c, p(4));
-    assert.equal(r.store.has(LED(p(4))), false, 'full, and every star fought: the new one waits');
-    // a stands at the first; the rest are left alone
-    await r.pose(a, at(PX)); step(600);
-    for (let t = 0; t < STAR_IDLE_MS; t += STAR_WORD_MS) { step(STAR_WORD_MS); await say(a, p(0)); }
-    await say(c, p(4));
-    assert.deepEqual(ledgers(r), [LED(p(0)), LED(p(2)), LED(p(3)), LED(p(4))].sort(), 'the place of the star stood at least lately (the second)');
-    // two over; the new one idle; the first fought - only the idle star gives its place
-    for (const i of [2, 3]) { const led = r.room._stars.get(ID(p(i))); led.p = P_LOST; led.lo = Date.now(); await r.room._starSave(led, Date.now()); }
-    for (let t = 0; t < STAR_IDLE_MS; t += STAR_WORD_MS) { step(STAR_WORD_MS); await say(a, p(0)); }
-    await say(d, p(1));
-    assert.deepEqual(ledgers(r), [LED(p(0)), LED(p(1)), LED(p(2)), LED(p(3))].sort(), 'the idle star gave its place; the over ones kept theirs');
-    await say(e, p(3));
-    await r.pose(e, at(PX + 4)); step(600); await say(e, p(4));
-    assert.equal(r.store.has(LED(p(4))), false, 'none idle: it waits');
+/** Pixel `i` east of the star's own, in the one cell. */
+const px = (i) => ({ px: PX + i });
+/** The owner's blows drink star `i`'s light until it is lost, dark - the cheapest way a ledger ends (a forged pixel's). */
+async function drain({ r, say, step }, ws, i) {
+  for (let hb = 6; r.store.get(LED(px(i)))?.p !== P_LOST && hb < 400; hb += 6) { step(600); await say(ws, { ...px(i), o: 1, hb }); }
+  assert.equal(r.store.get(LED(px(i))).p, P_LOST, `star ${i} drained`);
+}
+
+test('STAR3 THE CELL\'S PLACES: a cell keeps STAR_LEDGERS_MAX live stars and one account makes STAR_LEDGERS_BY_MAX of them; a star over costs no place and counts to no account, kept to its end and never put out; full, a new star takes the place of the live one stood at least lately that nobody stands at - an account stands where its last word in the cell came from, within STAR_IDLE_MS; with none, it waits (mutants: the account unbounded; an over star costs a place; an account at every star it spoke at; the idle bound dropped; the freshest put out)', async () => {
+  await withStar(async (rig) => {
+    const { r, say, step } = rig;
+    for (let i = 0; i < 8; i++) assert.equal(worldRoom(PX + i, PY), CELL);
+    const [a, b, c, d, e, f] = [r.connect(), r.connect(), r.connect(), r.connect(), r.connect(), r.connect()];
+    await r.hello(a, 'peer-0001', at(PX)); await r.hello(b, 'peer-0002', at(PX + 3)); await r.hello(c, 'peer-0003', at(PX + 4));
+    await r.hello(d, 'peer-0004', at(PX + 5)); await r.hello(e, 'peer-0005', at(PX + 6)); await r.hello(f, 'peer-0006', at(PX + 7));
+    await say(a, px(0));
+    await r.pose(a, at(PX + 1)); step(600); await say(a, px(1));
+    await r.pose(a, at(PX + 2)); step(600); await say(a, px(2));
+    assert.deepEqual(ledgers(r), [LED(px(0)), LED(px(1))], 'one account makes two live');
+    // one of a's is lost: it keeps its ledger, costs no place, counts to nothing - a makes its third
+    await r.pose(a, at(PX + 1)); await drain(rig, a, 1);
+    await r.pose(a, at(PX + 2)); step(600); await say(a, px(2));
+    assert.deepEqual(ledgers(r), [LED(px(0)), LED(px(1)), LED(px(2))], 'a third, its lost one kept');
+    await say(b, px(3)); step(600); await say(c, px(4));   // c's stood at a moment later than b's
+    assert.equal(ledgers(r).length, STAR_LEDGERS_MAX + 1, 'four live and one over: the over one took no place');
+    // full: a stands at its third now, b and c at theirs - a's first, left for its third, gives its place
+    step(600); await say(d, px(5));
+    assert.deepEqual(ledgers(r), [LED(px(1)), LED(px(2)), LED(px(3)), LED(px(4)), LED(px(5))], 'the live star nobody stands at gave its place; the lost one kept');
+    // b and c fall silent past STAR_IDLE_MS while a and d stand at theirs: the one stood at least lately goes first
+    for (let t = 0; t <= STAR_IDLE_MS; t += STAR_WORD_MS) { step(STAR_WORD_MS); await say(a, px(2)); await say(d, px(5)); }
+    await say(e, px(6));
+    assert.deepEqual(ledgers(r), [LED(px(1)), LED(px(2)), LED(px(4)), LED(px(5)), LED(px(6))], 'b\'s star, stood at least lately, gave its place');
+    // c speaks again at its own: every place stood at - the next star waits
+    step(STAR_WORD_MS); await say(c, px(4)); await say(a, px(2)); await say(d, px(5)); await say(e, px(6));
+    await say(f, px(7));
+    assert.equal(r.store.has(LED(px(7))), false, 'every live star stood at: it waits');
+    assert.equal(r.store.get(LED(px(1))).p, P_LOST, 'and the star over is kept through it all');
     assert.equal(STAR_LEDGERS_BY_MAX, 2);
+  });
+});
+
+test('STAR3 A FORGED PIXEL STANDS IN NO OTHER\'S WAY: two accounts that make two stars each of pixels the law places none in, and drive them lost, hold no place against the real star - its first defender makes its ledger at once, and it is defended to its end (mutants: an over star costs a place)', async () => {
+  await withStar(async (rig) => {
+    const { r, say, step, set } = rig;
+    const g1 = r.connect(), g2 = r.connect();
+    await r.hello(g1, 'grief-0001', at(PX + 3)); await r.hello(g2, 'grief-0002', at(PX + 5));
+    for (const [ws, i] of [[g1, 3], [g1, 4], [g2, 5], [g2, 6]]) {
+      await r.pose(ws, at(PX + i)); step(600); await say(ws, px(i));
+      await drain(rig, ws, i);
+    }
+    assert.deepEqual(ledgers(r), [3, 4, 5, 6].map((i) => LED(px(i))), 'four forged stars, lost and kept');
+    // the honest player at the real star
+    const h = r.connect(); await r.hello(h, 'honest-0001', ON);
+    step(2000); await say(h, { o: 1, s: 1 });
+    assert.equal(r.store.has(LED()), true, 'the real star\'s ledger made at once');
+    assert.equal(seen(h).p, P_GATHER, 'and the coven gathers');
+    for (const [ws, i] of [[g1, 3], [g1, 4]]) { step(600); await say(ws, px(i)); }
+    set(T.endAt - 1000); await say(h, { o: 1, s: 1 });
+    assert.equal(r.store.has(LED()), true, 'kept to its deadline');
+    assert.deepEqual(ledgers(r).filter((k) => r.store.get(k).p === P_LOST), [3, 4, 5, 6].map((i) => LED(px(i))), 'the forged ones kept to their end - none fought again');
+  });
+});
+
+test('STAR3 THE NIGHT\'S THIRD STAR: one account that made the night\'s first two stars in a cell makes its third as it lands - the first, at its deadline then, holds no place - and the cell\'s places count only stars still standing (mutants: a star past its deadline holds its place; an over star costs a place)', async () => {
+  await withStar(async ({ r, set, step }) => {
+    const atK = (k, x) => { const [nx, nz] = starNativeOf(N, k, x, PY); return { x: nx, y: 0, z: nz, yaw: 0, pitch: 0 }; };
+    const sites = [[0, PX], [1, PX + 5], [2, PX + 10]];
+    for (const [, x] of sites) assert.equal(worldRoom(x, PY), CELL);
+    const a = r.connect(); await r.hello(a, 'solo-0001', atK(0, PX));
+    for (const [k, x] of sites) {
+      set(starTimes(N, k).fallAt + 1000);
+      await r.pose(a, atK(k, x)); step(600);
+      await r.raw(a, JSON.stringify({ t: 'star', ...word({ k, px: x, o: 1, s: 1 }) }));
+      assert.equal(r.store.has(starLedgerKey(starLedgerId({ n: N, k, px: x, py: PY }))), true, `star ${k} made as it lands`);
+    }
+    assert.equal(starTimes(N, 2).fallAt, starTimes(N, 0).endAt, 'the third lands on the first\'s deadline');
+  });
+});
+
+test('STAR3 A STAR STOOD AT KEEPS ITS PLACE: a defender standing at the real star keeps it its place however many stars others make about it - a star somebody stands at is never put out, so N accounts hold at most N places, and with every place stood at a new star waits; a star whose speaker\'s last word came from off it, or whose maker has gone to make another, is stood at by nobody (mutants: a stood-at star put out; a far word stands; the maker stands where it was)', async () => {
+  await withStar(async (rig) => {
+    const { r, say, step } = rig;
+    const h = r.connect(); await r.hello(h, 'honest-0001', ON);
+    const tick = async () => { step(600); await say(h, { o: 1, s: 1 }); };
+    await say(h, { o: 1, s: 1 });
+    const [g1, g2, g3, g4] = [r.connect(), r.connect(), r.connect(), r.connect()];
+    await r.hello(g1, 'grief-0001', at(PX + 1)); await r.hello(g2, 'grief-0002', at(PX + 3));
+    await r.hello(g3, 'grief-0003', at(PX + 4)); await r.hello(g4, 'grief-0004', at(PX + 5));
+    await tick(); await say(g1, px(1));
+    await r.pose(g1, at(PX + 2)); await tick(); await say(g1, px(2));
+    await tick(); await say(g2, px(3));
+    assert.equal(ledgers(r).length, STAR_LEDGERS_MAX, 'full');
+    await tick(); await say(g3, px(4));
+    assert.deepEqual(ledgers(r), [LED(), LED(px(2)), LED(px(3)), LED(px(4))].sort(), 'the forged star its maker left gave its place; the real star kept');
+    // four accounts, each standing at its own: four places held - the fifth waits
+    await tick(); await say(g1, px(2)); await say(g2, px(3)); await say(g3, px(4));
+    await say(g4, px(5));
+    assert.equal(r.store.has(LED(px(5))), false, 'every place stood at: it waits');
+    // g1's last word comes from off its star: it stands at none
+    await r.pose(g1, at(PX + 2, PY, STAR_REACH_M + 5)); await tick(); await say(g1, px(2));
+    await say(g4, px(5));
+    assert.deepEqual(ledgers(r), [LED(), LED(px(3)), LED(px(4)), LED(px(5))].sort(), 'a word from off a star stands nobody at it');
+    // g3 goes to make another: the star it made and spoke at last is its no longer
+    await r.pose(g3, at(PX + 6)); await tick(); await say(g2, px(3)); await say(g4, px(5));
+    await say(g3, px(6));
+    assert.deepEqual(ledgers(r), [LED(), LED(px(3)), LED(px(5)), LED(px(6))].sort(), 'its maker stands at the new one');
+    assert.equal(seen(h).p, P_GATHER, 'and the real star stood through it all');
+  });
+});
+
+test('STAR3 THE KEPT STARS NEVER CROWD THE LIVE ONES OUT: what a cell keeps over is bounded - a ledger is made once, from its star\'s landing to its deadline, so 256 pixels by a night\'s three stars, one night at a time - and none of it is held in hand: a live star\'s copy stays the one its words fold into through a new star\'s listing, a sweep, and the forgetting of hundreds (mutants: a settled star held in hand; the forgotten held in hand at a sweep; the forgotten held in hand at a new star)', async () => {
+  assert.ok(starTimes(N, STAR_PER_NIGHT - 1).endAt + STAR_KEEP_MS < starTimes(N + 1, 0).fallAt, 'one night\'s stars kept at a time');
+  const T2 = starTimes(N, 2), T0 = starTimes(N, 0);
+  const atK = (k, x) => { const [nx, nz] = starNativeOf(N, k, x, PY); return { x: nx, y: 0, z: nz, yaw: 0, pitch: 0 }; };
+  const keepLost = (r) => {   // the first star's forged pixels, twenty of them, lost and kept
+    for (let i = 0; i < 20; i++) {
+      const led = newStarLedger(word({ k: 0, px: 96 + (i % 16), py: 192 + Math.floor(i / 16) }), T0.fallAt + 1000, `acct-grief-${i}`);
+      led.p = P_LOST; led.lo = T0.fallAt + 9000; led.why = STAR_LOST_DARK;
+      r.store.set(starLedgerKey(starLedgerId(led)), structuredClone(led));
+    }
+  };
+  for (const forget of ['make', 'sweep']) {
+    await withStar(async ({ r, set, step }) => {
+      keepLost(r);
+      const h = r.connect(), m = r.connect();
+      await r.hello(h, 'honest-0001', atK(2, PX)); await r.hello(m, 'maker-0001', atK(2, PX + 1));
+      await r.raw(h, JSON.stringify({ t: 'star', ...word({ k: 2, o: 1, s: 1 }) }));
+      const id = starLedgerId({ n: N, k: 2, px: PX, py: PY });
+      const mine = r.room._stars.get(id);
+      assert.ok(mine && mine.k === 2, 'the live star in hand');
+      step(600); await r.raw(m, JSON.stringify({ t: 'star', ...word({ k: 2, px: PX + 1 }) }));
+      assert.equal(r.room._stars.get(id), mine, 'a new star listed the twenty: the live copy kept');
+      set(T0.endAt + STAR_KEEP_MS);
+      if (forget === 'make') { const n2 = r.connect(); await r.hello(n2, 'maker-0002', atK(2, PX + 2)); await r.raw(n2, JSON.stringify({ t: 'star', ...word({ k: 2, px: PX + 2 }) })); }
+      else await r.fire();
+      assert.equal(ledgers(r).filter((k) => k.startsWith(`star:${N}.0@`)).length, 0, `the twenty forgotten (${forget})`);
+      assert.equal(r.room._stars.get(id), mine, `the live copy kept through their forgetting (${forget})`);
+      await r.raw(h, JSON.stringify({ t: 'star', ...word({ k: 2, o: 1, s: 1 }) }));
+      assert.equal(r.room._stars.get(id), mine);
+    }, T2.fallAt + 1000);
+  }
+});
+
+test('STAR3 MY OWN BLOWS: the ledger said to the socket that spoke carries its own account\'s credited blows (`hm`) - in the fan and in the answer to a word that moved nothing - so a reloaded or new device counts on from them, owner or not; everyone else hears the shared ledger without it (mutants: my blows to everyone; my blows unsaid; the owner\'s blows for mine)', async () => {
+  await withStar(async ({ r, say, step }) => {
+    const by = r.connect(); await r.hello(by, 'peer-0009', at(PX, PY, 2000));
+    const a = r.connect(), b = r.connect();
+    await r.hello(a, 'peer-0001', ON); await r.hello(b, 'peer-0002', ON);
+    await say(a, { o: 1, s: 1 }); await say(b, { s: 1 });
+    step(STAR_WORD_MS); await say(a, { o: 1, s: 1, hb: 5 });
+    assert.equal(seen(a).hm, 5, 'the owner\'s own credited blows, in its copy of the fan');
+    assert.equal(seen(a).hc, 5);
+    assert.equal('hm' in seen(by), false, 'a bystander hears the shared ledger');
+    assert.equal('hm' in seen(b), false, 'and so does a defender who did not speak');
+    step(STAR_WORD_MS); await say(b, { s: 1 });
+    assert.equal(seen(b).hm, 0, 'a word that moved nothing: answered with its own count, not the owner\'s');
+    assert.equal(seen(b).hc, 5);
+    const mine = { ...seen(a) }; delete mine.t;
+    assert.deepEqual(validStarOut(mine), mine, 'the wire\'s own word');
   });
 });
 

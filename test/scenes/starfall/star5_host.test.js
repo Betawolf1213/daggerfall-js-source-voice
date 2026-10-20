@@ -14,7 +14,7 @@ import {
   createStarfallHost, starfallStands, STAR_BLOWS_STORE, STAR_LIVE_MAX, STAR_RESTAND_MS, STAR_COARSE_EVERY, STAR_FLOOR_OFFSET, STAR_BUILD_M,
 } from '../../../src/scenes/starfall/starfallHost.js';
 import {
-  starNightAt, starTimes, starCircleSize, STAR_ORPHAN_MS, STAR_CIRCLE_AT, STAR_LOST_DARK, STAR_LIFE_MS, STAR_AFTER_MS,
+  starNightAt, starTimes, starCircleSize, starLostAt, STAR_ORPHAN_MS, STAR_CIRCLE_AT, STAR_LOST_DARK, STAR_LIFE_MS, STAR_AFTER_MS, STAR_GRACE_MS,
   P_GATHER, P_WAVE, P_BREATH, P_MASTER, P_HELD, P_LOST,
 } from '../../../src/net/starfall/starfallLaw.js';
 import { starCovenOf, covenWitches, STAR_COVENS } from '../../../src/systems/starfall/starfallCovens.js';
@@ -203,7 +203,7 @@ test('STAR5 THE DEFENSE: at the fallen star this player springs its coven - its 
   const [a, b, c] = w.foes.stood;
   for (const f of [a, b]) { f.dead = true; f.corpse = true; }
   w.frame(); w.t += 2100; w.frame();
-  assert.deepEqual([w.words.at(-1).kn, w.words.at(-1).wc], [2, 0], 'two down, the wave stands');
+  assert.deepEqual([w.words.at(-1).kw, w.words.at(-1).kn, w.words.at(-1).wc], [1, 2, 0], 'two down of the first wave, the wave stands');
   c.dead = true;
   w.frame(); w.t += 2100; w.frame();
   assert.equal(w.words.at(-1).kn, 2, 'gone without a body: walked off, no fall');
@@ -212,10 +212,16 @@ test('STAR5 THE DEFENSE: at the fallen star this player springs its coven - its 
   assert.equal(w.host.state().find((s) => s.key.startsWith(`${N}.1@`)).kn, 3);
   assert.equal(w.words.at(-1).kn, 3);
   assert.equal(w.words.at(-1).wc, 1, 'the wave seen cleared');
+  // the breath: the word still names the wave its deaths are (the cell credits them to that wave alone)
+  w.st(1, { p: P_BREATH, w: 1, wz: 3, kn: 3, b: 1 });
+  w.frame(); w.t += 2100; w.frame();
+  assert.deepEqual([w.words.at(-1).kw, w.words.at(-1).kn], [1, 3], 'the first wave\'s deaths, named by it');
   // wave 2, taken over mid-wave: only what is left of it stands
   w.st(1, { p: P_WAVE, w: 2, wz: 5, kn: 2, b: 1 });
   await w.beat();
   assert.deepEqual(w.foes.stood.slice(3).map((f) => f.mobileType), starWaveFoes(N, 1, 2, 3, 1));
+  w.frame(); w.t += 2100; w.frame();
+  assert.deepEqual([w.words.at(-1).kw, w.words.at(-1).kn], [2, 2], 'the second wave\'s word counts on from the deaths the cell said of it');
   assert.ok(starWaveFoes(N, 1, 2, 3, 1).every((c) => STAR_ROSTERS[1][1].includes(c)));
   Date.now = realNow;
 });
@@ -788,5 +794,37 @@ test('AUDIT STARFALL R9 THE COARSE GROUND READ ONCE, THE PASS BUILT AT IDLE: a s
     g.frame();
     assert.equal(programs(), 3, 'once');
   } finally { if (had) globalThis.requestIdleCallback = had; else delete globalThis.requestIdleCallback; }
+  Date.now = realNow;
+});
+
+test('AUDIT STARFALL THE GRACE, ONE TIME: this screen says its last word at the deadline (the grace is a word\'s flight), but the star is not dark until the grace is out (starLostAt) - a hold said in it turns it gold from lit, never from dark; past the grace it is dark (mutants: the grace)', async () => {
+  const beaconAt = (w, k) => { const h = w.heart(k); return w.host.skyLists([h[0] + 20, 2, h[2]]).beacons.find((b) => Math.abs(b.origin[0] - h[0]) < 1e-6 && Math.abs(b.origin[2] - h[2]) < 1e-6) ?? null; };
+  const fight = async (w) => {
+    clockOf(w);
+    w.t = starTimes(N, 1).fallAt + 500; w.at(1, 5); w.frame();
+    w.st(1, { p: P_GATHER, w: 0, wz: 0 });
+    w.st(1, { p: P_MASTER, w: 4, wz: 0, b: 1, nd: 1 });
+    await w.beat();
+  };
+  const T = starTimes(N, 1);
+  const w = world();
+  await fight(w);
+  w.t = T.endAt + 500;
+  const said = w.words.length;
+  w.frame();
+  assert.equal(w.star(1).phase, 'after', 'past its deadline');
+  assert.equal(w.words.length, said, 'no word past the deadline: what was said as it came is in flight');
+  assert.equal(w.star(1).own, false, 'its defense down');
+  assert.ok(beaconAt(w, 1)?.fade > 0 && beaconAt(w, 1).held === false, 'its beacon lit in the grace, never dark before it is out');
+  w.st(1, { p: P_HELD, hd: w.t });
+  w.frame();
+  assert.equal(beaconAt(w, 1).held, true, 'a hold in the grace: gold');
+  const d = world();
+  await fight(d);
+  d.t = T.endAt + 500; d.frame();
+  assert.ok(beaconAt(d, 1)?.fade > 0);
+  d.t = starLostAt(N, 1) + 10; d.frame();
+  assert.equal(beaconAt(d, 1), null, 'past the grace, unheld: its beacon out');
+  assert.equal(starLostAt(N, 1), T.endAt + STAR_GRACE_MS);
   Date.now = realNow;
 });

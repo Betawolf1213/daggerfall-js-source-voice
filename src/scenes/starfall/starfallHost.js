@@ -26,7 +26,7 @@
 // bible/01-Overview/Host-Split.md - the shape of scenes/fishHost.js). Not a DFU member. Ledger A (STARFALL).
 import {
   starfallRuns, starInWindow, starNightAt, starTimes, starStreakBearing, starCircleSize, STAR_WORD_MS, STAR_ORPHAN_MS,
-  STAR_CIRCLE_AT, STAR_LOW_LIGHT, STAR_LIGHT, STAR_GRACE_MS, P_WAVE, P_BREATH, P_MASTER, P_HELD, P_LOST, STAR_LOST_DARK,
+  STAR_CIRCLE_AT, STAR_LOW_LIGHT, STAR_LIGHT, starLostAt, P_WAVE, P_BREATH, P_MASTER, P_HELD, P_LOST, STAR_LOST_DARK,
   STAR_LIFE_MS, STAR_AFTER_MS, STAR_WAVE_MAX, STAR_ACCOUNTS_MAX, STAR_BLOWS_WIRE_MAX,
 } from '../../net/starfall/starfallLaw.js';
 import { worldRoom } from '../../net/wire.js';
@@ -284,9 +284,15 @@ export function createStarfallHost(host) {
     col.addMesh(starBucket(S.key), S.stone.positions, S.stone.indices, S.mat);
     S.colliderAt = S.mat; S.colliderGen = S.stoneGen;
   }
+  /** AUDIT STARFALL (the relay's grace, WP1): WHETHER THE STAR IS STILL UNDECIDED - fallen, or past its deadline inside
+   *  the grace in which a word said as the deadline came, still in flight, is heard (net/starfall/starfallLaw.js
+   *  starLostAt: a master's fall in it holds the star). This screen's last word is at the deadline (its defense ends with
+   *  `fallen`); its looks keep the grace - the star went dark at its deadline, and a hold landing in the grace turned it
+   *  gold a moment on. */
+  const undecided = (S, t) => S.phase === 'fallen' || (S.phase === 'after' && t < starLostAt(S.site.n, S.site.k));
   /** The record the stone wears now, and whether its thread still stands. */
   const looks = (S) => {
-    const L = ledgers.get(S.key), h = held.has(S.key) || L?.p === P_HELD, lost = !h && (L?.p === P_LOST || S.phase === 'after');
+    const L = ledgers.get(S.key), h = held.has(S.key) || L?.p === P_HELD, lost = !h && (L?.p === P_LOST || !undecided(S, now()));
     return { glass: h ? STAR_GOLD_RECORD : lost ? STAR_DARK_RECORD : STAR_GLASS_RECORD, thread: !h, held: h, lost };
   };
   function ensureMesh(S) {
@@ -544,7 +550,7 @@ export function createStarfallHost(host) {
   function word(S, t) {
     const s = session();
     if (!s?.starReady?.(S.cell)) return;
-    const w = starWordOf(S.site, { struck: S.struck, own: S.own, kn: S.kn, wc: S.wc, hb: S.hb, mf: S.mf }, playerEntity.level ?? 1);
+    const w = starWordOf(S.site, { struck: S.struck, own: S.own, kw: S.stoodWave, kn: S.kn, wc: S.wc, hb: S.hb, mf: S.mf }, playerEntity.level ?? 1);   // kw: the wave S.kn counts
     const key = starWordKey(w), changed = key !== S.saidKey;
     if (!changed && t - S.wordAt < STAR_WORD_MS && t < S.resayAt) return;
     if (!s.sendStar(w, S.cell)) return;
@@ -570,7 +576,7 @@ export function createStarfallHost(host) {
     const online = !!s?.starReady?.(S.cell), inside = d <= STAR_SAY_M;
     if (online && foes && S.known && inside && holds(S)) { S.awayAt = NaN; owner(S, L); }
     else if (S.own && (camp.peerSprang?.(S.sites.base) || leashSlipped(S, t, inside))) dropDefense(S);   // a peer won the race, or I walked off
-    if (online && inside && t < starTimes(S.site.n, S.site.k).endAt + STAR_GRACE_MS) { blowsOf(S); word(S, t); }
+    if (online && inside) { blowsOf(S); word(S, t); }   // to the deadline (`over`): the grace is a word's flight alone
   }
 
   // ── the words ──

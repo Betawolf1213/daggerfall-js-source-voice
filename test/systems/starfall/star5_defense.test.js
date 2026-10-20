@@ -118,15 +118,17 @@ test('STAR5 WHERE THEY STAND: a wave on a ring 25 to 35 metres out from the hear
   assert.deepEqual(starCirclePlaces(0), []);
 });
 
-test('STAR5 THE WORD: the star and its pixel, the level 1 to 60, the flags as 0 and 1, every count held to the wire\'s bound; its key moves with each field; said from inside the relay\'s reach (mutants: a clamp, a key field)', () => {
+test('STAR5 THE WORD: the star and its pixel, the level 1 to 60, the flags as 0 and 1, every count held to the wire\'s bound; the deaths said only with the wave they belong to (`kw`); its key moves with each field; said from inside the relay\'s reach (mutants: a clamp, a key field, deaths of no wave said, the wave no news)', () => {
   const star = { n: N, k: 1, px: 300, py: 200 };
-  const w = starWordOf(star, { struck: true, own: false, kn: 150, wc: 9, hb: 20_000, mf: true }, 99);
-  assert.deepEqual(w, { n: N, k: 1, px: 300, py: 200, lv: 60, s: 1, o: 0, kn: 99, wc: STAR_WAVES, hb: 9999, mf: 1 });
-  assert.deepEqual(starWordOf(star, { struck: false, own: true, kn: -4, wc: -1, hb: -9, mf: false }, 0), { n: N, k: 1, px: 300, py: 200, lv: 1, s: 0, o: 1, kn: 0, wc: 0, hb: 0, mf: 0 });
-  const base = starWordOf(star, { struck: false, own: false, kn: 0, wc: 0, hb: 0, mf: false }, 10);
+  const w = starWordOf(star, { struck: true, own: false, kw: 9, kn: 150, wc: 9, hb: 20_000, mf: true }, 99);
+  assert.deepEqual(w, { n: N, k: 1, px: 300, py: 200, lv: 60, s: 1, o: 0, kw: STAR_WAVES, kn: 99, wc: STAR_WAVES, hb: 9999, mf: 1 });
+  assert.deepEqual(starWordOf(star, { struck: false, own: true, kw: -2, kn: -4, wc: -1, hb: -9, mf: false }, 0), { n: N, k: 1, px: 300, py: 200, lv: 1, s: 0, o: 1, kw: 0, kn: 0, wc: 0, hb: 0, mf: 0 });
+  assert.equal(starWordOf(star, { struck: false, own: true, kw: 0, kn: 3, wc: 0, hb: 0, mf: false }, 10).kn, 0, 'deaths of no wave stood are said as none');
+  assert.equal(starWordOf(star, { struck: false, own: true, kw: 2, kn: 3, wc: 0, hb: 0, mf: false }, 10).kn, 3);
+  const base = starWordOf(star, { struck: false, own: false, kw: 0, kn: 0, wc: 0, hb: 0, mf: false }, 10);
   const keys = new Set([starWordKey(base)]);
-  for (const over of [{ struck: true }, { own: true }, { kn: 1 }, { wc: 1 }, { hb: 1 }, { mf: true }]) keys.add(starWordKey(starWordOf(star, { struck: false, own: false, kn: 0, wc: 0, hb: 0, mf: false, ...over }, 10)));
-  assert.equal(keys.size, 7);
+  for (const over of [{ struck: true }, { own: true }, { kw: 1 }, { kw: 1, kn: 1 }, { wc: 1 }, { hb: 1 }, { mf: true }]) keys.add(starWordKey(starWordOf(star, { struck: false, own: false, kw: 0, kn: 0, wc: 0, hb: 0, mf: false, ...over }, 10)));
+  assert.equal(keys.size, 8);
   assert.equal(starWordKey(starWordOf(star, { struck: false, own: false, kn: 0, wc: 0, hb: 0, mf: false }, 30)), starWordKey(base), 'the level is no news');
   assert.ok(STAR_SAY_M < STAR_REACH_M);
 });

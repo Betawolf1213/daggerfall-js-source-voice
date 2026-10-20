@@ -11,7 +11,7 @@ import {
   starNightAt, starOk, starTimes, starInWindow, starHeard, starSpotLocal, starNativeOf, starNear, STAR_REACH_M, STAR_UNITS_PER_M,
   STAR_WAVES, STAR_GATHER_MS, STAR_WAVE_MAX_MS, STAR_KILL_MIN_MS, STAR_BREATH_MS, STAR_MASTER_MIN_MS, starWaveSize, starCircleSize,
   STAR_LIGHT, STAR_BLOW_LIGHT, STAR_BREATH_LIGHT, STAR_BLOWS_HZ, STAR_BLOWS_BURST, starBandOf, STAR_PRESENT_MS, STAR_ORPHAN_MS,
-  newStarLedger, stepStar, foldStarWord, starEarned, starTop, starLedgerState, starPhaseLeft, starOwner,
+  newStarLedger, stepStar, foldStarWord, starEarned, starTop, starLedgerState, starPhaseLeft, starOwner, starMayMake, starLostAt,
   P_FALLEN, P_GATHER, P_WAVE, P_BREATH, P_MASTER, P_HELD, P_LOST, STAR_LOST_DARK, STAR_LOST_DAWN, STAR_ACCOUNTS_MAX,
 } from '../../../src/net/starfall/starfallLaw.js';
 import { mintStarReceipt, readStarReceipt, verifyStarReceipt, starReceiptValid, STAR_RECEIPT_TTL_S } from '../../../src/net/starfall/starReceipt.js';
@@ -24,7 +24,7 @@ const SKY_HOUR = (ms) => (Math.floor(skyClassicMinutes(ms)) % 1440) / 60;
 /** The Witches' Festival's days (net/festivalLaw.js FESTIVALS - the Starfall's own), and a night inside them. */
 const { fromMs: FROM_MS, toMs: TO_MS } = FESTIVALS[0];
 const N0 = Math.ceil(FROM_MS / STAR_HOUR_MS) + 3;
-const word = (o = {}) => ({ lv: 10, s: 0, o: 0, kn: 0, wc: 0, hb: 0, mf: 0, ...o });
+const word = (o = {}) => ({ lv: 10, s: 0, o: 0, kw: 0, kn: 0, wc: 0, hb: 0, mf: 0, ...o });
 
 test('STAR1 THE NIGHT: three stars a night, the sky\'s 18:00, 21:00 and midnight, each standing fifteen minutes - the last to dawn (mutants: a fall moved; the life lengthened; the omen shortened)', () => {
   assert.deepEqual(STAR_FALLS_MS, [-900_000, -450_000, 0]);
@@ -133,13 +133,13 @@ test('STAR1 THE MACHINE, END TO END: a defender\'s word begins the gathering; th
   assert.equal(led.p, P_WAVE); assert.equal(led.w, 1); assert.equal(led.wz, starWaveSize(1, 1));
   assert.equal(led.b, 2, 'the wave\'s band, by the level its defender said');
   // cleared too soon: refused
-  tick(2_000, word({ o: 1, lv: 12, wc: 1, kn: 3 }));
+  tick(2_000, word({ o: 1, lv: 12, kw: 1, wc: 1, kn: 3 }));
   assert.equal(led.p, P_WAVE, 'a wave of three is not cleared in two seconds');
   assert.equal(led.kn, 3);
   led.lt = 60;
-  for (let i = 0; i < 2; i++) tick(2_000, word({ o: 1, lv: 12, wc: 1, kn: 3 }));
+  for (let i = 0; i < 2; i++) tick(2_000, word({ o: 1, lv: 12, kw: 1, wc: 1, kn: 3 }));
   assert.equal(led.p, P_WAVE, 'nor in six: three foes are 7.5 s at the least');
-  tick(2_000, word({ o: 1, lv: 12, wc: 1, kn: 3 }));
+  tick(2_000, word({ o: 1, lv: 12, kw: 1, wc: 1, kn: 3 }));
   assert.equal(led.p, P_BREATH, 'cleared once its foes could have died');
   assert.equal(led.lt, 60 + STAR_BREATH_LIGHT);
   for (let i = 0; i < 6; i++) tick(2_000);
@@ -167,6 +167,32 @@ test('STAR1 THE MACHINE, END TO END: a defender\'s word begins the gathering; th
   assert.equal(foldStarWord(led, 'acctA', 'Ann', word({ o: 1 }), true, now + 2_000), false, 'nothing moves a held star');
 });
 const STAR_WORD_MS_TEST = 2_000;
+
+test('STAR1 THE DEATHS NAME THEIR WAVE: the owner\'s deaths are credited to the wave its word names (`kw`) alone - its screen says the last wave\'s through the breath, and the word that ends the breath starts the next, which stands whole; an honest owner\'s defense stands every wave whole and holds the star (mutants: the deaths on any wave)', () => {
+  const t = starTimes(N0, 1).fallAt + 5_000;
+  let now = t;
+  const led = begun(now);
+  const say = (o) => { now += STAR_WORD_MS_TEST; foldStarWord(led, 'acctA', 'Ann', word({ o: 1, s: 1, lv: 12, ...o }), true, now); };
+  while (led.p !== P_WAVE) say({});
+  say({ kw: 0, kn: 2 });
+  assert.equal(led.kn, 0, 'deaths of no wave named are none');
+  say({ kw: 2, kn: 2 });
+  assert.equal(led.kn, 0, 'nor of a wave not standing');
+  say({ kw: 1, kn: 2 });
+  assert.equal(led.kn, 2, 'this wave\'s');
+  // the owner's screen, as starfallHost.js keeps it: the wave it stood (kw) and its deaths (kn), said through the breath
+  const S = { kw: 1, kn: 2, wc: 0, left: Math.max(0, led.wz - 2) };
+  const stood = [];
+  for (let i = 0; i < 600 && led.p !== P_HELD && led.p !== P_LOST; i++) {
+    if (led.p === P_WAVE && S.kw !== led.w) { S.kw = led.w; S.kn = led.kn; S.wc = 0; S.left = Math.max(0, led.wz - led.kn); stood.push([led.w, led.wz, S.left]); }
+    if (led.p === P_WAVE && S.left > 0 && i % 2 === 0) { S.left--; S.kn++; }
+    if (led.p === P_WAVE && S.left === 0) S.wc = led.w;
+    say({ kw: S.kw, kn: S.kn, wc: S.wc, mf: led.p === P_MASTER && led.ec - led.ma >= STAR_MASTER_MIN_MS ? 1 : 0 });
+  }
+  assert.deepEqual(stood.map(([w]) => w), [2, 3, 4], 'each wave after the first seen');
+  for (const [w, wz, left] of stood) assert.equal(left, wz, `wave ${w} stands whole: none of the last wave's deaths credited to it`);
+  assert.equal(led.p, P_HELD);
+});
 
 test('STAR1 THE LIGHT: the owner\'s blows on the star drink it, credited six at once and nine a second after - clipped, then credited as the count runs on; another\'s count drinks nothing; at nothing the star is lost, dark (mutants: a non-owner\'s blows credited; the burst raised; the rate raised; the light never lost)', () => {
   assert.deepEqual([STAR_LIGHT, STAR_BLOW_LIGHT, STAR_BLOWS_HZ, STAR_BLOWS_BURST], [100, 1, 9, 6]);
@@ -205,18 +231,40 @@ test('STAR1 THE ENCOUNTER CLOCK: it runs only while someone stands at the star -
   assert.equal(starPhaseLeft(led), STAR_WAVE_MAX_MS - (2_000 + STAR_PRESENT_MS - STAR_GATHER_MS));
 });
 
-test('STAR1 THE DEADLINE: a star unheld at its deadline is lost at dawn, whatever stood (mutants: the deadline ignored)', () => {
+test('STAR1 THE DEADLINE AND ITS GRACE: a star is made only before its deadline; its words are heard STAR_GRACE_MS past it, and a master\'s fall said in flight at the deadline holds it; unheld then, it is lost at dawn, whatever stood (mutants: the deadline ignored; the grace unheld; a star made in the grace)', () => {
   const t = starTimes(N0, 1);
+  assert.equal(starLostAt(N0, 1), t.endAt + STAR_GRACE_MS);
+  assert.equal(starMayMake(N0, 1, t.fallAt), true);
+  assert.equal(starMayMake(N0, 1, t.endAt - 1), true);
+  assert.equal(starMayMake(N0, 1, t.endAt), false, 'never made past its deadline - a first word then would make a star already lost');
+  assert.equal(starHeard(N0, 1, t.endAt + STAR_GRACE_MS - 1), true, 'a ledger\'s last words still heard');
+  assert.equal(starMayMake(N0, 1, t.fallAt - 1), false);
   const led = begun(t.fallAt + 5_000);
   assert.equal(stepStar(led, t.endAt - 1), true);
   assert.notEqual(led.p, P_LOST);
-  assert.equal(stepStar(led, t.endAt), true);
+  stepStar(led, t.endAt + STAR_GRACE_MS - 1);
+  assert.notEqual(led.p, P_LOST, 'the grace: not lost yet');
+  assert.equal(stepStar(led, t.endAt + STAR_GRACE_MS), true);
   assert.equal(led.p, P_LOST);
   assert.equal(led.why, STAR_LOST_DAWN);
   const fresh = newStarLedger({ n: N0, k: 1, px: 300, py: 200 }, t.fallAt);
   assert.equal(fresh.p, P_FALLEN);
-  stepStar(fresh, t.endAt);
+  stepStar(fresh, starLostAt(N0, 1));
   assert.equal(fresh.p, P_LOST, 'a star nobody came to is taken at dawn too');
+  // the master's fall, said as the deadline came (its 45 s long run): held by a word that lands in the grace
+  const atMaster = () => {
+    const m = begun(t.endAt - 60_000);
+    Object.assign(m, { p: P_MASTER, w: STAR_WAVES, ma: 0, ec: 100_000, nearAt: t.endAt - 3_000, stepAt: t.endAt - 3_000, ownAt: t.endAt - 3_000 });
+    return m;
+  };
+  for (const dt of [-1, 0, 1_000, STAR_GRACE_MS - 1]) {
+    const m = atMaster();
+    foldStarWord(m, 'acctA', 'Ann', word({ o: 1, s: 1, mf: 1 }), true, t.endAt + dt);
+    assert.equal(m.p, P_HELD, `the fall heard ${dt} ms past the deadline holds`);
+  }
+  const late = atMaster();
+  foldStarWord(late, 'acctA', 'Ann', word({ o: 1, s: 1, mf: 1 }), true, t.endAt + STAR_GRACE_MS);
+  assert.equal(late.p, P_LOST, 'past the grace, dawn');
 });
 
 test('STAR1 THE OWNER: the first who says so holds the foes; another\'s word is not the owner\'s while it holds; it gives them up by saying so, or by silence past ten seconds (mutants: the orphan bound dropped; the yield ignored)', () => {

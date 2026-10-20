@@ -164,7 +164,7 @@
  {
   "name": "STAR3-the-alarm-past-the-deadline",
   "file": "server/src/index.js",
-  "old": "return starOver(led) ? this._starEndsAt(led) : starTimes(led.n, led.k).endAt;",
+  "old": "return starOver(led) ? this._starEndsAt(led) : starLostAt(led.n, led.k);",
   "new": "return this._starEndsAt(led);",
   "tests": [
    "test/net/starfall/star3_relay.test.js"
@@ -181,36 +181,36 @@
  },
  {
   "name": "STAR3-the-account-unbounded",
-  "file": "server/src/index.js",
-  "old": "led.by === by).length >= STAR_LEDGERS_BY_MAX) return false;",
-  "new": "led.by === by).length >= STAR_LEDGERS_BY_MAX + 9) return false;",
+  "file": "src/net/starfall/starfallLaw.js",
+  "old": "led.by === by).length >= STAR_LEDGERS_BY_MAX) return { ok: false, out: null };",
+  "new": "led.by === by).length >= STAR_LEDGERS_BY_MAX + 9) return { ok: false, out: null };",
   "tests": [
    "test/net/starfall/star3_relay.test.js"
   ]
  },
  {
-  "name": "STAR3-a-fought-star-evicted",
-  "file": "server/src/index.js",
-  "old": "now - led.nearAt >= STAR_IDLE_MS",
-  "new": "now - led.nearAt >= 0",
+  "name": "STAR3-a-stood-at-star-put-out",
+  "file": "src/net/starfall/starfallLaw.js",
+  "old": "live.filter((led) => !at.has(led))",
+  "new": "live.filter((led) => !!led)",
   "tests": [
    "test/net/starfall/star3_relay.test.js"
   ]
  },
  {
-  "name": "STAR3-an-over-star-evicted",
-  "file": "server/src/index.js",
-  "old": "live.filter(([, led]) => !starOver(led) && now - led.nearAt",
-  "new": "live.filter(([, led]) => now - led.nearAt",
+  "name": "STAR3-an-over-star-costs-a-place",
+  "file": "src/net/starfall/starfallLaw.js",
+  "old": "export const starLive = (led, nowMs) => !starOver(led) && nowMs < starTimes(led.n, led.k).endAt;",
+  "new": "export const starLive = (led, nowMs) => nowMs < starTimes(led.n, led.k).endAt;",
   "tests": [
    "test/net/starfall/star3_relay.test.js"
   ]
  },
  {
-  "name": "STAR3-the-freshest-evicted",
-  "file": "server/src/index.js",
-  "old": ".sort(([, x], [, y]) => x.nearAt - y.nearAt)[0];",
-  "new": ".sort(([, x], [, y]) => y.nearAt - x.nearAt)[0];",
+  "name": "STAR3-the-freshest-put-out",
+  "file": "src/net/starfall/starfallLaw.js",
+  "old": ".sort((x, y) => x.nearAt - y.nearAt)[0] ?? null;",
+  "new": ".sort((x, y) => y.nearAt - x.nearAt)[0] ?? null;",
   "tests": [
    "test/net/starfall/star3_relay.test.js"
   ]
@@ -382,6 +382,141 @@
   "file": "src/net/starfall/starfallLaw.js",
   "old": "starTimes(n, STAR_PER_NIGHT - 1).goneAt",
   "new": "starTimes(n, 0).goneAt",
+  "tests": [
+   "test/net/starfall/star3_relay.test.js"
+  ]
+ },
+ {
+  "name": "STAR3-the-alarm-before-the-grace",
+  "file": "server/src/index.js",
+  "old": "return starOver(led) ? this._starEndsAt(led) : starLostAt(led.n, led.k);",
+  "new": "return starOver(led) ? this._starEndsAt(led) : starTimes(led.n, led.k).endAt;",
+  "tests": [
+   "test/net/starfall/star3_relay.test.js"
+  ]
+ },
+ {
+  "name": "STAR3-a-ledger-made-past-the-deadline",
+  "file": "server/src/index.js",
+  "old": "if (!starMayMake(m.n, m.k, now)) return;",
+  "new": "if (false) return;",
+  "tests": [
+   "test/net/starfall/star3_relay.test.js"
+  ]
+ },
+ {
+  "name": "STAR3-a-star-past-its-deadline-holds-its-place",
+  "file": "src/net/starfall/starfallLaw.js",
+  "old": "export const starLive = (led, nowMs) => !starOver(led) && nowMs < starTimes(led.n, led.k).endAt;",
+  "new": "export const starLive = (led, nowMs) => !starOver(led) && nowMs < starLostAt(led.n, led.k);",
+  "tests": [
+   "test/net/starfall/star3_relay.test.js"
+  ]
+ },
+ {
+  "name": "STAR3-an-account-at-every-star-it-spoke-at",
+  "file": "src/net/starfall/starfallLaw.js",
+  "old": "if (!had || r.last > had.r.last) latest.set(acct, { r, led });",
+  "new": "latest.set(acct + led.px, { r, led });",
+  "tests": [
+   "test/net/starfall/star3_relay.test.js"
+  ]
+ },
+ {
+  "name": "STAR3-the-idle-bound-dropped",
+  "file": "src/net/starfall/starfallLaw.js",
+  "old": "r.near && nowMs - r.last <= STAR_IDLE_MS",
+  "new": "r.near",
+  "tests": [
+   "test/net/starfall/star3_relay.test.js"
+  ]
+ },
+ {
+  "name": "STAR3-a-far-word-stands",
+  "file": "src/net/starfall/starfallLaw.js",
+  "old": "acct !== but && r.near && nowMs",
+  "new": "acct !== but && nowMs",
+  "tests": [
+   "test/net/starfall/star3_relay.test.js"
+  ]
+ },
+ {
+  "name": "STAR3-the-maker-stands-where-it-was",
+  "file": "src/net/starfall/starfallLaw.js",
+  "old": "acct !== but && r.near",
+  "new": "r.near",
+  "tests": [
+   "test/net/starfall/star3_relay.test.js"
+  ]
+ },
+ {
+  "name": "STAR3-a-settled-star-held-in-hand",
+  "file": "server/src/index.js",
+  "old": "_starKeep(id, led) { if (!led || !starSettled(led)) this._stars.set(id, led); }",
+  "new": "_starKeep(id, led) { this._stars.set(id, led); }",
+  "tests": [
+   "test/net/starfall/star3_relay.test.js"
+  ]
+ },
+ {
+  "name": "STAR3-the-forgotten-held-in-hand-at-a-sweep",
+  "file": "server/src/index.js",
+  "old": "await this.state.storage.delete(k); if (led) this._stars.delete(starLedgerId(led)); continue; }",
+  "new": "await this.state.storage.delete(k); if (led) this._stars.set(starLedgerId(led), null); continue; }",
+  "tests": [
+   "test/net/starfall/star3_relay.test.js"
+  ]
+ },
+ {
+  "name": "STAR3-the-forgotten-held-in-hand-at-a-new-star",
+  "file": "server/src/index.js",
+  "old": "      await this.state.storage.delete(k);\n      if (led) this._stars.delete(starLedgerId(led));",
+  "new": "      await this.state.storage.delete(k);\n      if (led) this._stars.set(starLedgerId(led), null);",
+  "tests": [
+   "test/net/starfall/star3_relay.test.js"
+  ]
+ },
+ {
+  "name": "STAR3-my-blows-to-everyone",
+  "file": "server/src/index.js",
+  "old": "this._send(ws, ws === from ? own : s)",
+  "new": "this._send(ws, own)",
+  "tests": [
+   "test/net/starfall/star3_relay.test.js"
+  ]
+ },
+ {
+  "name": "STAR3-my-blows-unsaid",
+  "file": "server/src/index.js",
+  "old": "const mine = starLedgerState(led, acct);",
+  "new": "const mine = starLedgerState(led);",
+  "tests": [
+   "test/net/starfall/star3_relay.test.js"
+  ]
+ },
+ {
+  "name": "STAR3-the-owners-blows-for-mine",
+  "file": "src/net/starfall/starfallLaw.js",
+  "old": "{ hm: Object.hasOwn(led.a, acct) ? led.a[acct].hb : 0 }",
+  "new": "{ hm: starOwnerBlows(led) }",
+  "tests": [
+   "test/net/starfall/star3_relay.test.js"
+  ]
+ },
+ {
+  "name": "STAR3-my-blows-unbounded",
+  "file": "src/net/wire.js",
+  "old": "if (m.hm !== undefined && !intIn(m.hm, 0, STAR_BLOWS_MAX)) return null;",
+  "new": "if (m.hm !== undefined && !intIn(m.hm, -1e9, 1e9)) return null;",
+  "tests": [
+   "test/net/starfall/star3_relay.test.js"
+  ]
+ },
+ {
+  "name": "STAR3-the-deaths-wave-unbounded",
+  "file": "src/net/wire.js",
+  "old": "!intIn(m.kw, 0, STAR_WAVES_MAX)",
+  "new": "!intIn(m.kw, 0, 99)",
   "tests": [
    "test/net/starfall/star3_relay.test.js"
   ]
