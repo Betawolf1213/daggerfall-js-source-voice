@@ -72,7 +72,7 @@ The mod in DFU's terms (`BestiaryMod.cs`, cited below by line):
 | DEX2 | the sprites on the texture door: a non-classic archive's real frame counts, the xml scales, the emission maps, NoShadow and the ghost shader by behaviour (DFU's own rows too); its pictures on the GPU alone once uploaded, as DFU imports them; the Overworld's bands dressed too - section 6 | SHIPPED (the glow's light routed, Ledger C) |
 | DEX3 | the encounter tables in all four hosts: the dungeon's seeded choice, the water's, the climates' - on a door every reader asks, the climates' on PlayerGPS's events | SHIPPED (section 7) |
 | DEX4 | combat: the on-hit effects, spells 500-503 and the spellbook tables, the skeletal rule, groups and languages, forced gender, ranged | SHIPPED - DEX4a (section 8: the spells, the spellbooks), DEX4b (section 9: the hit's effects, the skeletal rule, groups and languages, forced gender); ranged rode DEX1's rows |
-| DEX5 | the Troll's corpse: up again after ten seconds unless a spell's missile burns it, saved with the game, the cheat | SHIPPED - DEX5a (section 11: the prefab door, the rise, the burn, the save, the cheat), DEX5b (section 11, Online: a body gone on the record, a copy's missile to the runner; relay world233 grown in place) |
+| DEX5 | the Troll's corpse: up again after ten seconds unless a spell's missile burns it, saved with the game, the cheat | SHIPPED - DEX5a (section 11: the prefab door, the rise, the burn, the save, the cheat), DEX5b (section 11, Online: a body gone on the record, a copy's missile to the runner; relay world234 grown in place) |
 | DEX6 | DEX_RRICompat: the new classes equipped by their tables under Roleplay & Realism: Items | SHIPPED (section 12: the class by its table, the armor by the career, the unknown's longblade, the Assassin's poison) |
 | DEX7 | the Morrowind bodies (section 4); a NoShadow row's body casts none (AUDIT DEX B2) | SHIPPED (section 10) |
 | AUDIT DEX | the arc's cold audit (2026-10-20): five lanes over the frozen snapshot `d8db6d444`, every finding proven, then fixed and pinned with a mutant or recorded - `bible/01-Overview/audits/Audit-DEX.md`; its corrections are marked AUDIT DEX in each section | DONE |
@@ -132,7 +132,7 @@ port's enemy code that any mod could use, and the mod's reading through them.
   had its Dragonling (146 health, the bound 60) and its Werewolf (level 9, the bound 8) refused as impossible. A row's
   third number is the level the progression share reads (`foeShare(basics.level)`, the table's row - vanilla or the
   mod's), so the relay reads no table at all and its bound is the same on every machine.
-- **The wire** (`net/wire.js` FOE_TYPE_MAX, relay world233 - world225 on its branch, renumbered past main's world225-world232 at four merges; AUDIT DEX A8/E6: this said world229): a streamed foe's kind was bounded at 255, which refused
+- **The wire** (`net/wire.js` FOE_TYPE_MAX, relay world234 - world225 on its branch, renumbered past main's world225-world233 at five merges; AUDIT DEX A8/E6: this said world229): a streamed foe's kind was bounded at 255, which refused
   every record of a mod's foe whole; it is MobileTypes' own u16. A peer has the rows whatever its switch (below).
 
 **The reading** (`systems/enemyExpansion/dexTables.js`, line for line as the C# reads, every column, default, `continue`
@@ -365,7 +365,7 @@ the Snow Wolf, the Hell Hound, King Lysandus (503, the Bolt of Vengeance), the D
 books; the Fire Daemon the FireDaedra table; the six spellcasting classes the ladder, which casts what DFU's would.
 
 **The wire** (`net/wire.js` SPELL_INDEX_MAX): a cast's spell index rode as a u8, SPELLS.STD's; a foe casting one of
-the mod's spells was refused whole. It is a u16 now - relay world233, grown in place (not yet deployed; world230 until main's OW-CHASE-RANGE took that number, world231 until NAME-WORDS did, world232 until GAUNTLET-PLATES did at the merges).
+the mod's spells was refused whole. It is a u16 now - relay world234, grown in place (not yet deployed; world230 until main's OW-CHASE-RANGE took that number, world231 until NAME-WORDS did, world232 until GAUNTLET-PLATES did, world233 until SD-SEA did at the merges).
 
 Departures (Port-Ledger A, the DEX row):
 
@@ -532,7 +532,7 @@ The port's half:
   told - a stand refused (an online grant withheld, a build that failed) leaves the body lying, to try again after its
   time; no missile meets a rising body. The body had gone before the stand was certain.
 - **A body's fate is saved and remembered** (D3, D4): the dungeon's save writes a destroyed body's kind (`bg`, 1 risen,
-  2 burnt) and the room's memory keeps it on a dead record (`net/wire.js` validSharedFoe - world233 grown in place, not
+  2 burnt) and the room's memory keeps it on a dead record (`net/wire.js` validSharedFoe - world234 grown in place, not
   yet deployed), so a burnt troll no longer stood again for an arrival; the seat loading a save of a gone body settles
   every copy's (`settle`) rather than lay a ghost body on them.
 - **A load lays the save's body again** (D1): a same-dungeon quickload after a rise or a burn lays the body the save

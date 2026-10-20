@@ -547,5 +547,5 @@ the host for the module whose rule it is - `world/playerGps.js` resets on the ju
 a load and a fast travel) and the jump core hands it every jump's kind, one statement - and the road trouble's foe
 level, a lambda of the host's, left for the enemy table (`characters/enemy/enemyBasics.js` enemyLevelOf), where the
 roads' harness reads it too (its own copy still asked `>= 128` after DEX1 gave the host the bit). `bootWorld` 36,185 ->
-36,183 logical lines, at its ceiling, which stays; the relay re-hashed in place (world233, enemyBasics.js is in its
+36,183 logical lines, at its ceiling, which stays; the relay re-hashed in place (world233 then, world234 since SD-SEA's merge; enemyBasics.js is in its
 bundle); the C1 pin and its mutants re-aimed, two more for the subscriptions.
