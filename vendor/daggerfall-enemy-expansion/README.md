@@ -54,9 +54,10 @@ Fifty new enemies and a new law for where enemies come from:
   Wraith's silence, the Fire Daemon's touch, the Will-o'-wisp's drain), the
   skeletal rule on the new skeletons, the new enemies' groups and languages;
 - **the Troll gets back up**: ten seconds after it falls it stands again,
-  unless its body is struck in the meantime and burns to ash (the corpse
-  prefab `1618_20`, saved with the game; the one setting,
-  `Cheat.DisableTrollRespawn`, stops it);
+  unless a spell's missile strikes its body in the meantime and burns it to
+  ash - a blade or an arrow does nothing to it (the corpse prefab `1618_20`,
+  saved with the game; the one setting, `Cheat.DisableTrollRespawn`, stops
+  it);
 - with Roleplay & Realism: Items' realistic enemy equipment on, the new
   classes are equipped by the class each one names (`EquipmentTable`).
 
