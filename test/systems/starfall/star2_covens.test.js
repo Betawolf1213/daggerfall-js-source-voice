@@ -10,7 +10,7 @@ import { join } from 'node:path';
 import { STAR_COVENS, STAR_COVENS_APART, starCovenOf, covenLocation, covenFactionName } from '../../../src/systems/starfall/starfallCovens.js';
 import { findStarSites, starSiteKey, STAR_APART_PX } from '../../../src/systems/starfall/starfallSites.js';
 import { WITCHES_FESTIVAL_DAY, witchesNight, heartStar, HEART_STAR, nightDayOfYear } from '../../../src/systems/starfall/starfallNight.js';
-import { STAR_HOUR_MS, STAR_PER_NIGHT, STARFALL_FROM_MS, STARFALL_TO_MS, starTimes } from '../../../src/net/starfall/starfallLaw.js';
+import { STAR_HOUR_MS, STAR_PER_NIGHT, starTimes } from '../../../src/net/starfall/starfallLaw.js';
 import { DAEDRA } from '../../../src/systems/daedraSummoning.js';
 import { HOLIDAYS, holidayDayOfYear } from '../../../src/systems/holidays.js';
 import { WILD_REGION } from '../../../src/systems/wild/wildZone.js';
@@ -20,6 +20,8 @@ import { LOCATION_TYPES } from '../../../src/formats/mapsFile.js';
 import { FactionFile, FACTION_TYPES } from '../../../src/formats/factionFile.js';
 import { WoodsFile } from '../../../src/formats/woodsFile.js';
 import { HAS_ARENA2, ARENA2, loadMaps, ROOT } from '../../arena1Data.mjs';
+import { FESTIVALS } from '../../../src/net/festivalLaw.js';
+const { fromMs: FESTIVAL_FROM_MS, toMs: FESTIVAL_TO_MS } = FESTIVALS[0];   // the Witches' Festival's days, the Starfall's own (net/festivalLaw.js)
 
 const SKIP = HAS_ARENA2 ? false : 'no ARENA2 (sh tools/fetch-data.sh, then ARENA2_PATH)';
 
@@ -78,7 +80,7 @@ test('STAR2 THE NIGHT\'S STARS ON THE PLAYER\'S MAP: for a hundred nights, three
   woods.load(new Uint8Array(readFileSync(join(ARENA2, 'WOODS.WLD'))));
   const scan = gateScanner(maps, { heightAt: (x, y) => woods.getHeightMapValue(x, y) }).step();
   const gateSiteOf = (day) => findGateSite(day, scan);
-  const n0 = Math.ceil(STARFALL_FROM_MS / STAR_HOUR_MS);
+  const n0 = Math.ceil(FESTIVAL_FROM_MS / STAR_HOUR_MS);
   let distinct = 0, total = 0;
   for (let n = n0; n < n0 + 100; n++) {
     const sites = findStarSites(n, scan, { gateSiteOf });
@@ -105,7 +107,7 @@ test('STAR2 THE WITCHES\' NIGHT: the festival is day 283 - the holiday table\'s 
   assert.equal(holidayDayOfYear(HOLIDAYS.Witches_Festival), 283);
   assert.equal(DAEDRA.find((d) => d.name === 'Mephala').dayOfYear, WITCHES_FESTIVAL_DAY, 'Mephala\'s day is the Witches\' Festival');
   const nights = [];
-  for (let n = Math.ceil(STARFALL_FROM_MS / STAR_HOUR_MS); n < Math.ceil(STARFALL_TO_MS / STAR_HOUR_MS); n++) if (witchesNight(n)) nights.push(n);
+  for (let n = Math.ceil(FESTIVAL_FROM_MS / STAR_HOUR_MS); n < Math.ceil(FESTIVAL_TO_MS / STAR_HOUR_MS); n++) if (witchesNight(n)) nights.push(n);
   assert.deepEqual(nights, [Date.UTC(2026, 9, 20, 12) / STAR_HOUR_MS, Date.UTC(2026, 10, 4, 12) / STAR_HOUR_MS], 'the window\'s two, a sky year (fifteen real days) apart: dusk 2026-10-20 and 2026-11-04, 11:45 UTC');
   const n = nights[1];
   assert.equal(nightDayOfYear(n), 283);

@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 import { heldBy, STAR_REGION_TEXT, STAR_AT_TEXT, STAR_CARD_TEXT } from '../../../src/systems/starfall/starWords.js';
 import { STAR_MASTERS } from '../../../src/systems/starfall/starCoven.js';
 import { starTrackerModel, starMapMarks, starTimerRows, starHeldKey, starHeldLine, starPhaseLine, clockText } from '../../../src/systems/starfall/starfallClient.js';
-import { starTimes, starNightAt, STARFALL_FROM_MS, STAR_LIGHT, STAR_LOW_LIGHT, STAR_CIRCLE_AT, P_GATHER, P_WAVE, P_BREATH, P_MASTER, P_HELD, P_LOST } from '../../../src/net/starfall/starfallLaw.js';
+import { starTimes, starNightAt, STAR_LIGHT, STAR_LOW_LIGHT, STAR_CIRCLE_AT, P_GATHER, P_WAVE, P_BREATH, P_MASTER, P_HELD, P_LOST } from '../../../src/net/starfall/starfallLaw.js';
 import { HEART_STAR, witchesNight } from '../../../src/systems/starfall/starfallNight.js';
 import { STAR_COVENS, covenWitches } from '../../../src/systems/starfall/starfallCovens.js';
 import { eventTimerRows } from '../../../src/systems/eventTimers.js';
@@ -18,9 +18,11 @@ import { starBarModel, STAR_BAR_FELL_HOLD_MS, STAR_BAR_FELL_FADE_MS } from '../.
 import { drawStarTracker, destroyStarTracker, STAR_TRACKER_KEYS, isStarTrackerSelector } from '../../../src/ui/starfall/starTracker.js';
 import { STAR_VIOLET_CSS } from '../../../src/ui/starfall/starMapMark.js';
 import { readRaidMarks } from '../../../src/ui/eventMapMarks.js';
+import { FESTIVALS } from '../../../src/net/festivalLaw.js';
+const FESTIVAL_FROM_MS = FESTIVALS[0].fromMs;   // the Witches' Festival's first day, the Starfall's own (net/festivalLaw.js)
 
 const read = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
-const N = starNightAt(STARFALL_FROM_MS) + 30;
+const N = starNightAt(FESTIVAL_FROM_MS) + 30;
 const COVEN = STAR_COVENS[0];
 const site = (k, over = {}) => ({ n: N, k, px: 300 + k * 7, py: 200, near: 'Gothway Garden', coven: COVEN, ...over });
 
