@@ -142,5 +142,14 @@
     "tests": [
       "test/systems/audit_environs.test.js"
     ]
+  },
+  {
+    "name": "SS-the-court-warms-one-a-frame-beside-a-parallel-driver",
+    "file": "src/scenes/gate/gateCourt.js",
+    "old": "    if (!parallelCompile(gl)) { warmDoors[warmed++](); return; }",
+    "new": "    if (true) { warmDoors[warmed++](); return; }",
+    "tests": [
+      "test/net/gate/gatemix_targets.test.js"
+    ]
   }
 ]

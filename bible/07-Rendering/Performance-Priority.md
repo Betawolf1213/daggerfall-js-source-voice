@@ -1382,8 +1382,13 @@ game waited on here.
 same on both), and the passes the other scenes build in play (the Spire's, the Hour's, the arenas') keep their builds.
 Each can take the door by listing its programs; `compileStallProbe.mjs` names what still waits.
 
-Pins: `test/render/shaderstall.test.js` (11), and the snow's in `test/systems/audit_environs.test.js`. Mutants:
-`tools/mutants/shaderstall.json`, 16, all dead. Source pins moved with the code: `wbx_gate_fixes` (the court's portal),
+GATE-MIX (#1082, merged into this branch beside it) had moved the court's sparks, crystals and portal to the arrival,
+one build a frame: its warm now asks each through its door - where the driver compiles beside the frames the three
+start together and block none, and where it cannot, one a frame as it had it (`gatemix_targets`' pin moved to hold both).
+
+Pins: `test/render/shaderstall.test.js` (11), the snow's in `test/systems/audit_environs.test.js`, the court's warm in
+`test/net/gate/gatemix_targets.test.js`. Mutants: `tools/mutants/shaderstall.json`, 17, all dead; `gatemix.json`'s three
+warm records re-aimed at the doors, dead. Source pins moved with the code: `wbx_gate_fixes` (the court's portal),
 `eglook_lines` (the Spire's telegraph).
 
 ## For the owner
