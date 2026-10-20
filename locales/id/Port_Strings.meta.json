@@ -24294,6 +24294,11 @@
   "tr": "b9ad024cef2f",
   "by": "claude-in-session"
  },
+ "rvn.took.home": {
+  "en": "84ea8e5aee36",
+  "tr": "5ba92a0e8dc3",
+  "by": "claude-in-session"
+ },
  "rvn.unq.amb.mastery": {
   "en": "696e3191948f",
   "tr": "2010327d4f8c",
@@ -26197,6 +26202,31 @@
  "wagon.upkeep.boons.rickety": {
   "en": "8dcc1fe1e4b7",
   "tr": "c51d5fc556fb",
+  "by": "claude-in-session"
+ },
+ "wild.companion.away": {
+  "en": "7e77f9c09561",
+  "tr": "90be94a1cebf",
+  "by": "claude-in-session"
+ },
+ "wild.companion.left": {
+  "en": "56feda3a32f4",
+  "tr": "e8a6411d3374",
+  "by": "claude-in-session"
+ },
+ "wild.companion.stays": {
+  "en": "49c0926abdee",
+  "tr": "e8809759c72e",
+  "by": "claude-in-session"
+ },
+ "wild.companion.yours": {
+  "en": "370154673ec6",
+  "tr": "57e3a0f246da",
+  "by": "claude-in-session"
+ },
+ "wild.companion.yoursFirst": {
+  "en": "d601a60c609f",
+  "tr": "139df5b422f8",
   "by": "claude-in-session"
  },
  "wild.death.burnt": {
