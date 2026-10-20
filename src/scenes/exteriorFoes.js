@@ -76,7 +76,8 @@ const NO_PUPPET_BLOW = Object.freeze({ hold: false, staggered: false });
 import { CORPSE_ACTIVATION_DISTANCE, liveFoeTargets, liveFoeFor } from '../player/activate.js';   // WORLD-HOVER H2: the LIVE bodies, in the shape the hover's one seam takes
 import { WEAPON_REACH } from '../combat/playerWeapon.js';   // AUDIT WATCH1 B2: a peer's melee blow on my watch lands from the player's own reach, no farther   // AUDIT WORLD6b-iii(c) A1/C7: the owner reads the taker's reach
 import { createWeapon, bowDamageArrow } from '../combat/enemyEquipment.js';   // MAC-N1: the recovered shaft is CreateWeapon's arrow, value and all   // AUDIT WORLD6b-ii B2: a puppet's weapon is its owner's word, rebuilt from the descriptor   // AUDIT WORLD6b B3/C2: a cell's record projected and its puppets capped, the wire's law
-import { mintCorpseMarker, createCorpsePrefabs, playBodyFall, playRareDrop, corpseLootTargets, physicalCorpseSources, corpseEntryFor, corpseContents, openCorpseLoot, pileBody, sayEnemyDied, raiseEnemyDeath, corpseEntityName } from './corpseMarker.js';
+import { mintCorpseMarker, corpseTextureOf, tickCorpseMarkers, playBodyFall, playRareDrop, corpseLootTargets, physicalCorpseSources, corpseEntryFor, corpseContents, openCorpseLoot, pileBody, sayEnemyDied, raiseEnemyDeath, corpseEntityName } from './corpseMarker.js';
+import { createStreetCorpsePrefabs } from './corpsePrefabHost.js';   // DEX5 / AUDIT DEX D11: a mod's corpse prefab - the pool's reach
 import { rollCorpseKit } from '../systems/foeLootCap.js';   // KIT-ROLL: a plain foe's kit, laddered at its death by every body door
 import { floorLanding } from '../player/enterExit.js';   // REVENANT-FATE (the 2026-10-02 audit): a flyer kneels, and its pile lies, on the ground below
 import { renownFoeStruck, renownFoeDied } from '../net/renownTracker.js';   // RENOWN1: a foe the player fought pays its Renown XP when it dies, by any hand
@@ -687,7 +688,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
   function mintCorpse(f) {
   const _corpsePixel = currentPixelKey();
   const _corpseGen = epoch;   // AUDIT-39r: the world this body falls in
-  const ct = f.mobile?.basics?.corpseTexture ?? ENEMY_BASICS[f.mobileType]?.corpseTexture;
+  const ct = corpseTextureOf(f);   // AUDIT DEX A1: a female mobile's own corpse where her row names one (EnemyDeath.cs:86-93)
   corpsePrefabs.mint(f, ct);   // DEX5: a mod's prefab for this picture takes the body's place - before the art warms, so no loot from the first frame
   mintCorpseMarker({
     renderer, getTexture, uploadRecordFrame, collider,
@@ -1537,6 +1538,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     portals.tick(_eye);   // COMPANION-PORTAL: each opening, holding, sealing
     hitEffects?.bleed?.(dt, foes, foeBleedView);   // BLOOD2c: the wounded drip, the dead bleed out - every body this pool walks, puppets included
     corpsePrefabs.frame(foes, dt);   // DEX5: a prefab's body on the foes' clock
+    tickCorpseMarkers(corpseBatches, dt);   // AUDIT DEX B3: a body of more than one frame animates (the Hell Hound's)
     _peerFrame++;   // WORLD6b-ii: the peers are read once a frame
     spaceFoes(foes, collider, foeFrameDt(dt));   // FOE-SPACING: two bodies in one spot are pushed apart (characters/foeSpacing.js)
     for (const f of foes) {
@@ -2162,29 +2164,11 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     f.corpse = false; f.corpseMarker = null;
   }
   // DEX5 (bible/04-Characters/Enemy-Expansion.md section 11): a mod's corpse prefab on a body (scenes/corpseMarker.js) - the
-  // pool's reach. Its owner counts down; a RISE is a new foe of its kind where the body lay (spawnFoe, the slot-neutral
-  // replacement the Wabbajack takes) and the body goes as removeCorpse takes one - its record ends, and every copy with
-  // it; the ASH takes the body's place as its marker (by its centre - moved with the origin and the ground, collected with
-  // its pixel), so the record rides on and says `bg` 2 to every copy, a late one too. DEX5b: a copy's missile sends its
-  // bundle to the owner (`cs`, applyHit). The street saves no body (snapshotWorld - "Dead foes stay out"), so none is keyed.
-  const corpsePrefabs = createCorpsePrefabs({
-    runs: (f) => !f.puppet,
-    body: (f) => f.corpseMarker ?? null,
-    rise: (f) => { const p = f.corpseMarker?.pos ?? f.ai.feet, at = [p[0], p[1], p[2]]; removeCorpse(f); spawnFoe(f.mobileType, at, { feetGiven: true, replacing: true }); },
-    vanish: (f) => { f.corpseDestroyed = 1; if (!f.puppet) removeCorpse(f); },   // a copy's goes with its owner's record
-    toAsh: (f, ash) => {
-      const body = f.corpseMarker, gen = epoch, pixelKey = f.corpsePixelKey ?? currentPixelKey();
-      f.corpseDestroyed = 2;
-      if (body) { const i = corpseBatches.indexOf(body); if (i >= 0) corpseBatches.splice(i, 1); renderer.destroyBillboardBatch(body.batch); f.corpseMarker = null; }
-      mintCorpseMarker({ renderer, getTexture, uploadRecordFrame, collider: body ? null : collider, corpseTexture: ash, feet: body?.pos ?? f.ai.feet, centre: ash.centre }).then((c) => {
-        if (!c) return;
-        if (gen !== epoch || f._gone || !f.corpse) { renderer.destroyBillboardBatch(c.batch); return; }
-        c.pixelKey = f.corpsePixelKey = pixelKey; f.corpseMarker = c; corpseBatches.push(c);
-      });
-    },
-    send: (f, spell, level) => { const sp = hitSpellFields(spell, level); if (sp && f.puppet) _net?.onPeerHit?.({ to: f.puppet, k: _owners.get(f.puppet)?.k ?? _net.room?.() ?? null, i: f.seq, dmg: 0, kind: 'spell', ...sp, cs: 1 }); },
-    say: (line) => say?.(line),
-    key: () => null,
+  // pool's reach (the rise, the ash as the body's marker, a copy's missile to the owner); the street saves no body
+  const corpsePrefabs = createStreetCorpsePrefabs({   // AUDIT DEX D11: the reach is scenes/corpsePrefabHost.js's
+    removeCorpse, spawnFoe, renderer, corpseBatches, collider, epoch: () => epoch, currentPixelKey, say: (line) => say?.(line),
+    mintMarker: (spec) => mintCorpseMarker({ renderer, getTexture, uploadRecordFrame, ...spec }),
+    sendHit: (f, hit) => _net?.onPeerHit?.({ to: f.puppet, k: _owners.get(f.puppet)?.k ?? _net.room?.() ?? null, i: f.seq, ...hit }),
   });
 
   /**
@@ -2252,7 +2236,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       c.pos[1] += d;
       renderer.destroyBatch(c.batch);
       c.batch = renderer.createBillboardBatch(c.archive, c.record, c.size, [c.pos]);
-      c.batch.frame = 0;   // FA1 slice 3: a REBUILT batch is a new object - it needs the frame too
+      c.batch.frame = c.anim?.frame ?? 0;   // FA1 slice 3: a REBUILT batch is a new object - it needs the frame too (AUDIT DEX B3: its clock's)
       if (c.elite) markEliteCorpseBatch(c.batch, c.elitePhase);   // ELITE FOES: ...and its outline, in step with itself
     }
   }
@@ -2271,7 +2255,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       c.pos[0] += offset[0]; c.pos[1] += offset[1]; c.pos[2] += offset[2];
       renderer.destroyBatch(c.batch);
       c.batch = renderer.createBillboardBatch(c.archive, c.record, c.size, [c.pos]);
-      c.batch.frame = 0;   // FA1 slice 3: a REBUILT batch is a new object - it needs the frame too
+      c.batch.frame = c.anim?.frame ?? 0;   // FA1 slice 3: a REBUILT batch is a new object - it needs the frame too (AUDIT DEX B3: its clock's)
       if (c.elite) markEliteCorpseBatch(c.batch, c.elitePhase);   // ELITE FOES: ...and its outline, in step with itself
     }
   }

@@ -304,7 +304,8 @@ import { getPref } from '../systems/uiPrefs.js';
 import { createHostNpcBodies, npcBodiesOn } from '../characters/npcBodies.js';   // MWNPC5b: the foes in their Morrowind bodies
 import { isBodyFoe, foeActor, foeFx, foeId, foeSeed, applyWireLook, drawBodiesUnderWindow } from '../characters/foeBodies.js';
 import { createPopulationLane } from '../characters/npcBodies.js'; import { personActor } from '../characters/peopleBodies.js';   // MWNPC8b: the dungeon's standing people   // ENHANCED AI 3b: the Enhanced tab's switch
-import { raiseEnemyDeath, playRareDrop, pileBody, sayEnemyDied, corpseEntityName, createCorpsePrefabs, mintCorpseMarker } from './corpseMarker.js';   // UL1: OnEnemyDeath; LR3: the drop chime; LOOT-STACK: a body as the loot window's tab; LOOT7-CHECK DUNGEON-DIED: the kill notice; L10N3e: a body's name as shown
+import { raiseEnemyDeath, playRareDrop, pileBody, sayEnemyDied, corpseEntityName, mintCorpseMarker, corpseTextureOf } from './corpseMarker.js';
+import { createDungeonCorpsePrefabs } from './corpsePrefabHost.js';   // DEX5 / AUDIT DEX D11: a mod's corpse prefab - the dungeon's reach   // UL1: OnEnemyDeath; LR3: the drop chime; LOOT-STACK: a body as the loot window's tab; LOOT7-CHECK DUNGEON-DIED: the kill notice; L10N3e: a body's name as shown
 import { egFindStruck, egFindKill } from '../systems/eliteGates/egFind.js';   // EG-E3: the dungeon's find - a joiner's kill, asked by the joiner; PARTY-LOOT: a room's body's kill
 import { rollCorpseKit, capFoeLoot } from '../systems/foeLootCap.js';   // KIT-ROLL: a foe's kit, laddered at its death by every body door; AUDIT 625 L5: a copy's cap
 import { dropFoeCard } from '../systems/card/cardSources.js';   // AUDIT CARDS-6 A3: a joiner's copy of a body draws for its own card
@@ -4297,7 +4298,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // the seducer's unwinged corpse (400/6) for the winged one (400/5),
     // and the static table cannot carry both. A rig foe has no mobile
     // and falls back to the row, which is where it always read.
-    const ct = f.mobile?.basics?.corpseTexture ?? ENEMY_BASICS[f.mobileType]?.corpseTexture;
+    const ct = corpseTextureOf(f);   // AUDIT DEX A1: and a female mobile's own corpse where its row names one (EnemyDeath.cs:86-93)
     // C12: a flyer dies mid-air - the corpse lands on the floor
     // below (AlignBillboardToGround semantics for every corpse).
     const p = floorLanding(collider, [f.ai.feet[0], f.ai.feet[1] + 0.1, f.ai.feet[2]]);
@@ -5101,6 +5102,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     f.dead = false;
     f._diedAt = null;   // WORLD8
     freeCorpse(f);
+    corpsePrefabs.forget(f);   // AUDIT DEX D2: and its body's fate (a prefab's rise or ash) - the next death lays a body again
     const pi = foes.indexOf(f);   // AUDIT WORLD7/8 C12: the body's loot record goes with the body - the next death's corpse is a new container, its claim not refused as already spoken
     if (pi >= 0) { _lootSeen.delete(`corpse:${pi}`); _lootAt.delete(`corpse:${pi}`); forgetRoomContainer(`corpse:${pi}`); }   // PARTY-LOOT: and its base, its takes and my bonus over it - the next death is a new container
     if (f._encId != null) { _lootSeen.delete(`enc:${f._encId}`); _lootAt.delete(`enc:${f._encId}`); forgetRoomContainer(`enc:${f._encId}`); }   // REST-SYNC: a shared body's, by the room's number
@@ -5805,7 +5807,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (!data || typeof data !== 'object' || (data.k != null && data.k !== _locationKey)) return false;
     const i = data.i | 0, dmg = Number(data.dmg);
     const f = foes.find((x) => x._ownFrom == null && x._ownSeq === i) ?? null;
-    if (f?.dead && data.cs === 1) { const s = hitSpellOf(data); return !!s && !!f.corpsePrefab?.struck(s.spell, s.level, null); }   // DEX5b: a copy's missile on my loose foe's prefab body
+    if (f?.dead && data.cs === 1) { if (f.entity?.team === 'PlayerAlly' || !(ownLoose(f) || (!!ownQuestTag(f) && ownPeerMayHit(id, f)))) return false; const s = hitSpellOf(data); return !!s && !!f.corpsePrefab?.struck(s.spell, s.level, null); }   // DEX5b: a copy's missile on my loose foe's prefab body; AUDIT DEX D7: through the gate a living blow on it passes (the street's quest gate's twin)
     // AUDIT CC-E1: a foe on another client mauled MY companion - the blow lands here, where he is real: the foe's, not a
     // player's (the knock-out arm his death); he turns on the striker when the striker rides the lane to me
     if (data.fb === 1) {
@@ -6311,30 +6313,17 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     f.corpsePos = null;
     if (!f.corpseBatch) return;
     const bi = billboardBatches.indexOf(f.corpseBatch); if (bi >= 0) billboardBatches.splice(bi, 1);
+    flatAnims.remove(f.corpseBatch);   // AUDIT DEX B3: a body of more than one frame (the Hell Hound's) keeps no clock on a freed batch
     renderer.destroyBillboardBatch(f.corpseBatch);
     f.corpseBatch = null;
   }
   // DEX5 (bible/04-Characters/Enemy-Expansion.md section 11): a mod's corpse prefab on a body (scenes/corpseMarker.js) - the
-  // dungeon's reach. Its runner counts down (the seat, a loose foe's owner); a RISE is a NEW loose foe of its kind where the
-  // body lay - CreateEnemy's, no quest's and no slot's (spawnLooseFoe), while the dead one stays dead with no body, as DFU's
-  // stays; the ASH stands by its centre, as a flat the level keeps; a save keeps a layout body's time by its slot. DEX5b: a
-  // copy's missile sends its bundle to the runner by the lane the foe rides (the seat's number, a shared encounter's, a
-  // loose foe's owner's - `cs`), and the record says a body gone (`bg`, roomRecord) to every copy (applyFoeRecord's told)
-  const corpsePrefabs = createCorpsePrefabs({
-    runs: (f) => !isPuppetFoe(f),
-    body: (f) => (f.corpsePos ? { pos: f.corpsePos, size: f.corpseBatch?.size ?? null } : null),
-    rise: (f) => { const p = f.corpsePos ?? f.ai.feet; f.corpseDestroyed = 1; freeCorpse(f); spawnLooseFoe(f.mobileType, [p[0], p[1], p[2]]); },
-    vanish: (f) => { f.corpseDestroyed = 1; freeCorpse(f); },
-    toAsh: (f, ash) => {
-      const p = f.corpsePos; f.corpseDestroyed = 2; freeCorpse(f);
-      if (p) mintCorpseMarker({ renderer, getTexture, uploadRecordFrame, corpseTexture: ash, feet: p, centre: ash.centre }).then((c) => { if (c) { if (_ctxDead) renderer.destroyBillboardBatch(c.batch); else billboardBatches.push(c.batch); } });
-    },
-    send: (f, spell, level) => {
-      const sp = hitSpellFields(spell, level), hit = { dmg: 0, kind: 'spell', ...sp, cs: 1 };
-      if (sp) opts.onFoeHit?.(f._ownFrom != null ? { own: 1, to: f._ownFrom, k: _locationKey, i: f._ownI, ...hit } : { ...(f._encId != null ? { i: f._encId, xs: 1 } : { i: f._surI ?? foes.indexOf(f) }), ...hit });
-    },
-    say: (line) => hudText.add(line),
-    key: (f) => { const i = foes.indexOf(f); return i >= 0 && i < _layoutFoes ? `${_locationKey}|${i}` : null; },
+  // dungeon's reach (the rise, the ash, a copy's missile to the runner). The record says a body gone (`bg`, roomRecord) to
+  // every copy (applyFoeRecord's told), and the save and the room's memory carry it (AUDIT DEX D1/D3)
+  const corpsePrefabs = createDungeonCorpsePrefabs({   // AUDIT DEX D11: the reach is scenes/corpsePrefabHost.js's
+    isPuppetFoe, freeCorpse, spawnLooseFoe, renderer, billboardBatches, foes, onFoeHit: opts.onFoeHit, say: (line) => hudText.add(line),
+    mintMarker: (spec) => mintCorpseMarker({ renderer, getTexture, uploadRecordFrame, ...spec }), dead: () => _ctxDead,
+    locationKey: () => _locationKey, layoutFoes: () => _layoutFoes,
   });
   /** WORLD8: THE HOUR'S RESPAWN of the layout foe at `i` - the corpse freed, its body's loot record forgotten, and the
    *  foe REBUILT fresh at its marker through the one build chain (retypeFoe as its own species: a new entity at full
@@ -6430,7 +6419,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         died: f.dead && Number.isFinite(f._diedAt) ? f._diedAt : null,   // WORLD8: when it fell, the relay's clock - the hour's respawn reads it
         ...(f.abyssDestroyed ? { abyssDestroyed: true } : {}),   // AUDIT OH-F B1: Object.Destroy'd - in DFU's save not at all
         ...(f.dead && (f.escaped || f.executed || f._swornAway) ? { noBody: true } : {}),   // REVENANT-FATE (the 2026-10-02 audit): fled, burnt away or sworn - gone with no body, so a load lays none
-        ...(f.dead && f.corpseDestroyed ? { noBody: true } : {}),   // DEX5: a body a mod's prefab destroyed (risen, burnt) - DFU's save keeps the foe dead and no body
+        ...(f.dead && f.corpseDestroyed ? { bg: f.corpseDestroyed } : {}),   // DEX5: a body a mod's prefab destroyed (1 risen, 2 burnt) - DFU's save keeps the foe dead and no body; AUDIT DEX D3: its kind, which the room's memory carries too (validSharedFoe)
         feet: [...f.ai.feet], yaw: f.ai.yaw, anchor: 1,   // REVIEW 2026-09-05: feet under the enemyAnchor law (a pre-fix save carries no stamp)
         items: (f.entity.items ?? []).map((it) => ({ ...it })),
         // CH4 (the senses verify pass): SerializableEnemy carries
@@ -6570,6 +6559,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // place: un-kill and free the corpse flat by its foe (setFoeDead,
     // WORLD2's one door for the save and the stream).
     else if (!sf.dead && f.dead) setFoeDead(f, false);
+    else if (sf.dead && f.corpseDestroyed) { corpsePrefabs.forget(f); spawnCorpse(f); }   // AUDIT DEX D1: the save's body lies again where a prefab had taken it since (BestiarySaveInterface stands it again)
   }
   function applyWorld(w, { truncate = true, wire = false } = {}) {
     // SL-3 (AUDIT 65): THE PICKPOCKET LATCH DIES WITH THE POOL - which
@@ -6589,6 +6579,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // REVENANT-FATE (the 2026-10-02 audit): a judgement in flight is the replaced game's - a same-dungeon load patched the
     // foe whole and left it kneeling, or burning (its pile dropped after the load)
     for (const f of foes) { if (!f) continue; f.yielded = null; f.executing = null; f.sparing = null; f.trophy = null; f.yieldEvent = null; }
+    if (truncate) corpsePrefabs.clearAsh();   // AUDIT DEX D1: a prefab's ash is no saved object - the rebuilt level holds none (BestiaryTrollCorpseEntity.cs:65-66)
     if (truncate) clearOwnPuppets();   // QUEST-PARTY phase 3c: the save holds none (collectWorld), so its indices are this pool's without them - they stand again from their owners' next frames
     // AUDIT BAL (bible/05-Combat/Balance-Arc.md section 10): THE SAVE'S WORD ON AN ELITE, NOT THIS BUILD'S PICK. The pick
     // follows the loot ladder's switch offline (BAL4), so a save made with the ladder set the other way - or before
@@ -6643,7 +6634,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       // REVENANT-FATE (the 2026-10-02 audit): one gone with no body (fled, burnt away, sworn) - out again with none: a save
       // of it had laid its corpse, its whole pack lootable (an executed one's twice over: its pile is the save's too). One
       // due back past the hour was rebuilt above, as any foe is
-      if (sf.noBody && sf.dead) { if (!f.dead) questPoolOps.removeFoe(f); if (Number.isFinite(sf.died)) f._diedAt = sf.died; return; }
+      if ((sf.noBody || sf.bg) && sf.dead) { if (!f.dead) questPoolOps.removeFoe(f); corpsePrefabs.settle(f, sf.bg); if (Number.isFinite(sf.died)) f._diedAt = sf.died; return; }   // AUDIT DEX D3/D4: a prefab's (risen, burnt) settled too - its record says `bg` again
       patchFoe(f, sf, wire);
     });
     // SL2 / SerializableStateManager.RestoreEnemyData (:404-425): a
@@ -10670,7 +10661,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         // takes (EnemyDeath.cs:86-92), and the pair arrives without
         // playerOwned because :833 sets it false - so CanChangeDropIcon
         // refuses to cycle a body's icon.
-        const ct = f.mobile?.basics?.corpseTexture ?? ENEMY_BASICS[f.mobileType]?.corpseTexture;
+        const ct = corpseTextureOf(f);   // AUDIT DEX A1: the body's own picture, a female's where her row names one
         if (ct) lootHooks = { textureArchive: ct.archive, textureRecord: ct.record };
       } else if (kind === 'srch') {
         source = searchables[i]?.items ?? null;   // SEARCH1: a searched object's find - the room's list

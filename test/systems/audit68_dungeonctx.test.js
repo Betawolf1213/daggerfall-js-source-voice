@@ -27,7 +27,7 @@ import { rollCorpseKit } from '../../src/systems/foeLootCap.js';   // KIT-ROLL: 
 import { registerFoeDoor } from '../../src/systems/artifactEffects.js';   // AUDIT PSCALE1 DOORS-2: `stand` registers the foe's door   // PSCALE1: the kill door's weight - who fights it - in the harness's scope
 import { validFoeRecord, FOE_HEALTH_MAX, FOE_LEVEL_MAX } from '../../src/net/wire.js';   // AUDIT SET P-M3: the stream's door, and the record's bounds
 import { FOES_FULL_MS } from '../../src/net/online.js';   // AUDIT FINAL F7: the full frame the name must outlive
-import { sayEnemyDied, createCorpsePrefabs } from '../../src/scenes/corpseMarker.js';   // LOOT7-CHECK DUNGEON-DIED: the kill door's notice, the real one
+import { sayEnemyDied, createCorpsePrefabs, corpseTextureOf } from '../../src/scenes/corpseMarker.js';   // LOOT7-CHECK DUNGEON-DIED: the kill door's notice, the real one
 import { eliteCorpseSize, isEliteCorpse, markEliteCorpseBatch } from '../../src/systems/eliteFoes.js';   // ELITE FOES: the corpse chain's own imports, the real ones (no elite here: the size and batch as they were)
 import { effectiveLevel } from '../../src/systems/mentorMode.js';   // SOFTCAP2: the mentor's level the spawn sites read (a free name there, the module's own import)
 import { blowClassOf } from '../../src/ai/puppetBlows.js';   // AUDIT FEUD: the hit door builds a blow's class whenever its weakness rides (the real one - no wind-up here, no weakness: none)
@@ -110,7 +110,8 @@ function killHarness({ foes, foeDeps = null, getTexture = async () => ({ recordC
     damageShieldPool: (e, n) => n, attemptSoulTrap, peerSoulTrapOf, fillEmptyTrap, isAzurasStarEquipped: () => false,
     hudText: { add: (l) => log.hud.push(l) }, sayEnemyDied, SOUL_TRAP_TEXT: { trapSuccess: 'ok', trapFail: 'fail', trapNoneEmpty: 'none' },   // LOOT7-CHECK DUNGEON-DIED: the notice, onto the harness's line
     setEnemyAlert, playRareDrop: () => { log.chimes++; }, raiseEnemyDeath: () => { log.deaths++; }, liveStat: () => 50, stampWonWeapons, rollCorpseKit,
-    isClassEnemyId, enemyEntityType, audio: {}, ENEMY_BASICS, weaponKnockbackApplies: () => false, maxFatigue: () => 100, q2: (x) => x, q3: (x) => x,
+    isClassEnemyId, enemyEntityType, audio: {}, ENEMY_BASICS, corpseTextureOf,   // AUDIT DEX A1: the corpse mints read it
+    weaponKnockbackApplies: () => false, maxFatigue: () => 100, q2: (x) => x, q3: (x) => x,
     _wallNow: () => null, floorLanding: (c, p) => p, collider: null, getTexture,
     uploadRecord: () => {}, billboardSize: () => ({ w: 1, h: 1 }), armFlatAnim: () => {}, flatAnims: { remove: () => {} }, uploadRecordFrame: () => {},
     eliteCorpseSize, isEliteCorpse, markEliteCorpseBatch,   // ELITE FOES: spawnCorpseNow's

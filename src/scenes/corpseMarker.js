@@ -63,12 +63,22 @@ import { addItem, takeOneInto } from '../systems/inventory.js';   // QUICK-LOOT 
 import { SOUND } from '../systems/soundClips.js';
 import { lootRarityOn, bestRarity, RARITIES } from '../systems/loot/lootRarity.js';   // LR3: the drop chime asks the body's best tier
 import { CORPSE_ACTIVATION_DISTANCE, RAY_DISTANCE } from '../player/activate.js';
-import { enemyDisplayName } from '../characters/enemy/enemyBasics.js';
+import { enemyDisplayName, ENEMY_BASICS } from '../characters/enemy/enemyBasics.js';
+import { FlatAnim, isAnimatedFlat } from '../render/flatAnimation.js';   // AUDIT DEX B3: a corpse of more than one frame animates, as DFU's billboard does
 import { localizedText, getLocalizedEnemyName } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; L10N3e: and the enemy's name
 import { silverFindAt } from '../systems/silverFinds.js';   // SILVER-FINDS: a body opened holds silver now and then
 
 /** ItemTemplates Arrow - the auto-pickup arm keys on it. */
 export const ARROW_TEMPLATE_INDEX = 131;
+
+/** EnemyDeath.cs:86-93 - the corpse's picture: a female mobile's own where its row names one (`FemaleCorpseTexture != 0`
+ *  - no classic row does; Daggerfall Enemy Expansion's riders and its Dark Slayer, AUDIT DEX A1), else CorpseTexture. A5:
+ *  the per-mobile struct copy (`f.mobile.basics` - the seducer's winged corpse) and its resolved gender (a mod's forced
+ *  one too), the row for a rig foe with no mobile. */
+export function corpseTextureOf(f) {
+  const row = f?.mobile?.basics ?? ENEMY_BASICS[f?.mobileType];
+  return ((f?.mobile?.gender ?? f?.gender) === 'female' && row?.femaleCorpseTexture) || row?.corpseTexture;
+}
 
 /**
  * CreateLootableCorpseMarker's mint. Resolves to the pool's corpse
@@ -114,10 +124,25 @@ export async function mintCorpseMarker({
   // FA1 slice 3: a BARE record plus a frame FIELD - the draw builds
   // `record#frame`, so the record must not carry one already.
   batch.frame = 0;
+  // AUDIT DEX B3: DFU's corpse is a billboard (GameObjectHelper.cs:681-683) and animates when its record has frames
+  // (DaggerfallBillboard.cs:260 AnimatedMaterial) - every classic corpse has one, the mod's Hell Hound's (1614_20) three.
+  // The clock rides the record (`anim`, tickCorpseMarkers), so a batch rebuilt by a recentre keeps it.
+  const frames = t.getFrameCount?.(record) ?? 1;
+  let anim = null;
+  if (isAnimatedFlat(frames)) {
+    for (let i = 1; i < frames; i++) uploadRecordFrame(archive, record, i);
+    anim = new FlatAnim(archive, frames);
+    batch.frame = anim.frame;
+  }
   // AUDIT 17e F23 / THE FOUR HOSTS RULE: the creation params travel
   // with the record, because a floating-origin recenter has to REBUILD
   // the batch (centres are baked into a STATIC_DRAW buffer).
-  return { batch, archive, record, size, pos };
+  return { batch, archive, record, size, pos, anim };
+}
+
+/** AUDIT DEX B3: each animated marker's clock on the host's dt (FlatAnim - DFU's fixed step), its batch the frame. */
+export function tickCorpseMarkers(markers, dt) {
+  for (const c of markers) if (c.anim) c.batch.frame = c.anim.tick(dt);
 }
 
 /**
@@ -165,7 +190,12 @@ export function raiseEnemyDeath(entity, opts = {}) {
  *     body away), `vanish(f)` (take the body away), `toAsh(f, ash)` (take the body away and stand `ash` - `{ archive,
  *     record, centre }` - where it lay), `send(f, spell, casterLevel)` (a copy's: a missile's bundle on it, to the foe's
  *     runner), `say(line)` and `key(f)` (the body's place in a save, or null where a save keeps no body). A body a prefab
- *     destroyed is marked `corpseDestroyed` (1 or 2) - what the hosts' records carry and their saves write as no body.
+ *     destroyed is marked `corpseDestroyed` (1 or 2) - what the hosts' records carry (`bg`) and their saves write.
+ *     AUDIT DEX: `rise(f)` answers whether the new foe stood (D8 - a refused stand leaves the body); `forget(f)` - a foe
+ *     that stands up again (a load's rewind): its body's fate forgotten with its body (D2); `settle(f, kind)` - a load's or
+ *     the room's memory's word that the body is gone, with no rise and no ash, neither a saved object (D1, D3, D4);
+ *     `destroy()` lets every prefab it minted go (D12). A prefab answers `release()` - freed by another road.
+ *   scenes/corpsePrefabHost.js holds the two hosts' reach (AUDIT DEX D11).
  */
 const _corpsePrefabs = new Map();   // `${archive}_${record}` -> make
 export function registerCorpsePrefab(archive, record, make) {
@@ -177,11 +207,15 @@ export function _resetCorpsePrefabs() { _corpsePrefabs.clear(); }
 export function createCorpsePrefabs(host) {
   let alive = true;
   const reach = Object.freeze({ ...host, alive: () => alive });
+  const minted = new Set();
+  const release = (f) => { const c = f.corpsePrefab; f.corpsePrefab = null; minted.delete(f); c?.release?.(); };
   return {
     mint(f, corpseTexture) {
+      release(f);
       // an executed revenant's body is the port's own fate (gone for good - revenant.js), never a prefab's to raise
       const make = corpseTexture && !f.executed ? _corpsePrefabs.get(`${corpseTexture.archive}_${corpseTexture.record}`) : null;
       f.corpsePrefab = make ? make(f, reach) ?? null : null;
+      if (f.corpsePrefab) minted.add(f);
       return f.corpsePrefab;
     },
     frame(foes, dt) { for (const f of foes) if (f.corpsePrefab && f.dead && f.corpse) f.corpsePrefab.frame?.(dt); },
@@ -190,7 +224,14 @@ export function createCorpsePrefabs(host) {
       if (f.corpsePrefab?.gone) f.corpsePrefab.gone(kind);
       else reach.vanish(f);   // a copy with no prefab of its own (none to name the ash): the body goes, as its runner's did
     },
-    destroy() { alive = false; },
+    forget(f) { release(f); f.corpseDestroyed = 0; },
+    settle(f, kind) {
+      if (kind !== 1 && kind !== 2) return;
+      release(f);
+      if (f.corpse) reach.vanish(f);
+      f.corpseDestroyed = kind;
+    },
+    destroy() { alive = false; for (const f of [...minted]) release(f); },
   };
 }
 /** The body a missile at `pos` meets, among `foes` - a dead one whose prefab stands a trigger (its sphere and the

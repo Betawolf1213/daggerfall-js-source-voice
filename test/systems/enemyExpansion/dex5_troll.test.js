@@ -244,14 +244,16 @@ test('DEX5-6 THE DOOR: a prefab by its picture, attached on every machine at the
   assert.equal(corpsePrefabStruck([0, 1, 1.4], [a], 0.45), a, 'radius 1 and the missile\'s reach 0.45');
   assert.equal(corpsePrefabStruck([0, 1, 1.5], [a], 0.45), null);
   assert.equal(corpsePrefabStruck([0, 1, 0], [{ ...a, dead: false }], 0.45), null, 'a living foe is no body');
+  const pa = a.corpsePrefab;
   runner.destroy();
-  assert.equal(a.corpsePrefab.host.alive(), false, 'the host gone: its bodies with it');
+  assert.equal(pa.host.alive(), false, 'the host gone: its bodies with it');
+  assert.equal(a.corpsePrefab, null, 'AUDIT DEX D12: and each of its prefabs let go');
 });
 
-test('DEX5-7 THE SAVE: every body still down with its time left, by the host\'s key; a load sets a body\'s time where it lies and where it is stood later (a quickload restores the mod\'s record first); a body with no time left is skipped; a body gone, risen or its host destroyed is not saved', () => {
+test('DEX5-7 THE SAVE: every body still down with its time left, by the host\'s key; a load sets a body\'s time where it lies and where it is stood later (a quickload restores the mod\'s record first); a body with no time left is skipped; a body gone, risen or its host destroyed is not saved', async () => {
   reset();
   installEnemyExpansion({ on: true, log: silent });
-  const host = (keys) => createCorpsePrefabs({ runs: () => true, body: () => null, rise() {}, burn() {}, say() {}, key: (f) => keys.get(f) ?? null });
+  const host = (keys) => createCorpsePrefabs({ runs: () => true, body: () => null, rise: () => true, burn() {}, say() {}, key: (f) => keys.get(f) ?? null });
   const keys = new Map();
   const runner = host(keys);
   const body = (id) => { const f = { id, mobileType: TROLL, dead: true, corpse: true, entity: {} }; keys.set(f, `dungeon:7|${id}`); runner.mint(f, { archive: 1618, record: 20 }); return f; };
@@ -266,7 +268,8 @@ test('DEX5-7 THE SAVE: every body still down with its time left, by the host\'s 
   assert.equal(three.corpsePrefab.respawnBuffer, 4, 'a body stood after the load: its time then');
   assert.equal(four.corpsePrefab.respawnBuffer, 10, 'no time left: skipped (RestoreSaveData\'s `continue`)');
   two.corpse = false;   // freed by another road (the hour's respawn, the stream's un-death)
-  runner.frame([one], 3);   // ...and one rises
+  runner.frame([one], 3);   // ...and one rises (AUDIT DEX D8: once its stand answers)
+  await Promise.resolve(); await Promise.resolve();
   assert.deepEqual(trollSaveData().activeCorpses.map((r) => r.key), ['dungeon:7|3', 'dungeon:7|4']);
   runner.destroy();
   assert.deepEqual(trollSaveData(), { activeCorpses: [] }, 'the host destroyed: no body of it is saved');
@@ -281,7 +284,7 @@ test('DEX5-8 THE HOSTS WIRE IT: the dungeon and the street mint a body\'s prefab
   assert.match(dc, /roomClaimTick\(_ecvT \* 1000\);[^\n]*\n\s*corpsePrefabs\.frame\(foes, dt\);/);
   assert.equal((dc.match(/if \(f\.dead\) \{ f\.corpsePrefab\?\.rounds\?\.\(/g) ?? []).length, 2, 'both of the dungeon\'s foe round loops');
   assert.match(dc, /_peopleLane\.destroy\(\);[^\n]*\n\s*corpsePrefabs\.destroy\(\);/);
-  assert.match(dc, /\.\.\.\(f\.dead && f\.corpseDestroyed \? \{ noBody: true \} : \{\}\),/);
+  assert.match(dc, /\.\.\.\(f\.dead && f\.corpseDestroyed \? \{ bg: f\.corpseDestroyed \} : \{\}\),/, 'AUDIT DEX D3: its kind, which the memory carries too');
   assert.match(ext, /corpsePrefabs\.mint\(f, ct\);[^\n]*\n\s*mintCorpseMarker\(\{/);
   assert.match(ext, /corpsePrefabs\.frame\(foes, dt\);/);
   assert.match(ext, /foes\.length = 0;\n\s*corpsePrefabs\.destroy\(\);/);
@@ -363,9 +366,9 @@ test('DEX5-12 ONLINE UNDERGROUND: the record says a body gone (`bg`, roomRecord)
   assert.match(dc, /else setFoeDead\(f, false\);\n\s*\}\n\s*if \(r\.d === 1 && r\.bg\) corpsePrefabs\.told\(f, r\.bg\);/);
   assert.match(dc, /if \(f\._ownFrom != null \|\| \(f\.dead && !f\.corpse && !f\.corpseDestroyed\)\) continue;/);
   assert.match(dc, /if \(\(f\.dead && !f\.corpse && !f\.corpseDestroyed\) \|\| !foes\.includes\(f\)\) _sharedById\.delete\(id\);/);
-  assert.match(dc, /f\._ownFrom != null \? \{ own: 1, to: f\._ownFrom, k: _locationKey, i: f\._ownI, \.\.\.hit \} : \{ \.\.\.\(f\._encId != null \? \{ i: f\._encId, xs: 1 \} : \{ i: f\._surI \?\? foes\.indexOf\(f\) \}\), \.\.\.hit \}/);
+  assert.match(rd('src/scenes/corpsePrefabHost.js'), /f\._ownFrom != null \? \{ own: 1, to: f\._ownFrom, k: h\.locationKey\(\), i: f\._ownI, \.\.\.hit \} : \{ \.\.\.\(f\._encId != null \? \{ i: f\._encId, xs: 1 \} : \{ i: f\._surI \?\? h\.foes\.indexOf\(f\) \}\), \.\.\.hit \}/);
   assert.match(dc, /if \(f\?\.dead && data\.cs === 1 && \(xs \|\| i < _layoutFoes\)\) \{ const s = hitSpellOf\(data\); return !!s && !!f\.corpsePrefab\?\.struck\(s\.spell, s\.level, null\); \}/);
-  assert.match(dc, /if \(f\?\.dead && data\.cs === 1\) \{ const s = hitSpellOf\(data\); return !!s && !!f\.corpsePrefab\?\.struck\(s\.spell, s\.level, null\); \}/);
+  assert.match(dc, /if \(f\?\.dead && data\.cs === 1\) \{ if \(f\.entity\?\.team === 'PlayerAlly' \|\| !\(ownLoose\(f\) \|\| \(!!ownQuestTag\(f\) && ownPeerMayHit\(id, f\)\)\)\) return false; const s = hitSpellOf\(data\); return !!s && !!f\.corpsePrefab\?\.struck\(s\.spell, s\.level, null\); \}/, 'AUDIT DEX D7: through the gate a living blow passes');
   assert.match(dc, /if \(!foes\.includes\(f\) \|\| f\.corpseDestroyed\) return;/, 'a body told gone while its art warmed never lands');
   const ext = rd('src/scenes/exteriorFoes.js');
   assert.match(ext, /if \(npcLane\) for \(const f of foes\) if \(f\.dead && f\.corpse && !f\.corpseDestroyed && isBodyFoe\(f\) && f\.ai\)/, 'the street\'s ash stands no Morrowind body');

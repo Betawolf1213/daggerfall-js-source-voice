@@ -193,15 +193,15 @@
   {
     "name": "QP3C-own-hit-stranger",
     "file": "src/scenes/dungeonContext.js",
-    "old": "!(ownLoose(f) || (!!ownQuestTag(f) && ownPeerMayHit(id, f)))",
-    "new": "!(ownLoose(f) || !!ownQuestTag(f))",
+    "old": "!(ownLoose(f) || (!!ownQuestTag(f) && ownPeerMayHit(id, f))) || !Number.isFinite(dmg)",
+    "new": "!(ownLoose(f) || !!ownQuestTag(f)) || !Number.isFinite(dmg)",
     "tests": ["test/scenes/questparty3c.test.js"]
   },
   {
     "name": "QP3C-own-hit-private",
     "file": "src/scenes/dungeonContext.js",
-    "old": "!(ownLoose(f) || (!!ownQuestTag(f) && ownPeerMayHit(id, f)))",
-    "new": "!(ownLoose(f) || !!ownShare()?.peerMayHit?.(id, f))",
+    "old": "!(ownLoose(f) || (!!ownQuestTag(f) && ownPeerMayHit(id, f))) || !Number.isFinite(dmg)",
+    "new": "!(ownLoose(f) || !!ownShare()?.peerMayHit?.(id, f)) || !Number.isFinite(dmg)",
     "tests": ["test/scenes/questparty3c.test.js"]
   },
   {

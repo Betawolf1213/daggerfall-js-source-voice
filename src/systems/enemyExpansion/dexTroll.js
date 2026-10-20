@@ -2,7 +2,7 @@
 // next mod 1:1") - THE TROLL THAT GETS BACK UP. Daggerfall Enemy Expansion ships a prefab for the Troll's corpse picture
 // (`1618_20`, its components in vendor/daggerfall-enemy-expansion/Prefabs/), which DFU stands in the corpse's place
 // (scenes/corpseMarker.js registerCorpsePrefab, the port's door for it). What the prefab is, read off its own scripts:
-//   - NO LOOT (BestiaryTrollCorpseBillboard.PostParentedSetup, :250-262): the loot container's DaggerfallLoot and its
+//   - NO LOOT (BestiaryTrollCorpseBillboard.PostParentedSetup, :252-292): the loot container's DaggerfallLoot and its
 //     colliders destroyed - the body is never searched, and what it carried goes with it.
 //   - AN ENTITY OF ITS OWN (BestiaryTrollCorpseEntity, :38-52): health 1 of 1, the troll's career, and nothing else a
 //     DaggerfallEntity does not start with (every stat 50, level 0). Its behaviour is EntityType None (the prefab's own
@@ -17,11 +17,13 @@
 //     hostile, no quest's, no save's: its LoadID is 0), the body is destroyed and the HUD says "The {name} has recovered
 //     from its injuries." (the mod's own English, a C# literal - here a port string)
 //   - THE SAVE (BestiaryTrollCorpseSerializer, BestiarySaveInterface): every body still down, with its time left; a load
-//     sets each again (one with no time left stays down - it is skipped).
+//     sets each again (one with no time left is skipped, :63-64 - DFU re-creates nothing for it).
 // ONLINE (DEX5b): the foe's runner counts, rises and burns; a copy's missile sends its bundle to the runner (`send`), and
 // the runner's record says the body is gone (`bg` - `gone(kind)`), so every machine loses it as the runner did.
-// A LEAF over the door: the hosts' reach (`host` - runs, body, rise, vanish, toAsh, send, say, key; corpseMarker.js) does
-// the standing.
+// A LEAF over the door: the hosts' reach (`host` - runs, body, rise, vanish, toAsh, send, say, key; corpseMarker.js,
+// scenes/corpsePrefabHost.js) does the standing. AUDIT DEX D8: the rise ASKS - the new troll stands, and only then does the
+// body go and the HUD say so; while it is asked the body is gone to the world (DFU destroys it at once), and a stand
+// refused leaves it lying, to try again after its time.
 
 import { DEX_TABLE_TEXT } from './dexTableText.js';
 import { registerCorpsePrefab, sayEnemyDied } from '../../scenes/corpseMarker.js';
@@ -67,7 +69,7 @@ const cheat = () => _vendor != null && modSetting(_vendor, 'Cheat.DisableTrollRe
 
 function makeTrollCorpse(f, host) {
   f.corpseDisabled = true;   // PostParentedSetup: no loot - every host's loot readers refuse a disabled body
-  let entity = null, ended = false;
+  let entity = null, ended = false, rising = false;
   const key = host.key(f);
   const c = {
     respawnBuffer: TROLL_CORPSE.respawnTime,
@@ -76,16 +78,21 @@ function makeTrollCorpse(f, host) {
     get down() { return !ended && f.corpsePrefab === c && !!f.dead && !!f.corpse && host.alive(); },
     /** Update: the countdown, where this machine runs the foe. */
     frame(dt) {
-      if (ended || !host.runs(f) || cheat()) return;
+      if (ended || rising || !host.runs(f) || cheat()) return;
       c.respawnBuffer -= dt;
       if (c.respawnBuffer > 0) return;
-      end();
-      host.rise(f);
-      host.say(t('dex.troll.recovered', 'The {name} has recovered from its injuries.', { name: getLocalizedEnemyName(f.mobileType, enemyDisplayName(f.mobileType)) }));
+      rising = true;
+      Promise.resolve(host.rise(f)).then((stood) => {
+        rising = false;
+        if (ended) return;   // let go meanwhile (the host gone, a load)
+        if (!stood) { c.respawnBuffer = TROLL_CORPSE.respawnTime; return; }
+        end();
+        host.say(t('dex.troll.recovered', 'The {name} has recovered from its injuries.', { name: getLocalizedEnemyName(f.mobileType, enemyDisplayName(f.mobileType)) }));
+      });
     },
     /** The trigger a missile meets: about the body's centre (its flat's, once it stands - its foot until then). */
     sphere() {
-      if (ended) return null;
+      if (ended || rising) return null;
       const b = host.body(f);
       if (!b?.pos) return null;
       return { center: [b.pos[0], b.pos[1] + (b.size?.h ?? 0) / 2, b.pos[2]], radius: TROLL_TRIGGER_RADIUS };
@@ -93,7 +100,7 @@ function makeTrollCorpse(f, host) {
     /** A missile's bundle, assigned to the body's entity (EntityEffectManager.AssignBundle - its saves against the troll's
      *  career, its first round now). */
     struck(spell, casterLevel, caster) {
-      if (ended) return null;
+      if (ended || rising) return null;
       if (!host.runs(f)) { host.send(f, spell, casterLevel); return null; }   // DEX5b: a copy's - the bundle goes to the body its runner holds
       entity ??= trollCorpseEntity(f.entity?.career);
       const r = applySpell(spell, casterLevel, entity, sinks, Math.random, caster);
@@ -103,7 +110,7 @@ function makeTrollCorpse(f, host) {
     /** The magic rounds the host's broker raised (OnNewMagicRound - every EntityEffectManager): a lasting effect's later
      *  rounds on the body. */
     rounds(from, to) {
-      if (ended || !entity?.activeEffects.length || !host.runs(f)) return;
+      if (ended || rising || !entity?.activeEffects.length || !host.runs(f)) return;
       runMagicRoundsFor(entity, from, to, { sinks });
       if (entity.health <= 0) burn();
     },
@@ -114,6 +121,8 @@ function makeTrollCorpse(f, host) {
       if (kind === 2) host.toAsh(f, TROLL_CORPSE.ash);
       else host.vanish(f);
     },
+    /** AUDIT DEX D2/D12: freed by another road (a load, the foe standing up again, its host gone) - no rise, no ash. */
+    release() { end(); },
   };
   /** BestiaryTrollCorpseEntity.SetHealth's damage: DecreaseHealth, the one sink a harmful effect reaches. */
   const sinks = { hurt: (n) => { if (n > 0) entity.health = Math.max(0, entity.health - n); } };
