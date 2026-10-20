@@ -210,8 +210,8 @@
   {
     "name": "UI1-the-shop-at-another-surfaces-box",
     "file": "src/ui/enhanced/enhancedTrade.js",
-    "old": "linePicture(line, { box: SLOT_BOX.row, onReady: render })",
-    "new": "linePicture(line, { box: SLOT_BOX.loot, onReady: render })",
+    "old": "linePicture(line, { box: SLOT_BOX.row, onReady: landed })",
+    "new": "linePicture(line, { box: SLOT_BOX.loot, onReady: landed })",
     "tests": [
       "test/ui/enhanced/ui1_slots.test.js"
     ]
