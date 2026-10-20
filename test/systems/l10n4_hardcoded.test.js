@@ -98,7 +98,7 @@ const HARDCODED = {
   'src/net/firmament/firmamentLaw.js': 42,
   'src/net/firmament/firmamentTree.js': 113,
   'src/net/fortLaw.js': 21,
-  'src/net/gate/gateBrain.js': 9,
+  'src/net/gate/gateBrain.js': 7,   // AUDIT WB14 (TEXT-9): the phase names through the text core
   'src/net/gate/gateClaims.js': 5,
   'src/net/gate/gateHerald.js': 8,
   'src/net/gate/gateLaw.js': 4,
@@ -259,7 +259,7 @@ const HARDCODED = {
   'src/scenes/fishHost.js': 14,
   'src/scenes/fleetHost.js': 52,
   'src/scenes/foragingWait.js': 1,
-  'src/scenes/gate/gateCourt.js': 12,
+  'src/scenes/gate/gateCourt.js': 10,   // AUDIT WB14 (TEXT-9): the phase card's orders through the text core
   'src/scenes/gate/gateHost.js': 7,
   'src/scenes/gate/gatePool.js': 4,
   'src/scenes/gatherHost.js': 10,
@@ -362,7 +362,7 @@ const HARDCODED = {
   'src/systems/enchanting.js': 7,
   'src/systems/enchantmentCatalogue.js': 65,
   'src/systems/enemyExpansion/dexTableText.js': 5,   // DEX0: the mod's tables as text, verbatim (data, the enemies' names among it - read by its own parser, never shown)
-  'src/systems/enemyExpansion/dexTables.js': 24,   // DEX1: the mod's `[DEX]` Debug.LogError lines, verbatim - console diagnostics through the reading's `log` seam (a test silences it), never shown to a player
+  'src/systems/enemyExpansion/dexTables.js': 29,   // DEX1 (24) and DEX3 (5, ParseEncounterTables' and the first Update's): the mod's `[DEX]` Debug.LogError lines, verbatim - console diagnostics through the reading's `log` seam (a test silences it), never shown to a player
   'src/systems/equip.js': 3,
   'src/systems/eventTimers.js': 50,
   'src/systems/faction/factionStanding.js': 3,
