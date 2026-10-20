@@ -15,7 +15,8 @@
 //   SETTING ONE OUT. The Hearth Offering's Use (systems/festival/soulCake.js setOfferingPlacer) on foot in the street,
 //   within OFFERING_SET_REACH of the door of a home the playing character owns, sets it out there - at the spot the build
 //   kept for it (`room` where it kept none).
-//   THE WYRD SISTER. A press on one (scenes/worldModes.js activateStaticNpc, `pn.witch`) opens her window (ui/wyrdDoor.js).
+//   THE WYRD SISTER. A press on one (scenes/worldModes.js activateStaticNpc, `pn.witch`) opens her window (ui/wyrdDoor.js),
+//   and the window opened is the act `wyrd-met` (AUDIT STAR8 T1: The Thirteenth of Frostfall's letter is hers to give).
 //   THE NOTICE. The first town the festival dresses in a session says it in the chat, and so does a night the dead walk.
 //
 // Online alone (the offerings and the sales are the account service's); the dressing and the Sisters stand by the
@@ -41,6 +42,7 @@ import { itemLongName } from '../systems/item/itemInfo.js';
 import { skyMinutes } from '../systems/worldTick.js';
 import { dayOfYearFromMinutes } from '../systems/gameDate.js';
 import { createWyrdOverlay } from '../ui/wyrdDoor.js';
+import { noteAct } from '../systems/questlines/qlActs.js';   // AUDIT STAR8 T1: a Wyrd Sister met - Morwen's letter
 import { t } from '../systems/textManager.js';
 
 /** How often the town the player stands in is asked for its offerings again (and after every move of mine, at once) -
@@ -249,8 +251,10 @@ export function createWitchesHost(deps) {
       load: () => Promise.all([refreshFestival(), loadWardrobe()]),
       hear: (/** @type {() => void} */ fn) => hearFestival(fn),
     });
-    if (win) townTalk?.showOverlay?.(win);
-    return !!win;
+    if (!win) return false;
+    townTalk?.showOverlay?.(win);
+    noteAct('wyrd-met');   // AUDIT STAR8 T1: her window opened - a questline's letter waits on it, never a find
+    return true;
   }
 
   return {

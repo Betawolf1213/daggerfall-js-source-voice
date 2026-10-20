@@ -5,8 +5,9 @@
 //
 // Four parts, each a heading and its rows: THE INSIGNIA (the Witchwarden title, the Witchfire aura, three profile icons -
 // the account's, bought once - and the two the festival gives: Hearthkeeper, for cakes given from an offering, and the
-// Soul Cake icon, for cakes taken), THE WYRD'S RAIMENT (the set's nine pieces, the Athame its weapon), THE ILIAC HAND (the
-// festival's six cards) and the HEARTH OFFERING. A row: its picture, its name and kind, its price, and one press - Buy,
+// Soul Cake icon, for cakes taken; and, AUDIT STAR8 T3, the Starwarden beside Hearthkeeper - The Thirteenth of
+// Frostfall's title, Morwen's coven being the Wyrd's own: shown, never sold), THE WYRD'S RAIMENT (the set's nine
+// pieces, the Athame its weapon), THE ILIAC HAND (the festival's six cards) and the HEARTH OFFERING. A row: its picture, its name and kind, its price, and one press - Buy,
 // Wear or Take off - that says why it cannot when it cannot. A row pressed shows it whole beside the list: a piece's
 // lines and its set, a card's rules, an insignia's sign large.
 //
@@ -66,8 +67,9 @@ const INSIGNIA_WHAT = Object.freeze({
 /**
  * THE ROWS, off what the account holds: each ware (festivalLaw FESTIVAL_WARES) with its part and name, and the two the
  * festival gives (`earned` - their progress toward it in `progress`). `owned` an account ware the account holds,
- * `worn` the one worn of its kind. Pure.
- * @param {{ wares?: string[], given?: number, taken?: number }} state @param {{ title?: string|null, aura?: string|null, icon?: string|null } | null} worn
+ * `worn` the one worn of its kind. AUDIT STAR8 T3: and the Starwarden, the Festival's questline's title - held when the
+ * wardrobe's `titles` say so (the service lays it, net/questlineClaims.js), no count to show. Pure.
+ * @param {{ wares?: string[], given?: number, taken?: number }} state @param {{ title?: string|null, aura?: string|null, icon?: string|null, titles?: string[] } | null} worn
  * @param {(w: any) => any} itemOf the pack's piece a ware mints (its picture and its card), or null
  * @param {(item: any) => string} nameOf
  */
@@ -83,13 +85,14 @@ export function wyrdRows(state, worn, itemOf, nameOf) {
       owned: accountWare(w) && wares.includes(w.id), worn: accountWare(w) && wearing(w.kind, w.key), earned: null, progress: null,
     };
   });
-  const gift = (/** @type {string} */ kind, /** @type {string} */ key, /** @type {number} */ have, /** @type {number} */ need, /** @type {string} */ how) => ({
+  const gift = (/** @type {string} */ kind, /** @type {string} */ key, /** @type {number} */ have, /** @type {number} */ need, /** @type {string} */ how, counted = true) => ({
     id: `earned:${key}`, part: 'insignia', kind, key, price: null, item: null, name: insigniaName(kind, key),
-    owned: have >= need, worn: wearing(kind, key), earned: how, progress: `${Math.min(have, need)}/${need}`,
+    owned: have >= need, worn: wearing(kind, key), earned: how, progress: counted ? `${Math.min(have, need)}/${need}` : null,
   });
   const at = rows.findIndex((r) => r.part !== 'insignia');
   rows.splice(at, 0,
     gift('title', 'hearthkeeper', state?.given ?? 0, HEARTHKEEPER_GIVEN, t('festival.window.earnGiven', 'Earned when others take Soul Cakes from your offerings.')),
+    gift('title', 'starwarden', worn?.titles?.includes('starwarden') ? 1 : 0, 1, t('festival.window.earnStarwarden', 'Earned on The Thirteenth of Frostfall.'), false),   // AUDIT STAR8 T3
     gift('icon', 'soulcake', state?.taken ?? 0, SOULCAKE_TAKEN, t('festival.window.earnTaken', "Earned by taking Soul Cakes from others' offerings.")));
   return rows;
 }
@@ -99,7 +102,7 @@ export function wyrdRows(state, worn, itemOf, nameOf) {
 export function wyrdPress(/** @type {any} */ row, /** @type {{ cakes: number|null, shut: string|null, busy: boolean }} */ s) {
   if (row.worn) return { label: t('festival.window.takeOff', 'Take off'), why: null };
   if (row.owned) return { label: t('festival.window.wear', 'Wear'), why: null };
-  if (row.earned) return { label: row.progress, why: row.earned };
+  if (row.earned) return { label: row.progress ?? t('festival.window.notYet', 'Not yet'), why: row.earned };   // AUDIT STAR8 T3: a title with no count
   const need = row.price - (s.cakes ?? 0);
   if (s.shut) return { label: t('festival.window.buy', 'Buy'), why: festivalRefusalText(s.shut) };
   if (s.cakes != null && need > 0) return { label: t('festival.window.need', '{n} more', { n: need }), why: festivalRefusalText('cakes') };

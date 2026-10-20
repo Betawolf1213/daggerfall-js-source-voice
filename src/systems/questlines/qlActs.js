@@ -41,6 +41,7 @@ export const ACT_KINDS = Object.freeze({
   'arena-won': 'world',   // a ladder bout won in the Arena (never a bout between players - AUDIT QUESTLINES ACTS-6)
   'revenant-knelt': 'world',   // a revenant made to kneel
   'star-taken': 'world',   // a star taken on the Firmament - each star once (never one given back and taken again - AUDIT QUESTLINES ACTS-5)
+  'wyrd-met': 'world',   // a Wyrd Sister's window opened at a tavern's door (the Witches' Festival - AUDIT STAR8 T1: Morwen's letter); never a find (festivalClient.js ACT_NOT_FOUND)
   // the endgame (each also a receipt the service holds - section 5.3)
   'rite-broken': 'endgame',   // Dagon's Faithful's rite broken before the breach opened
   'breach-closed': 'endgame',   // a Dagon's Breach closed

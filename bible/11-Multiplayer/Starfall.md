@@ -370,8 +370,10 @@ in 240 to 120 s (never one of the Spire's death saves: it saves no life). The ca
 6, online, a registered account, and only while the Starfall runs (`opens.event: 'starfall'`). A step whose deed is a
 star waits while the Starfall is not running (`needs: ['starfall']` - "Opens during the Witches' Festival.", said once
 though the opener and the first step both need it), and the window draws no line that has not begun outside its event
-(UI-Calm's law); a line begun stays drawn out of season, its starred step waiting. The giver is **Morwen of Glenmoril**,
-a witch of Hircine's coven (the port's own), met at the Glenmoril Coven in Ilessan Hills (`permanent GlenmorilCoven`).
+(UI-Calm's law); a line begun stays drawn out of season, its starred step waiting - and a star step the Festival ends
+under is set aside, fail-free, until the next (AUDIT STAR8 S2, below). The giver is **Morwen, a Wyrd Sister of
+Glenmoril** - of the Witches' Festival's Glenmoril Wyrd, whose sisters stand at the taverns' doors (the port's own) - met
+at the Glenmoril Coven in Ilessan Hills (`permanent GlenmorilCoven`).
 The villains are the Sisters of the Bluff, whose coven stands nearest the capital (`permanent BluffCoven`). The line's
 own lore holds with the canon (section "The lore"): FACTION.TXT's Glenmoril Witches (#419) summon Hircine, the Sisters
 of the Bluff are #423, the Order of Arkay #82.
@@ -390,14 +392,15 @@ quest marker. DFU's `place npc`, `place foe` and `place item` stand a thing at a
 them to take. The scripts meet there by ARRIVAL instead: `pc at _glenmoril_` (and `_bluff_`), and a `when` task that
 starts the meeting's own task once (a `when` task re-arms its actions each time it clears - DFU's always-on triggers -
 so the latch is the `start task`). Morwen speaks as the player reaches her fire (a message, no Person stood); the Spinner
-and her three sisters are called up by `create foe ... 1 times` from the latched task, once.
+and her three sisters are called up by `create foe ... 1 times` from the latched task - once while they stand, and again
+only when the whole coven is gone unfought (AUDIT STAR8 S1, below).
 
 | Step | What the player does | Witness |
 |---|---|---|
-| QLTF01 Music in the Woods | a raven's letter; hold a fallen star (`ql act star-held 1`); reach the Glenmoril Coven, where Morwen steps out of the trees | star |
-| QLTF02 The Coven on the Bluff | reach the Coven on the Bluff; the Spinner (a Sorcerer) and three Sisters (Nightblades) come; slay the Spinner and take the spindle of black thread; back at Glenmoril, unwind a length of it to sell (`unwound`, greater pay) or give it whole (`wound`, lesser pay, the Glenmoril Witches +3) | |
-| QLTF03 Three Stars | hold three more stars (`ql act star-held 3`) - every star held is a strand the web loses; Morwen's raven brings word and purse - the line's title, Starwarden | stars3 |
-| QLTF04 What the Thread Is Worth | the holiday's own clash, asked at Glenmoril: burn the spindle in Hircine's fire (`burned`, lesser pay, the Glenmoril Witches +10, "Morwen's Hunt-Charm"), sell it to a mage of the Mages Guild at a guild hall (`guild`, greater pay, "Starglass Rod"), or carry it to a priest of Arkay at a temple (`temple`, standard pay, the Order of Arkay +5, "Thread-Cutter") | |
+| QLTF01 Music in the Woods | Morwen's letter from a Wyrd Sister at a tavern's door - her window opened (`ql act wyrd-met 1`) - or, a star held before any Sister is met, her raven's note; hold a fallen star (`ql act star-held 1`); reach the Glenmoril Coven, where Morwen steps out of the trees | star |
+| QLTF02 The Coven on the Bluff | reach the Coven on the Bluff; the Spinner (a Sorcerer) and three Sisters (Nightblades) come; slay the Spinner - the spindle of black thread the player's as she falls, the Sisters of the Bluff's favour lost (-10) - and a coven gone unfought is called again (`ql gone`); back at Glenmoril, unwind a length to sell (`unwound`, greater pay - Morwen buys it herself rather than see it sold) or give it whole (`wound`, lesser pay, the Glenmoril Witches +3) | |
+| QLTF03 Three Stars | hold three more stars (`ql act star-held 3`) - every star held is a strand the web loses; Morwen's raven brings word and purse - the line's title, Starwarden. Never a gate: the Heart-Star held while it runs (`ql act heart-star-held 1`) is `heart` - greater pay and "Heart-Star Ring" | stars3 |
+| QLTF04 What the Thread Is Worth | the holiday's own clash, asked at Glenmoril: burn the spindle in Hircine's fire (`burned`, lesser pay, the Glenmoril Witches +10, "Morwen's Hunt-Charm"), sell it to a mage of the Mages Guild at a guild hall (`guild`, greater pay, "Starglass Rod"), or carry it to a priest of Arkay at a temple of Arkay (`templeArkay`; `temple`, standard pay, the Order of Arkay +5, "Thread-Cutter") | |
 
 **THE TITLE ON THE THREE STARS - a departure from this page's first design**, which put it on QLTF04. A title is paid
 only on a step the service witnessed (`qlTitleSteps`), and QLTF04's choice is the client's: the Burning Doors' law -
@@ -420,9 +423,59 @@ a `give pc` of any item is the layer's reward, and it would settle the outcome's
 remote guild hall; the temple's, a priest of the Order of Arkay at a remote temple; each takes the spindle by `toting
 _spindle_ and _who_ clicked`.
 
+**THE AUDIT (AUDIT STAR8, 2026-10-20) - what was fixed, and what ties the line to the Festival.**
+
+- **S1 - the Spinner can leave the world; the spindle cannot.** The spindle was on her body alone, and she came once:
+  the encounters' cull (a quest foe is not `placed`, so past 120 m it goes), a death's teleport (`exteriorFoes.js`
+  clearLive) or a load could take her, and the step could never end. The spindle is now the player's as she falls (`get
+  item _spindle_` in `_spinnerslain_`), and a new trigger of the questlines' own, `ql gone _spinner_ _sisters_`
+  (`systems/questlines/qlActions.js` QlGone; `06-Systems/Questlines-Arc.md` section 2.3), clears the ambush once the coven
+  is gone unfought: one of them stood, none stands now, the Spinner unkilled. A foe stands while its pool drives its
+  behaviour within `FOE_STANDS_TICKS` (`systems/quest/machine.js` questFoeStands, the machine's `beat`) and has not
+  fallen - so a second coven is never called while one of the first still stands. Its task stands between the arrival's
+  and the ambush's, so the ambush is updated unset before the arrival sets it again (CreateFoe's re-arm waits on that
+  edge, InitialiseOnSet).
+- **S2 - a star step the Festival ends under.** Its needs were read only as it started, so its sixty days ran down on a
+  deed no star was left to do. The runner sets it aside, fail-free, and takes it up at the next Festival
+  (`systems/questlines/qlLineRunner.js:"function keepSeason(l, rec, q) {"`); the row waits, "Opens during the Witches'
+  Festival.".
+- **S4 - the priest of Arkay in Arkay's temple.** `Place _temple_ remote temple` took any god's (396 of the Bay's 2,980
+  temples are Arkay's). The questlines lay a row of their own on Quests-Places, `templeArkay` (p3 21, FACTION.TXT's
+  Arkay - `qlActions.js` QL_PLACE_ROWS, as Roleplay & Realism lays its own), and `systems/quest/place.js` holds a temple
+  to its row's faction as DFU holds a guild hall to its (Place.cs CollectQuestSitesOfBuildingType, IsGuildFactionMatch;
+  IsPlayerAtBuildingType). A DEPARTURE: DFU reads no temple's faction; its own `temple` row names none, so no DFU quest
+  moves. A region with no temple of Arkay (Alcaire, Gavaudon, Betony in the player's MAPS.BSA) begins no QLTF04: the
+  step waits a day and is offered again wherever the player stands (LINES-19's stall) - Betony has no Mages Guild hall
+  either.
+- **S5, S6 - the words.** The coven is open air (Morwen's fire lights the clearing, never a hall); one coven a night
+  holds the rite, and Glenmoril and Wroth never ("The covens take turns at the same rite, a night each."); nothing is
+  said twice; QLTF04's box no longer thanks Morwen's way after a mage's or a priest's purse; the unwound length Morwen
+  buys herself; the sheets' objectives are short ("Hold a fallen star", "Hold 3 more fallen stars"); and the holiday is
+  TEXT.RSC 8392 (8349 plus its id, 43), not 8349.
+- **S8 - the Sisters' favour.** Slaying the Spinner costs the Sisters of the Bluff (#423) 10 (`change repute with`, a
+  stand-in Person of their faction - A0C0XY04's `_dummymage_` way), so the Bluff's own witch no longer serves as before.
+- **T1 - the Wyrd Sister hands over Morwen's letter.** Opening a Wyrd Sister's window is the act `wyrd-met`
+  (`scenes/witchesHost.js` shop - the festival's module, never a host's own scope), and never a Soul Cake find
+  (`systems/festival/festivalClient.js` ACT_NOT_FOUND). The raven is the fallback, but on a deed, not a clock: online
+  REST8 cuts a delay to the short wait (`systems/quest/clock.js` ONLINE_DELAY_SECONDS, two real minutes of play), so a
+  raven on the courier's clock would beat every Sister. A star held before any Sister is met brings the raven's note;
+  one word or the other, never both. Morwen speaks of her sisters at the taverns' doors.
+- **T2 - the Heart-Star.** An optional objective of QLTF03, never its gate: the act `heart-star-held` (said by the
+  receipt's claim, `net/starfall/starClaims.js`, beside `star-held`) is the step's own bonus - the `heart` outcome, the
+  greater pay and Morwen's "Heart-Star Ring" among the choice of three. The service's own pay on the step is the
+  service's (`server-account/`).
+- **T3 - the Wyrd know the Starwarden.** The Wyrd Sister's window shows the line's title among its insignia, beside
+  Hearthkeeper (`ui/wyrdWindow.js` wyrdRows): held as the account's wardrobe says, worn there, never sold.
+- **T4, NOT DONE** - Morwen's greeting a line of its own on the nights the dead walk. A script cannot read
+  `net/festivalLaw.js` deadWalk without a new trigger reading the sky's day and the wall clock, and its timing against
+  her meeting's own `end quest` (QLTF01) and question (QLTF04); not cheap, so left.
+
 Pinned by `test/systems/questlines/star8_frostfall.test.js` (the line, the season, the hub's word, the foe's name, the
-scripts run on the machine over a rig of both covens, and the covens open air in ARENA2), `test/server/ql12_claim.test.js`
-STAR8 (the witnesses and the title through the Worker), and `tools/mutants/star8.json`.
+scripts run on the machine over a rig of both covens, and the covens open air in ARENA2; the audit's: the coven called
+again and never twice, the letter's two ways, the Heart-Star, the step set aside, Arkay's temple, the words, and TEXT.RSC
+8392 in ARENA2), `test/scenes/witch1_host.test.js` and `test/systems/festival/witch1_client.test.js` (`wyrd-met`, and
+no find), `test/systems/festival/witch1_wares.test.js` (the Starwarden's row), `test/server/ql12_claim.test.js` STAR8
+(the witnesses and the title through the Worker), `tools/mutants/star8.json` and `tools/mutants/star8_audit.json`.
 
 ## 8. What a player sees and hears
 

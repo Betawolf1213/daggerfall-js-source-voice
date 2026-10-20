@@ -170,8 +170,8 @@ test('WITCH1 THE WINDOW\'S ROWS AND PRESSES: the wares in their parts, the two t
   const rows = wyrdRows({ wares: ['title:witchwarden', 'icon:twinmoons'], given: 30, taken: 3 }, { title: 'witchwarden', aura: null, icon: null },
     (w) => ({ name: `piece ${w.key}` }), (it) => it.name);
   assert.deepEqual(rows.filter((r) => r.part === 'insignia').map((r) => r.id), [
-    'title:witchwarden', 'aura:witchfire', 'icon:tallowskull', 'icon:twinmoons', 'icon:wyrdcauldron', 'earned:hearthkeeper', 'earned:soulcake',
-  ]);
+    'title:witchwarden', 'aura:witchfire', 'icon:tallowskull', 'icon:twinmoons', 'icon:wyrdcauldron', 'earned:hearthkeeper', 'earned:starwarden', 'earned:soulcake',
+  ]);   // PIN MOVED (AUDIT STAR8 T3): the Starwarden beside Hearthkeeper
   assert.deepEqual([...new Set(rows.map((r) => r.part))], ['insignia', 'offering', 'raiment', 'cards']);
   const by = (id) => rows.find((r) => r.id === id);
   assert.deepEqual([by('title:witchwarden').owned, by('title:witchwarden').worn], [true, true]);
@@ -190,6 +190,18 @@ test('WITCH1 THE WINDOW\'S ROWS AND PRESSES: the wares in their parts, the two t
   assert.deepEqual(wyrdPress(by('card:warlock'), live), { label: 'Buy', why: null });
   assert.deepEqual(wyrdPress(by('card:warlock'), { ...live, shut: 'offline' }), { label: 'Buy', why: 'The Wyrd cannot hear you right now.' });
   assert.deepEqual(wyrdPress(by('card:warlock'), { ...live, shut: 'guest' }), { label: 'Buy', why: 'Link an account to keep Soul Cakes.' }, 'a guest is told why (AUDIT WITCH1 F-M1)');
+});
+
+test('AUDIT STAR8 T3 THE WYRD KNOW THE STARWARDEN: The Thirteenth of Frostfall\'s title stands beside Hearthkeeper among the insignia - held as the account\'s wardrobe says it is, worn and taken off there, never sold and no count to show; unheld, it says where it is earned (mutants: the row left out; held read off the wrong title; its count shown)', () => {
+  const rowOf = (worn) => wyrdRows({ wares: [], given: 0, taken: 0 }, worn, () => null, (it) => it?.name).find((r) => r.id === 'earned:starwarden');
+  const none = rowOf({ title: null, aura: null, icon: null, titles: ['hearthkeeper'] });
+  assert.deepEqual([none.name, none.kind, none.price, none.owned, none.progress], ['Starwarden', 'title', null, false, null]);
+  assert.deepEqual(wyrdPress(none, { cakes: 500, shut: null, busy: false }), { label: 'Not yet', why: 'Earned on The Thirteenth of Frostfall.' }, 'never sold');
+  const held = rowOf({ title: null, aura: null, icon: null, titles: ['starwarden'] });
+  assert.deepEqual([held.owned, wyrdPress(held, { cakes: 0, shut: null, busy: false }).label], [true, 'Wear']);
+  const worn = rowOf({ title: 'starwarden', aura: null, icon: null, titles: ['starwarden'] });
+  assert.deepEqual([worn.worn, wyrdPress(worn, { cakes: 0, shut: null, busy: false }).label], [true, 'Take off']);
+  assert.equal(rowOf(null).owned, false, 'no wardrobe read yet: not held');
 });
 
 test('WITCH1 THE RAIMENT IS LEATHER, A CASTER\'S - the Athame Elven; and the Witchfire\'s candles wrap, one candle at the seam (AUDIT WITCH1 B4, E5)', () => {

@@ -170,6 +170,7 @@ test('QL11 THE SWEEP, both ways: every kind has a producer in src/; every produc
     'star-taken': ['src/net/firmament/firmamentBook.js'],
     'valkynaz-felled': ['src/scenes/eliteGates/egClient.js'],
     'wood-chopped': ['src/scenes/treeHost.js', 'src/systems/foraging/foragingInstall.js'],
+    'wyrd-met': ['src/scenes/witchesHost.js'],   // AUDIT STAR8 T1: a Wyrd Sister's window opened, the festival's own module (test/scenes/witch1_host.test.js drives it)
   });
   // the hosts that carry one: a line each, never more (test/scenes/hostceiling.test.js holds their length)
   const lines = (f) => readFileSync(join(ROOT, f), 'utf8').split('\n').filter((l) => /\bnoteAct\(/.test(l) && !/^\s*(\/\/|\*)/.test(l)).length;
@@ -196,7 +197,7 @@ test('QL11 the kinds: ACT_IDS is the leaf\'s keys, frozen; each kind lower-case 
   assert.ok(Object.isFrozen(ACT_KINDS) && Object.isFrozen(ACT_IDS));
   for (const k of ACT_IDS) assert.match(k, /^[a-z]+(-[a-z]+)*$/, k);
   for (const k of ACT_IDS) assert.ok(typeof ACT_KINDS[k] === 'string' && ACT_KINDS[k].length > 0, `${k} has its family`);
-  assert.equal(ACT_IDS.length, 24);   // PIN MOVED (STAR8): and star-held, a fallen star held
+  assert.equal(ACT_IDS.length, 25);   // PIN MOVED (STAR8): and star-held, a fallen star held; PIN MOVED (AUDIT STAR8 T1): and wyrd-met, a Wyrd Sister's window
   assert.ok(!Object.hasOwn(ACT_KINDS, 'wagon-hauled'), 'no feature sells a wagon\'s load (qlActs.js says why)');
   assert.ok(Object.hasOwn(ACT_KINDS, 'valkynaz-felled'), 'the Weir Road\'s third step waits on it');
 });

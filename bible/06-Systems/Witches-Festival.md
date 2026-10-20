@@ -67,6 +67,7 @@ pressed shows its card beside the list (on a phone, brought into view), and the 
 | | the **Witchfire** aura (green fire, seven tallow candles) | 150 |
 | | profile icons: **Tallow Skull**, **Twin Moons**, **Wyrd Cauldron** | 40 each |
 | | the **Hearthkeeper** title - earned, 25 cakes given from your offerings | - |
+| | the **Starwarden** title - earned on The Thirteenth of Frostfall, the Festival's questline; shown, never sold (AUDIT STAR8 T3) | - |
 | | the **Soul Cake** icon - earned, 10 cakes taken from others' offerings | - |
 | The Wyrd's Raiment | eight armour pieces | 40 (the cuirass 50) |
 | | **The Witchmoon Athame**, its weapon | 60 |
@@ -156,7 +157,14 @@ each real hour one of the Bay's covens pulls three stars down into its region's 
 against four waves and their master. The stars fall on THESE days - `net/starfall/starfallLaw.js` `starfallRuns` is
 `festivalOpen` - and a held star is the act `star-held` (the endgame family), so it is a find like a breach closed: the
 endgame's four cakes, twice on the nights the dead walk. The Heart-Star falls on the sky's 13th of Frostfall, the
-festival's own day. The questline's giver, Morwen, is of the Glenmoril Wyrd, the Wyrd Sisters' own coven.
+festival's own day. The questline's giver, Morwen, is of the Glenmoril Wyrd, the Wyrd Sisters' own coven, and the line
+is tied to the festival's own parts (AUDIT STAR8, `11-Multiplayer/Starfall.md` section 7):
+
+- **A Wyrd Sister hands over Morwen's letter.** Her window opened is the act `wyrd-met` (`scenes/witchesHost.js` shop),
+  which The Thirteenth of Frostfall's first step waits on; a star held before any Sister is met brings Morwen's raven
+  instead. The act is never a find (`festivalClient.js` ACT_NOT_FOUND): a press at her door is no Soul Cake.
+- **The Heart-Star** is Three Stars' optional objective - held, the step's greater pay and Morwen's Heart-Star Ring.
+- **The Wyrd know the Starwarden**: the line's title stands in her window's insignia, beside Hearthkeeper.
 
 ## The four hosts
 

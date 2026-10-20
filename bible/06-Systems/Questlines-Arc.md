@@ -282,6 +282,13 @@ claiming no line of the shipped corpus (`test/systems/questlines/ql4_actions.tes
   `ql name _foe_ <Name> [female|male]` names a Foe the same way, and the gender word sets a class enemy's (DFU's Foe.cs
   SetFoeName rolls a class foe 55% male; a gender on a monster is refused with a warning) - the Starfall's Spinner and
   her Sisters (`11-Multiplayer/Starfall.md` section 7, STAR8).
+- `ql gone _foe_ [_foe_ ...]` (AUDIT STAR8 S1) - a trigger: true once one of the foes named (one to four) has stood in a
+  scene, none stands now, and the first is not all killed. A foe stands while its pool drives its behaviour
+  (`resourceBehaviour.js` update, stamping the machine's `beat`) within `FOE_STANDS_TICKS` (five minutes of play - a load's
+  revived foe comes back behind its art inside it) and it has not fallen (`machine.js` hook `questFoeStands`): a cull, a
+  teleport's sweep (`exteriorFoes.js` clearLive tells a behaviour nothing) or a load that did not bring it back stops
+  that. What it saw is saved. QLTF02 clears its ambush on it, so the Coven on the Bluff is called again rather than its
+  spindle lost with a Spinner the world took.
 
 AS BUILT: the design's `ql reward` was not needed. GivePc's own moment reaches the layer for every reward a script pays
 (`questReward`: the gold scaled by the outcome the quest's state holds then, before a party's split - AUDIT QUESTLINES
@@ -550,6 +557,7 @@ sweeps `src/` both ways and pins where each is said:
 | arena-won | a ladder bout won - this screen's own, or the relay's `pve` bout; never the pit's practice nor a bout between players (`scenes/arena/arenaBouts.js`; AUDIT QUESTLINES ACTS-6) |
 | revenant-knelt | one of the player's own revenants made to kneel, whoever struck the blow that broke it - a revenant is the player's own and comes for them alone (`scenes/exteriorFoes.js`, and `dungeonContext.js` underground), its record answering the yield (`systems/revenant/revenantFate.js` beginYield; AUDIT QUESTLINES ACTS-7, decided) |
 | star-taken | a star the service now holds, each star once, counted by the book whose change took it and kept by account and character across a reload (`net/firmament/firmamentBook.js`; AUDIT QUESTLINES ACTS-5: one star given back and taken again counted each time) |
+| wyrd-met | a Wyrd Sister's window opened at a tavern's door, the Witches' Festival's (`scenes/witchesHost.js` shop, the festival's own module; AUDIT STAR8 T1: The Thirteenth of Frostfall's letter waits on it) - never a Soul Cake find (`systems/festival/festivalClient.js` ACT_NOT_FOUND) |
 | rite-broken, breach-closed | a gate receipt counted (`net/gate/gateClaims.js`) - `rite`, or `r: 1`; `dealt` or `stood` |
 | elite-foe-slain | an elite foe of an Elite-tier dungeon killed by the player's blow (`systems/questlines/qlEliteFoe.js`, which the dungeon host hands its place in one line - AUDIT QUESTLINES ACTS-8: the whole condition stood in buildDungeonContext) |
 | redoubt-taken, valkynaz-felled | a Redoubt receipt counted, Rehearsals excluded (`scenes/eliteGates/egClient.js`, at the module's scope - ACTS-8) |
@@ -578,18 +586,21 @@ system; the window's rail already holds its rows.
 
 ### 4.6 THE THIRTEENTH OF FROSTFALL (`thirteenthFrostfall`, tier 3, level 6, online, the Starfall's - STAR8)
 
-Morwen of Glenmoril, a witch of Hircine's coven. A line of its own group (`festival`) that opens only while the Starfall
-runs (`opens.event: 'starfall'`), its star steps waiting outside it, and the window drawing it outside its event only
-once begun (UI-Calm's law). Canon: the Witches' Festival on the 13th of Frostfall, the Glenmoril Witches, the Sisters of
-the Bluff. The port's own: the fallen stars and the covens' thread. The whole of it is `11-Multiplayer/Starfall.md`
-section 7.
+Morwen, a Wyrd Sister of Glenmoril - the Witches' Festival's Glenmoril Wyrd, whose sisters keep the taverns' doors. A
+line of its own group (`festival`) that opens only while the Starfall runs (`opens.event: 'starfall'`), its star steps
+waiting outside it, and the window drawing it outside its event only once begun (UI-Calm's law). A star step the
+Festival ends under is set aside, fail-free, and taken up again at the next (AUDIT STAR8 S2: the runner's
+`keepSeason` - its quest set aside as the journal's Abandon sets one, `aside` on the line's record, its row "Opens during
+the Witches' Festival."; a step the player set aside stays theirs). Canon: the Witches' Festival on the 13th of
+Frostfall, the Glenmoril Witches, the Sisters of the Bluff, the Order of Arkay. The port's own: the fallen stars and the
+covens' thread. The whole of it is `11-Multiplayer/Starfall.md` section 7.
 
 | Step | What the player does | Witness |
 |---|---|---|
-| QLTF01 Music in the Woods | hold a fallen star (`ql act star-held 1`); reach the Glenmoril Coven | star |
-| QLTF02 The Coven on the Bluff | slay the Spinner at the Coven on the Bluff and take her spindle; unwind a length (`unwound`, greater pay) or give it whole (`wound`, the Glenmoril Witches +3) | |
-| QLTF03 Three Stars | hold three more stars (`ql act star-held 3`) - the line's title, Starwarden | stars3 |
-| QLTF04 What the Thread Is Worth | burn the spindle (`burned`, the Glenmoril Witches +10, "Morwen's Hunt-Charm"), sell it to the Mages Guild (`guild`, greater pay, "Starglass Rod") or take it to Arkay's priests (`temple`, the Order of Arkay +5, "Thread-Cutter") | |
+| QLTF01 Music in the Woods | Morwen's letter from a Wyrd Sister at a tavern's door (`ql act wyrd-met 1` - her window opened), or her raven's note if a star is held first; hold a fallen star (`ql act star-held 1`); reach the Glenmoril Coven | star |
+| QLTF02 The Coven on the Bluff | slay the Spinner at the Coven on the Bluff - her spindle the player's as she falls, the Sisters of the Bluff -10, a coven gone unfought called again (`ql gone`); unwind a length (`unwound`, greater pay) or give it whole (`wound`, the Glenmoril Witches +3) | |
+| QLTF03 Three Stars | hold three more stars (`ql act star-held 3`) - the line's title, Starwarden; and, never a gate, the Heart-Star (`ql act heart-star-held 1`: `heart`, greater pay, "Heart-Star Ring") | stars3 |
+| QLTF04 What the Thread Is Worth | burn the spindle (`burned`, the Glenmoril Witches +10, "Morwen's Hunt-Charm"), sell it to the Mages Guild (`guild`, greater pay, "Starglass Rod") or take it to a priest of Arkay in Arkay's own temple (`templeArkay`; `temple`, the Order of Arkay +5, "Thread-Cutter") | |
 
 ## 5. The rewards (AS BUILT - `src/systems/questlines/qlRewards.js`)
 

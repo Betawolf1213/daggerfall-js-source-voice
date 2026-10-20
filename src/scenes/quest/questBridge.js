@@ -471,7 +471,7 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
     // WITCH1: and a quest done is a Witches' Festival find (systems/festival/festivalClient.js - nothing while it is not live)
     onQuestEnded: (q) => { questlines?.runner?.dropped?.(q); festivalQuestEnded(q); ctx.onQuestEnded?.(q); },
   });
-  // QL4 (bible/06-Systems/Questlines-Arc.md section 2.3): the questlines' five actions, after DFU's 82 - here, so every
+  // QL4 (bible/06-Systems/Questlines-Arc.md section 2.3): the questlines' six actions, after DFU's 82 - here, so every
   // host's machine has them before a save or a script that says them is read (a first-match scan; none of DFU's claims
   // these lines - test/systems/questlines/ql4_actions.test.js).
   for (const template of questlineActionTemplates()) machine.registerAction(template);
