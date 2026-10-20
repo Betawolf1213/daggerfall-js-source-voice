@@ -85,7 +85,7 @@ export const festivalAccount = () => _api?.me?.() ?? storedSession(appStorage())
 /** Whether this page plays the festival now: bound, online, a registered account, inside its days, open for it. */
 export const festivalLive = () => festivalShut() == null;
 /** A refusal's line: the festival's own words, else the account service's (a session signed out, a ban, its fault). */
-export const refusalText = (/** @type {unknown} */ code) => (isFestivalRefusal(code) || typeof code !== 'string' ? festivalRefusalText(code) : accountRefusalText(code));
+const refusalText = (/** @type {unknown} */ code) => (isFestivalRefusal(code) || typeof code !== 'string' ? festivalRefusalText(code) : accountRefusalText(code));
 
 /** Lay an answer's counts on the state and the pack: `cakes` and `bowls` the account's, the pack's stacks their faces. */
 function learn(/** @type {any} */ d) {
