@@ -17,7 +17,7 @@
 // dropped after five minutes left a step no deed could witness). An end the service has not witnessed is the step's
 // `unseen` in the window: a later deed's receipt witnesses it. The line moves on the client's own quest either way: the
 // service pays, it does not gate.
-import { QL_LINES, lineById, lineStepOf, lineOpens, opensWords, witnessOf, lineServiceOf, unmetNeeds } from './qlLines.js';
+import { QL_LINES, lineById, lineStepOf, lineOpens, opensWords, witnessOf, lineServiceOf, unmetNeeds, eventHolds } from './qlLines.js';
 import { QL_SERVICE_LINES, qlStepClaimed } from '../../net/questlineClaims.js';
 import { questlinesOn } from './qlLaw.js';
 import { t } from '../textManager.js';
@@ -26,16 +26,21 @@ import { getPref } from '../uiPrefs.js';
 import { KINGS_GAMBIT_KEY } from '../features.js';
 import { modSetting } from '../modSettings.js';
 import { revenantHeld } from '../revenant/revenant.js';
+import { starfallRuns } from '../../net/starfall/starfallLaw.js';   // STAR8: the Witches' Festival's stars falling
 
 /** AUDIT QUESTLINES ACTS-2, LINES-3, LINES-6: WHAT A STEP'S DEED NEEDS, read where the game reads it - Loot rarity's own
  *  switch (a socket, a reforge refuse 'off' without it), The King's Gambit's (no table offers the game), the sea's
  *  (scenes/world.js navalOn: the Naval Combat row and Come Sail Away's own switch), and the Renown a revenant comes at
- *  (revenant.js revenantHeld - online, below it none rises). A step that needs what is off waits, saying so. */
+ *  (revenant.js revenantHeld - online, below it none rises). STAR8: and the Starfall - the Witches' Festival's own calendar
+ *  (net/festivalLaw.js, through starfallLaw.js starfallRuns) at `nowMs`, the runner's clock, exactly as the starfall host
+ *  and the relay read it. A step that needs what is
+ *  off waits, saying so. */
 export const NEED_CHECKS = Object.freeze({
   lootRarity: () => lootRarityOn(),
   kingsGambit: () => !!getPref(KINGS_GAMBIT_KEY),
   naval: () => getPref('naval') !== false && (() => { try { return modSetting('come-sail-away', 'Enabled') !== false; } catch { return false; } })(),
   renown: () => !revenantHeld(),
+  starfall: (/** @type {number} */ nowMs) => starfallRuns(nowMs),
 });
 
 /** The game seconds a line waits between one step's end and the next step's start - an hour of the character's time,
@@ -49,8 +54,9 @@ export const CLAIM_RETRY_MS = 60_000;
 export const CLAIM_TRIES = 5;
 export const CLAIM_SLOW_MS = 600_000;
 
-/** A line's record, fresh - `begun` the character's second it began (AUDIT QUESTLINES LINES-17: one new line an hour). */
-const freshLine = (begun = 0) => ({ step: 0, outcomes: {}, done: false, wait: 0, claims: {}, begun });
+/** A line's record, fresh - `begun` the character's second it began (AUDIT QUESTLINES LINES-17: one new line an hour);
+ *  `aside` its running step's quest set aside by the runner itself for a need that stopped holding (AUDIT STAR8 S2). */
+const freshLine = (begun = 0) => ({ step: 0, outcomes: {}, done: false, wait: 0, claims: {}, begun, aside: false });
 
 /**
  * @param {{ machine: any, ctx?: any, service?: any, nowMs?: () => number }} deps
@@ -75,7 +81,7 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
   const now = () => ctx.nowSeconds?.() ?? 0;
   /** A registered account signed in: never a guest's (AUDIT QUESTLINES LINES-2). */
   const registered = () => !!service && !service.guest?.();
-  const need = (n) => { try { return !!NEED_CHECKS[n]?.(); } catch { return false; } };
+  const need = (n) => { try { return !!NEED_CHECKS[n]?.(nowMs()); } catch { return false; } };
   const probe = { level, online, registered, need, lineDone: (id) => !!lines[id]?.done };
 
   /** The step's quest on the machine (by name) - running, or scheduled for the next tick - or null. */
@@ -129,6 +135,23 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
     c.next = nowMs() + (c.tries < CLAIM_TRIES ? CLAIM_RETRY_MS : CLAIM_SLOW_MS);
   }
 
+  /**
+   * AUDIT STAR8 S2: A RUNNING STEP OUT OF SEASON IS SET ASIDE, FAIL-FREE. A step's needs are read as it starts (startStep),
+   * and the Witches' Festival can end under a star step begun inside it: its own clock would run out on a deed no star
+   * is left to do. Its quest is set aside as the journal's Abandon sets one aside (machine.js shelveQuest: its clocks
+   * stopped, its items kept, no act heard) and the record says the runner did it (`aside`); the need holding again, it is
+   * reclaimed (reclaimQuest: its clocks moved on by the time away) and goes on where it stood. Its row waits, saying for
+   * what (rows, waitingWords). A quest the player set aside is the player's: never reclaimed here.
+   */
+  function keepSeason(l, rec, q) {
+    if (unmetNeeds(l, rec.step, probe).length) {
+      if (q.shelvedAt == null && machine.shelveQuest?.(q.uid)?.ok) rec.aside = true;
+      return;
+    }
+    if (!rec.aside || (q.shelvedAt != null && !machine.reclaimQuest?.(q.uid)?.ok)) return;
+    rec.aside = false;
+  }
+
   function startStep(l, rec) {
     const step = l.steps[rec.step];
     if (!step) return;
@@ -173,6 +196,8 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
           rec = lines[l.id] = freshLine(Math.max(1, s));
         }
         if (rec.done || rec.wait > s) continue;
+        const stepQuest = runningStep(l.steps[rec.step]?.quest);
+        if (stepQuest) keepSeason(l, rec, stepQuest);   // AUDIT STAR8 S2: online or not
         if (l.opens.online && !online()) continue;   // an endgame line waits, offline, where it stood
         if (l.opens.account && !registered()) continue;   // LINES-2: and a guest's page, where it stood
         startStep(l, rec);
@@ -218,7 +243,8 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
     /**
      * The window's rows: every line, begun or not - `{ id, group, title, lead, giver, state, steps, opens, outcome, honour }`
      * (`honour` the title the line pays, or null).
-     * `state` 'done' | 'running' | 'waiting' (between steps, or offline for an endgame line) | 'retry' (a step failed,
+     * `state` 'done' | 'running' | 'waiting' (between steps, offline for an endgame line, or - AUDIT STAR8 S2 - its step
+     * set aside by the runner until its need holds again) | 'retry' (a step failed,
      * offered again) | 'shelved' (its step's quest set aside in the journal) | 'locked'; each step `{ title, state:
      * 'done'|'current'|'next', witnessed: bool (a step the service witnesses), seen: bool (it did), unseen: bool (done,
      * not yet witnessed), outcome, refused: the service's refusal of its claim (UI-19), or null }` - the steps after the current one are named
@@ -226,12 +252,14 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
      */
     rows() {
       // AUDIT QUESTLINES UI-14 (decision 1): offline, a line that can only begin online is not drawn - one begun shows,
-      // "Continues online"
-      return QL_LINES.filter((l) => lines[l.id] || !l.opens.online || online()).map((l) => {
+      // "Continues online". STAR8 (UI-Calm's law): nor a seasonal line not begun outside its event - one begun shows, and
+      // says what it waits for
+      return QL_LINES.filter((l) => lines[l.id] || ((!l.opens.online || online()) && eventHolds(l, probe))).map((l) => {
         const rec = lines[l.id];
         const stepQuest = rec && !rec.done ? runningStep(l.steps[rec.step]?.quest) : null;
         const shelved = stepQuest?.shelvedAt != null;
         const running = !!stepQuest && !shelved;
+        const aside = shelved && !!rec?.aside;   // AUDIT STAR8 S2: set aside by the runner, out of season - it waits
         const steps = l.steps.map((s, i) => {
           // UI-7: the step at the line's place is `current` only while its quest runs - between steps it is still to come
           const state = !rec ? 'next' : rec.done || i < rec.step ? 'done' : i === rec.step && (running || shelved) ? 'current' : 'next';
@@ -242,7 +270,7 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
           return { quest: s.quest, title: s.title(), state, witnessed: !!witnessOf(l, i), seen: said === 'witnessed', unseen: state === 'done' && !!witnessOf(l, i) && said !== 'witnessed', outcome: rec?.outcomes?.[i]?.text ?? null, refused };
         });
         // UI-7: a failed step offered again (`retry`), a step's quest set aside in the journal (`shelved`)
-        const state = !rec ? 'locked' : rec.done ? 'done' : running ? 'running' : shelved ? 'shelved' : rec.retry ? 'retry' : 'waiting';
+        const state = !rec ? 'locked' : rec.done ? 'done' : running ? 'running' : shelved && !aside ? 'shelved' : rec.retry ? 'retry' : 'waiting';
         const last = rec?.outcomes?.[l.steps.length - 1] ?? null;
         return {
           id: l.id, group: l.group, title: l.title(), lead: l.lead(), giver: l.giver(), state, steps,
@@ -270,7 +298,7 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
         const step = Math.max(0, Math.min(l.steps.length, Number.isSafeInteger(r.step) ? r.step : 0));
         lines[id] = {
           step, done: !!r.done || step >= l.steps.length, wait: Number.isFinite(r.wait) ? r.wait : 0,
-          begun: Number.isFinite(r.begun) ? r.begun : 0, stalled: !!r.stalled, retry: !!r.retry,
+          begun: Number.isFinite(r.begun) ? r.begun : 0, stalled: !!r.stalled, retry: !!r.retry, aside: !!r.aside,
           outcomes: r.outcomes && typeof r.outcomes === 'object' ? structuredClone(r.outcomes) : {},
           claims: r.claims && typeof r.claims === 'object' ? { ...r.claims } : {},
         };

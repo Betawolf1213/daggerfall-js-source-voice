@@ -7,7 +7,7 @@ import { applyClimate, getNatureArchive, getTerrainGroundArchive, INTERIOR_SEASO
 import { SEA_LEVEL_M } from '../systems/weather/airTemperature.js';   // PRECIP4: heights above the sea, the snow's
 import { ARENA_BLOCK } from '../world/arena/arenaCity.js';
 import { armFlatAnim, FlatAnimator } from '../render/flatAnimation.js';
-import { billboardSize, centredBase, collectBlockFlats, isNatureArchive, NATURE_FLATS_Y } from '../world/rmbFlats.js';
+import { billboardSize, BLOCK_FLATS_OFFSET_Y, centredBase, collectBlockFlats, isNatureArchive, NATURE_FLATS_Y } from '../world/rmbFlats.js';
 import { blockHillPatch, blockHillSeat, seatNatureFlat } from '../world/townStandIns.js';
 import { blockSolids } from '../world/flatFields.js';
 import { BODY } from '../world/windmillMesh.js';
@@ -24,7 +24,7 @@ import { collectCityLights, LIGHTS_ARCHIVE } from '../world/city/cityLights.js';
 import { collectExteriorNpcs, exteriorNpcRecord } from '../characters/exteriorNpcs.js';
 import { coverProxies, coverProxy, FELLED, isCoverFlat } from '../ai/cover.js';
 import { flatBodies, jungleBody } from '../world/propBodies.js';   // PROP-BODIES: the solid flats' bodies, beside their cover
-import { DOOR_TYPE } from '../world/meshReader.js';
+import { DOOR_TYPE, GLOBAL_SCALE } from '../world/meshReader.js';
 import { doorCornersOf, doorNormalOf } from './hallBanners.js';
 import { drawnFlat } from '../characters/nudeFlats.js';
 import { dungeonEntranceLanding } from '../player/enterExit.js';
@@ -93,6 +93,7 @@ import { staticBuildingBox, staticBuildingWorldAabb } from '../world/staticBuild
 import { BUILDING_TYPES as TALK_BUILDING_TYPES } from '../world/buildingNames.js';
 import { TownPopulation } from '../systems/town/townPopulation.js';
 import { windfallResponse } from '../systems/windfall.js';
+import { colliderBlocked, dryGround, witchesDressingBreathing } from '../world/witchesDecor.js';   // WITCH1: the Witches' Festival's dressing and its Wyrd Sisters
 import { wodRockUvs } from '../world/worldOfDaggerfall/wodRockUv.js';
 import { WodSpawner } from '../world/worldOfDaggerfall/wodSpawner.js';
 import { lateSolidsOf } from '../player/lateSolid.js';   // ROCK-CLEAR: a pixel's statics built round a body already standing are withheld until it is clear
@@ -408,6 +409,7 @@ export function createPixelBuild(host) {
     let portSites = null;    // SHIPYARDS: a port town's shipyard and lighthouse - their sites in the location frame, null in any other place
     let personBatches = null;
     let locBlocks = null;    // T3d: the layout blocks for the Where-is directory
+    let witchFloor = null;   // WITCH1: the town's street, where the Witches' Festival's dressing stands (below)
     let homeTown = 0;        // HOME-LOOK: the town's map id, and its homes as heard at the build
     let homeLookRead = -1;   // HOME-LOOK (AUDIT): the registry's version as this build read it - refreshHomeLooks starts from it
     /** @type {Map<number, any>|null} */
@@ -433,6 +435,7 @@ export function createPixelBuild(host) {
       if (portTown) portSites = places.ports;
       const tilePos = getLocationTerrainTileOrigin(dfLocation);
       const locLocal = [tilePos.x * tileSide, avg * worldHeight + 2.0 * 0.025, tilePos.y * tileSide];
+      witchFloor = locLocal[1] + BLOCK_FLATS_OFFSET_Y * GLOBAL_SCALE;   // WITCH1: as the block's own flats stand
       // T3d: EVERY location pixel keeps its origin (the population
       // gate below no longer owns it) - the Where-is directory
       // resolves doors and the player in the LOCATION frame.
@@ -598,7 +601,7 @@ export function createPixelBuild(host) {
             if (isLefayTown(dfLocation)) for (const sd of staticDoors) if (sd.doorType === DOOR_TYPE.DUNGEON_ENTRANCE) lefayExitDoors.push(sd);   // HOLD-MONUMENT: the way out of the Hold
             // GUILD1d: the building's first door, measured where it stands - its hall's banners hang beside it
             const hf = homeKey != null ? pixelHomeFrames.get(homeKey) : null;
-            if (hf && !hf.door) hf.door = doorCornersOf(cpu.doors[0], local);
+            if (hf && !hf.door) { hf.door = doorCornersOf(cpu.doors[0], local); hf.normal = doorNormalOf(cpu.doors[0], local); }   // AUDIT WITCH1 D1: and its own outward normal - a door on its box's middle line takes its face from it, never the vertices' order (systems/siegeField.js doorFaceSign)
             if (dfLocation.hasDungeon) for (const d of cpu.doors) if (d.type === DOOR_TYPE.DUNGEON_ENTRANCE) pixelDungeonDoors.push({ door: doorCornersOf(d, local), box, normal: doorNormalOf(d, local), arena: b.blockName === ARENA_BLOCK });   // CASTLE-GATE (AUDIT G1: its outward normal; AUDIT PRE-MERGE 1003 W7: the undercroft's stair, no castle's - castleEntranceOf passes it over)
             for (const door of staticDoors) {
               host.doorGeneration += 1;   // WORLD-HOVER: a pixel's doors arriving
@@ -1082,6 +1085,23 @@ export function createPixelBuild(host) {
     // season's own number named none in winter, so a winter wood's trees were cover as flats - mended with it)
     const natureSet = new Set([natureArchive, ...borderNature.keys()]);
     const natureBase = (a) => (a === natureArchive ? climate.natureArchive : borderNature.get(a));
+    // WITCH1 (bible/06-Systems/Witches-Festival.md): WHILE THE WITCHES' FESTIVAL RUNS, the town dressed in its people's
+    // way and a Wyrd Sister at each tavern's door (world/witchesDecor.js) - its flats logged with the block's (they batch,
+    // light, stand solid and keep through a re-skin as those do), a fire among them a hearth, the Sisters stood with the
+    // street's people below; each spot clear of the walls the pixel's bucket now holds and of what the town stands
+    const witchDress = witchFloor != null && locBlocks ? await witchesDressingBreathing({
+      frames: pixelHomeFrames, taverns: buildingKeysOfType(locBlocks, makeBuildingKey, TALK_BUILDING_TYPES.Tavern), temples: buildingKeysOfType(locBlocks, makeBuildingKey, TALK_BUILDING_TYPES.Temple),
+      mapId: dfLocation?.mapTableData?.mapId ?? 0, climateIndex: maps.getClimateIndex(px, py), region: dfLocation?.regionIndex ?? null, floorY: witchFloor,
+      blocked: colliderBlocked(collider, host.state, px, py), ground: dryGround(locBlocks, locOrigin), taken: [...flatLog.map((f) => f.c), ...[...pixelNpcFlats, ...pixelStandFlats].map((n) => [n.x, n.y, n.z])],
+    }, () => breather.breathe()) : null;   // PERF7: a city's rays breathe
+    for (const f of witchDress?.flats ?? []) {
+      addFlat(f.archive, f.record, ...f.c);
+      if (f.archive !== LIGHTS_ARCHIVE) continue;
+      const s = lightSize(f.record);
+      pixelLights.push([f.c[0], f.c[1] + s.h, f.c[2]]);
+      if (isHearthFlat(LIGHTS_ARCHIVE, f.record)) pixelHearths.push([f.c[0], f.c[1] + s.h, f.c[2], f.c[1], s.w, s.h]);
+    }
+    pixelNpcFlats.push(...(witchDress?.sisters ?? []));
     // AUDIT PRECIP HOST-7: the groups stood by the one function a re-skin stands them by (standFlatGroups, above)
     const { groups, wild: wildFlats, places } = groupFlats(flatLog, flatLog.map((f) => [f.archive, f.record]));
     placeTrees(flatLog, flatLog.map((f) => f.archive), places);
@@ -1206,7 +1226,7 @@ export function createPixelBuild(host) {
       // SetActive(false)) and `questBehaviour` the component
       // SetupIndividualStaticNPC attaches; both are what the interior
       // host's people carry, so the click seam reads one shape.
-      pixelNpcs.push({ ...pn, drawArchive, drawRecord, width: size.w, height: size.h, active: true, questBehaviour: null, host: null });
+      pixelNpcs.push({ ...pn, drawArchive, drawRecord, width: size.w, height: size.h, active: true, questBehaviour: null, host: null, witch: flat.witch ?? null, ...(flat.witch ? { _mwLook: null } : {}) });   // WITCH1: a Wyrd Sister marked - and her own picture, never a Morrowind commoner's look (scenes/world.js streetLook)
       // The extent still belongs to the pixel's culling box even though
       // the billboard is batched later (a pixel whose only content near
       // an edge is a street NPC must not cull itself away).
@@ -1286,6 +1306,7 @@ export function createPixelBuild(host) {
       _lookV: homeLookRead,   // HOME-LOOK (AUDIT)
       homeFrames: pixelHomeFrames, homeRegion: dfLocation?.regionIndex ?? 0,   // HOME-YARD: each building's frame, and the town's region (a yard's pieces are paid there)
       seatAnchors, _boardSplit: pixelBoardSplit, festivalAnchors, festivalLanterns,   // SEAT1a (above); FESTIVAL-STAGE (above)
+      witchHomes: witchDress?.homes ?? null, witchFloor,   // WITCH1: each home's Hearth Offering spot, and the street they stand on (scenes/witchesHost.js)
       chapterHalls: pixelChapterHalls,   // CHAP7b (above)
       beach: beach ?? null,   // AUDIT LANDFORMS II H2: DFU's own blend in a location's pixel with the row on - where a gathering node asks the beach line
       px, py, terrain, water, tilemapTex, tilemap, groundArchive, models, windmills, batches, flatAnims, texRemap, lights: pixelLights, hearths: pixelHearths, animals: pixelAnimals, springs: pixelSprings, skyBase: climate.skyBase, samples, natureCount: nature.length,

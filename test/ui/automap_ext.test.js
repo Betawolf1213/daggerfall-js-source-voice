@@ -43,9 +43,10 @@ import {
   snapshotDiscovery, restoreDiscovery,
 } from '../../src/systems/discovery.js';
 import { setValue, _resetForTests } from '../../src/systems/settings/settings.js';
+import { hostText } from '../hostText.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const src = (p) => readFileSync(join(ROOT, p), 'utf8');
+const src = (p) => hostText(p);   // HOST-SPLIT 2: a host read whole - the M-outside dispatch lives in scenes/exteriorAutomapToggle.js
 
 const COLOURS = { temple: 0xffc37d45, shop: 0xff1855be, tavern: 0xff307555, house: 0xff283c45 };
 const at = (bmp, x, yTop) => bmp.colors[yTop * bmp.width + x];
@@ -1243,10 +1244,10 @@ test('D5 the residence-with-active-quest plate arm: ExteriorAutomap.cs:693-709\'
     // the M-outside door of the host that HAS a quest machine, between
     // the summaries walk and the window, on DFU's own three inputs.
     const wsrc = src('src/scenes/world.js');
-    const door = wsrc.slice(wsrc.indexOf('const toggleExteriorAutomap'), wsrc.indexOf('SetCustomBuildingName (ExteriorAutomap.cs:867-899)'));
+    const at = wsrc.indexOf('const toggleExteriorAutomap'), door = wsrc.slice(at, wsrc.indexOf('\n  };\n', at));   // HOST-SPLIT 2: the toggle, wherever it lives (scenes/exteriorAutomapToggle.js)
     assert.match(door, /\n {4}stampResidenceQuestNames\(summaries, discoveredBuildings\(locId\), \{/);
-    assert.match(door, /getAllActiveQuestIds: activeQuestIds,/, 'QuestMachine.GetAllActiveQuests, the tree\'s own definition');
-    assert.match(door, /isBuildingQuestResource: \(mapID, key\) => topicTree\.isBuildingQuestResource\(mapID, key\),/);
+    assert.match(door, /getAllActiveQuestIds: host\.activeQuestIds,/, 'QuestMachine.GetAllActiveQuests, the tree\'s own definition');   // HOST-SPLIT 2: a live name, read through the handle
+    assert.match(door, /isBuildingQuestResource: \(mapID, key\) => host\.topicTree\.isBuildingQuestResource\(mapID, key\),/);
     assert.match(door, /\}, dfLoc\.mapTableData\?\.mapId \?\? 0\);/, 'PlayerGPS.CurrentMapID');
     // ...and QX1 gave the OTHER host a machine, so it stamps too - the
     // same call between the summaries walk and the window, off its own

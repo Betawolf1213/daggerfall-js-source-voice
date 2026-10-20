@@ -226,7 +226,7 @@
   },
   {
     "name": "TOWN-MARKS-the-homes-never-asked",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/exteriorAutomapToggle.js",
     "old": "    onlineHomes?.ensure(dfLoc.mapTableData?.mapId);   // TOWN-MARKS",
     "new": "    void 0;   // TOWN-MARKS",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "TOWN-MARKS-the-registry-never-read",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/exteriorAutomapToggle.js",
     "old": "          const h = onlineHomes.homeAt(mapId, buildingKey);",
     "new": "          const h = null;",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "TOWN-MARKS-the-bank-house-unread",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/exteriorAutomapToggle.js",
     "old": "regionIndex: dfLoc.regionIndex, houses: playerEntity.houses ?? null,",
     "new": "regionIndex: dfLoc.regionIndex, houses: null,",
     "tests": [

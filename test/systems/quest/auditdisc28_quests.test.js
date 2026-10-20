@@ -35,9 +35,10 @@ import { questShareTag, sharedQuestFoe, questPrivateTag, partyQuestFoe, questBeh
 import { ExteriorAutomapWindow, stampResidenceQuestNames } from '../../../src/ui/exteriorAutomapWindow.js';
 import { buildingSummaries } from '../../../src/world/buildingSummaries.js';
 import { fakeSocketClass } from '../../fakeSocket.mjs';
+import { hostText } from '../../hostText.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
-const rd = (p) => readFileSync(join(ROOT, p), 'utf8');
+const rd = (p) => hostText(p);   // HOST-SPLIT 2: a host read whole - the town plan's open lives in scenes/exteriorAutomapToggle.js
 const VENDOR = join(ROOT, 'vendor', 'dfu-quests');
 const readQ = (p) => readFileSync(p, 'utf8').replace(/^﻿/, '');
 {
