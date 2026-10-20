@@ -136,7 +136,9 @@ test('PROF-FOUND THE HOSTS: townTalk\'s own grouping (no engine) lays the opened
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
     const s = read(host);
     assert.match(s, /createTownTalk\(\{/, `${host}: the shared talk`);
-    assert.match(s, /createTownMapWindow\(\{/, `${host}: the shared town map`);
+    // PIN MOVED (FB1020c STREETS-TAB): the streaming host's M key builds its bag in scenes/townMapHost.js townHere and
+    // hands it to the same door
+    assert.match(host === 'src/scenes/world.js' ? read('src/scenes/townMapHost.js') : s, host === 'src/scenes/world.js' ? /createTownMapWindow\(here\.deps\)/ : /createTownMapWindow\(\{/, `${host}: the shared town map`);
   }
   assert.doesNotMatch(read('src/scenes/dungeonContext.js'), /createTownMapWindow/, 'the dungeon opens no town map');
 });

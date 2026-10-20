@@ -715,8 +715,12 @@ test('A2 wiring pins: the M-outside dispatch in both exterior hosts, gated on a 
     const arm = h.indexOf("if (act === 'AutoMap') { hudCtx.toggleAutomap(); return true; }");
     assert.ok(arm > g, `${host}: and M-outside sits inside that gate`);
   }
-  const w = src('src/scenes/world.js');
-  assert.match(w, /if \(!dfLoc \|\| !b\?\.locBlocks \|\| !b\.locOrigin\) return;/, 'empty wilderness opens nothing');
+  // PIN MOVED (FB1020c STREETS-TAB): the streaming host's M key is scenes/townMapHost.js's `open` now - the town it stands
+  // in built by `townHere` (null off a location), and nothing opened without one
+  const w = src('src/scenes/townMapHost.js');
+  assert.match(w, /if \(!dfLoc \|\| !b\?\.locBlocks \|\| !b\.locOrigin\) return null;/, 'empty wilderness opens nothing');
+  assert.match(w, /const toggleExteriorAutomap = \(\) => \{\n\s*if \(townTalk\.overlayActive\) return;\n\s*const here = townHere\(\);\n\s*if \(!here\) return;/, '...from the M key');
+  assert.match(src('src/scenes/world.js'), /toggleAutomap: \(\) => townMap\.open\(\),/, 'the world host\'s AutoMap action');
   // EM4: the town map is behind a SKIN DOOR now - the classic skin
   // still gets `new ExteriorAutomapWindow(...)`, from inside
   // ui/town/townMapDoor.js, and the host opens whichever the skin wears.
@@ -726,7 +730,7 @@ test('A2 wiring pins: the M-outside dispatch in both exterior hosts, gated on a 
   assert.match(e, /createTownMapWindow\(/, 'the host opens a town map');
   assert.match(src('src/ui/town/townMapDoor.js'), /new ExteriorAutomapWindow\(/,
     'and the classic arm of that door still builds DFU\'s own window');
-  assert.match(src('src/scenes/world.js'), /createTownMapWindow\(/, 'both exterior hosts, one door');
+  assert.match(w, /createTownMapWindow\(/, 'both exterior hosts, one door');
   assert.match(src('src/systems/inputActions.js'), /\['KeyM', 'AutoMap'\]/, 'and M is that action\'s default');
 });
 
@@ -1242,11 +1246,13 @@ test('D5 the residence-with-active-quest plate arm: ExteriorAutomap.cs:693-709\'
     // quest-marked residence was silently plateless. The stamp lives in
     // the M-outside door of the host that HAS a quest machine, between
     // the summaries walk and the window, on DFU's own three inputs.
-    const wsrc = src('src/scenes/world.js');
-    const door = wsrc.slice(wsrc.indexOf('const toggleExteriorAutomap'), wsrc.indexOf('SetCustomBuildingName (ExteriorAutomap.cs:867-899)'));
+    // PIN MOVED (FB1020c STREETS-TAB): the M-outside door's build is scenes/townMapHost.js `townHere` now - the plan of
+    // either key - its two live reads off the host
+    const wsrc = src('src/scenes/townMapHost.js');
+    const door = wsrc.slice(wsrc.indexOf('const townHere'), wsrc.indexOf('SetCustomBuildingName (ExteriorAutomap.cs:867-899)'));
     assert.match(door, /\n {4}stampResidenceQuestNames\(summaries, discoveredBuildings\(locId\), \{/);
-    assert.match(door, /getAllActiveQuestIds: activeQuestIds,/, 'QuestMachine.GetAllActiveQuests, the tree\'s own definition');
-    assert.match(door, /isBuildingQuestResource: \(mapID, key\) => topicTree\.isBuildingQuestResource\(mapID, key\),/);
+    assert.match(door, /getAllActiveQuestIds: host\.activeQuestIds,/, 'QuestMachine.GetAllActiveQuests, the tree\'s own definition');
+    assert.match(door, /isBuildingQuestResource: \(mapID, key\) => host\.topicTree\.isBuildingQuestResource\(mapID, key\),/);
     assert.match(door, /\}, dfLoc\.mapTableData\?\.mapId \?\? 0\);/, 'PlayerGPS.CurrentMapID');
     // ...and QX1 gave the OTHER host a machine, so it stamps too - the
     // same call between the summaries walk and the window, off its own

@@ -39,7 +39,7 @@ import { attachGamepad, GLASS_PAD_ZOOM } from '../ui/gamepadInput.js';   // GP1:
 import { BlocksFile } from '../formats/blocksFile.js';
 import { bindWorldDataBlocks } from '../formats/worldData/worldDataReplacement.js';   // RR3b
 import { customModelFor, hasCustomModel, customModelNeeds, classicModelIdOf } from '../world/customModels.js';   // ARENA1: RuntimeMaterials' ApplyClimate 0 - the colosseum wears its own pictures; AUDIT MERCHANT-YARDS G1: the yards measure the registered models
-import { isUndercroftDoor, undercroftLocation, isArenaUndercroft, isArenaCity, inArenaCell, ARENA_REGION, ARENA_LOCATION, ARENA_BLOCK, ARENA_GATE_PEOPLE, arenaTownLandmark } from '../world/arena/arenaCity.js';   // ARENA1: the undercroft's stair and its record, the city's cell; ARENA2: the colosseum's block in a built pixel, the Herald's place; ARENA-MAP: its name on the town map
+import { isUndercroftDoor, undercroftLocation, isArenaUndercroft, isArenaCity, inArenaCell, ARENA_REGION, ARENA_LOCATION, ARENA_BLOCK, ARENA_GATE_PEOPLE } from '../world/arena/arenaCity.js';   // ARENA1: the undercroft's stair and its record, the city's cell; ARENA2: the colosseum's block in a built pixel, the Herald's place; ARENA-MAP: its name on the town map
 import { isFurnishing } from '../systems/decor/decorFurnish.js';   // ARENA2: a moved house's furniture back among the furnishings
 import { createArenaBouts } from './arena/arenaBouts.js';   // ARENA2: the bout on this screen - its law over real bodies, its crowd, its HUD
 import { createArenaSound } from '../systems/arena/arenaSound.js';   // ARENA2: the crowd, heard - built from DAGGER.SND's own voices
@@ -216,14 +216,12 @@ import { prepareQuestShare, prepareShareData, shareSignature, receiveSharedQuest
 import { careerSunAverse } from '../systems/passiveSpecials.js';   // AUDIT 64 F20: Career.DamageFromSunlight, the arrival clamp's second arm - HOOD-CAREER: under a bare head
 import { buildMapDict, locationSummaryAt as travelLocationSummaryAt } from '../systems/map/mapDirectory.js';   // W1: ContentReader's map dict; TO1: the junction map's own reads
 import { dilateCoastalClimate, smoothLocationNeighbourhood } from '../world/terrain/terrainHelper.js';   // AUDIT 58 F4
-import { stampResidenceQuestNames, registerExteriorAutomapConsoleCommands } from '../ui/exteriorAutomapWindow.js';   // D5: the quest-residence plate name; E3: ExteriorAutoMapConsoleCommands
-// EM4: the skin fork. The classic skin keeps DFU's rotating town map
-// whole; the enhanced one gets the held sheet with the town's plan
-// traced onto it and its names in the Iliac Bay's own hand.
-import { createTownMapWindow, townMapDoorReady } from '../ui/town/townMapDoor.js';
-import { WORLD_PER_PX } from '../ui/ink/inkTown.js';   // EM4: the town plan's own scale
+import { registerExteriorAutomapConsoleCommands } from '../ui/exteriorAutomapWindow.js';   // D5: the quest-residence plate name; E3: ExteriorAutoMapConsoleCommands
+// EM4: the skin fork - the town map's door (ui/town/townMapDoor.js) is
+// scenes/townMapHost.js's import since FB1020c STREETS-TAB moved the
+// town map's group there.
 import { buildingSummaries } from '../world/buildingSummaries.js';   // ROAD-C c2/S10: the plate anchor's Position-bearing walk
-import { townTierOn, townQuestBuildings, townBuildingLocal } from '../systems/quest/questGuidance.js';   // GUIDE8's Town tier (AUDIT DELVE): the building a quest's journal names, in its town
+import { townTierOn, townBuildingLocal } from '../systems/quest/questGuidance.js';   // GUIDE8's Town tier (AUDIT DELVE): the building a quest's journal names, in its town
 import { hasCustomLocationPosition } from '../world/locationLayout.js';   // ROAD-C c2/S10: the marker's custom-location offsets
 import { FootstepMachine, pickFootstepSet, pickFootstepKind } from '../systems/footsteps.js';   // FS-slice; PEER-FS1: pickFootstepKind for the pose's own `fk`
 import { immersiveFootsteps, reportModCompatibilityIssues } from '../systems/immersiveFootsteps.js';
@@ -820,8 +818,7 @@ import { hasCarriageGate } from '../world/immersiveTravelGates.js';   // OW-HUBS
 import { seatArrivalLine, seatHallOf, seatBannerOf, boardTithePct } from '../net/townSeatLaw.js';   // SEAT1a: the seat's arrival line; SEAT-HALL: whose hall a palace is; CROWN-HALL: the throne room's banners; AUDIT SEATS-3 D3: a board's Tithe
 import { hallMay } from '../net/hallLaw.js';   // SEAT-HALL: a palace's keepers are a hall's
 import { createOnlineHomes, moveArenaHomes, homeSceneName, homeTownBlocks, holdRealmDeeds, homeClaimLayout, checkpointLanded, HOME_RETRY_MS } from '../systems/online/onlineHomes.js';   // HOME1: the account service's homes, one town at a time; ARENA4b: the ones the arena displaced, moved; HOME-PRICE: a town's size; FIELD BUGS 2026-10-04d KNIGHT-HOUSE: a deed the realm gave, held
-import { townBoardRows, townHomeRows } from '../ui/town/townMapMarks.js';   // TOWN-MARKS: the Notice Boards and the player housing on the town map
-import { setVendorWaypoint, clearVendorWaypoint, vendorWaypoint, vendorWaypointKey, vendorWaypointVersion, isVendorWaypoint, vendorWaypointLabel } from '../systems/vendorWaypoint.js';   // HOME-VENDOR: the trader's waypoint
+import { setVendorWaypoint, clearVendorWaypoint, vendorWaypoint, vendorWaypointKey, isVendorWaypoint } from '../systems/vendorWaypoint.js';   // HOME-VENDOR: the trader's waypoint
 import { setVendorPage } from '../ui/vendor/vendorPage.js';   // HOME-VENDOR: the Vendor page, under the Professions
 import { goldText as vendorGoldText } from '../net/marketLaw.js';   // HOME-VENDOR: a trader's price in words
 import { homeMayEnter as vendorDoorOpen } from '../net/homeLaw.js';   // HOME-VENDOR: only the traders whose door lets this player in
@@ -1006,7 +1003,7 @@ const RACE_BY_NAME_BANK = Object.freeze(Object.fromEntries(
   Object.entries(BANK_TYPES).map(([race, bank]) => [bank, race])));
 import { startDisease, endDisease, diseaseCount } from '../systems/diseases.js';   // AUDIT 24: the quest bridge's MakePcDiseased / CurePcDisease seams; U41: the popup's diseased warning
 import { poisonCount } from '../systems/poisons.js';   // U41: the warning's other half
-import { discoverRandomLocation, discoverLocation, undiscoverBuilding, discoverBuilding, discoveredBuildings, hasDiscoveredLocationId, setDiscoveredBuildingCustomName, getDiscoveredBuilding, discoveryGeneration, restampQuestNames, pruneDiscoveryLayouts } from '../systems/discovery.js';   // G8 + TV: the guild map reveals + the entry writer; TK-ii: the quest-residence undiscover; AUDIT DISC28 QS-K2: the town map's re-stamp
+import { discoverRandomLocation, discoverLocation, undiscoverBuilding, discoverBuilding, discoveredBuildings, hasDiscoveredLocationId, getDiscoveredBuilding, discoveryGeneration, pruneDiscoveryLayouts } from '../systems/discovery.js';   // G8 + TV: the guild map reveals + the entry writer; TK-ii: the quest-residence undiscover; AUDIT DISC28 QS-K2: the town map's re-stamp
 import { scryRows } from '../systems/loot/lootScry.js';   // LOOT19: the region a scrying reads
 import {
   WEATHER_TYPES, fogForWeather, scaleFogForDistance, skyOffsetForWeather, weatherSunlightScale,
@@ -1151,6 +1148,7 @@ import { regionChaseWords } from '../systems/travel/regionChase.js';   // OW-CHA
 import { createRegionChaseHearing } from './regionChaseHost.js';   // OW-CHASE-RANGE: the region's chase words heard (AUDIT OW-REVISITED L4-2, L4-3)
 import { TOWN_PACE_MAX } from '../systems/travel/townWalk.js';   // OW-TOWN-WALK: the keys' travel in a town, held to a town's pace
 import { monsterVolume } from '../systems/monsterVolume.js';   // MONSTER-VOL: a monster's pain cry rides the Audio tab's Monster Volume
+import { createTownMapHost } from './townMapHost.js';   // HOST-SPLIT
 
 /** Internal_Strings_en 654 / 655, the two guild map-reveal notes
  *  (ThievesGuild.cs:115, DarkBrotherhood.cs:108). %map is the
@@ -16193,7 +16191,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // PARTY-TRAVEL (2026-09-25, Mac: "Implementing a prompt for online to travel to party leader"): a member away from
     // the leader is asked first whether the journey is to the leader - No opens the map (systems/party/partyTravel.js mapOffer)
     if (!gotoPlace && partyTravel?.mapOffer()) return false;
-    _travelMap = buildTravelMapWindow({ onTravel: (pick, opts, computed) => {
+    // FB1020c STREETS-TAB (scenes/townMapHost.js travelTown): in a town the window holds its streets too, opening on the bay
+    _travelMap = buildTravelMapWindow({ ...townMap.travelTown(), onTravel: (pick, opts, computed) => {
       if (TEST_GODMODE && staffPowers().god && pick?.pixel) { teleportTo(pick); return; }   // TESTBUILD: god mode - the map's journey is instant, from anywhere to anywhere
       // HALL-HERE (the owner: "happens only when youre already on the dungeon and press begin journey on the pixel where
       // you are"): a journey to the zone hall I already stand at is no journey - said, and nothing begun
@@ -17033,138 +17032,18 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       }
     }).catch(() => {});
   };
-  // A2: the exterior automap's own dispatch half (DaggerfallUI.cs
-  // :633-650): M outside opens the TOWN map only when the current
-  // map pixel carries a location - empty wilderness opens nothing.
-  // (Inside, routeKey's 'automap' arm opens the dungeon map instead.)
-  const toggleExteriorAutomap = () => {
-    if (townTalk.overlayActive) return;
-    const px = playerTravelPixel();
-    const key = `${px.x},${px.y}`;
-    const dfLoc = locationIndex.get(key);
-    const b = built.get(key);
-    if (!dfLoc || !b?.locBlocks || !b.locOrigin) return;
-    const feet = walkMode ? player.pos : cam.pos;
-    const t = state.pixelTranslation(px.x, px.y);
-    // location-local player frame - the Where-is directory's own
-    // conversion (setTopics' playerPos closure); the overlay holds
-    // the motor, so the open-time capture stays truthful
-    const local = [feet[0] - t[0] - b.locOrigin[0], feet[1] - t[1] - b.locOrigin[1], feet[2] - t[2] - b.locOrigin[2]];
-    const locId = `${dfLoc.regionIndex}:${dfLoc.name}`;
-    // ROAD-C c2/S10: the arrow/stamp is the REAL mesh 99900, rasterised
-    // once from its CPU data (ui/meshStamp.js). Kicked off here and
-    // read lazily - the window draws its two other layers meanwhile.
-    getGpuMesh(99900).catch(() => {});
-    // HALF B: the plates now come off the Position-bearing subrecord
-    // walk over ALL buildings, not off the discovered doors.
-    // L10N3e: the plates' names carry the shown pair beside the canonical one - GetLocalizedLocationName by the MapId
-    // and GetLocalizedRegionName by the index (ExteriorAutomap.cs:717-718); the canonical pair still chooses the palace
-    const shownLocation = getLocalizedLocationName(dfLoc.mapTableData?.mapId, dfLoc.name);
-    const summaries = buildingSummaries(dfLoc.exterior?.buildings ?? [], b.locBlocks,
-      { locationName: dfLoc.name, regionName: maps.getRegionName(dfLoc.regionIndex), locationIndex: dfLoc.locationIndex ?? 0,
-        shownLocationName: shownLocation, shownRegionName: getLocalizedRegionName(dfLoc.regionIndex, (i) => maps.getRegionName(i)) });
-    // ROAD-D D5: CreateBuildingNameplates' residence arm (:682-709).
-    // DFU resolves the quest name for every discovered residence AS IT
-    // BUILDS THE NAMEPLATES - once per open (:273), never per frame -
-    // and this is that build. The quest source is the pair DFU reads:
-    // QuestMachine.GetAllActiveQuests/GetQuest and TalkManager
-    // .IsBuildingQuestResource, which the topic tree already carries.
-    // PlayerGPS.CurrentMapID is the map ID of the location the player
-    // is standing in, which is exactly the pixel this door resolved.
-    // AUDIT DISC28 QS-K2: DISC28-K's re-stamp, at the map's own open - it ran only at a door, so the plan opened on
-    // arrival still named a house for the job before the live one (an override-named residence draws its stored name)
-    restampQuestNames(locId, { ...questBuildingSource, currentMapID: () => dfLoc.mapTableData?.mapId ?? 0 });   // the plan's own town
-    stampResidenceQuestNames(summaries, discoveredBuildings(locId), {
-      getAllActiveQuestIds: activeQuestIds,
-      getQuest: (questID) => questBridge?.machine.getQuest(questID) ?? null,
-      isBuildingQuestResource: (mapID, key) => topicTree.isBuildingQuestResource(mapID, key),
-    }, dfLoc.mapTableData?.mapId ?? 0);
-    if (!townMapDoorReady()) return;   // EM4: the skin fork's gate
-    mwViewFirstPerson();   // MW-MAP1: MAP-POV's law for this sheet too - the town plan is read in the head, and the arm must be first-person before the window's first tick asks
-    townTalk.showOverlay(createTownMapWindow({
-      holder: sheetHolderOf(() => weaponRig),   // MW-MAP1: the Morrowind hands lane on the M key, as on V
-      locationName: shownLocation,   // L10N3e: the title, as shown - the key is locationId
-      locationId: locId,
-      gridW: dfLoc.exterior.exteriorData.width, gridH: dfLoc.exterior.exteriorData.height,
-      blocks: b.locBlocks.map((bl) => ({ x: bl.x, y: bl.y, autoMap: bl.dfBlock?.rmbBlock?.fldHeader?.autoMapData, landmark: arenaTownLandmark(bl.dfBlock) })),   // ARENA-MAP: the Arena's name (world/arena/arenaCity.js)
-      yards: b.merchantYards ?? null,   // YARDS-FOUND: the town's Stable and Wagon Yard on the map - their ground and their names (ui/town/townMapDoor.js)
-      ports: b.portSites ?? null,   // SHIPYARDS-FOUND: a port town's shipyard and lighthouse on it the same way
-      playerPos: () => local,
-      // the marker law is DFU's modulo of the MAP PIXEL frame, so the
-      // window needs the location's origin inside that pixel back
-      locOrigin: [b.locOrigin[0], b.locOrigin[1], b.locOrigin[2]],
-      isCustomLocation: hasCustomLocationPosition(dfLoc),
-      playerYaw: () => cam.yaw,
-      arrowMesh: () => cpuModels.get(99900) ?? null,
-      compassArt: hudArt,
-      buildings: () => summaries,
-      directory: () => townTalk.directory,
-      discovered: () => discoveredBuildings(locId),
-      rename: (buildingKey, name) => renameMapBuilding(locId, buildingKey, name),
-      // EM4: what the enhanced sheet needs beyond the classic bag. The
-      // context is DERIVED off the flags every host already keeps.
-      //
-      // THE BAY TAB IS NOT HANDED OVER FROM HERE, and that is a
-      // decision rather than an omission. `systems/map/mapTabs.js` says a
-      // town offers the streets AND the bay, and the slot's narrowing
-      // (ui/map/mapStrip.js) therefore leaves the world tab off this
-      // window's strip because this window holds no world sheet. The
-      // reason is DFU's travel guards: `toggleTravelMap` refuses to
-      // OPEN the bay with enemies nearby, with a merchant's offer
-      // pending, in sunlight for a sun-damaged career, or under a
-      // racial fast-travel block - four checks that happen at open
-      // time. Handing the bay over on the town key would walk straight
-      // past all four, and moving them to commit time is a behaviour
-      // change to a ported, audited system. Mac's call, recorded in
-      // 10-UI/Enhanced-Maps-Arc.md; until he takes it, the travel key
-      // is the way to the bay and it keeps its ladder.
-      where: () => ({ inLocation: true }),
-      townPlayer: () => ({ x: local[0] / WORLD_PER_PX, y: local[2] / WORLD_PER_PX, yaw: cam.yaw }),
-      // DISC23-A: the party in these streets, their feet taken into the location's frame by the SAME subtraction the
-      // player's `local` is (the translation and the origin read at open, which the held motor keeps true)
-      townParty: () => partyOnMaps().map((m) => ({ ...m, feet: [m.feet[0] - t[0] - b.locOrigin[0], m.feet[1] - t[1] - b.locOrigin[1], m.feet[2] - t[2] - b.locOrigin[2]] })),
-      // TOWN-MARKS (ui/town/townMapMarks.js): the town's Notice Boards, while the board is open (the boards noticeCountPoints
-      // counts over), with its unread count; and its player housing - the online homes and the bank's house
-      townBoards: () => townBoardMarks(b),
-      // GUIDE8's Town tier (AUDIT DELVE, systems/quest/questGuidance.js): the buildings a quest's journal names in this town
-      townQuestBuildings: () => (townTierOn() ? townQuestBuildings(questTracker.views, dfLoc.mapTableData?.mapId, questTracker.tracked()?.id ?? null) : []),
-      townHomes: () => townHomeRows({
-        buildings: summaries, mapId: dfLoc.mapTableData?.mapId, regionIndex: dfLoc.regionIndex, houses: playerEntity.houses ?? null,
-        homeAt: onlineHomes ? (mapId, buildingKey) => {
-          const h = onlineHomes.homeAt(mapId, buildingKey);
-          // HOME-VENDOR: the trader's waypoint names its house on the town map
-          return h && isVendorWaypoint(mapId, buildingKey) ? { ...h, own: false, owner: vendorWaypointLabel(h.owner) } : h;
-        } : null,
-      }),
-      townHomesVersion: () => (onlineHomes?.version() ?? 0) + vendorWaypointVersion() * 100_000,   // HOME-VENDOR: a waypoint moved repaints
-    }));
-    onlineHomes?.ensure(dfLoc.mapTableData?.mapId);   // TOWN-MARKS: a town heard from long ago is asked again, and its homes mark when it answers
-  };
-  /** TOWN-MARKS: a built pixel's Notice Boards for the town map - none while the board is closed (the town's boards are
-   *  then Daggerfall's rumour boards) or off a location. */
-  const townBoardMarks = (p) => {
-    if (!noticeBook || noticeBook.open !== true || !p?.boards?.length || !p.location) return [];
-    const bountyAt = boardSplitOf(p);
-    const town = noticeTownOf(p.px, p.py, bountyAt.size > 0);
-    return town ? townBoardRows(p, bountyAt, noticeBook.unseen(town.mapId)) : [];
-  };
-  /** SetCustomBuildingName (ExteriorAutomap.cs:867-899): the plate's
-   *  double-click raises DFU's DaggerfallInputMessageBox over the open
-   *  map (a PUSH, not a replace - the map is still there underneath),
-   *  pre-filled with the name the player is LOOKING AT - `mb.TextBox
-   *  .Text = renamingLabelRef.Text` (:888), the custom name whenever
-   *  one is set - and the answer lands on the discovery record. The
-   *  canonical is only TextBox.Name/DefaultText (:887, :889), the
-   *  fallback for an emptied box, which the port reaches by storing ''.
-   *  MaxCharacters 80, WidthOverride 306 (:893-894); the
-   *  "Custom name: " label is Internal_Strings' `customName`. */
-  const renameMapBuilding = (locId, buildingKey, displayed) => {
-    townTalk.pushOverlay(new ServiceFlowWindow([{
-      rows: [localizedText('customName', 'Custom name: ')],
-      field: { numeric: false, maxCharacters: 80, initial: displayed ?? '' },
-      onInput: (text) => { setDiscoveredBuildingCustomName(locId, buildingKey, text); return null; },
-    }]));
-  };
+  // FB1020c STREETS-TAB: the town map's host half - the M key's window (`open`) and the streets the travel key's holds
+  // in a town (`travelTown`, spread at toggleTravelMap's door), one bag
+  const townMap = createTownMapHost({   // HOST-SPLIT: src/scenes/townMapHost.js
+    boardSplitOf, built, cam, cpuModels, getGpuMesh, locationIndex, maps, noticeBook, noticeTownOf, onlineHomes,
+    player, playerTravelPixel, questBuildingSource, state, townTalk, walkMode, weaponRig,
+    get activeQuestIds() { return activeQuestIds; },
+    get hudArt() { return hudArt; },
+    get modes() { return modes; },
+    get partyOnMaps() { return partyOnMaps; },
+    get questBridge() { return questBridge; },
+    get topicTree() { return topicTree; },
+  });
   // Edge-detect latch shared with the mode machine: a held key must not
   // re-trigger across a mode switch.
   // MWCROUCH: the four press latches this host kept - the crouch
@@ -17370,7 +17249,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (w) townTalk.showOverlay(w);
     },
     toggleSpellbook: () => toggleSpellbook(),
-    toggleAutomap: () => toggleExteriorAutomap(),
+    toggleAutomap: () => townMap.open(),
     openTravelMap: () => toggleTravelMap(),
     /** AUDIT 58 (f2/hosts): THE SHEATH PANEL'S DOOR - the eleventh
      *  panel of the large HUD (ui/hud/hudLarge.js:"key: 'spellbook',"), which until now

@@ -49,7 +49,8 @@ const ROUTED = {
   'src/scenes/exterior.js': 1,
   'src/scenes/hostMagic.js': 6,
   'src/scenes/menu.js': 1,
-  'src/scenes/world.js': 16,
+  'src/scenes/townMapHost.js': 1,   // FB1020c STREETS-TAB: the town map's rename box, out of world.js with its group
+  'src/scenes/world.js': 15,
   'src/scenes/worldModes.js': 7,
   'src/systems/answerPipeline.js': 24,
   'src/systems/artifactEffects.js': 1,

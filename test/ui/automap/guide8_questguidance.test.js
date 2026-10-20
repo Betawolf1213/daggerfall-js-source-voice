@@ -295,14 +295,15 @@ test('GUIDE8 TOWN TIER (AUDIT DELVE): the town map rings a building the journal 
   assert.equal(mk(null).quests().length, 0);
   assert.match(src('src/ui/town/townMapDoor.js'), /questBuildings: deps\.townQuestBuildings \?\? null,/);
   const w = src('src/scenes/world.js');
-  assert.match(w, /townQuestBuildings: \(\) => \(townTierOn\(\) \? townQuestBuildings\(questTracker\.views, dfLoc\.mapTableData\?\.mapId, questTracker\.tracked\(\)\?\.id \?\? null\) : \[\]\),/);
+  // PIN MOVED (FB1020c STREETS-TAB): the town map's bag is scenes/townMapHost.js's now (townHere, either key)
+  assert.match(src('src/scenes/townMapHost.js'), /townQuestBuildings: \(\) => \(townTierOn\(\) \? townQuestBuildings\(questTracker\.views, dfLoc\.mapTableData\?\.mapId, questTracker\.tracked\(\)\?\.id \?\? null\) : \[\]\),/);
   assert.match(w, /quest: vendorCompassMark\(\) \?\? townQuestCompassMark\(\) \?\? questCompassMark\(\),/);
   const fn = w.slice(w.indexOf('const townQuestCompassMark = () => {'), w.indexOf('const gateCompassMark = () => {'));
   assert.match(fn, /if \(!townTierOn\(\) \|\| \(modes\?\.mode \?\? 'exterior'\) !== 'exterior'\) return null;/, 'the tier, on the street');
   assert.match(fn, /const bld = questTracker\.tracked\(\)\?\.target\?\.building;/, 'the tracked quest\'s named building');
   assert.match(fn, /\(\(dfLoc\.mapTableData\?\.mapId \?\? -1\) >>> 0\) !== \(Number\(bld\.mapId\) >>> 0\)\) return null;/, 'only in its town');
   assert.match(fn, /return \[_townQuestAt\.at\[0\] \+ t\[0\] \+ b\.locOrigin\[0\], _townQuestAt\.at\[1\] \+ t\[2\] \+ b\.locOrigin\[2\]\];/, 'the town map\'s frame turned back: local + translation + origin, as `local` is taken');
-  assert.match(w, /const local = \[feet\[0\] - t\[0\] - b\.locOrigin\[0\], feet\[1\] - t\[1\] - b\.locOrigin\[1\], feet\[2\] - t\[2\] - b\.locOrigin\[2\]\];/, 'the frame it is the inverse of');
+  assert.match(src('src/scenes/townMapHost.js'), /const local = \[feet\[0\] - t\[0\] - b\.locOrigin\[0\], feet\[1\] - t\[1\] - b\.locOrigin\[1\], feet\[2\] - t\[2\] - b\.locOrigin\[2\]\];/, 'the frame it is the inverse of');   // PIN MOVED (FB1020c STREETS-TAB): the town map's `local`, in its module
 });
 
 test('GUIDE8 EXACT INDOORS (AUDIT DELVE): the interior hands its quest marks to its map and its compass', () => {

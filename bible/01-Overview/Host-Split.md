@@ -549,3 +549,31 @@ level, a lambda of the host's, left for the enemy table (`characters/enemy/enemy
 roads' harness reads it too (its own copy still asked `>= 128` after DEX1 gave the host the bit). `bootWorld` 36,185 ->
 36,183 logical lines, at its ceiling, which stays; the relay re-hashed in place (world233 then, world234 since SD-SEA's merge; enemyBasics.js is in its
 bundle); the C1 pin and its mutants re-aimed, two more for the subscriptions.
+
+## STREETS-TAB's move - the town map's group out of bootWorld (FIELD BUGS 2026-10-20c)
+
+Not a slice of the order above: a fix (`10-UI/Enhanced-Maps-Arc.md` FB1020c STREETS-TAB) whose code was the town map's
+group in `bootWorld` - the travel key's window had to take the town's streets from the bag the M key built there, and the
+fix belonged beside that bag, not in the host.
+
+- THE MAP: `node tools/hostScope.mjs src/scenes/world.js --group toggleExteriorAutomap,townBoardMarks,renameMapBuilding`
+  measured 3 contiguous members, 116 lines; reads 23 host names, writes none; used by `hudCtx` alone.
+- THE MOVE, by `tools/hostMove.mjs`: to `src/scenes/townMapHost.js` (`createTownMapHost(host)`), 17 names by value, five
+  live (`activeQuestIds`, `hudArt`, `partyOnMaps`, `questBridge`, `topicTree`), 12 imports the host no longer read
+  dropped, 13 mutant records and one doc anchor pointed at the module. THEN, by hand and said so: the M key's member
+  split in two - `townHere` (the bag, built once per open for either key) and `open` (the door, its gate and its window,
+  as before) - and `travelTown` added beside them, the one new behaviour, with one more live name (`modes`) for its
+  street-only answer. The host constructs it where the group stood and keeps `townMap`: `hudCtx.toggleAutomap` calls
+  `townMap.open()`, and `toggleTravelMap` - above it, called only after the host is built - spreads
+  `townMap.travelTown()` into its window. The streets' bag has its own one home at the door
+  (`ui/town/townMapDoor.js` `townSheetBag`), which both keys' windows read.
+- THE FOUR HOSTS: `bootWorld` wired; `bootExterior` has no travel map (its M builds through the same door, so the same
+  bag); `createWorldModes` and `buildDungeonContext` - the travel key is refused indoors and in a dungeon, and their M
+  opens their own plans.
+- THE PINS, by hand (`PIN MOVED`): twelve test files that quoted the group from `world.js` read the module (or the host
+  whole) - `invisnet`, `disc23a_party_plans`, `l10n3e_scenes` (its lifted statements run from the module), `proffound1`,
+  `yardsfound1`, `guide8_questguidance`, `arena_townmap`, `auditdisc28_quests`, `automap_ext` (A2 and D5), `mwmap1`,
+  `town_marks`, `fb0929d_toroads` (the travel door's lift, which now opens on the spread). Six mutant records re-aimed by
+  content by hand (`town_marks` four, `disc23a` one - the bag's re-indented lines and the homes' ask - and `hostsplit`'s
+  ceiling), and two test anchors.
+- `bootWorld` 36,183 -> 36,101 logical lines; its ceiling 36,187 -> 36,101, the host's own count.

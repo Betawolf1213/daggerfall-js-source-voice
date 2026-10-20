@@ -247,8 +247,10 @@ test('L10N3e scenes: the town map\'s plates carry the shown pair beside the cano
     return [BUILDING_TYPES.Bank, BUILDING_TYPES.GeneralStore, BUILDING_TYPES.Palace]
       .map((t) => generateBuildingName(t === BUILDING_TYPES.GeneralStore ? cnSeed : 9, t, { ...o, palaceName: palace }));
   };
+  // PIN MOVED (FB1020c STREETS-TAB): the streaming host's town map group left world.js for scenes/townMapHost.js, whose
+  // `townHere` builds the plates' bag for either key - the same statements, run there
   const show = () => ({
-    world: plates(opts('world.js', { dfLoc: DAGGERFALL, b: { locBlocks: [] } })),
+    world: plates(opts('townMapHost.js', { dfLoc: DAGGERFALL, b: { locBlocks: [] } })),
     exterior: plates(opts('exterior.js', { dfLocation: DAGGERFALL, loc: { blocks: [] }, locationName: 'Daggerfall' })),
   });
   const { en, fr } = inFrench(PLACES, show);
@@ -259,7 +261,7 @@ test('L10N3e scenes: the town map\'s plates carry the shown pair beside the cano
   assert.deepEqual(fr.exterior, fr.world);
   // the title: the window's `locationName` is the name as shown, its key the locationId - by source, since the window's
   // bag is built inside the M key's whole arm
-  for (const file of ['world.js', 'exterior.js']) {
+  for (const file of ['townMapHost.js', 'exterior.js']) {   // PIN MOVED (FB1020c STREETS-TAB): world.js's M key, in its module
     assert.match(host(file).text, /locationName: shownLocation,   \/\/ L10N3e: the title, as shown - the key is locationId\n\s*locationId: locId,/, `${file}'s title`);
   }
 });

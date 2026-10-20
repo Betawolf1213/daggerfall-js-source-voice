@@ -320,7 +320,10 @@ test('RR3b the hosts and the save: the four hosts bind the reader and await the 
   const w = rd('src/scenes/world.js'), e = rd('src/scenes/exterior.js');
   // AUDIT DELVE (PIN MOVED): GUIDE8's Town tier reads the town's summaries for the compass's building - a fifth site,
   // with the same location index
-  assert.equal((w.match(/locationIndex: (dfLoc|loc)\.locationIndex \?\? 0/g) ?? []).length, 5, 'world.js: the five merge sites');
+  // PIN MOVED (FB1020c STREETS-TAB): the town map's site left world.js with its group for scenes/townMapHost.js, which
+  // builds the plan for either key - four here, one there, the same location index
+  assert.equal((w.match(/locationIndex: (dfLoc|loc)\.locationIndex \?\? 0/g) ?? []).length, 4, 'world.js: four of the five merge sites');
+  assert.equal((rd('src/scenes/townMapHost.js').match(/locationIndex: dfLoc\.locationIndex \?\? 0/g) ?? []).length, 1, 'the town map\'s, the fifth');
   assert.equal((e.match(/locationIndex: dfLocation\.locationIndex \?\? 0/g) ?? []).length, 4, 'exterior.js: the four merge sites');
   assert.match(rd('src/systems/talk/talkTopics.js'), /export function mergeNamedBuildings\(exteriorBuildings, blocks, \{ locationIndex = 0 \} = \{\}\) \{/);
   assert.match(rd('src/world/buildingSummaries.js'), /mergeNamedBuildings\(exteriorBuildings \?\? \[\], blocks \?\? \[\], \{ locationIndex: nameOpts\.locationIndex \?\? 0 \}\)/);

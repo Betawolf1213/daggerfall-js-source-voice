@@ -327,6 +327,12 @@ that inks nothing.
   > system. So for now the town key opens the streets and the travel key
   > opens the bay, each with its own ladder, and the one window still
   > holds both sheets the moment that call is taken.
+  >
+  > **FB1020c STREETS-TAB (2026-10-20) took the other half:** the travel
+  > key's window holds the streets now while the player stands in a town
+  > (below). That way round needs none of the four checks - the streets
+  > are handed over after the travel key's ladder has passed. The bay
+  > from the TOWN key is still open, for the reason above.
 
   **FB1020c STAR-PLATE (2026-10-20): A PLATE THE SOLVER GIVES UP ON IS
   DFU'S "*", NEVER NOTHING.** A player's report: "citizens who mark
@@ -349,6 +355,41 @@ that inks nothing.
   `tools/mutants/fb1020c_starplate.json`. `em34.json`'s EM4-20 (below,
   one of the three recorded equivalent) is re-aimed by content at the
   star and dies now.
+
+  **FB1020c STREETS-TAB (2026-10-20): THE TRAVEL KEY'S WINDOW HOLDS THE
+  STREETS IN A TOWN.** The same report's other half. A townsperson's mark
+  is a building on the TOWN'S plan, and only the town key's window held
+  the plan: the travel key's - which the dial's Map opens too - held the
+  bay alone, so a player who looked there found no mark, however whole
+  it was. This arc's tab law already offered a town's streets beside the
+  bay and the window already held both sheets; only the travel key's door
+  handed no streets. The town map's host half left `bootWorld` for
+  `scenes/townMapHost.js` (`createTownMapHost`, by `tools/hostMove.mjs`;
+  `01-Overview/Host-Split.md`), where `townHere` builds the town the
+  player stands in once for either key: the M key's window as before
+  (`open`), and the travel key's streets
+  (`townMapHost.js:"    return { town: townSheetBag(here.deps), where: here.deps.where, openOnSheet: 'world' };"`),
+  spread into its window at the door past the whole ladder
+  (`world.js:"_travelMap = buildTravelMapWindow({ ...townMap.travelTown(), onTravel"`),
+  `{}` in the wild, indoors and in a dungeon. One bag, one home: both
+  keys' streets come off `ui/town/townMapDoor.js` `townSheetBag` - the
+  same summaries, the same discovery record, the yards laid the same -
+  so a mark is on both, plate for plate. The window opens on the bay,
+  where the travel key always has (`mapTabs.openOn('town', 'world')`),
+  the streets one tab away; `ui/map/mapStrip.js` is unchanged - its
+  narrowing reads the two sheets the window now holds. THE FOUR HOSTS:
+  `bootWorld` wired (the one door every travel-map press passes - the
+  key, the dial, the journal's Find Place, the party tab, the Overworld
+  block; the teleport, the portal stone, the driver's map and the POI
+  editor's jump are armed windows and take none); `bootExterior` has no
+  travel map (its M builds through the same door, so its streets are the
+  same bag); `createWorldModes` and `buildDungeonContext` - the travel
+  key is refused indoors and in a dungeon (IsPlayerInside), and their M
+  opens their own plans. A departure from DFU, whose travel map holds no
+  town plan - this arc's, the Enhanced skin's alone; the classic travel
+  window takes no `town` and is DFU's. Pins
+  `test/ui/town/fb1020c_streetstab.test.js` (4, one over Daggerfall);
+  mutants `tools/mutants/fb1020c_streetstab.json` (12, all dead).
 - **EM5 — the campaigns, and what only a browser can answer.** The
   campaigns are run: `tools/mutants/em1.json` (34, all dead),
   `em2.json` (29, 27 dead and 2 recorded equivalent) and `em34.json`
@@ -676,7 +717,7 @@ all.
   the party. The `?exterior` probe host hands none.
 
 Code: `ui/town/townMapMarks.js` (the rows and the reading), `ui/ink/inkTown.js` (`paintBoardMark`, `paintHomeMark`),
-`ui/town/townSheet.js`, `ui/town/townMapDoor.js`, `scenes/world.js` (`townBoardMarks`, `townHomes`). Pins:
+`ui/town/townSheet.js`, `ui/town/townMapDoor.js`, `scenes/townMapHost.js` (`townBoardMarks`, `townHomes`; out of `scenes/world.js` with STREETS-TAB). Pins:
 `test/ui/town/town_marks.test.js` (9). Mutants: `tools/mutants/town_marks.json` (35, all dead); `disc23a.json`'s breathing
 record and `survtiers3.json`'s two cite records re-aimed.
 

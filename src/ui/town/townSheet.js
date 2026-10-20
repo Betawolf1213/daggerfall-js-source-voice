@@ -201,7 +201,7 @@ export function createTownSheet(deps = {}) {
   }
 
   /** DISC23-A: the party members in the streets, in sheet space. The host hands their feet in the LOCATION's own
-   *  frame - the frame it measures the player's `local` in (scenes/world.js toggleExteriorAutomap) - so a member
+   *  frame - the frame it measures the player's `local` in (scenes/townMapHost.js townHere) - so a member
    *  crosses into the sheet by the player's own two steps: metres to layout pixels (WORLD_PER_PX, the host's
    *  townPlayer division), then +Z up (sheetY, EM-BUG3's one seam). Read fresh each paint: they walk. */
   function partyOnSheet() {

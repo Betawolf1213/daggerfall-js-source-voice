@@ -534,7 +534,7 @@ const sleeper = () => ({
   career: {}, skillUses: { [SKILLS.Medical]: 0 },
 });
 
-/** world.js:"rows: [localizedText('customName', 'Custom name: ')]"'s keydown arm, verbatim in shape: the host consumes
+/** townMapHost.js:"rows: [localizedText('customName', 'Custom name: ')]"'s keydown arm, verbatim in shape: the host consumes
  *  the press itself and hands the slot a brand-new window. */
 const openOnKeydown = (tt, win) => { tt.showOverlay(win); return win; };
 

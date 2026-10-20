@@ -129,7 +129,7 @@ test('ARENA-MAP: the name - "Arena" at the colosseum\'s place on both maps, alwa
 });
 
 test('ARENA-MAP: both exterior hosts hand the landmark on the town map\'s block rows; the interior and dungeon hosts open no town map', () => {
-  for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
+  for (const host of ['src/scenes/townMapHost.js', 'src/scenes/exterior.js']) {   // PIN MOVED (FB1020c STREETS-TAB): world.js's M key, in its module
     const s = read(host);
     assert.match(s, /import \{[^}]*\barenaTownLandmark\b[^}]*\} from '\.\.\/world\/arena\/arenaCity\.js';/, `${host} imports it`);
     assert.match(s, /blocks: (?:b\.locBlocks|loc\.blocks)\.map\(\(bl\) => \(\{ x: bl\.x, y: bl\.y, autoMap: bl\.dfBlock\?\.rmbBlock\?\.fldHeader\?\.autoMapData, landmark: arenaTownLandmark\(bl\.dfBlock\) \}\)\),/, `${host}'s town map rows`);

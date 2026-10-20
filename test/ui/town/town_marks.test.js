@@ -219,10 +219,15 @@ test('TOWN-MARKS the wiring: the door hands the marks to the enhanced town map; 
   assert.match(door, /boards: deps\.townBoards \?\? null,/);
   assert.match(door, /homes: deps\.townHomes \?\? null,/);
   assert.match(door, /homesVersion: deps\.townHomesVersion \?\? null,/);
-  const w = src('src/scenes/world.js');
+  // PIN MOVED (FB1020c STREETS-TAB): the streaming host's town map group is scenes/townMapHost.js's - the bag `townHere`
+  // builds for either key, the homes asked as the M key's window opens and as the travel key's streets are handed over
+  const w = src('src/scenes/townMapHost.js');
   assert.match(w, /townBoards: \(\) => townBoardMarks\(b\),/);
   assert.match(w, /townHomes: \(\) => townHomeRows\(\{\n\s*buildings: summaries, mapId: dfLoc\.mapTableData\?\.mapId, regionIndex: dfLoc\.regionIndex, houses: playerEntity\.houses \?\? null,\n\s*homeAt: onlineHomes \? \(mapId, buildingKey\) => \{\n\s*const h = onlineHomes\.homeAt\(mapId, buildingKey\);\n[^\n]*\n\s*return h && isVendorWaypoint\(mapId, buildingKey\) \? \{ \.\.\.h, own: false, owner: vendorWaypointLabel\(h\.owner\) \} : h;\n\s*\} : null,\n\s*\}\),/);
-  assert.match(w, /townHomesVersion: \(\) => \(onlineHomes\?\.version\(\) \?\? 0\) \+ vendorWaypointVersion\(\) \* 100_000,[^\n]*\n\s*\}\)\);\n\s*onlineHomes\?\.ensure\(dfLoc\.mapTableData\?\.mapId\);/);
+  assert.match(w, /townHomesVersion: \(\) => \(onlineHomes\?\.version\(\) \?\? 0\) \+ vendorWaypointVersion\(\) \* 100_000,[^\n]*\n\s*\} \};/);
+  assert.match(w, /townTalk\.showOverlay\(createTownMapWindow\(here\.deps\)\);\n\s*onlineHomes\?\.ensure\(here\.mapId\);/, 'the M key asks');
+  assert.match(w, /if \(!here\) return \{\};\n\s*onlineHomes\?\.ensure\(here\.mapId\);/, 'the travel key\'s streets ask too');
+  assert.match(w, /return \{ mapId: dfLoc\.mapTableData\?\.mapId, deps: \{/, 'the town\'s MapId');
   const marks = w.slice(w.indexOf('const townBoardMarks = (p) => {'));
   assert.match(marks, /^const townBoardMarks = \(p\) => \{\n\s*if \(!noticeBook \|\| noticeBook\.open !== true \|\| !p\?\.boards\?\.length \|\| !p\.location\) return \[\];\n\s*const bountyAt = boardSplitOf\(p\);\n\s*const town = noticeTownOf\(p\.px, p\.py, bountyAt\.size > 0\);\n\s*return town \? townBoardRows\(p, bountyAt, noticeBook\.unseen\(town\.mapId\)\) : \[\];/);   // ONE-BOARD REVERTED (PIN MOVED)
   // the classic exterior automap is DFU's own window: it draws DFU's marks alone
