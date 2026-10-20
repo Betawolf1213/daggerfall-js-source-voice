@@ -10,7 +10,8 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DEX_ART } from '../../../src/systems/enemyExpansion/dexArt.js';
 import { dexSpriteEntries, dexXmlScales, installDexSprites, _resetDexSprites, DEX_OWN_ART, DEX_REPAINTED_ART } from '../../../src/systems/enemyExpansion/dexSprites.js';
-import { addVendorTextures, clearVendorTextures, vendorTextureStandIn, vendorFrameCount, isVendorArchive } from '../../../src/systems/textureReplacement.js';
+import { addVendorTextures, clearVendorTextures, vendorTextureStandIn, vendorFrameCount, isVendorArchive, decodedTextureBytes, preloadTextureArchive } from '../../../src/systems/textureReplacement.js';
+import { readPng } from '../../../tools/pngIO.mjs';
 import { mobileBillboardSize } from '../../../src/world/rmbFlats.js';
 import { billboardXmlScale, unregisterBillboardXml, registerBillboardXml } from '../../../src/world/billboardXml.js';
 import { setValue } from '../../../src/systems/settings/settings.js';
@@ -143,6 +144,79 @@ test('DEX2 A STAND-IN\'S XML-SCALED SIZE IS ONE CACHED OBJECT (AUDIT DEX B7): mo
   // another record of the texture is its own entry
   assert.notEqual(mobileBillboardSize(standIn, 1), mobileBillboardSize(standIn, 0));
   assert.equal(mobileBillboardSize(standIn, 1), mobileBillboardSize(standIn, 1));
+});
+
+// AUDIT DEX B5: A MOBILE'S PICTURES ARE THE GPU'S ONCE UPLOADED. Every picture of an archive was decoded to RGBA on the CPU
+// when the archive first loaded and kept for the session - the 5,500 shipped pictures are ~350 MB of it, the classic
+// Barbarian's 1507 and 1508 86 MB the first time one is met - where DFU imports a mobile's pictures `readOnly: true`
+// (TextureReplacement.cs:574, :609): on the GPU alone. Driven through the real pipeline and the real renderer's upload
+// door (a stub context), with the shipped files decoded as the browser decodes them (disc22d_flail_icon's stub).
+const pngBytes = (file) => { const b = readFileSync(join(root, 'public', file)); return b.readUInt32BE(16) * b.readUInt32BE(20) * 4; };
+const shipped = (url) => /art\/daggerfall-enemy-expansion(?:-repainted)?\/[^/]+\.png$/.exec(url)[0];
+function uploadRenderer(Renderer) {
+  let made = 0;
+  const gl = new Proxy({}, { get: (_, k) => (k === 'createTexture' ? () => ({ id: ++made }) : typeof k === 'string' && /^[A-Z_0-9]+$/.test(k) ? 1 : () => {}) });
+  const r = Object.create(Renderer.prototype);
+  Object.assign(r, { gl, textures: new Map(), emissionTextures: new Map(), emissionWhite: new Set(), _texKeysByBase: new Map(), _texBaseOf: new Map(), _replacements: new Set(), _placeholders: new Set(), _texGen: 0, _retroMips: false });
+  return r;
+}
+const landed = async () => { for (let i = 0; i < 20; i++) await new Promise((res) => setTimeout(res, 5)); };
+
+test('DEX2 A MOBILE\'S PICTURES ARE THE GPU\'S ONCE UPLOADED (AUDIT DEX B5): the Barbarian\'s archive decoded whole at its first load (as DFU imports it) and let go of, picture by picture, as the upload takes it - 43.8 MB to none - its stand-in measuring as before; a refresh decodes none back; a frame whose GPU copy was evicted draws nothing until it is decoded again, a hit asks nothing, and an emission map comes back with its albedo (mutants: the release never made; the preload decodes the released; the pending picture uploaded; a hit decoded; the size forgotten; the map after its albedo)', async (t) => {
+  const was = { cib: globalThis.createImageBitmap, oc: globalThis.OffscreenCanvas };
+  globalThis.createImageBitmap = async (blob) => ({ ...readPng(new Uint8Array(await blob.arrayBuffer())), close() {} });
+  globalThis.OffscreenCanvas = class {
+    constructor(w, h) { this.width = w; this.height = h; }
+    getContext() { let bmp = null; return { drawImage: (b) => { bmp = b; }, getImageData: () => ({ width: bmp.width, height: bmp.height, data: new Uint8ClampedArray(bmp.data) }) }; }
+  };
+  t.after(() => { globalThis.createImageBitmap = was.cib; globalThis.OffscreenCanvas = was.oc; clearVendorTextures(); _resetDexSprites(); unregisterBillboardXml('daggerfall-enemy-expansion'); });
+  clearVendorTextures();
+  let slowMaps = false;   // an emission map's fetch held back - the albedo, asked beside it, would land first
+  installDexSprites({ fetchBytes: async (url) => {
+    if (slowMaps && /_Emission\.png$/.test(url)) await new Promise((res) => setTimeout(res, 60));
+    return new Uint8Array(readFileSync(join(root, 'public', shipped(url))));
+  } });
+  const { Renderer } = await import('../../../src/render/renderer.js');
+  const { createDataPipeline } = await import('../../../src/scenes/dataPipeline.js');
+  const r = uploadRenderer(Renderer);
+  const pipe = createDataPipeline({ renderer: r, arch: null, palette: null, fetch: async (n) => { throw new Error(`no ${n} here`); } });
+  const frames = (a) => DEX_ART[a].frames.flatMap((n, rec) => Array.from({ length: n }, (_, f) => [rec, f]));
+  const before = decodedTextureBytes();
+  const barbarian = await pipe.getTexture(1507);
+  const whole = frames(1507).reduce((n, [rec, f]) => n + pngBytes(`${DEX_OWN_ART}1507_${rec}-${f}.png`), 0);
+  assert.equal(frames(1507).length, 160);
+  assert.equal(decodedTextureBytes() - before, whole, `the first load decodes every picture DFU imports (${(whole / 1048576).toFixed(1)} MB)`);
+  const sizes = DEX_ART[1507].frames.map((_, rec) => barbarian.getSize(rec));
+  assert.ok(sizes.every((z) => z.width > 1 && z.height > 1), 'measured off its pictures');
+  for (const [rec, f] of frames(1507)) pipe.uploadRecordFrame(1507, rec, f);
+  assert.equal(r.textures.size, 160, 'every frame on the GPU');
+  assert.equal(decodedTextureBytes() - before, 0, 'and none on the CPU');
+  assert.deepEqual(DEX_ART[1507].frames.map((_, rec) => barbarian.getSize(rec)), sizes, 'the stand-in measures as before: a picture let go keeps its size');
+  await preloadTextureArchive(1507);
+  assert.equal(decodedTextureBytes() - before, 0, 'an archive\'s refresh (a tier\'s epoch moved) decodes nothing the GPU holds');
+  // PLACE-LRU let a frame's GPU copy go, and a foe draws it again
+  r.evictTexture('1507_5#3');
+  pipe.uploadRecordFrame(1507, 5, 3);
+  assert.equal(r.textures.has('1507_5#3'), false, 'on its way: nothing at its key - the draw asks again');
+  await landed();
+  assert.equal(decodedTextureBytes() - before, pngBytes(`${DEX_OWN_ART}1507_5-3.png`), 'decoded again, that frame alone');
+  pipe.uploadRecordFrame(1507, 5, 3);
+  assert.ok(r.textures.has('1507_5#3'), 'and drawn');
+  assert.equal(decodedTextureBytes() - before, 0, 'and let go');
+  pipe.uploadRecordFrame(1507, 5, 2);
+  await landed();
+  assert.equal(decodedTextureBytes() - before, 0, 'a frame the GPU holds asks no decode');
+  // an emissive archive's frame: its map evicted with it, both back together (the map decoded before its albedo)
+  await pipe.getTexture(1614);
+  for (const [rec, f] of frames(1614)) pipe.uploadRecordFrame(1614, rec, f);
+  assert.equal(decodedTextureBytes() - before, 0, 'the Hell Hound\'s pictures and maps, all on the GPU');
+  assert.ok(r.emissionTextures.has('1614_0#0'), 'its own map');
+  r.evictTexture('1614_0#0'); r.evictEmissionTexture('1614_0#0');
+  slowMaps = true;
+  for (let i = 0; i < 60 && !r.textures.has('1614_0#0'); i++) { pipe.uploadRecordFrame(1614, 0, 0); await new Promise((res) => setTimeout(res, 5)); }   // a foe drawn, frame after frame
+  assert.ok(r.textures.has('1614_0#0'), 'drawn again');
+  assert.ok(r.emissionTextures.has('1614_0#0'), 'and its map with it - never the albedo first, unlit for good');
+  assert.equal(decodedTextureBytes() - before, 0);
 });
 
 test('DEX2 the install registers the pictures at Start, whatever the switch; a frame\'s emission map rides beside it in the pipeline (by source)', () => {

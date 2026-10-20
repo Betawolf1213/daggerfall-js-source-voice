@@ -148,5 +148,75 @@
   "tests": [
    "test/systems/enemyExpansion/dex2_sprites.test.js"
   ]
+ },
+ {
+  "name": "DEX2-a-readonly-picture-kept",
+  "file": "src/systems/textureReplacement.js",
+  "old": "  if (pic) { const e = liveEntry(key); if (e?.readOnly) release(key, e, pic); }",
+  "new": "",
+  "why": "AUDIT DEX B5: every picture an archive decoded stays on the CPU for the session (DFU imports a mobile's readOnly)",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ },
+ {
+  "name": "DEX2-the-preload-decodes-the-released",
+  "file": "src/systems/textureReplacement.js",
+  "old": "!decodedFrom(key, entry) && !releasedFrom(key, entry)) todo.push([key, entry]);",
+  "new": "!decodedFrom(key, entry)) todo.push([key, entry]);",
+  "why": "AUDIT DEX B5: an archive's refresh decodes back every picture the GPU already holds",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ },
+ {
+  "name": "DEX2-the-pending-picture-uploaded",
+  "file": "src/render/renderer.js",
+  "old": "    if (color32?.pending) { if (!this.textures.has(key)) color32.pending(); return this.textures.get(key) ?? null; }\n",
+  "new": "",
+  "why": "AUDIT DEX B5: a frame on its way stands as a clear texel at its key for good",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ },
+ {
+  "name": "DEX2-a-hit-decodes",
+  "file": "src/render/renderer.js",
+  "old": "    if (color32?.pending) { if (!this.textures.has(key)) color32.pending();",
+  "new": "    if (color32?.pending) { color32.pending();",
+  "why": "AUDIT DEX B5: an upload of a frame the GPU holds decodes its picture back onto the CPU",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ },
+ {
+  "name": "DEX2-a-released-size-forgotten",
+  "file": "src/systems/textureReplacement.js",
+  "old": "  const size = (record) => { const d = measuredOf(archive, record);",
+  "new": "  const size = (record) => { const d = decodedOf(archive, record);",
+  "why": "AUDIT DEX B5: a stand-in whose pictures went to the GPU measures 1x1",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ },
+ {
+  "name": "DEX2-the-map-after-its-albedo",
+  "file": "src/systems/textureReplacement.js",
+  "old": "      lit.then(() => preloadTextureRecord(archive, record, frame));",
+  "new": "      preloadTextureRecord(archive, record, frame);",
+  "why": "AUDIT DEX B5: an evicted frame's albedo lands before its emission map and is uploaded unlit for good",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ },
+ {
+  "name": "DEX2-another-records-picture-on-a-miss",
+  "file": "src/systems/textureReplacement.js",
+  "old": "      if (_vendor.get(key)?.readOnly) return _decoded.get(key) ?? pendingPicture(archive, r, f);\n",
+  "new": "",
+  "why": "AUDIT DEX B5: a readOnly frame asked again answers another record's picture (or nothing, and the upload throws)",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
  }
 ]

@@ -34,7 +34,11 @@ async function fetchPng(url) {
   return new Uint8Array(await r.arrayBuffer());
 }
 
-/** Every picture the mod's tables draw, as texture-door entries: `{ archive, record, frame, map, standIn, load | build }`. */
+/** Every picture the mod's tables draw, as texture-door entries: `{ archive, record, frame, map, standIn, readOnly, load | build }`.
+ *  AUDIT DEX B5: `readOnly`, as DFU imports a mobile's pictures (GetMobileBillboardMaterial's LoadFromCacheOrImport(...,
+ *  readOnly: true), TextureReplacement.cs:574, :609) - on the GPU alone once uploaded. The 5,500 shipped pictures are ~350 MB
+ *  of RGBA, and every one an archive decoded stayed on the CPU for the session (the classic Barbarian's 1507 and 1508,
+ *  86 MB, the first time one was met); the door lets each go as the upload takes it (systems/textureReplacement.js). */
 export function dexSpriteEntries({ fetchBytes = fetchPng } = {}) {
   const out = [];
   for (const [a, art] of Object.entries(DEX_ART)) {
@@ -45,10 +49,10 @@ export function dexSpriteEntries({ fetchBytes = fetchPng } = {}) {
       const maps = new Set(art.emissive?.[record] ?? []);
       for (let frame = 0; frame < n; frame++) {
         const name = `${archive}_${record}-${frame}`;
-        out.push({ archive, record, frame, map: 'Albedo', standIn: true, fileName: name, ...source(name) });
+        out.push({ archive, record, frame, map: 'Albedo', standIn: true, readOnly: true, fileName: name, ...source(name) });
         // the emission: the frame's own map, or - the archive's xml asking for emission - its albedo, lit
-        if (maps.has(frame)) out.push({ archive, record, frame, map: 'Emission', standIn: true, fileName: `${name}_Emission`, ...source(`${name}_Emission`) });
-        else if (art.emission) out.push({ archive, record, frame, map: 'Emission', standIn: true, fileName: `${name}_Emission`, ...source(name) });
+        if (maps.has(frame)) out.push({ archive, record, frame, map: 'Emission', standIn: true, readOnly: true, fileName: `${name}_Emission`, ...source(`${name}_Emission`) });
+        else if (art.emission) out.push({ archive, record, frame, map: 'Emission', standIn: true, readOnly: true, fileName: `${name}_Emission`, ...source(name) });
       }
     });
   }
