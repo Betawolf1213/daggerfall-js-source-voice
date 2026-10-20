@@ -3326,7 +3326,8 @@ the Cloudflare token: "Use it", then "Do everything. No band aids. No short fixe
 - **LEAN-WITNESS** (`server-account/src/leanWitness.js`, migration 0134): an answer that agrees with its key's
   confirmation and was given in a later second than it is LATE - `world_witness.late`, kept by the database itself:
   `witness_confirmed` holds each hall's and seat's confirmation (its answer and the second its third agreeing account
-  gave it, ordered by second and account as witnessedFact orders them; NULL both while the key confirms nothing). The
+  gave it, ordered by second and account as witnessedFact orders them; NULL both, or no row, while the key confirms
+  nothing). The
   proof that a late row changes nothing the law reads: witnessedFact counts after its confirmation only the answers that
   differ, and every row up to the confirming one is not late; seatIgnoredAccounts never counts an agreeing answer, nor
   lets one count toward another's givers; and where no ignored account answered a key among its rows that are not late,
@@ -3335,7 +3336,9 @@ the Cloudflare token: "Use it", then "Do everything. No band aids. No short fixe
   since twice SEAT_WITNESS_IGNORED_S (none on the day; `idx_world_witness_account`, which the account's ON DELETE
   CASCADE lacked too), and then reads the region's rows that are not late (some 1,050 for the Daggerfall region,
   measured on a copy of the day's shape, where it read 48,000); a report that lands late moves no region's version, so
-  no reader computes the chapters again for it; the seats' clock, the isolate's fallback and the Turning read the judged
+  no reader computes the chapters again for it - unless one of its town's confirmers may be ignored (`mayBeIgnored`'s
+  count, asked of those few accounts alone: the law leaves such a confirmer out, and the late report may be the third
+  the town's confirmation then rests on - AUDIT LEAN-READS 2 A2); the seats' clock, the isolate's fallback and the Turning read the judged
   rows. The audit lists (a developer's listHalls and listSeats) read every row - their witnesses and "exactly three"
   count the late ones. The migration's backfill was timed on a production-shaped copy (2,902 accounts, 2,425 towns one of
   1,516, 1,204 seats, 67,000 pixel rows): 390 ms.
@@ -3349,28 +3352,49 @@ the Cloudflare token: "Use it", then "Do everything. No band aids. No short fixe
   confirmer gone, the answer's third is the first late row at the latest, and every other answer's rows are none of them
   late. A confirmation moved moves the late rows by their index ranges (`witness_confirmed_moved`: its own answer's rows
   up to its second back, of a later second late; `witness_confirmed_turned`: the old answer's back where it turned). A
-  key's 1,516 answers deleted in one statement - a strike, the old Worker's - now write some 4,500 rows in 28 ms on a
+  key's 1,516 agreeing answers deleted in one statement - the old Worker's strike - write some 4,500 rows in 28 ms on a
   production-shaped copy, where they rewrote 3.6 million (5.8-8.8 s, some 25 s on D1); a late answer into a 4,000-row
-  key costs 0.045 ms, where it walked the key (0.28 ms, growing with it). Strikes are a plain delete again. The lean
-  indexes hold the two kinds' rows alone (`LEAN_ROWS`, which every read that judges repeats term for term - SQLite takes
-  a partial index for no other), so a harvest's pixel row writes neither.
+  key costs some 0.015-0.045 ms, where it walked the key (0.28 ms, growing with it). A STRIKE (AUDIT LEAN-READS 2 A1/D1,
+  `leanWitness.js` strikeWitness) is three statements: the key's late rows (none a confirmer, their going fires nothing),
+  its confirmation emptied, then the rest - every row deleted once, none rewritten. One DELETE fires its rows' triggers
+  in rowid order, the order the answers came in, and where two answers' rows lie interleaved (a disputed or split key:
+  the keys a developer strikes) each confirmer's going turned the confirmation over and moved half the key - 1,516 rows
+  wrote 1.1 million, 2.6-4 s, some 13-20 s on D1. EACH TRIGGER READ NAMES ITS INDEX (A3: with ANALYZE's statistics the
+  planner takes the table's key index over the partial ones - pixels make the average key three rows - and every settle
+  walks its key again; INDEXED BY holds the plan whatever the statistics). An answer is never rewritten in place
+  (`witness_lean_fixed` refuses an UPDATE of its key, account, answer or second - no trigger would hear it), and a
+  key's confirmation row is made by a statement no outer conflict policy can turn (A4). The lean indexes hold the two
+  kinds' rows alone (`LEAN_ROWS`, which every read that judges repeats term for term - SQLite takes a partial index for
+  no other), so a harvest's pixel row writes neither (it writes `idx_world_witness_account`, which the cascade wanted).
 - **YARD-SNAP** (`decor.js` yardsOf, settleYards, settleStaleYards; migration 0135): `home_yards` keeps each town's yard
-  rows as the read takes them, built at a version the database moves on every yard row written - a route, a home
-  released, an account gone, a sweep (three triggers) - and in a SHAPE (`YARD_SNAP_SHAPE`, keptBoard.js: the build's
-  columns, order and bound). A read is one row while it is its version's and the code's shape, and the rows as they stand
-  while it is not - never an answer older than the rows, never another deploy's build. A decor route builds its town as
+  rows as the read takes them, built at the version `home_yards_ver` holds - a number the database moves on every yard
+  row written (a route, a home released, an account gone, a sweep: three triggers), in a narrow row of its own so a write
+  never rewrites the kept rows (AUDIT LEAN-READS 2 B3) - and in a SHAPE (`YARD_SNAP_SHAPE`, keptBoard.js: the read whole,
+  which the build and the read of an unbuilt town share, and the bound - 2 B5). A read is one row while it is its
+  version's and the code's shape, and the rows as they stand while it is not - never an answer older than the rows,
+  never another deploy's build. Rows past KEPT_BOARD_MAX_BYTES are kept as none and read as they stand, said once an
+  isolate (2 B7: a row past D1's 2 MB would refuse the clock's whole page). A town standing yard pieces with no version
+  row is read as it stands (one index probe asked of such a town alone), and its next yard write of any kind makes the
+  row - past any version its rows were kept at, so a version row lost and counted again never meets old rows (2 B4). A decor route builds its town as
   it answers; the minute's clock (`yard-snap`) builds YARDS_SETTLE_A_MINUTE towns a cascade left stale or a deploy left in
   another shape. The build reads in `idx_home_decor_yard_order`'s order, no sort; 0039's `idx_home_decor_yard`, its
   prefix, is dropped. The backfill builds every town in today's shape, so the deploy reads them at once.
 - **VENDOR-BOARD** (`market.js` vendorBoard, migration 0136): the region's board every caller reads alike is one row,
-  kept at a version the database moves on every write of a column the board reads - a trader listing's (its bookkeeping,
-  the hour's patron mark and the board's pixel, moves nothing), a trader piece's, a trader's house's (made, changed or
-  released), a patron's sale - in the reads' shape, and served to a caller whose second is between the second it was
-  read at (`built_at`) and its first listing's end (`until`); a patron's sale past its day is filtered on the way out.
-  The caller's own door - its own house, its guild's, a room it rents - is read off its own two rows in one batch, before
-  the board. A missing row is version 0; the read writes nothing before its reads, and keeps its board last - only where
-  the version is still the one it read and no board of that version and shape serves its second already, so a slow
-  reader never puts an older board over a newer and readers that missed together write it once. The next listing to run
+  kept at the version `market_vendor_ver` holds - a narrow row of its own (AUDIT LEAN-READS 2 B3), which the database
+  moves on every write of a column the board reads: a trader listing's (its bookkeeping, the hour's patron mark and the
+  board's pixel, moves nothing), a trader piece's, a trader's house's (made, changed - its heir's character too - or
+  released), a patron's sale - in its shape (the reads, their bounds' read and the seconds it spans, the text: 2 B5),
+  and served to a caller whose second is between `since` and `until` (`vendorSpan`): `until` its first listing's end;
+  `since` (2 B2) the last second before its read at which an answer would have differed - the last listing to run out
+  by the read, and the last patron's sale to leave the day where the board tells fewer than it may - so a caller whose
+  clock was taken before the read, as an overload's are, is served it too (with a 10 s lag, 3-19% of the reads were
+  read again for nothing). A patron's sale past its day is filtered on the way out. The caller's own door - its own
+  house, its guild's, a room it rents - is read off its own two rows in one batch, before the board. The read writes
+  nothing before its reads, and keeps its board last - only where the version row still holds the version it read (a
+  region with no version row is read every time and kept never: the migration makes one for every region a board can
+  name, a trigger for any other at its first write, past any version a board of it was kept at - 2 B4) and no board of
+  that version and shape is kept for its second or a later one, so a slow or lagging reader never puts an older board
+  over a newer and readers that missed together write it once. The next listing to run
   out has its index (`idx_market_vendor_expiry`). A piece whose place is not JSON never has its write refused by a
   trigger asking its station (`json_valid` first).
 - **WRIT-BOARD** (`professions.js`, migration 0137): one index, `idx_writs_owner (day, owner, region, kind, faction)`:
@@ -3381,34 +3405,54 @@ the Cloudflare token: "Use it", then "Do everything. No band aids. No short fixe
   rated board, the climb, the fastest, two seasons' standings, both rosters, the banners' members - one row a season,
   counted in one batch where they were ten trips, kept at the arena's one version (`arena_board_ver`), which the database
   moves on every bout, void, account gone and banner joined or left, and in the counts' shape; kept after the caller's
-  ladder, rating, banner and bouts are read, only where the version is the one counted and no board of it is kept.
+  ladder, rating, banner and bouts are read, only where the version is the one counted and no board of it is kept. The
+  row keeps the reads' rows alone - the banners' points are worked out on the way out (AUDIT LEAN-READS 2 B5: a
+  worked-out count was JavaScript no shape hashes).
 - **SLOW-SHED** (`service.js` noteD1Wait, `metrics.js` measured, `accountClient.js` call): each isolate keeps the last
   SLOW_SHED_SPAN_MS (30 s) of its requests' D1 waits over their round trips (a statement awaited, or a batch whole - the
   queue's unit), each trip counting SLOW_SHED_TRIP_CAP_MS (5 s) at most; while SLOW_SHED_MIN (16) or more of them average
   SLOW_SHED_WAIT_MS (1,000 ms - above every healthy point, below every overload) a trip, each request itself that slow
   opens what an overload opens (noteOverload: the BUSY reads answered `server` 503 with their Retry-After, no statement)
   and says so in the log as it opens; it closes BUSY_SHED_MS after the last slow one. And the page takes a BUSY read that
-  timed out as the overload's word: its reads stand back - a stall once, however many reads it caught, the wait doubling
-  while they keep timing out after it - never an act's, a sign-in's or a write's, never a call the player's own line
-  could not make.
+  timed out as the overload's word: its reads stand back - a stall once, however many reads it caught (a read sent
+  while a hold ran is that hold's, whenever it times out - AUDIT LEAN-READS 2 C6; the 503s the shed gives the reads out
+  together, one word - C2), the wait doubling while reads sent after it keep timing out - never an act's, a sign-in's or
+  a write's, never a call the player's own line could not make. Each trip is capped where it is measured (2 C1: one
+  stalled trip among nine quick ones counted its whole 25 s under a cap of the request's), a trip that throws counts
+  (C8), and the window keeps running sums (C10).
 - **KEPT-BOARD** (`server-account/src/keptBoard.js`): the three boards' shape (`shapeOf`: FNV-1a over their reads' text
   and bounds) and their bound in bytes (`KEPT_BOARD_MAX_BYTES`, 1,500,000 of D1's 2,000,000 a row - a board past it is
   read every time, as before, and the log says so once an isolate).
 
 ### Deploying it
 
-- The migrations run before the new Worker; the old Worker (acct158) works on the new schema - it reads none of the new
-  columns, and the triggers keep every new table through its writes, its strikes among them (a plain delete settles a
-  confirmer at a time). Rollback is Worker-first: acct158 may stand on these migrations for as long as it must. The
-  reverse is not safe - dropping the triggers while acct161 runs leaves `late`, the confirmations and the three boards
-  stale; and a Time Travel restore to the bookmark the deploy prints, with acct161 still live, takes away tables it reads
-  (500s): put the code back first, then restore, then redeploy - from the reverted tree, or the deploy applies 0134-0138
-  again (AUDIT LEAN-READS D6).
-- 0137 builds one index over `writs` - some 862,000 rows live (`MAX(rowid)`, 2026-10-20): 0.6 s on a copy of that size,
-  an estimated 2.5-3 s holding the primary on D1 (4-5 times a local statement, measured on the same reads). Merge it
-  outside the evening's peak. 0134's backfill: 390 ms on the day's shape.
-- The deploy's smoke reads the three kept boards on D1 itself - a town's yards and the arena's board as its guest, the
-  region's traders as its registered account (D7).
+- The migrations run before the new Worker; the old Worker (acct160, live on 2026-10-20 - AUDIT LEAN-READS 2 C7/D6)
+  works on the new schema - it reads none of the new columns, and the triggers keep every new table through its writes,
+  its strikes among them. One thing it must not do there: STRIKE A DISPUTED OR SPLIT KEY - its strike is one DELETE,
+  which turns such a key's confirmation over at each confirmer (2 A1/D1: 1,516 rows some 13-20 s on D1); a key whose
+  answers agree costs 28 ms. No strike between the migrations and the Worker, nor after a rollback. Rollback is
+  Worker-first: acct160 may stand on these migrations for as long as it must, the triggers moving every version; acct161
+  reads what it finds there as stale when it returns. The reverse is not safe - dropping the triggers while acct161 runs
+  leaves `late`, the confirmations and the three boards stale. A Time Travel restore to the bookmark the deploy prints
+  takes away every player's write since it, not the migrations alone: once acct160 is live again, a forward migration
+  that drops the new triggers, tables and column undoes them and loses nothing (these migrations only add). And with
+  acct161 still live a restore takes away tables it reads (500s): put the code back first, then restore, then redeploy -
+  from the reverted tree, or the deploy applies 0134-0138 again (D6). A migration recorded in `d1_migrations` is never
+  applied again: a fix to one of these files once it has run is a new migration.
+- The migrations hold the primary in separate requests (2 D3, measured on a production-shaped copy of every table they
+  touch, D1 4-5 times a local statement): 0134 535 ms (its backfill 341, its four indexes 144: some 2.1-2.7 s on D1,
+  11.2 MB written), 0135 83 ms, 0136 9 ms, 0137 0.6 s (some 2.5-3.1 s on D1), 0138 10 ms - some 5-6 s in all. Merge it
+  outside the evening's peak. 0137's index over `writs` (some 862,000 rows live, `MAX(rowid)`, 2026-10-20), measured on
+  workerd itself (2 D2, wrangler 4.151.2's): workerd builds SQLite with TEMP_STORE=1, so the sort spills to temporary
+  files - its memory +4 MB at 860,000 rows and at 1.7 million alike, its spill some 37 MB (74 MB at twice the rows), and
+  D1 meters a database's SQLite memory apart from the isolate's. Not checkable off the platform: whether D1's own storage
+  keeps those temporary files in memory - at worst some 37 MB today.
+- The deploy's smoke reads the three kept boards on D1 itself - a town that stands yards and the arena's board as its
+  guest, the region's traders as its registered account (D7) - and asks D1 whether each is kept (2 C3). A BUSY read the
+  shed answered 503 through all seven tries is said and passed: SLOW-SHED sheds on slowness alone, and the deploy's
+  Worker had taken (2 D5).
+- A read replica that has not yet replayed a migration answers its tables "no such table" (500) for the moments it lags
+  (2 D7): the relay's wait and `wrangler deploy` cover them, as for every migration before.
 
 ### Left, each with its reason
 
@@ -3425,6 +3469,13 @@ the Cloudflare token: "Use it", then "Do everything. No band aids. No short fixe
   time, as before - the log says so. Live, 2026-10-20: 13,051 ladder bouts in all, 230 banner members - far under it.
 - **The writs never swept**: no code deletes a writ, so `writs` grows by its days (some 862,000 rows); every read is by
   its day now, so the growth costs storage and a future index's build, not a read. A sweep is a retention call.
+- **The old Worker's strike of a disputed key** (AUDIT LEAN-READS 2 A1/D1): one DELETE, quadratic in such a key -
+  acct160 cannot be changed; no strike while it runs on this schema (Deploying it).
+- **D1's own temporary storage** (2 D2): whether D1 keeps SQLite's temporary files in memory is not public; workerd
+  spills 0137's sort to them - some 37 MB today, at worst in memory.
+- **A version row deleted by hand** (2 B4): never stale - a board with no version row is never served, and the row is
+  made again past any version kept - but slow until the region's or town's next write; and the arena's one version
+  row, deleted, keeps no board until it is made again (only a migration makes it).
 - **A rebuild of world_witness** (as five migrations rebuilt it to admit a kind) drops `late`, its indexes and its
   triggers: carried in the same migration, and `lean_witness.test.js` fails a tree whose migrations end without them;
   `vendor_board.test.js` fails a later migration that drops a table the board's triggers stand on. A row the triggers
@@ -3471,6 +3522,58 @@ finding below is fixed and pinned, or answered with its reason.
 | D5 | A read on a replica's session wrote first (the region's first read made its row) and read after its keep | no write before the reads; the keep after the caller's own reads | VENDORB-read-writes-first, VENDORB-keep-before-caller, ARENAB-keep-before-caller |
 | D6 | Rollback and restore order unwritten | Deploying it, above | - |
 | D7 | The deploy's smoke read none of the changed routes | it reads the yards, the arena's board and the traders on D1 | `home2` the smoke's routes |
+
+### AUDIT LEAN-READS 2 (2026-10-20) - the owner: "Audit this"
+
+Four cold lanes again, over the branch as audit one left it (acct161, 0134-0138): A LEAN-WITNESS (a fuzzer of some 420,000
+operations through the real migration on node:sqlite and 900 on workerd's own D1 engine, every confirmation and late flag
+held to the law after every statement: no mismatch); B the kept boards (three differential oracles against the code
+before this branch - 108,000, 7,200 and 13,500 comparisons: no mismatch); C SLOW-SHED and the pins; D the deploy, D1 and
+production (every migration and trigger statement planned on a copy filled to the live sizes, the old Worker's 508
+statements planned before and after: none worse). What they found is cost, robustness and test strength - each fixed and
+pinned, or answered with its reason.
+
+| # | Found | Fixed | Pin |
+|---|---|---|---|
+| A1, D1 | A strike of a key whose answers lie interleaved - split between two, or disputed: the keys a developer strikes - turned its confirmation over at each confirmer (one DELETE fires in rowid order, the answers' own): 1,516 rows wrote 1.1 million, 2.6-4 s, some 13-20 s on D1. Audit one's pin had 2% dissents | `strikeWitness`: the late rows, then the confirmation emptied, then the rest - each row deleted once, none rewritten (13-28 ms); the old Worker's window: no strike (Deploying it) | `lean_witness` interleaved strikes (split, disputed, a dissent among the late: N + 8 rows at most); LEANW2-strike-late-not-first, -confirmation-kept |
+| A2 | A late report whose town rests on a confirmer the law may ignore moved no region's version: the chapters stayed without the town's faction until another report came | the bump asks the town's confirmers' counts (mayBeIgnored's: a few accounts' own rows) | `lean_witness` a liar among the confirmers; LEANW2-confirmers-unasked, -dissent-for-confirmer, -confirmer-window-shut |
+| A3 | With ANALYZE's statistics the triggers' reads took the key index - pixels make a key three rows: a 10,000-row town's strike 0.2 s to 12 s. D1 keeps none today; its own guide says to run PRAGMA optimize | every trigger read names its index (an UPDATE through a rowid read that does) | `lean_witness` the plans under statistics, against the unnamed reads they turn; LEANW2-*-unnamed (9) |
+| A4 | An outer OR ABORT, OR FAIL or OR ROLLBACK is every trigger statement's: the key's row refused every answer after a key's first (OR FAIL left it in, unsettled); an UPDATE of an answer fired nothing | the key's row made by an INSERT no policy turns; `witness_lean_fixed` refuses a rewrite; the REPLACE grep reads quoted and schema-named tables | `lean_witness` schema: every policy, the rewrites refused; LEANW2-key-row-conflicts, -rewrite-unrefused |
+| A5 | Answers sharing one second cost quadratically - 2,000 agreeing in a second 3.2 s | answered: a second's answers are as many accounts' in that second, implausible at any rate the service answers | - |
+| A6 | The backfill makes no row for a key that confirms nothing; "a handful a key" is not a disputed key's; a late answer costs 0.015-0.019 ms | the header and this page say so (a missing row and a NULL one are read alike, fuzzed) | - |
+| B1 | The vendor oracle never wrote an heir's house (its char_id), never deleted a trader or a listing outright, read at one clock - three trigger mutants survived it | every write the board reads and the regions it moves pinned by name; the oracle writes them and reads at lagging clocks | `vendor_board` every write; VENDORB2-house-char-unwatched, -trader-out-unmoved, -unlisted-unmoved |
+| B2 | A board read at a second later than a caller's served no lagging caller: with a 10 s lag, the overload's, 3-19% of the reads read the board again | `since`, the last second an answer would have differed (vendorSpan) | `vendor_board` the span; VENDORB2-gone-unread, -told-unread, -told-when-full |
+| B3 | The version shared the kept row: every write rewrote the whole board - a busy region's 354 KB, the city's yards 374 KB (a yard write 0.06 to 0.48 ms) | the versions narrow rows of their own: `home_yards_ver`, `market_vendor_ver` | `yard_snap`, `vendor_board`: no version in a kept row, a write's two rows |
+| B4 | A version row deleted between a read and its keep kept a board read before a write; a town's row lost hid its yards; a version counted again from 1 could meet a board kept at 1 | no version row: read every time, kept never; a town with yard pieces and none read as it stands; a version row made past any version kept | `yard_snap`, `vendor_board` B4; YARDSNAP2-orphan-unasked, -out-version-unmade, -version-made-at-one, VENDORB2-version-made-at-one |
+| B5 | Each shape missed part of what made its row: the traders' bounds and seconds, the yards' WHERE and a fallback read written apart, the arena's worked-out standings | the traders' shape its bounds' read, seconds and text; the yards' the read whole, the build's and the fallback's one text; the arena keeps the reads' rows alone | the three shapes; YARDSNAP-shape-parts, VENDORB2-shape-parts, ARENAB2-standings-kept-worked |
+| B6 | `json_valid` is strict where `json_extract` reads JSON5: a JSON5 trader's place moves no version | answered: every place is written by JSON.stringify (decor.js placeJson) | - |
+| B7 | The yards' build had no byte bound (the city 374 KB; 988 KB at the decor law's widest pieces): past D1's 2 MB a row refuses the clock's whole page | no rows kept past KEPT_BOARD_MAX_BYTES - read as they stand, said once; REALs print to 15 digits, and no yard column holds one | `yard_snap` B7; YARDSNAP2-bound-unkept, -past-unsaid |
+| B8 | A REPLACE into `homes` that changes its region leaves the old region's board | answered: a house's region is its map's, and no source REPLACEs a kept table (A4's grep) | - |
+| C1 | The trip cap was the request's: one stalled 25 s trip among nine quick ones counted whole | each trip capped where it is measured; a caller handing the whole held to its trips' caps | `slow_shed`; SLOWSHED-cap-per-request |
+| C2 | The 503s the shed gave a burst of reads each doubled the page's hold | one burst is one word | SLOWSHED-client-burst-each |
+| C3 | The smoke read the boards and never asked D1 whether they were kept (a refused keep is caught) | it asks D1 each board's kept row, three times | `home2` the smoke |
+| C4 | A lone slow window opens the shed | answered, measured: the service's own 30 s windows over three days - 342 of 8,640 over the line, 266 of them in 12 slowdowns of 2.5 minutes or more (10-18 01:49 for 15 minutes, up to 5,216 ms a statement; 14:18 for 31; each night's 00:00, below); the 41 lone windows some 0.6% of the time, each at some 1 s a statement where the healthy median is 89 ms | - |
+| C5 | The pin's clock was the machine's | the pin's own | `slow_shed` |
+| C6 | A read sent while a hold ran, timing out after it, doubled the hold again | a read counts only where it was sent after the hold | SLOWSHED-client-late-read-counted |
+| C7 | Deploying it named acct158 as the old Worker | acct160 | - |
+| C8 | A trip that threw was never counted | counted as it ends, whatever it answered | SLOWSHED-trip-only-where-answered |
+| C9 | An invocation the platform cancels never reaches the shed's ear | answered: the requests that finish open it - an overload's are slow, not cancelled alone | - |
+| C10 | The window was summed again on every request | running sums | SLOWSHED-sums-keep-the-gone |
+| C11 | A fresh isolate sheds nothing before its sixteenth request | answered: the floor is what keeps one heavy request from shedding, and a fresh isolate's first requests are answered as every isolate's were before | - |
+| D2 | 0137's index build might hold its sort in memory (node:sqlite with its temp store in memory: +65 MB) | measured on workerd: TEMP_STORE=1, +4 MB at any size (Deploying it) | - |
+| D3 | Deploying it named 0137's hold alone; 0134's is as long | every file's hold | - |
+| D4 | A pixel row writes the account index too; a late answer three index rows | answered: the cascade's index and the late flag's price, said above | - |
+| D5 | The smoke failed a healthy deploy on a BUSY read shed through seven tries, and read the yards of a town with none | a shed read said and passed; a town that stands yards | `home2` the smoke |
+| D6 | The restore advice named acct158, no word of the writes a restore takes, nor of a forward migration | Deploying it | - |
+| D7 | A replica that has not replayed a migration answers 500 for its moments | answered: as for every migration (Deploying it) | - |
+
+**Each night's 00:00, read while answering C4** (D1's query insights, 2026-10-20 00:00-00:18 against 23:30-23:48;
+the service's clock jobs by the minute): the median request went from some 250 ms to 2-10 s and a statement's wait from
+some 100 ms to 1,400-4,800 for 18 minutes. The costliest statements were the seats' every-row read - 310 times, 33,615
+rows each (63 s), where the minute's clock reads it once: the isolates that took a witness's report read the rows until
+the clock keeps the facts after it, and the clock's keep itself took 19-25 s - the traders' board (3,257 reads, 53 s)
+and the yards (5,502 reads, 42 s). This branch reads the seats' judged rows there (some 3,700 on the day's copy, lane D),
+the traders' and the yards' kept rows.
 
 ### Pins
 

@@ -12,8 +12,8 @@
  {
   "name": "SLOWSHED-threshold-side",
   "file": "server-account/src/service.js",
-  "old": "  if (all / asked < SLOW_SHED_WAIT_MS) return;",
-  "new": "  if (all / asked <= SLOW_SHED_WAIT_MS) return;",
+  "old": "  if (slowSum.ms / slowSum.trips < SLOW_SHED_WAIT_MS) return;",
+  "new": "  if (slowSum.ms / slowSum.trips <= SLOW_SHED_WAIT_MS) return;",
   "tests": [
    "test/net/slow_shed.test.js"
   ],
@@ -22,8 +22,8 @@
  {
   "name": "SLOWSHED-span",
   "file": "server-account/src/service.js",
-  "old": "  while (slowWaits.length && nowMs - slowWaits[0].at > SLOW_SHED_SPAN_MS) slowWaits.shift();",
-  "new": "  while (slowWaits.length && nowMs - slowWaits[0].at > 10 * SLOW_SHED_SPAN_MS) slowWaits.shift();",
+  "old": "  while (slowWaits.length && nowMs - slowWaits[0].at > SLOW_SHED_SPAN_MS) {",
+  "new": "  while (slowWaits.length && nowMs - slowWaits[0].at > 10 * SLOW_SHED_SPAN_MS) {",
   "tests": [
    "test/net/slow_shed.test.js"
   ],
@@ -32,8 +32,8 @@
  {
   "name": "SLOWSHED-unweighted",
   "file": "server-account/src/service.js",
-  "old": "  for (const w of slowWaits) { all += w.ms; asked += w.trips; }",
-  "new": "  for (const w of slowWaits) { all += w.ms / w.trips; asked += 1; }",
+  "old": "  slowSum.ms += waited;\n  slowSum.trips += trips;",
+  "new": "  slowSum.ms += waited / trips;\n  slowSum.trips += 1;",
   "tests": [
    "test/net/slow_shed.test.js"
   ],
@@ -92,7 +92,7 @@
  {
   "name": "SLOWSHED-wait-unheard",
   "file": "server-account/src/metrics.js",
-  "old": "  noteD1Wait(tally.ms, tally.trips, Date.now());   // SLOW-SHED: the isolate's shed hears how long the database made it wait, a trip at a time\n",
+  "old": "  noteD1Wait(tally.capped, tally.trips, Date.now());   // SLOW-SHED: the isolate's shed hears how long the database made it wait, a trip at a time\n",
   "new": "",
   "tests": [
    "test/net/slow_shed.test.js"
@@ -102,8 +102,8 @@
  {
   "name": "SLOWSHED-by-statements",
   "file": "server-account/src/metrics.js",
-  "old": "  noteD1Wait(tally.ms, tally.trips, Date.now());",
-  "new": "  noteD1Wait(tally.ms, tally.n, Date.now());",
+  "old": "  noteD1Wait(tally.capped, tally.trips, Date.now());",
+  "new": "  noteD1Wait(tally.capped, tally.n, Date.now());",
   "tests": [
    "test/net/slow_shed.test.js"
   ],
@@ -112,8 +112,8 @@
  {
   "name": "SLOWSHED-batch-untripped",
   "file": "server-account/src/metrics.js",
-  "old": "          } finally { add(tally, 'ms', Date.now() - started); add(tally, 'trips', 1); }   // SLOW-SHED (AUDIT LEAN-READS C1): and a batch one, whatever it carries",
-  "new": "          } finally { add(tally, 'ms', Date.now() - started); }   // SLOW-SHED (AUDIT LEAN-READS C1): and a batch one, whatever it carries",
+  "old": "          } finally { tripDone(tally, Date.now() - started); }   // SLOW-SHED (AUDIT LEAN-READS C1): and a batch one, whatever it carries",
+  "new": "          } finally { add(tally, 'ms', Date.now() - started); add(tally, 'capped', Date.now() - started); }   // SLOW-SHED (AUDIT LEAN-READS C1): and a batch one, whatever it carries",
   "tests": [
    "test/net/slow_shed.test.js"
   ],
@@ -122,8 +122,8 @@
  {
   "name": "SLOWSHED-statement-untripped",
   "file": "server-account/src/metrics.js",
-  "old": "          } finally { add(tally, 'ms', Date.now() - started); add(tally, 'trips', 1); }   // SLOW-SHED (AUDIT LEAN-READS C1): a statement awaited is a trip",
-  "new": "          } finally { add(tally, 'ms', Date.now() - started); }   // SLOW-SHED (AUDIT LEAN-READS C1): a statement awaited is a trip",
+  "old": "          } finally { tripDone(tally, Date.now() - started); }   // SLOW-SHED (AUDIT LEAN-READS C1): a statement awaited is a trip",
+  "new": "          } finally { add(tally, 'ms', Date.now() - started); add(tally, 'capped', Date.now() - started); }   // SLOW-SHED (AUDIT LEAN-READS C1): a statement awaited is a trip",
   "tests": [
    "test/net/slow_shed.test.js"
   ],
@@ -132,8 +132,8 @@
  {
   "name": "SLOWSHED-client-timeout-unheard",
   "file": "src/net/accountClient.js",
-  "old": "    if (e?.name === 'TimeoutError' && busyRead(path, method) && now() >= _busy.until) {",
-  "new": "    if (false && busyRead(path, method) && now() >= _busy.until) {",
+  "old": "    if (e?.name === 'TimeoutError' && busyRead(path, method) && busyAgain(sentAt)) {",
+  "new": "    if (false && busyRead(path, method) && busyAgain(sentAt)) {",
   "tests": [
    "test/net/slow_shed.test.js"
   ],
@@ -142,8 +142,8 @@
  {
   "name": "SLOWSHED-client-any-read",
   "file": "src/net/accountClient.js",
-  "old": "    if (e?.name === 'TimeoutError' && busyRead(path, method) && now() >= _busy.until) {",
-  "new": "    if (e?.name === 'TimeoutError' && now() >= _busy.until) {",
+  "old": "    if (e?.name === 'TimeoutError' && busyRead(path, method) && busyAgain(sentAt)) {",
+  "new": "    if (e?.name === 'TimeoutError' && busyAgain(sentAt)) {",
   "tests": [
    "test/net/slow_shed.test.js"
   ],
@@ -152,8 +152,8 @@
  {
   "name": "SLOWSHED-client-unreachable",
   "file": "src/net/accountClient.js",
-  "old": "    if (e?.name === 'TimeoutError' && busyRead(path, method) && now() >= _busy.until) {",
-  "new": "    if (busyRead(path, method) && now() >= _busy.until) {",
+  "old": "    if (e?.name === 'TimeoutError' && busyRead(path, method) && busyAgain(sentAt)) {",
+  "new": "    if (busyRead(path, method) && busyAgain(sentAt)) {",
   "tests": [
    "test/net/slow_shed.test.js"
   ],
@@ -162,7 +162,7 @@
  {
   "name": "SLOWSHED-client-stall-each",
   "file": "src/net/accountClient.js",
-  "old": "    if (e?.name === 'TimeoutError' && busyRead(path, method) && now() >= _busy.until) {",
+  "old": "    if (e?.name === 'TimeoutError' && busyRead(path, method) && busyAgain(sentAt)) {",
   "new": "    if (e?.name === 'TimeoutError' && busyRead(path, method)) {",
   "tests": [
    "test/net/slow_shed.test.js"
@@ -178,5 +178,55 @@
    "test/net/slow_shed.test.js"
   ],
   "note": "timeouts in a row never wait longer"
+ },
+ {
+  "name": "SLOWSHED-cap-per-request",
+  "file": "server-account/src/metrics.js",
+  "old": "  add(tally, 'capped', Math.min(ms, SLOW_SHED_TRIP_CAP_MS));",
+  "new": "  add(tally, 'capped', ms);",
+  "tests": [
+   "test/net/slow_shed.test.js"
+  ],
+  "note": "AUDIT LEAN-READS (audit two, C1): the cap the request's - one 25 s statement among nine quick trips opens the shed"
+ },
+ {
+  "name": "SLOWSHED-trip-only-where-answered",
+  "file": "server-account/src/metrics.js",
+  "old": "            const r = await v.apply(target, args);\n            if (key === 'all' || key === 'run') noteMeta(r, tally, sql);",
+  "new": "            const r = await v.apply(target, args).catch((err) => { tally.trips -= 1; throw err; });\n            if (key === 'all' || key === 'run') noteMeta(r, tally, sql);",
+  "tests": [
+   "test/net/slow_shed.test.js"
+  ],
+  "note": "a statement that threw counted no trip - its wait over another's trips"
+ },
+ {
+  "name": "SLOWSHED-sums-keep-the-gone",
+  "file": "server-account/src/service.js",
+  "old": "    slowSum.ms -= gone.ms;\n",
+  "new": "",
+  "tests": [
+   "test/net/slow_shed.test.js"
+  ],
+  "note": "the window's sums keep the waits of requests gone from it - a drained database still reads slow"
+ },
+ {
+  "name": "SLOWSHED-client-late-read-counted",
+  "file": "src/net/accountClient.js",
+  "old": "    if (e?.name === 'TimeoutError' && busyRead(path, method) && busyAgain(sentAt)) {",
+  "new": "    if (e?.name === 'TimeoutError' && busyRead(path, method) && now() >= _busy.until) {",
+  "tests": [
+   "test/net/slow_shed.test.js"
+  ],
+  "note": "AUDIT LEAN-READS (audit two): a read that left before the stall's hold and timed out after it doubles the hold again"
+ },
+ {
+  "name": "SLOWSHED-client-burst-each",
+  "file": "src/net/accountClient.js",
+  "old": "      const again = busyAgain(sentAt);",
+  "new": "      const again = true;",
+  "tests": [
+   "test/net/slow_shed.test.js"
+  ],
+  "note": "AUDIT LEAN-READS (audit two, C2): a burst of the shed's 503s counted per answer - the page held up to a minute"
  }
 ]

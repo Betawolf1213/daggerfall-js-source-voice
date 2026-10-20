@@ -14,9 +14,9 @@ import { DatabaseSync } from 'node:sqlite';
 
 import { d1, standService, T0 } from '../accountDb.mjs';
 import {
-  yardsOf, settleYards, settleStaleYards, yardRowsOf, YARD_SNAP_COLS, YARD_SNAP_READ, YARD_SNAP_SHAPE, YARDS_SETTLE_A_MINUTE, _resetYardsKept,
+  yardsOf, settleYards, settleStaleYards, yardRowsOf, yardRowsSql, YARD_SNAP_COLS, YARD_SNAP_READ, YARD_SNAP_SHAPE, YARDS_SETTLE_A_MINUTE, _resetYardsKept,
 } from '../../server-account/src/decor.js';
-import { shapeOf } from '../../server-account/src/keptBoard.js';
+import { shapeOf, KEPT_BOARD_MAX_BYTES } from '../../server-account/src/keptBoard.js';
 import { DECOR_YARDS_TOWN_MAX } from '../../src/net/decorLaw.js';
 import { MINUTE_JOBS } from '../../server-account/src/cron.js';
 
@@ -42,7 +42,9 @@ async function fromRows(db, raw, t) {
   if (was) raw.prepare('UPDATE home_yards SET built = -1 WHERE map_id = ?').run(t);
   try { return await yardsOf({ db }, null, { mapId: t }); } finally { if (was) raw.prepare('UPDATE home_yards SET built = ? WHERE map_id = ?').run(was.built, t); }
 }
-const stale = (raw, t) => { const r = raw.prepare('SELECT ver, built, shape FROM home_yards WHERE map_id = ?').get(t); return !!r && (r.ver !== r.built || r.shape !== YARD_SNAP_SHAPE); };
+/** A town's version and its built row (AUDIT LEAN-READS 2 B3: the version a row of its own). */
+const snapOf = (raw, t) => raw.prepare('SELECT v.ver, y.built, y.shape, y.rows FROM home_yards_ver v LEFT JOIN home_yards y ON y.map_id = v.map_id WHERE v.map_id = ?').get(t);
+const stale = (raw, t) => { const r = snapOf(raw, t); return !!r && (r.ver !== r.built || r.shape !== YARD_SNAP_SHAPE); };
 
 test('YARD-SNAP the oracle: through yard and room pieces placed, moved within and between towns, in and out of a yard, taken away and their homes released, every town\'s answer off its built row is its answer off its rows, a stale row is never answered, and a room piece moves no town (mutants: a delete unmoved, a move between towns moving one, a room piece moving its town, the build\'s order, the stale row answered)', async () => {
   for (let seed = 1; seed <= 25; seed++) {
@@ -52,7 +54,7 @@ test('YARD-SNAP the oracle: through yard and room pieces placed, moved within an
     for (let op = 0; op < 80; op++) {
       const x = r();
       const t = TOWNS[Math.floor(r() * TOWNS.length)], k = KEYS[Math.floor(r() * KEYS.length)];
-      const vers = () => TOWNS.map((m) => raw.prepare('SELECT ver FROM home_yards WHERE map_id = ?').get(m)?.ver ?? 0);
+      const vers = () => TOWNS.map((m) => raw.prepare('SELECT ver FROM home_yards_ver WHERE map_id = ?').get(m)?.ver ?? 0);
       const before = vers();
       let movesTowns = [];
       if (x < 0.45) {
@@ -108,15 +110,14 @@ test('YARD-SNAP a built town is one row and one statement, its answer in the rea
   const rows = yardRowsOf(row.rows);
   assert.equal(rows.length, DECOR_YARDS_TOWN_MAX);
   assert.deepEqual(Object.keys(rows[0]), [...YARD_SNAP_COLS]);
-  assert.deepEqual([...YARD_SNAP_COLS], raw.prepare('PRAGMA table_info(home_decor)').all().map((c) => c.name), 'every column SELECT * reads - a column added to home_decor is added to the built row');
-  assert.deepEqual(rows.map((x) => ({ ...x })), raw.prepare(`SELECT ${YARD_SNAP_COLS.join(', ')} FROM home_decor WHERE map_id = 7 AND yard = 1 ORDER BY building_key, placed_at, id LIMIT ?`).all(DECOR_YARDS_TOWN_MAX).map((x) => ({ ...x })),
-    'the rows SELECT * gives, in its order');
+  assert.deepEqual([...YARD_SNAP_COLS], raw.prepare('PRAGMA table_info(home_decor)').all().map((c) => c.name), 'every column of home_decor - a column added to it is added to the built row and the read alike');
+  assert.deepEqual(rows.map((x) => ({ ...x })), raw.prepare(yardRowsSql('?')).all(7).map((x) => ({ ...x })), 'the rows the read gives, in its order');
   assert.equal(yardRowsOf('not json'), null);
   assert.equal(yardRowsOf('[[1,2]]'), null, 'a row of other columns is no row');
   assert.deepEqual(await yardsOf({ db }, null, { mapId: 9 }), { mapId: 9, yards: [] });
-  assert.equal(raw.prepare('SELECT COUNT(*) AS n FROM home_yards WHERE map_id = 9').get().n, 0);
+  assert.equal(raw.prepare('SELECT (SELECT COUNT(*) FROM home_yards WHERE map_id = 9) + (SELECT COUNT(*) FROM home_yards_ver WHERE map_id = 9) AS n').get().n, 0);
   // the build reads in the index's order: no sort
-  const plan = raw.prepare(`EXPLAIN QUERY PLAN SELECT ${YARD_SNAP_COLS.join(', ')} FROM home_decor WHERE map_id = 7 AND yard = 1 ORDER BY building_key, placed_at, id LIMIT 2000`).all().map((p) => p.detail).join(' | ');
+  const plan = raw.prepare(`EXPLAIN QUERY PLAN ${yardRowsSql('?')}`).all(7).map((p) => p.detail).join(' | ');
   assert.match(plan, /idx_home_decor_yard_order/);
   assert.doesNotMatch(plan, /TEMP B-TREE/);
 });
@@ -131,7 +132,7 @@ test('YARD-SNAP a decor route builds its town as it answers; the minute\'s clock
   const n = YARDS_SETTLE_A_MINUTE + 3;
   const home = raw.prepare("INSERT OR IGNORE INTO homes (map_id, building_key, player, char_id, owner_name, region, price, bought_at) VALUES (?, 300, 'p-owner', 'c', 'Owner', 17, 1, 1)");
   for (let t = 1000; t < 1000 + n; t++) { home.run(t); put(raw, t, 300, 'a', 1, 1); }
-  assert.equal(raw.prepare('SELECT COUNT(*) AS n FROM home_yards WHERE built != ver').get().n, n);
+  assert.equal(raw.prepare('SELECT COUNT(*) AS n FROM home_yards_ver v LEFT JOIN home_yards y ON y.map_id = v.map_id WHERE y.built IS NOT v.ver').get().n, n);
   assert.equal(await settleStaleYards(db), YARDS_SETTLE_A_MINUTE);
   assert.equal(await settleStaleYards(db), 3);
   assert.equal(await settleStaleYards(db), 0);
@@ -149,7 +150,7 @@ test('YARD-SNAP the migration\'s backfill: the towns standing yards when 0135 is
   put(raw, 7, 300, 'one', 1, 1);
   for (const f of files.filter((f) => f >= '0135')) raw.exec(src(`server-account/migrations/${f}`));
   for (const t of [7, 8]) {
-    const r = raw.prepare('SELECT ver, built, shape FROM home_yards WHERE map_id = ?').get(t);
+    const r = snapOf(raw, t);
     assert.equal(r.built, r.ver, `town ${t} built`);
     assert.equal(r.shape, YARD_SNAP_SHAPE, `town ${t} built in the shape the code reads (the deploy reads it at once)`);
     const asked = [];
@@ -166,14 +167,67 @@ test('YARD-SNAP AUDIT LEAN-READS B1: a town built by another deploy\'s read - an
   put(raw, 8, 300, 'b', 1, 1);
   await settleYards(db, 7);
   await settleYards(db, 8);
-  assert.equal(YARD_SNAP_SHAPE, shapeOf('yards', YARD_SNAP_COLS.join(', '), 'building_key, placed_at, id', DECOR_YARDS_TOWN_MAX));
+  // AUDIT LEAN-READS 2 B5: the shape is the read whole - its columns, its town, its yards alone, its order and bound - and
+  // the bound the build keeps under; the read of a town no row answers is the build's own text
+  assert.equal(YARD_SNAP_SHAPE, shapeOf('yards: [columns...] each, NULL past the bound', yardRowsSql('?'), KEPT_BOARD_MAX_BYTES));
+  assert.match(yardRowsSql('?'), new RegExp(`^SELECT ${YARD_SNAP_COLS.join(', ')} FROM home_decor\\s+WHERE map_id = \\? AND yard = 1 ORDER BY building_key, placed_at, id LIMIT ${DECOR_YARDS_TOWN_MAX}$`));
   raw.prepare("UPDATE home_yards SET shape = 'an older deploy', rows = '[]' WHERE map_id = 7").run();
   const asked = [];
   const got = await yardsOf({ db: { prepare: (sql) => { asked.push(sql); return db.prepare(sql); } } }, null, { mapId: 7 });
-  assert.equal(asked.length, 2, 'another shape: the rows read as they stand');
+  assert.deepEqual(asked, [YARD_SNAP_READ, yardRowsSql('?1')], 'another shape: the rows read as they stand, by the build\'s own read');
   assert.equal(got.yards.length, 1, 'never the older deploy\'s rows');
   assert.equal(await settleStaleYards(db), 1, 'the clock builds it - no write to the town needed');
   assert.equal(raw.prepare('SELECT shape FROM home_yards WHERE map_id = 7').get().shape, YARD_SNAP_SHAPE);
   assert.equal(await settleStaleYards(db), 0);
   assert.deepEqual(await yardsOf({ db }, null, { mapId: 7 }), await fromRows(db, raw, 7));
+});
+
+test('YARD-SNAP AUDIT LEAN-READS 2: a yard write moves its town\'s version in a row of its own and never rewrites the kept rows (B3); a town standing yard pieces with no version row is read as it stands, never as no yard, and its next write of any kind makes the row again (B4); rows past the bound are kept as none, read as they stand and said (B7) (mutants: a delete\'s version unmade, the orphan unasked, the bound unkept)', async () => {
+  const { db, raw } = world();
+  assert.ok(!raw.prepare('PRAGMA table_info(home_yards)').all().some((c) => c.name === 'ver'), 'the kept rows carry no version');
+  put(raw, 7, 300, 'a', 1, 1);
+  await settleYards(db, 7);
+  const kept = raw.prepare('SELECT built, rows FROM home_yards WHERE map_id = 7').get();
+  const total = () => raw.prepare('SELECT total_changes() AS n').get().n;
+  let t = total();
+  put(raw, 7, 301, 'b', 1, 2);
+  assert.equal(total() - t, 2, 'the piece and its town\'s version: nothing else written');
+  assert.deepEqual(raw.prepare('SELECT built, rows FROM home_yards WHERE map_id = 7').get(), kept, 'the kept rows untouched');
+  // B4: the version row lost - the town is read as it stands, and a delete or a move makes the row again
+  raw.prepare('DELETE FROM home_yards_ver WHERE map_id = 7').run();
+  const asked = [];
+  const got = await yardsOf({ db: { prepare: (sql) => { asked.push(sql); return db.prepare(sql); } } }, null, { mapId: 7 });
+  assert.deepEqual(got, await fromRows(db, raw, 7));
+  assert.equal(got.yards.reduce((n, y) => n + y.pieces.length, 0), 2, 'never no yard');
+  assert.deepEqual(asked, [YARD_SNAP_READ, yardRowsSql('?1')]);
+  raw.prepare("DELETE FROM home_decor WHERE map_id = 7 AND id = 'b'").run();
+  assert.ok(snapOf(raw, 7), 'a delete makes the version row again');
+  assert.equal(snapOf(raw, 7).ver, kept.built + 1, 'past the version the rows were kept at - never meeting them again');
+  raw.prepare('DELETE FROM home_yards_ver WHERE map_id = 7').run();
+  raw.prepare("UPDATE home_decor SET placed_at = 5 WHERE map_id = 7 AND id = 'a'").run();
+  assert.ok(snapOf(raw, 7), 'and a move');
+  assert.equal(await settleStaleYards(db), 1);
+  assert.deepEqual(await yardsOf({ db }, null, { mapId: 7 }), await fromRows(db, raw, 7));
+  const asked9 = [];
+  assert.deepEqual(await yardsOf({ db: { prepare: (sql) => { asked9.push(sql); return db.prepare(sql); } } }, null, { mapId: 9 }), { mapId: 9, yards: [] }, 'a town with neither: none');
+  assert.deepEqual(asked9, [YARD_SNAP_READ], 'in one statement');
+  // B7: a town's rows past KEPT_BOARD_MAX_BYTES - kept as none (D1 refuses a row past 2 MB, and the clock's page with it)
+  const big = JSON.stringify({ note: 'x'.repeat(900) });
+  for (let i = 0; i < 1800; i++) raw.prepare('INSERT INTO home_decor (map_id, building_key, id, model, place, placed_at, paid, yard, item) VALUES (8, 300, ?, 41000, ?, 1, 0, 1, ?)').run(`g${i}`, place(1), big);
+  await settleYards(db, 8);
+  const row = snapOf(raw, 8);
+  assert.equal(row.built, row.ver, 'built');
+  assert.equal(row.rows, null, 'past the bound: no rows kept');
+  const said = [];
+  const warn = console.warn;
+  console.warn = (...a) => said.push(a.join(' '));
+  try {
+    const asked2 = [];
+    const got8 = await yardsOf({ db: { prepare: (sql) => { asked2.push(sql); return db.prepare(sql); } } }, null, { mapId: 8 });
+    assert.deepEqual(asked2, [YARD_SNAP_READ, yardRowsSql('?1')], 'read as they stand');
+    assert.deepEqual(got8, await fromRows(db, raw, 8));
+    await yardsOf({ db }, null, { mapId: 8 });
+  } finally { console.warn = warn; }
+  assert.equal(said.filter((x) => x.includes('a town\'s yards')).length, 1, 'said once an isolate');
+  assert.equal(await settleStaleYards(db), 0, 'and not built again each minute');
 });

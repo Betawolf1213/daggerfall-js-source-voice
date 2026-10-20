@@ -70,7 +70,7 @@ test('PRIMARY-TRIPS YARDS-REPLICA: a town\'s yards are read on a session of thei
     await yardsKept(ctx, 1291, T0);
     await yardsKept(ctx, 1291, T0 + 1);   // kept: no read
     assert.deepEqual(db._sessions.map((s) => s.constraint), ['first-unconstrained'], 'the first read any instance\'s, the kept answer no read at all');
-    assert.match(db._sessions[0].statements.join('\n'), /FROM home_yards WHERE map_id = \?/);   // PIN MOVED (YARD-SNAP): the town's built row - a town with no yard has none, and no rows are read
+    assert.match(db._sessions[0].statements.join('\n'), /LEFT JOIN home_yards_ver v ON v\.map_id = q\.m LEFT JOIN home_yards y/);   // PIN MOVED (YARD-SNAP; AUDIT LEAN-READS 2 B3: the version a row of its own): the town's version and built row - a town with no yard has none, and no rows are read
     await yardsKept(ctx, 1291, T0 + 60);   // past YARDS_KEPT_S
     const mark = db._sessions[1]?.constraint;
     assert.ok(mark && mark !== 'first-unconstrained' && mark !== 'first-primary', `the next read from the last one's bookmark (${mark})`);

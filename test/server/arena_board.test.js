@@ -144,7 +144,9 @@ test('ARENA-BOARD a kept season is one statement for its counts; a bout moves th
   await Promise.all(Array.from({ length: 5 }, () => arenaShared({ db: keeps }, season)));
   assert.equal(writes, 1, 'one write for the five');
   // B1: a row of another shape is no board
-  raw.prepare("UPDATE arena_boards SET shape = 'an older deploy', rows = ? WHERE season = ?").run(JSON.stringify({ ...after, rosters: { red: [], blue: [] } }), season);
+  const keptNow = JSON.parse(raw.prepare('SELECT rows FROM arena_boards WHERE season = ?').get(season).rows);
+  assert.ok(arenaSharedOf(JSON.stringify({ ...keptNow, rosters: { red: [], blue: [] } })), 'a board\'s text in every way but its shape');
+  raw.prepare("UPDATE arena_boards SET shape = 'an older deploy', rows = ? WHERE season = ?").run(JSON.stringify({ ...keptNow, rosters: { red: [], blue: [] } }), season);
   assert.equal((await arenaShared({ db }, season)).rosters.red.length, 4, 'another shape: counted again');
   assert.equal(raw.prepare('SELECT shape FROM arena_boards WHERE season = ?').get(season).shape, ARENA_BOARD_SHAPE, 'and kept in this one');
   // D5: the board's keep after the caller's own reads
@@ -155,6 +157,11 @@ test('ARENA-BOARD a kept season is one statement for its counts; a bout moves th
   await arenaBoardOf({ db: seen, nowS: T0 + 10 }, { id: 'p-ana', handle: 'ana', registered_at: 0 }, ENV);
   assert.ok(order.includes('MINE') && order.lastIndexOf('MINE') < order.indexOf('KEEP'), `the caller's reads, then the keep: ${order.join(' ')}`);
   assert.equal(arenaSharedOf('{"grandRows":[]}'), null, 'not a board');
+  // AUDIT LEAN-READS 2 B5: the kept text is the reads' rows alone - the banners' points worked out on the way out - so the
+  // shape, which hashes the reads, is all of what a row holds
+  const keptText = JSON.parse(raw.prepare('SELECT rows FROM arena_boards WHERE season = ?').get(season).rows);
+  assert.deepEqual(Object.keys(keptText).sort(), ['counts', 'fastAll', 'grandRows', 'pveAll', 'pvpAll', 'rosters', 'standingRows']);
+  assert.equal(arenaSharedOf(JSON.stringify({ ...keptText, standingRows: { now: [[]], last: [[], []] } })), null, 'a season\'s rows short: no board');
 });
 
 test('ARENA-BOARD the writes that move a season are the database\'s own - every ladder bout, players\' bout and banner membership written, voided or deleted, by any route or cascade - and stand after every migration (mutant: a trigger dropped)', () => {

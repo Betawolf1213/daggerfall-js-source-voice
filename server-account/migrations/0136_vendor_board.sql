@@ -15,24 +15,44 @@
 -- guild's, a room it rents), and it moves only when a trader's listing, its piece, its house or a patron's sale is
 -- written, or a listing's time runs out.
 --
---   market_vendor_boards   one row a region read: `ver`, moved by the database itself on every such write (the row made
---                          by the first); `built`, the version `rows` was read at; `shape`, the reads that read it
---                          (keptBoard.js shapeOf - a deploy that changes them reads it again); `built_at`, the second it
---                          was read at, and `until`, the second its first listing runs out - the rows are the board for
---                          a caller whose second is between; `rows`, the board as every caller reads it (market.js
+--   market_vendor_ver      a region's version: `ver`, moved by the database itself on every such write (the row made by
+--                          the first) - a narrow row of its own, so a write moves a number and never rewrites the kept
+--                          board (AUDIT LEAN-READS 2 B3: kept beside it, a busy region's 354 KB was rewritten on every
+--                          listing, sale and patron). Made by the backfill below for every region a board can name
+--                          today, by a trigger for any other at its first write - and, made, past any version a board of
+--                          the region was kept at (AUDIT LEAN-READS 2 B4: a row lost and counted again from 1 would
+--                          meet a board kept at 1 long before). A region with no version row is read every time and
+--                          kept never.
+--   market_vendor_boards   one row a region read, kept: `built`, the version `rows` was read at; `shape`, the reads that
+--                          read it (keptBoard.js shapeOf - a deploy that changes them reads it again); `since` and
+--                          `until`, the seconds between which `rows` is the board - `until` its first listing's end,
+--                          `since` (AUDIT LEAN-READS 2 B2) the last second before the read at which an answer would have
+--                          differed: a listing that ran out by then, or a patron's sale that left the day by then where
+--                          the board tells fewer than it may - so a caller whose clock was taken before the read's, as an
+--                          overload's are, is served it as well; `rows`, the board as every caller reads it (market.js
 --                          vendorBoard). A read is the row while it is its version's and shape's and its second between;
 --                          else it reads the board as before - writing nothing first - and keeps it last, only where the
---                          version has not moved since it read and no board kept meanwhile serves its second already.
---                          No row: version 0 (no write since this migration).
-CREATE TABLE IF NOT EXISTS market_vendor_boards (
-  region   INTEGER PRIMARY KEY,
-  ver      INTEGER NOT NULL DEFAULT 1,
-  built    INTEGER NOT NULL DEFAULT 0,
-  shape    TEXT,
-  built_at INTEGER NOT NULL DEFAULT 0,
-  until    INTEGER NOT NULL DEFAULT 0,
-  rows     TEXT
+--                          version has not moved since it read (a version row deleted meanwhile keeps nothing: B4) and no
+--                          board kept meanwhile serves its second or a later one already.
+CREATE TABLE IF NOT EXISTS market_vendor_ver (
+  region INTEGER PRIMARY KEY,
+  ver    INTEGER NOT NULL DEFAULT 1
 );
+CREATE TABLE IF NOT EXISTS market_vendor_boards (
+  region INTEGER PRIMARY KEY,
+  built  INTEGER NOT NULL,
+  shape  TEXT NOT NULL,
+  since  INTEGER NOT NULL,
+  until  INTEGER NOT NULL,
+  rows   TEXT NOT NULL
+);
+
+-- Every region a board can name today - a house stands in it, a trader listing or a patron's sale names it - has its
+-- version now, so its first read keeps its board.
+INSERT OR IGNORE INTO market_vendor_ver (region, ver)
+  SELECT region, 1 FROM homes WHERE region IS NOT NULL
+  UNION SELECT region, 1 FROM market_listings WHERE vendor_id IS NOT NULL AND region IS NOT NULL
+  UNION SELECT region, 1 FROM market_patron_sales WHERE region IS NOT NULL;
 
 -- The board's next listing to run out, by its region (idx_market_vendor_region names the listing's age, not its end -
 -- every open trader listing of the region was read for it; AUDIT LEAN-READS B8).
@@ -43,17 +63,19 @@ CREATE INDEX IF NOT EXISTS idx_market_vendor_expiry ON market_listings (region, 
 -- town, and the board's pixel and the courier's word are none of the board's).
 CREATE TRIGGER IF NOT EXISTS vendor_board_listed AFTER INSERT ON market_listings WHEN NEW.vendor_id IS NOT NULL
 BEGIN
-  INSERT INTO market_vendor_boards (region) SELECT NEW.region WHERE NEW.region IS NOT NULL ON CONFLICT (region) DO UPDATE SET ver = ver + 1;
+  INSERT INTO market_vendor_ver (region, ver) SELECT r, COALESCE((SELECT built FROM market_vendor_boards b WHERE b.region = r), 0) + 1 FROM (SELECT NEW.region AS r) WHERE r IS NOT NULL
+    ON CONFLICT (region) DO UPDATE SET ver = ver + 1;
 END;
 CREATE TRIGGER IF NOT EXISTS vendor_board_listing AFTER UPDATE OF id, kind, region, material, item, own, bought, units, price, fee, wear, at,
   expires_at, state, currency, seller, vendor_map, vendor_id ON market_listings WHEN OLD.vendor_id IS NOT NULL OR NEW.vendor_id IS NOT NULL
 BEGIN
-  INSERT INTO market_vendor_boards (region) SELECT r FROM (SELECT OLD.region AS r UNION SELECT NEW.region) WHERE r IS NOT NULL
+  INSERT INTO market_vendor_ver (region, ver) SELECT r, COALESCE((SELECT built FROM market_vendor_boards b WHERE b.region = r), 0) + 1 FROM (SELECT OLD.region AS r UNION SELECT NEW.region) WHERE r IS NOT NULL
     ON CONFLICT (region) DO UPDATE SET ver = ver + 1;
 END;
 CREATE TRIGGER IF NOT EXISTS vendor_board_unlisted AFTER DELETE ON market_listings WHEN OLD.vendor_id IS NOT NULL
 BEGIN
-  INSERT INTO market_vendor_boards (region) SELECT OLD.region WHERE OLD.region IS NOT NULL ON CONFLICT (region) DO UPDATE SET ver = ver + 1;
+  INSERT INTO market_vendor_ver (region, ver) SELECT r, COALESCE((SELECT built FROM market_vendor_boards b WHERE b.region = r), 0) + 1 FROM (SELECT OLD.region AS r) WHERE r IS NOT NULL
+    ON CONFLICT (region) DO UPDATE SET ver = ver + 1;
 END;
 
 -- A trader standing in a room, moved or taken away (a piece a listing names stands there): its house's region. A
@@ -62,20 +84,20 @@ END;
 CREATE TRIGGER IF NOT EXISTS vendor_board_trader_in AFTER INSERT ON home_decor
   WHEN NEW.yard = 0 AND CASE WHEN json_valid(NEW.place) THEN json_extract(NEW.place, '$.station') END = 'vendor'
 BEGIN
-  INSERT INTO market_vendor_boards (region) SELECT region FROM homes WHERE map_id = NEW.map_id AND building_key = NEW.building_key
+  INSERT INTO market_vendor_ver (region, ver) SELECT r, COALESCE((SELECT built FROM market_vendor_boards b WHERE b.region = r), 0) + 1 FROM (SELECT region AS r FROM homes WHERE map_id = NEW.map_id AND building_key = NEW.building_key) WHERE true
     ON CONFLICT (region) DO UPDATE SET ver = ver + 1;
 END;
 CREATE TRIGGER IF NOT EXISTS vendor_board_trader AFTER UPDATE ON home_decor
   WHEN (OLD.yard = 0 AND CASE WHEN json_valid(OLD.place) THEN json_extract(OLD.place, '$.station') END = 'vendor') OR (NEW.yard = 0 AND CASE WHEN json_valid(NEW.place) THEN json_extract(NEW.place, '$.station') END = 'vendor')
 BEGIN
-  INSERT INTO market_vendor_boards (region) SELECT DISTINCT region FROM homes
-    WHERE (map_id = OLD.map_id AND building_key = OLD.building_key) OR (map_id = NEW.map_id AND building_key = NEW.building_key)
+  INSERT INTO market_vendor_ver (region, ver) SELECT r, COALESCE((SELECT built FROM market_vendor_boards b WHERE b.region = r), 0) + 1 FROM (SELECT DISTINCT region AS r FROM homes
+    WHERE (map_id = OLD.map_id AND building_key = OLD.building_key) OR (map_id = NEW.map_id AND building_key = NEW.building_key)) WHERE true
     ON CONFLICT (region) DO UPDATE SET ver = ver + 1;
 END;
 CREATE TRIGGER IF NOT EXISTS vendor_board_trader_out AFTER DELETE ON home_decor
   WHEN OLD.yard = 0 AND CASE WHEN json_valid(OLD.place) THEN json_extract(OLD.place, '$.station') END = 'vendor'
 BEGIN
-  INSERT INTO market_vendor_boards (region) SELECT region FROM homes WHERE map_id = OLD.map_id AND building_key = OLD.building_key
+  INSERT INTO market_vendor_ver (region, ver) SELECT r, COALESCE((SELECT built FROM market_vendor_boards b WHERE b.region = r), 0) + 1 FROM (SELECT region AS r FROM homes WHERE map_id = OLD.map_id AND building_key = OLD.building_key) WHERE true
     ON CONFLICT (region) DO UPDATE SET ver = ver + 1;
 END;
 
@@ -84,20 +106,23 @@ END;
 -- region's board for nothing - and a row replaced, whose implied delete fires no trigger, moves it: AUDIT LEAN-READS B6).
 CREATE TRIGGER IF NOT EXISTS vendor_board_house AFTER UPDATE OF player, char_id, owner_name, region, entry, guild_id ON homes
 BEGIN
-  INSERT INTO market_vendor_boards (region) SELECT r FROM (SELECT OLD.region AS r UNION SELECT NEW.region) WHERE r IS NOT NULL
+  INSERT INTO market_vendor_ver (region, ver) SELECT r, COALESCE((SELECT built FROM market_vendor_boards b WHERE b.region = r), 0) + 1 FROM (SELECT OLD.region AS r UNION SELECT NEW.region) WHERE r IS NOT NULL
     ON CONFLICT (region) DO UPDATE SET ver = ver + 1;
 END;
 CREATE TRIGGER IF NOT EXISTS vendor_board_house_in AFTER INSERT ON homes
 BEGIN
-  INSERT INTO market_vendor_boards (region) SELECT NEW.region WHERE NEW.region IS NOT NULL ON CONFLICT (region) DO UPDATE SET ver = ver + 1;
+  INSERT INTO market_vendor_ver (region, ver) SELECT r, COALESCE((SELECT built FROM market_vendor_boards b WHERE b.region = r), 0) + 1 FROM (SELECT NEW.region AS r) WHERE r IS NOT NULL
+    ON CONFLICT (region) DO UPDATE SET ver = ver + 1;
 END;
 CREATE TRIGGER IF NOT EXISTS vendor_board_house_gone AFTER DELETE ON homes
 BEGIN
-  INSERT INTO market_vendor_boards (region) SELECT OLD.region WHERE OLD.region IS NOT NULL ON CONFLICT (region) DO UPDATE SET ver = ver + 1;
+  INSERT INTO market_vendor_ver (region, ver) SELECT r, COALESCE((SELECT built FROM market_vendor_boards b WHERE b.region = r), 0) + 1 FROM (SELECT OLD.region AS r) WHERE r IS NOT NULL
+    ON CONFLICT (region) DO UPDATE SET ver = ver + 1;
 END;
 
 -- A patron's purchase told (the board says the region's day of them).
 CREATE TRIGGER IF NOT EXISTS vendor_board_patron AFTER INSERT ON market_patron_sales
 BEGIN
-  INSERT INTO market_vendor_boards (region) SELECT NEW.region WHERE NEW.region IS NOT NULL ON CONFLICT (region) DO UPDATE SET ver = ver + 1;
+  INSERT INTO market_vendor_ver (region, ver) SELECT r, COALESCE((SELECT built FROM market_vendor_boards b WHERE b.region = r), 0) + 1 FROM (SELECT NEW.region AS r) WHERE r IS NOT NULL
+    ON CONFLICT (region) DO UPDATE SET ver = ver + 1;
 END;

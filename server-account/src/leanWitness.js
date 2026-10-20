@@ -76,15 +76,34 @@ export async function exactRows(db, kind, lean, ignoredOf) {
 }
 
 /**
+ * A KEY'S ANSWERS STRUCK (AUDIT LEAN-READS 2 A1/D1) - npcHalls.js strikeHall, townSeats.js strikeSeat: three statements for
+ * a batch, `where` naming the key (`?1` bound to `key`). One DELETE fires its rows' triggers in rowid order - the order
+ * the answers came in - and where two answers' rows lie interleaved (a disputed or split key, the keys a developer
+ * strikes) each confirmer's going turned the confirmation over and moved half the key: 1,516 rows wrote 1.1 million (2.6
+ * s, some 13-20 s on D1). So the late rows first (none a confirmer: their going fires nothing), then the confirmation
+ * emptied (no late row is left for it to move), then the rest (no confirmation is left to settle): every row deleted
+ * once, none written. The two DELETEs' changes are the answers struck.
+ * @param {any} db @param {string} kind @param {string} where @param {string} key
+ */
+export const strikeWitness = (db, kind, where, key) => [
+  db.prepare(`DELETE FROM world_witness WHERE kind = ?2 AND ${where} AND late = 1`).bind(key, kind),
+  db.prepare(`UPDATE witness_confirmed SET report = NULL, at = NULL WHERE kind = ?2 AND ${where}`).bind(key, kind),
+  db.prepare(`DELETE FROM world_witness WHERE kind = ?2 AND ${where}`).bind(key, kind),
+];
+/** The count unmatchedRead asks, as SQL over `kind`, `account` and `since` (each SQL: a parameter or a column) - the
+ *  region bump's too (npcHalls.js witnessHall: a late report whose town's confirmers may be ignored). */
+export const unmatchedSql = (/** @type {string} */ kind, /** @type {string} */ account, /** @type {string} */ since) => `SELECT COUNT(*) FROM world_witness u
+  JOIN witness_confirmed c ON c.kind = u.kind AND c.key = u.key
+  WHERE u.account = ${account} AND u.kind = ${kind} AND u.late = 0 AND u.report != c.report AND u.at > ${since}`;
+/**
  * WHETHER AN ACCOUNT CAN BE IGNORED AT ALL (seatIgnoredAccounts): ignored takes SEAT_WITNESS_UNMATCHED_MAX answers that
  * differ from their key's confirmation inside SEAT_WITNESS_IGNORED_S, the last of them under SEAT_WITNESS_IGNORED_S ago -
  * so all of them given since twice that. Fewer such answers of this kind anywhere, and no region's law can ignore it:
  * the account's own rows (idx_world_witness_account), never a region's.
  * @param {any} db @param {string} kind @param {string} account @param {number} nowS
  */
-export const unmatchedRead = (db, kind, account, nowS) => db.prepare(`SELECT COUNT(*) AS n FROM world_witness w
-  JOIN witness_confirmed c ON c.kind = w.kind AND c.key = w.key
-  WHERE w.account = ?2 AND w.kind = ?1 AND w.late = 0 AND w.report != c.report AND w.at > ?3`).bind(kind, account, nowS - 2 * SEAT_WITNESS_IGNORED_S);
+export const unmatchedRead = (db, kind, account, nowS) => db.prepare(`SELECT (${unmatchedSql('?1', '?2', '?3')}) AS n`)
+  .bind(kind, account, nowS - 2 * SEAT_WITNESS_IGNORED_S);
 export async function mayBeIgnored(/** @type {any} */ db, /** @type {string} */ kind, /** @type {string} */ account, /** @type {number} */ nowS) {
   const row = await unmatchedRead(db, kind, account, nowS).first();
   return Number(row?.n ?? 0) >= SEAT_WITNESS_UNMATCHED_MAX;

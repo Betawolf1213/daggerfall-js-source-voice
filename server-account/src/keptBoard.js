@@ -32,10 +32,14 @@ const encoder = new TextEncoder();
 /** Whether a board's text may be kept - and a word in the log, once an isolate a board, where it may not. */
 export function keptFits(/** @type {string} */ text, /** @type {string} */ board) {
   if (text.length <= KEPT_BOARD_MAX_BYTES / 3 || encoder.encode(text).length <= KEPT_BOARD_MAX_BYTES) return true;
-  if (!toldTooLarge.has(board)) {
-    toldTooLarge.add(board);
-    console.warn(`[kept] ${board}: ${text.length} characters, past ${KEPT_BOARD_MAX_BYTES} bytes - read every time, as before`);
-  }
+  keptPast(board, `${text.length} characters`);
   return false;
+}
+/** A board past the bound, said once an isolate a board - by keptFits, or by a read whose build bounded it in SQL (the
+ *  yards: decor.js, AUDIT LEAN-READS 2 B7). */
+export function keptPast(/** @type {string} */ board, /** @type {string} */ what) {
+  if (toldTooLarge.has(board)) return;
+  toldTooLarge.add(board);
+  console.warn(`[kept] ${board}: ${what}, past ${KEPT_BOARD_MAX_BYTES} bytes - read every time, as before`);
 }
 const toldTooLarge = new Set();

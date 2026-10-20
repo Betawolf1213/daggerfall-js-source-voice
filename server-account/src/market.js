@@ -2103,13 +2103,14 @@ export async function marketVendors(ctx, player, env, { region, character = null
  * the 18:05 overload - 1,517 asks in five minutes where 330 was the rate; bible/11-Multiplayer/Scale-Arc.md VENDOR-BOARD;
  * migration 0136): THE REGION'S TRADERS AS EVERY CALLER READS THEM - `{ newest, houses, patrons }`, the rows the board's
  * three reads answer, before any caller's own door. Its kept row while it is its version's (the database moves it on
- * every trader listing, trader, trader's house and patron sale written), its shape's (these reads' - keptBoard.js) and
- * the caller's second is between the second it was read at and `until` (the first of its listings to run out; AUDIT
- * LEAN-READS B3: a caller whose second came before the read's is told the listings still open at its own); else read -
- * writing nothing first (D5) - the version, the three reads and the next listing to run out in ONE batch, one snapshot,
- * and kept at the version it read: a write landing between leaves the version past it, so the next caller reads again.
- * Kept only where the version is still the one it read, so a slow reader never puts an older board over a newer one, and
- * only where no board kept meanwhile serves its second already, so readers that missed together write it once (B2).
+ * every trader listing, trader, trader's house and patron sale written - in a row of its own, AUDIT LEAN-READS 2 B3; no
+ * such row, no board kept: B4), its shape's (these reads' and their bounds' - keptBoard.js) and the caller's second is
+ * between `since` and `until` (vendorSpan: AUDIT LEAN-READS B3, a caller whose second came before the read's is told the
+ * listings still open at its own - and 2 B2, served the board where none ran out between); else read - writing nothing
+ * first (D5) - the version, the three reads and the board's bounds in ONE batch, one snapshot, and kept at the version it
+ * read: a write landing between leaves the version past it, so the next caller reads again. Kept only where the version
+ * is still the one it read, so a slow reader never puts an older board over a newer one, and only where no board kept
+ * meanwhile serves its second or a later one already, so readers that missed together write it once (B2).
  *
  * PATRON-LOAD (2026-10-10, Mac: "the newest update account service keeps failing"): THE REGION'S READ RECKONS NOTHING.
  * Every online client standing in a living town reads it each PATRON_READ_S (scenes/world.js livingPatronsRead), and its
@@ -2125,35 +2126,54 @@ export async function marketVendors(ctx, player, env, { region, character = null
  */
 export async function vendorBoard({ db, nowS }, region) {
   const kept = await db.prepare(VENDOR_BOARD_READ).bind(region).first();
-  const fresh = kept && Number(kept.built) === Number(kept.ver) && kept.shape === VENDOR_BOARD_SHAPE
-    && Number(kept.built_at) <= nowS && nowS < Number(kept.until) ? vendorBoardOf(kept.rows) : null;
+  const fresh = kept?.ver != null && Number(kept.built) === Number(kept.ver) && kept.shape === VENDOR_BOARD_SHAPE
+    && Number(kept.since) <= nowS && nowS < Number(kept.until) ? vendorBoardOf(kept.rows) : null;
   if (fresh) return fresh;
-  const [v, newest, houses, patrons, next] = await db.batch([
-    db.prepare('SELECT ver FROM market_vendor_boards WHERE region = ?1').bind(region),
+  const [v, newest, houses, patrons, span] = await db.batch([
+    db.prepare('SELECT ver FROM market_vendor_ver WHERE region = ?1').bind(region),
     db.prepare(VENDOR_NEWEST_SQL).bind(nowS, region),
     db.prepare(VENDOR_HOUSES_SQL).bind(nowS, region),
     db.prepare(VENDOR_PATRONS_SQL).bind(nowS - PATRON_TOLD_S, region),
-    db.prepare(VENDOR_NEXT_SQL).bind(region, nowS),
+    db.prepare(VENDOR_SPAN_SQL).bind(region, nowS, nowS - PATRON_TOLD_S),
   ]);
   const read = { newest: newest?.results ?? [], houses: houses?.results ?? [], patrons: patrons?.results ?? [] };
-  const ver = Number(v?.results?.[0]?.ver ?? 0);   // no row: no write since the migration - version 0
+  const ver = v?.results?.[0]?.ver;   // AUDIT LEAN-READS 2 B4: no version row, no board kept - read every time
   const text = JSON.stringify(read);
   if (Number.isSafeInteger(ver) && keptFits(text, 'a region\'s traders')) {
-    const until = Math.min(Number(next?.results?.[0]?.next ?? Infinity), nowS + VENDOR_BOARD_KEPT_S);
-    await db.prepare(VENDOR_BOARD_KEEP).bind(region, ver, VENDOR_BOARD_SHAPE, nowS, until, text).run()
+    const { since, until } = vendorSpan(span?.results?.[0], read.patrons.length, nowS);
+    await db.prepare(VENDOR_BOARD_KEEP).bind(region, ver, VENDOR_BOARD_SHAPE, nowS, since, until, text).run()
       .catch((/** @type {any} */ e) => console.warn('[market] the region\'s board not kept', e?.message ?? e));   // the answer stands; the next caller reads it again
   }
   return read;
 }
-/** VENDOR-BOARD: a region's kept board. */
-export const VENDOR_BOARD_READ = 'SELECT ver, built, shape, built_at, until, rows FROM market_vendor_boards WHERE region = ?1';
-/** VENDOR-BOARD: a board read kept - its row made at version 0 where it read none, else written where the version is the
- *  one it read (?2) and no board of that version and shape serves its second (?4) already. */
-export const VENDOR_BOARD_KEEP = `INSERT INTO market_vendor_boards (region, ver, built, shape, built_at, until, rows) VALUES (?1, 0, 0, ?3, ?4, ?5, ?6)
-  ON CONFLICT (region) DO UPDATE SET built = ?2, shape = ?3, built_at = ?4, until = ?5, rows = ?6
-  WHERE ver = ?2 AND NOT (built = ?2 AND shape IS ?3 AND until > ?4)`;
+/** VENDOR-BOARD: a region's version and its kept board - one row each, the version's its own (AUDIT LEAN-READS 2 B3). */
+export const VENDOR_BOARD_READ = `SELECT v.ver, b.built, b.shape, b.since, b.until, b.rows
+  FROM (SELECT ?1 AS r) q LEFT JOIN market_vendor_ver v ON v.region = q.r LEFT JOIN market_vendor_boards b ON b.region = q.r`;
+/** VENDOR-BOARD: a board read kept - where the region's version row still holds the version it read (?2; AUDIT LEAN-READS
+ *  2 B4: a row deleted after the read keeps nothing) and no board of that version and shape is kept for its second (?4)
+ *  or a later one already: one serving it already (B2: readers that missed together write it once), or one read at a
+ *  later second, which a caller whose clock lagged never puts back to its own. */
+export const VENDOR_BOARD_KEEP = `INSERT INTO market_vendor_boards (region, built, shape, since, until, rows)
+  SELECT ?1, ?2, ?3, ?5, ?6, ?7 WHERE (SELECT ver FROM market_vendor_ver WHERE region = ?1) = ?2
+  ON CONFLICT (region) DO UPDATE SET built = excluded.built, shape = excluded.shape, since = excluded.since, until = excluded.until, rows = excluded.rows
+  WHERE NOT (built = excluded.built AND shape IS excluded.shape AND until > ?4)`;
 /** VENDOR-BOARD: how long a board with no listing to run out is kept before it is read again regardless. */
 export const VENDOR_BOARD_KEPT_S = 86_400;
+/**
+ * VENDOR-BOARD: THE SECONDS A BOARD READ AT `nowS` IS THE BOARD FOR - `{ since, until }` off VENDOR_SPAN_SQL's row (its
+ * bounds read in the board's own batch: one snapshot). `until`: its first listing to run out, a day at most. `since`
+ * (AUDIT LEAN-READS 2 B2): a caller's second before `nowS` reads the listings that ran out between as open (`expires_at
+ * > ?1`) - none after the last to run out by `nowS`, so from there - and the patrons' sales that left the day between
+ * (`at > ?1 - PATRON_TOLD_S`) - which change its answer only where the board tells fewer than VENDOR_BOARD_SHOWN, newest
+ * first, so from the last such sale's leaving. Where the reads read with the overload's lag, the board read at the
+ * read's second is the board for its callers' seconds as well.
+ * @param {any} row @param {number} patrons the board's patrons told @param {number} nowS
+ */
+export function vendorSpan(row, patrons, nowS) {
+  const gone = row?.gone == null ? 0 : Number(row.gone);
+  const told = patrons < VENDOR_BOARD_SHOWN && row?.told != null ? Number(row.told) + PATRON_TOLD_S : 0;
+  return { since: Math.min(nowS, Math.max(0, gone, told)), until: Math.min(Number(row?.next ?? Infinity), nowS + VENDOR_BOARD_KEPT_S) };
+}
 /** VENDOR-BOARD: a kept board's text read back, or null for one that is not a board. */
 export function vendorBoardOf(/** @type {unknown} */ text) {
   let o;
@@ -2261,10 +2281,16 @@ export const VENDOR_HOUSES_SQL = `SELECT * FROM (SELECT ${VENDOR_COLUMNS},
     ${PATRON_FROM} WHERE ${PATRON_SQL} AND l.expires_at > ?1 AND l.region = ?2 AND h.region = ?2) WHERE v_rank = 1
     ORDER BY at DESC LIMIT ${VENDOR_BOARD_SHOWN}`;
 const VENDOR_PATRONS_SQL = PATRON_TOLD_SQL('s.region = ?2');
-const VENDOR_NEXT_SQL = `SELECT MIN(expires_at) AS next FROM market_listings WHERE state = 'open' AND vendor_id IS NOT NULL AND region = ?1 AND expires_at > ?2`;
-/** VENDOR-BOARD (AUDIT LEAN-READS B1): the reads a kept board was read by - a deploy that changes them reads every board
- *  again. */
-export const VENDOR_BOARD_SHAPE = shapeOf('vendor-board: newest, houses, patrons', VENDOR_NEWEST_SQL, VENDOR_HOUSES_SQL, VENDOR_PATRONS_SQL, PATRON_TOLD_S);
+/** VENDOR-BOARD: a board's bounds (?1 the region, ?2 now, ?3 the patrons' day's first second) - its next listing to run
+ *  out, the last that ran out by now (idx_market_vendor_expiry, each), and the last patron's sale that left the day
+ *  (idx_patron_sales_region): vendorSpan's. */
+export const VENDOR_SPAN_SQL = `SELECT (SELECT MIN(expires_at) FROM market_listings WHERE state = 'open' AND vendor_id IS NOT NULL AND region = ?1 AND expires_at > ?2) AS next,
+    (SELECT MAX(expires_at) FROM market_listings WHERE state = 'open' AND vendor_id IS NOT NULL AND region = ?1 AND expires_at <= ?2) AS gone,
+    (SELECT MAX(at) FROM market_patron_sales WHERE region = ?1 AND at <= ?3) AS told`;
+/** VENDOR-BOARD (AUDIT LEAN-READS B1, 2 B5): what a kept board is - its reads, its bounds' and the seconds they span, and
+ *  the text it is written as - so a deploy that changes any reads every board again. */
+export const VENDOR_BOARD_SHAPE = shapeOf('vendor-board: {newest, houses, patrons} from since to until', VENDOR_NEWEST_SQL, VENDOR_HOUSES_SQL, VENDOR_PATRONS_SQL,
+  VENDOR_SPAN_SQL, PATRON_TOLD_S, VENDOR_BOARD_KEPT_S, VENDOR_BOARD_SHOWN);
 
 /**
  * AUDIT LW-II P10: THE DRAW'S SECRET (patronLaw.js patronDraw) - the service's own, derived from a secret it already keeps

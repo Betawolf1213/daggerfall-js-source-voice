@@ -101,14 +101,14 @@ test('LEAN-WITNESS the schema: world_witness carries `late`, witness_confirmed k
   assert.ok(raw.prepare('PRAGMA table_info(world_witness)').all().some((c) => c.name === 'late' && c.notnull === 1 && c.dflt_value === '0'),
     'a later rebuild of world_witness carries `late` (migration 0134\'s header)');
   const triggers = Object.fromEntries(raw.prepare("SELECT name, sql FROM sqlite_master WHERE type = 'trigger' AND tbl_name = 'world_witness'").all().map((t) => [t.name, t.sql]));
-  assert.deepEqual(Object.keys(triggers).sort(), ['witness_lean_in', 'witness_lean_out']);
+  assert.deepEqual(Object.keys(triggers).sort(), ['witness_lean_fixed', 'witness_lean_in', 'witness_lean_out']);
   assert.deepEqual(raw.prepare("SELECT name FROM sqlite_master WHERE type = 'trigger' AND tbl_name = 'witness_confirmed' ORDER BY name").all().map((t) => t.name),
     ['witness_confirmed_moved', 'witness_confirmed_turned']);
   const kinds = `IN (${LEAN_KINDS.map((k) => `'${k}'`).join(', ')})`;
   assert.deepEqual(LEAN_KINDS, ['npchall', 'seat']);
-  for (const t of Object.values(triggers)) {
-    assert.ok(t.includes(kinds), 'each trigger names the lean kinds');
-    assert.ok(t.includes(`WHERE n = ${WITNESS.confirm} ORDER BY at, account LIMIT 1`), 'and confirms at the law\'s count');
+  for (const [name, t] of Object.entries(triggers)) {
+    assert.ok(t.includes(kinds), `${name} names the lean kinds`);
+    if (name !== 'witness_lean_fixed') assert.ok(t.includes(`WHERE n = ${WITNESS.confirm} ORDER BY at, account LIMIT 1`), `${name} confirms at the law's count`);
   }
   const sql = src(MIGRATION);
   assert.ok(sql.includes(`WHERE kind IN ('npchall', 'seat'))\n    WHERE n = ${WITNESS.confirm})`), 'the backfill too');
@@ -120,11 +120,34 @@ test('LEAN-WITNESS the schema: world_witness carries `late`, witness_confirmed k
     assert.ok(raw.prepare("SELECT sql FROM sqlite_master WHERE name = ?").get(i).sql.endsWith(`WHERE ${LEAN_ROWS}`), `${i}: the lean kinds' rows that are not late alone (AUDIT LEAN-READS A4)`);
   }
   // AUDIT LEAN-READS B6: a replaced row's implied delete fires no trigger - no source writes one into a table they keep
+  // (AUDIT LEAN-READS 2 A4: its name quoted or its schema's named too)
   const kept = ['world_witness', 'home_decor', 'homes', 'market_listings', 'market_patron_sales', 'arena_pve', 'arena_pvp', 'arena_members'];
-  const replaces = new RegExp(`(?:OR\\s+REPLACE\\s+INTO|REPLACE\\s+INTO)\\s+(?:${kept.join('|')})\\b`, 'i');
+  const replaces = new RegExp(`(?:OR\\s+REPLACE\\s+INTO|REPLACE\\s+INTO)\\s+(?:main\\.)?["'\`\\[]?(?:${kept.join('|')})\\b`, 'i');
+  assert.match('INSERT OR REPLACE INTO "world_witness" (kind)', replaces);
+  assert.match('REPLACE INTO main.homes VALUES (1)', replaces);
   for (const f of readdirSync(new URL('../../server-account/src', import.meta.url))) {
     if (f.endsWith('.js')) assert.doesNotMatch(src(`server-account/src/${f}`), replaces, f);
   }
+  // AUDIT LEAN-READS 2 A4: the key's row made whatever the outer write's conflict policy (a policy named on the outer
+  // statement is every trigger statement's: an inner OR IGNORE refused a second answer under OR ABORT, and left it in
+  // unsettled under OR FAIL), and an answer is never rewritten in place - no trigger would hear it
+  const ins = (policy, key, account, f, at) => raw.prepare(`INSERT ${policy} INTO world_witness (kind, key, account, report, region, at) VALUES ('seat', ?, ?, ?, 21, ?)`)
+    .run(key, account, KINDS.seat.report(Number(key), 21, f), at);
+  ACCOUNTS.forEach((a) => addAccount(raw, a));
+  const policies = ['', 'OR ABORT', 'OR FAIL', 'OR ROLLBACK', 'OR IGNORE', 'OR REPLACE'];
+  policies.forEach((policy, i) => {
+    const key = String(600 + i);
+    ACCOUNTS.slice(0, 5).forEach((a, j) => ins(policy, key, a, j === 3 ? 41 : 40, T0 + j));
+  });
+  assertKept(raw, 'seat', 'every outer policy');
+  assert.equal(raw.prepare("SELECT COUNT(*) AS n FROM witness_confirmed WHERE kind = 'seat' AND key BETWEEN '600' AND '605' AND report IS NOT NULL").get().n, policies.length);
+  assert.throws(() => raw.prepare("UPDATE world_witness SET report = 'x' WHERE kind = 'seat' AND key = '600'").run(), /never rewritten/);
+  assert.throws(() => raw.prepare("UPDATE world_witness SET at = at + 1 WHERE kind = 'seat' AND key = '600' AND late = 1").run(), /never rewritten/);
+  assert.throws(() => raw.prepare(`INSERT INTO world_witness (kind, key, account, report, region, at) VALUES ('seat', '600', ?, 'y', 21, 0)
+    ON CONFLICT DO UPDATE SET report = excluded.report`).run(ACCOUNTS[0]), /never rewritten/, 'an upsert\'s update too');
+  raw.prepare("INSERT INTO world_witness (kind, key, account, report, region, at) VALUES ('pixel', 'p1', ?, 'a', 21, 0)").run(ACCOUNTS[0]);
+  raw.prepare("UPDATE world_witness SET report = 'b' WHERE kind = 'pixel' AND key = 'p1'").run();   // another kind's rows are none of the triggers'
+  assertKept(raw, 'seat', 'after the refused rewrites');
   assert.equal(LEAN_KEYS_A_STATEMENT, 99, 'one parameter is the kind: D1 binds 100');
 });
 
@@ -389,6 +412,7 @@ test('LEAN-WITNESS every statement of the triggers finds its rows by a key\'s in
       const p = plan(st);
       assert.doesNotMatch(p, /SCAN world_witness|SCAN witness_confirmed/, `${name}: ${st.slice(0, 60)} - ${p}`);
       for (const step of p.split(' | ').filter((x) => /SEARCH (world_witness|witness_confirmed|w|c) /.test(x))) {
+        if (/^SEARCH world_witness USING INTEGER PRIMARY KEY \(rowid=\?\)$/.test(step) && st.includes('WHERE rowid IN (SELECT rowid FROM world_witness INDEXED BY')) continue;   // the rows its named read found
         assert.match(step, /key=\?/, `${name}: a key's rows, not a kind's - ${step}`);
         searched++;
       }
@@ -403,4 +427,102 @@ test('LEAN-WITNESS every statement of the triggers finds its rows by a key\'s in
   const bump = src('server-account/src/npcHalls.js').match(/const bumpRegions = [\s\S]*?db\.prepare\(\s*`([\s\S]*?)`\)/)[1]
     .replaceAll('${HALL_WITNESS_KIND}', HALL_WITNESS_KIND).replaceAll('${LEAN_ROWS}', LEAN_ROWS).replace('${keySql}', 'key = ?1').replace('${guard}', 'changes() > 0');
   assert.match(plan(bump), /SEARCH world_witness USING (?:COVERING )?INDEX sqlite_autoindex_world_witness_1 \(kind=\? AND key=\?\)/, 'the bump: its town\'s rows (HALL-PLAN)');
+});
+
+test('LEAN-WITNESS with ANALYZE\'s statistics the triggers\' reads keep their indexes - where the planner, told pixels make a key three rows, takes the table\'s key index over both partial ones and every settle walks its key (AUDIT LEAN-READS 2 A3: a 10,000-row town\'s strike 0.2 s to 12 s; mutants: a settle\'s index unnamed, a moved row\'s)', () => {
+  const raw = d1()._raw;
+  ACCOUNTS.forEach((a) => addAccount(raw, a));
+  Array.from({ length: 60 }, (_, i) => addAccount(raw, `x${i}`));
+  const ins = raw.prepare('INSERT INTO world_witness (kind, key, account, report, region, at) VALUES (?, ?, ?, ?, 21, ?)');
+  raw.exec('BEGIN');
+  for (let k = 0; k < 20_000; k++) ins.run('pixel', `p${k}`, ACCOUNTS[k % ACCOUNTS.length], 'g', T0);   // the day's shape: pixels, a key a row or so
+  for (let k = 0; k < 100; k++) for (let j = 0; j < 27; j++) ins.run('seat', String(k), `x${(k + j) % 60}`, KINDS.seat.report(k, 21, 40), T0 + j);   // and seats of 27 answers
+  raw.exec('COMMIT');
+  raw.exec('ANALYZE');
+  assert.ok(raw.prepare('SELECT COUNT(*) AS n FROM sqlite_stat1').get().n > 0);
+  const plan = (sql) => raw.prepare(`EXPLAIN QUERY PLAN ${sql}`).all().map((r) => r.detail).join(' | ');
+  const unnamed = (st) => st.replace(/ INDEXED BY idx_world_witness_\w+/g, '');
+  // every row of the key read (a covering probe is the last answer's EXISTS; with its account, a row's own lookup)
+  const KEY_WALK = /USING INDEX sqlite_autoindex_world_witness_1 \(kind=\? AND key=\?\)/;
+  // the control: the same reads unnamed walk the key under these statistics - a settle's, a moved row's, a turned one's
+  for (const [name, i] of [['witness_lean_in', 1], ['witness_lean_out', 0], ['witness_confirmed_moved', 1], ['witness_confirmed_turned', 0]]) {
+    assert.match(plan(unnamed(triggerStatements(raw, name)[i])), KEY_WALK, `the statistics turn ${name}'s read unnamed`);
+  }
+  for (const name of ['witness_lean_in', 'witness_lean_out', 'witness_confirmed_moved', 'witness_confirmed_turned']) {
+    for (const st of triggerStatements(raw, name)) {
+      const p = plan(st);
+      assert.doesNotMatch(p, /SCAN world_witness/, `${name}: ${p}`);
+      assert.doesNotMatch(p, KEY_WALK, `${name}: its named index, not the key's every row - ${p}`);
+    }
+  }
+  const named = (name) => triggerStatements(raw, name).join(' ').match(/INDEXED BY idx_world_witness_\w+/g)?.length ?? 0;
+  assert.equal(named('witness_lean_in'), 3, 'the settle\'s three reads');
+  assert.equal(named('witness_lean_out'), 3);
+  assert.equal(named('witness_confirmed_moved'), 2);
+  assert.equal(named('witness_confirmed_turned'), 1);
+});
+
+test('LEAN-WITNESS a strike of a key whose answers lie interleaved - split between two, or disputed - deletes each row once and writes none: the late rows, then the confirmation emptied, then the rest (AUDIT LEAN-READS 2 A1/D1: one DELETE turned the confirmation over at each confirmer, 1,516 rows wrote 1.1 million; mutants: the late rows not first, the confirmation not emptied)', async () => {
+  const db = d1();
+  const raw = db._raw;
+  const nowS = T0;
+  const ins = raw.prepare('INSERT INTO world_witness (kind, key, account, report, region, at) VALUES (?, ?, ?, ?, ?, ?)');
+  const N = 600;
+  const ids = Array.from({ length: N }, (_, i) => `s${String(i).padStart(4, '0')}`);
+  ids.forEach((id) => addAccount(raw, id));
+  const shapes = {
+    split: (i) => (i % 2 ? 41 : 40),   // two answers, turn and turn about, as a client version's split would
+    disputed: (i) => (i < N / 2 ? 40 : 41),   // one answer's rows, then the other's
+    late: (i) => (i < 3 ? 40 : i < 6 ? 41 : 40),   // a confirmation with a dissent among its late rows
+  };
+  const fill = (kind, key, k, shape) => ids.forEach((id, i) => ins.run(kind, key, id, KINDS[kind].report(k, 21, shape(i)), 21, nowS + i));
+  const total = () => raw.prepare('SELECT total_changes() AS n').get().n;
+  const dev = witness(raw, 'devra', nowS);
+  let k = 50;
+  for (const [label, shape] of Object.entries(shapes)) {
+    k++;
+    fill('npchall', `1:${k}`, k, shape);
+    fill('seat', String(k), k, shape);
+    assertKept(raw, 'seat', label);
+    let t = total();
+    assert.equal((await strikeHall({ db, nowS }, dev, ENV, { key: k })).reports, N, `${label}: every answer struck`);
+    const hall = total() - t;
+    t = total();
+    assert.equal((await strikeSeat({ db, nowS }, dev, ENV, { key: k })).reports, N);
+    const seat = total() - t;
+    // each answer deleted once, the confirmation emptied and gone, the strike and the region's word: nothing rewritten
+    assert.ok(hall <= N + 6, `${label}: a hall's ${N} answers struck wrote ${hall} rows`);
+    assert.ok(seat <= N + 8, `${label}: a seat's wrote ${seat}`);
+    assert.equal(raw.prepare("SELECT COUNT(*) AS n FROM world_witness WHERE key IN (?, ?)").get(`1:${k}`, String(k)).n, 0);
+    assert.equal(raw.prepare("SELECT COUNT(*) AS n FROM witness_confirmed WHERE key IN (?, ?)").get(`1:${k}`, String(k)).n, 0, `${label}: and the keys' rows`);
+  }
+});
+
+test('LEAN-WITNESS a late report whose town rests on a confirmer the law may leave out moves the region\'s version - the law\'s confirmation then rests on it (AUDIT LEAN-READS 2 A2: the region\'s chapters stayed without its faction until another report came; mutants: the confirmers unasked, a dissent asked for a confirmer)', async () => {
+  const db = d1();
+  const raw = db._raw;
+  forgetChapters();
+  let nowS = T0;
+  const [liar, a, b, c, x, y, z] = ['liar', 'a', 'b', 'c', 'x', 'y', 'z'].map((id) => witness(raw, id, nowS));
+  const hall = (key, f) => ({ key, region: 21, factions: [f] });
+  const say = async (who, h) => { nowS += 1; return witnessHall({ db, nowS }, who, ENV, { hall: h }); };
+  for (const w of [liar, a, b]) await say(w, hall(800, 40));   // the liar one of town 800's three
+  for (const t of [801, 802, 803]) for (const w of [x, y, z]) await say(w, hall(t, 41));
+  for (const t of [801, 802, 803]) await say(liar, hall(t, 409));   // its own answer against three confirmed towns: ignored
+  assert.equal(await mayBeIgnored(db, 'npchall', 'liar', nowS), true);
+  forgetChapters();
+  assert.deepEqual(await regionChapters(db, 21, nowS * 1000), [41], 'town 800 unconfirmed under the law: the liar left out');
+  const ver = () => raw.prepare('SELECT ver FROM npc_hall_regions WHERE region = 21').get().ver;
+  const v0 = ver();
+  assert.deepEqual(await say(c, hall(800, 40)), { ok: true, counted: true });
+  assert.equal(raw.prepare("SELECT late FROM world_witness WHERE kind = 'npchall' AND key = '1:800' AND account = 'c'").get().late, 1, 'late by the database\'s confirmation');
+  assert.equal(ver(), v0 + 1, 'and the region told: its law confirms town 800 on it');
+  forgetChapters();
+  assert.deepEqual(await regionChapters(db, 21, nowS * 1000 + 61_000), [40, 41], 'the chapters counted again');
+  // a late report whose town's confirmers none may be ignored moves nothing - a liar's dissent among its rows or not
+  await say(liar, hall(801, 409));   // ignored: not counted
+  const w = witness(raw, 'w4', nowS);
+  const v1 = ver();
+  assert.deepEqual(await say(w, hall(801, 41)), { ok: true, counted: true });
+  assert.equal(ver(), v1, 'town 801 rests on x, y and z: the liar\'s dissent is no confirmer');
 });

@@ -569,7 +569,7 @@ const MEMBERS_SQL = 'SELECT banner, COUNT(*) AS n FROM arena_members WHERE banne
 export async function arenaShared({ db }, season, later) {
   const kept = await db.prepare(ARENA_BOARD_READ).bind(season).first();
   const shared = kept && Number(kept.built) === Number(kept.ver) && kept.shape === ARENA_BOARD_SHAPE ? arenaSharedOf(kept.rows) : null;
-  if (shared) return shared;
+  if (shared) return arenaView(shared, season);
   const rs = await db.batch([
     db.prepare('SELECT ver FROM arena_board_ver WHERE id = 1'),
     db.prepare(GRAND_SQL),
@@ -581,9 +581,11 @@ export async function arenaShared({ db }, season, later) {
     db.prepare(MEMBERS_SQL),
   ]);
   const at = (/** @type {number} */ i) => rs[i]?.results ?? [];
+  // AUDIT LEAN-READS 2 B5: the counts as the reads answer them - the banners' points worked out on the way out
+  // (arenaView), so the kept row is the reads' alone and their shape is all of it
   const counted = {
     grandRows: at(1), pvpAll: at(2), pveAll: at(3), fastAll: at(4),
-    standings: standingsFrom(at(5), at(6)), last: season > 1 ? standingsFrom(at(7), at(8)) : { red: 0, blue: 0 },
+    standingRows: { now: [at(5), at(6)], last: [at(7), at(8)] },
     rosters: { red: at(9), blue: at(10) }, counts: at(11),
   };
   const ver = at(0)[0]?.ver;
@@ -593,22 +595,30 @@ export async function arenaShared({ db }, season, later) {
       .catch((/** @type {any} */ e) => console.warn('[arena] the season\'s board not kept', e?.message ?? e));   // the answer stands; the next caller counts again
     if (later) later.push(keep); else await keep();
   }
-  return counted;
+  return arenaView(counted, season);
+}
+/** ARENA-BOARD: the counts as the board reads them - each season's standings worked out off its banners' rows. */
+function arenaView(/** @type {any} */ c, /** @type {number} */ season) {
+  const { standingRows: { now, last }, ...rest } = c;
+  return { ...rest, standings: standingsFrom(now[0], now[1]), last: season > 1 ? standingsFrom(last[0], last[1]) : { red: 0, blue: 0 } };
 }
 /** ARENA-BOARD: a season's kept counts, and the arena's version. */
 export const ARENA_BOARD_READ = `SELECT v.ver, b.built, b.shape, b.rows FROM arena_board_ver v LEFT JOIN arena_boards b ON b.season = ?1 WHERE v.id = 1`;
 /** ARENA-BOARD: counts kept - where the arena's version is the one counted (?2) and no board of it and this shape is kept. */
 export const ARENA_BOARD_KEEP = `INSERT INTO arena_boards (season, built, shape, rows) SELECT ?1, ?2, ?3, ?4 WHERE (SELECT ver FROM arena_board_ver WHERE id = 1) = ?2
   ON CONFLICT (season) DO UPDATE SET built = excluded.built, shape = excluded.shape, rows = excluded.rows WHERE NOT (built = excluded.built AND shape IS excluded.shape)`;
-/** ARENA-BOARD (AUDIT LEAN-READS B1): the counts a kept board was counted by - a deploy that changes them counts again. */
-export const ARENA_BOARD_SHAPE = shapeOf('arena-board: grandRows, pvpAll, pveAll, fastAll, standings, last, rosters, counts',
+/** ARENA-BOARD (AUDIT LEAN-READS B1, 2 B5): the counts a kept board was counted by, and the text they are kept as - the
+ *  reads' rows alone, so a deploy that changes any counts again. */
+export const ARENA_BOARD_SHAPE = shapeOf('arena-board: {grandRows, pvpAll, pveAll, fastAll, standingRows: {now, last: [pve, pvp]}, rosters: {red, blue}, counts}',
   GRAND_SQL, BOARD_SQL, CLIMB_SQL, FAST_SQL, STANDINGS_PVE_SQL, STANDINGS_PVP_SQL, ROSTER_SQL, MEMBERS_SQL);
 /** ARENA-BOARD: kept counts read back, or null for a text that is not them. */
 export function arenaSharedOf(/** @type {unknown} */ text) {
   let o;
   try { o = JSON.parse(String(text)); } catch { return null; }
   const lists = ['grandRows', 'pvpAll', 'pveAll', 'fastAll', 'counts'];
-  return o && lists.every((k) => Array.isArray(o[k])) && o.standings && o.last && Array.isArray(o.rosters?.red) && Array.isArray(o.rosters?.blue) ? o : null;
+  const pair = (/** @type {unknown} */ x) => Array.isArray(x) && x.length === 2 && x.every(Array.isArray);
+  return o && lists.every((k) => Array.isArray(o[k])) && pair(o.standingRows?.now) && pair(o.standingRows?.last)
+    && Array.isArray(o.rosters?.red) && Array.isArray(o.rosters?.blue) ? o : null;
 }
 
 // ── THE RECORDS PAGE (ARENA4b) ───────────────────────────────────────────────────────────────

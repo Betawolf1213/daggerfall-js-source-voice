@@ -1758,8 +1758,8 @@
   {
     "name": "AUDIT-CHAP2-E1-STRIKE-DELETE",
     "file": "server-account/src/npcHalls.js",
-    "old": "    db.prepare(`DELETE FROM world_witness WHERE kind = '${HALL_WITNESS_KIND}' AND key LIKE ?`).bind(`%:${key}`),",
-    "new": "    db.prepare('SELECT ?').bind(`%:${key}`),",
+    "old": "    ...strikeWitness(db, HALL_WITNESS_KIND, 'key LIKE ?1', `%:${key}`),",
+    "new": "    ...strikeWitness(db, HALL_WITNESS_KIND, 'key LIKE ?1 AND 0', `%:${key}`),",
     "tests": [
       "test/net/audit_chap1.test.js",
       "test/net/audit_chap2.test.js",

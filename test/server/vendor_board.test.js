@@ -14,8 +14,8 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 
 import { d1, T0 } from '../accountDb.mjs';
-import { marketVendors, vendorBoard, vendorBoardOf, VENDOR_BOARD_READ, VENDOR_BOARD_KEEP, VENDOR_BOARD_SHAPE, VENDOR_BOARD_KEPT_S, VENDOR_NEWEST_SQL, VENDOR_HOUSES_SQL,
-  PATRON_TOLD_S, PATRON_TOLD_SQL } from '../../server-account/src/market.js';
+import { marketVendors, vendorBoard, vendorBoardOf, vendorSpan, VENDOR_BOARD_READ, VENDOR_BOARD_KEEP, VENDOR_BOARD_SHAPE, VENDOR_BOARD_KEPT_S, VENDOR_NEWEST_SQL, VENDOR_HOUSES_SQL,
+  VENDOR_SPAN_SQL, PATRON_TOLD_S, PATRON_TOLD_SQL } from '../../server-account/src/market.js';
 import { shapeOf, keptFits, KEPT_BOARD_MAX_BYTES } from '../../server-account/src/keptBoard.js';
 import { VENDOR_STATION, VENDOR_BOARD_SHOWN } from '../../src/net/vendorLaw.js';
 
@@ -72,6 +72,10 @@ const after = (a) => ({
     units: r.units, listed: r.listed, price: r.price, fee: r.fee, wear: r.wear ?? null, at: r.at, expiresAt: r.expiresAt, state: r.state, currency: r.currency, mine: r.mine }]),
 });
 
+/** A region's version and its kept board (AUDIT LEAN-READS 2 B3: the version a row of its own). */
+const rowOf = (raw, region) => raw.prepare(`SELECT v.ver, b.built, b.shape, b.since, b.until FROM (SELECT ? AS r) q
+  LEFT JOIN market_vendor_ver v ON v.region = q.r LEFT JOIN market_vendor_boards b ON b.region = q.r`).get(region);
+
 /** A world: four people with two characters each, two guilds, houses in both regions with traders and chairs. */
 function world() {
   const db = d1();
@@ -117,8 +121,18 @@ test('VENDOR-BOARD the oracle: through listings put up, bought, cancelled and ru
       const x = r();
       if (x < 0.2) w.listing(`L${ids++}`, nowS);
       else if (x < 0.32) raw.prepare("UPDATE market_listings SET state = ? WHERE id = ?").run(w.pick(['sold', 'cancelled']), `L${Math.floor(r() * ids)}`);
-      else if (x < 0.42) nowS += Math.floor(r() * 40);   // listings run out
-      else if (x < 0.45) raw.prepare('UPDATE home_decor SET place = ? WHERE id = ?').run(place(r() < 0.5 ? VENDOR_STATION : null), `t${300 + Math.floor(r() * 6)}`);
+      else if (x < 0.40) nowS += Math.floor(r() * 40);   // listings run out
+      else if (x < 0.42) {
+        // AUDIT LEAN-READS 2 B1: a write by no route today - a trader piece or a listing deleted outright - and an heir's
+        // house (homes.js inheritHome: the char_id alone)
+        const y = r();
+        if (y < 0.3) raw.prepare('DELETE FROM home_decor WHERE id = ?').run(`t${300 + Math.floor(r() * 6)}`);
+        else if (y < 0.6) { try { raw.prepare('DELETE FROM market_listings WHERE id = ?').run(`L${Math.floor(r() * ids)}`); } catch { /* a listing a sale still names */ } }
+        else {
+          const h = raw.prepare('SELECT map_id, building_key, player FROM homes ORDER BY building_key LIMIT 1 OFFSET ?').get(Math.floor(r() * 6));
+          if (h) raw.prepare('UPDATE homes SET char_id = ? WHERE map_id = ? AND building_key = ?').run(w.pick(CHARS(h.player)), h.map_id, h.building_key);
+        }
+      } else if (x < 0.45) raw.prepare('UPDATE home_decor SET place = ? WHERE id = ?').run(place(r() < 0.5 ? VENDOR_STATION : null), `t${300 + Math.floor(r() * 6)}`);
       else if (x < 0.48) raw.prepare('UPDATE market_listings SET region = ? WHERE id = ?').run(w.pick(REGIONS), `L${Math.floor(r() * ids)}`);   // no route moves one; the database's law holds if one does
       else if (x < 0.58) {
         const h = raw.prepare('SELECT map_id, building_key FROM homes ORDER BY building_key LIMIT 1 OFFSET ?').get(Math.floor(r() * 6));
@@ -145,14 +159,18 @@ test('VENDOR-BOARD the oracle: through listings put up, bought, cancelled and ru
           VALUES (?, ?, 1, 2, 3, ?, ?, ?, ?, 0, 0, ?, ?, 1, 300)`).run(l.id, l.vendor_map, l.seller, l.char_id, l.region, l.price, l.price, nowS - Math.floor(r() * 2 * PATRON_TOLD_S));
       }
       if (r() < 0.25) nowS += Math.floor(r() * PATRON_TOLD_S / 4);   // the patrons' day passing
-      for (const region of REGIONS) {
+      for (const region of REGIONS) for (const lag of [0, Math.floor(r() * 60)]) {
+        // AUDIT LEAN-READS 2 B1/B2: callers whose clocks were taken before the board's read too, as an overload's are
         const p = w.pick(PEOPLE), me = r() < 0.15 ? null : w.pick(CHARS(p));
         const player = { id: p, handle: p.slice(2), registered_at: 0 };
-        const got = await marketVendors({ db, nowS }, player, ENV, { region, character: me });
+        const at = nowS - lag;
+        const got = await marketVendors({ db, nowS: at }, player, ENV, { region, character: me });
         assert.equal(got.ok, true, JSON.stringify(got));
-        assert.deepEqual(after(got), await before(db, player, region, me ?? '', nowS), `seed ${seed} op ${op} region ${region}`);
+        assert.deepEqual(after(got), await before(db, player, region, me ?? '', at), `seed ${seed} op ${op} region ${region} lag ${lag}`);
+        const was = raw.prepare('SELECT built FROM market_vendor_boards WHERE region = ?').get(region);
         raw.prepare('UPDATE market_vendor_boards SET built = -1 WHERE region = ?').run(region);
-        assert.deepEqual(got, await marketVendors({ db, nowS }, player, ENV, { region, character: me }), `seed ${seed} op ${op} region ${region}: whole, as read afresh`);
+        assert.deepEqual(got, await marketVendors({ db, nowS: at }, player, ENV, { region, character: me }), `seed ${seed} op ${op} region ${region} lag ${lag}: whole, as read afresh`);
+        if (was && raw.prepare('SELECT built FROM market_vendor_boards WHERE region = ?').get(region)?.built === -1) raw.prepare('UPDATE market_vendor_boards SET built = ? WHERE region = ?').run(was.built, region);   // a later board stands: as it was
       }
     }
   }
@@ -173,10 +191,10 @@ test('VENDOR-BOARD a kept board is one statement and the caller\'s own two rows;
   await marketVendors({ db: counted, nowS: T0 }, player, ENV, { region: 17, character: 'p-ana-c1' });
   const steps = asked.map((x) => (x === VENDOR_BOARD_READ ? 'READ' : x === VENDOR_BOARD_KEEP ? 'KEEP' : /^\s*(INSERT|UPDATE|DELETE|REPLACE)\b/i.test(x) ? 'WRITE' : x.startsWith('BATCH') ? x : null)).filter(Boolean);
   assert.deepEqual(steps, ['BATCH(2)', 'READ', 'BATCH(5)', 'KEEP'], 'the caller\'s own rows, the row, the board\'s reads - and its one write last');
-  const row = () => raw.prepare('SELECT ver, built, shape, built_at, until FROM market_vendor_boards WHERE region = 17').get();
+  const row = () => rowOf(raw, 17);
   assert.equal(row().built, row().ver, 'kept');
   assert.equal(row().shape, VENDOR_BOARD_SHAPE);
-  assert.equal(row().built_at, T0, 'at the second it was read');
+  assert.equal(row().since, 0, 'for every second before the read: no listing ran out by it, no patron\'s sale left its day');
   const next = raw.prepare("SELECT MIN(expires_at) AS n FROM market_listings WHERE state = 'open' AND vendor_id IS NOT NULL AND region = 17 AND expires_at > ?").get(T0).n;
   assert.equal(row().until, next, 'until its first listing runs out');
   asked.length = 0;
@@ -236,10 +254,12 @@ test('VENDOR-BOARD AUDIT LEAN-READS: a row of another shape is no board (B1); a 
   for (let k = 0; k < 6; k++) w.home(1000 + (k % 3), 300 + k);
   raw.prepare('UPDATE homes SET region = 17, entry = \'public\', guild_id = NULL').run();
   for (let i = 0; i < 20; i++) w.listing(`L${i}`, T0);
-  const row = () => raw.prepare('SELECT ver, built, shape, built_at, until FROM market_vendor_boards WHERE region = 17').get();
+  const row = () => rowOf(raw, 17);
   const ids = (b) => [...b.newest, ...b.houses].map((l) => l.id).sort();
-  // B1: the shape is the reads' own, and a row of another is read again and kept in this one
-  assert.equal(VENDOR_BOARD_SHAPE, shapeOf('vendor-board: newest, houses, patrons', VENDOR_NEWEST_SQL, VENDOR_HOUSES_SQL, PATRON_TOLD_SQL('s.region = ?2'), PATRON_TOLD_S));
+  // B1 (2 B5): the shape is the reads' own, their bounds' and the seconds they span, and the text's; a row of another is
+  // read again and kept in this one
+  assert.equal(VENDOR_BOARD_SHAPE, shapeOf('vendor-board: {newest, houses, patrons} from since to until', VENDOR_NEWEST_SQL, VENDOR_HOUSES_SQL, PATRON_TOLD_SQL('s.region = ?2'),
+    VENDOR_SPAN_SQL, PATRON_TOLD_S, VENDOR_BOARD_KEPT_S, VENDOR_BOARD_SHOWN));
   await vendorBoard({ db, nowS: T0 }, 17);
   raw.prepare("UPDATE market_vendor_boards SET shape = 'an older deploy', rows = '{\"newest\":[],\"houses\":[],\"patrons\":[]}' WHERE region = 17").run();
   assert.ok(ids(await vendorBoard({ db, nowS: T0 }, 17)).length > 0, 'another shape: read again');
@@ -248,14 +268,26 @@ test('VENDOR-BOARD AUDIT LEAN-READS: a row of another shape is no board (B1); a 
   raw.prepare("UPDATE market_listings SET expires_at = ? WHERE id = 'L0'").run(T0 + 5);
   raw.prepare("UPDATE market_listings SET expires_at = ? WHERE id <> 'L0' AND expires_at <= ?").run(T0 + 500, T0 + 10);
   const later = await vendorBoard({ db, nowS: T0 + 10 }, 17);
-  assert.equal(row().built_at, T0 + 10);
+  assert.equal(row().since, T0 + 5, 'the board read at T0 + 10 is the board from L0\'s end');
   const kept = row();
   const early = await vendorBoard({ db, nowS: T0 }, 17);
+  assert.deepEqual(row(), kept, 'the newer board stays kept: a lagging caller\'s never put over it');
+  const keptRows = raw.prepare('SELECT rows FROM market_vendor_boards WHERE region = 17').get().rows;
   raw.prepare('UPDATE market_vendor_boards SET built = -1 WHERE region = 17').run();
   const live = await vendorBoard({ db, nowS: T0 }, 17);
-  raw.prepare('UPDATE market_vendor_boards SET built = ?, built_at = ?, until = ? WHERE region = 17').run(kept.built, kept.built_at, kept.until);
+  raw.prepare('UPDATE market_vendor_boards SET built = ?, since = ?, until = ?, rows = ? WHERE region = 17').run(kept.built, kept.since, kept.until, keptRows);
   assert.deepEqual(ids(early), ids(live), 'the earlier caller is told the board at its own second');
   assert.ok(ids(early).includes('L0') && !ids(later).includes('L0'));
+  // 2 B2: a caller whose clock lags the read, with no listing run out between, is served the kept board - no read
+  const asked = [];
+  const counting = Object.create(db);
+  counting.prepare = (sql) => { asked.push(sql); return db.prepare(sql); };
+  counting.batch = (list) => { asked.push('BATCH'); return db.batch(list); };
+  assert.deepEqual(ids(await vendorBoard({ db: counting, nowS: T0 + 6 }, 17)), ids(later));
+  assert.deepEqual(asked, [VENDOR_BOARD_READ], 'served from L0\'s end on');
+  asked.length = 0;
+  await vendorBoard({ db: counting, nowS: T0 + 4 }, 17);
+  assert.ok(asked.includes('BATCH'), 'before it: read again');
   // B2: five callers miss together - the board written once
   raw.prepare("UPDATE market_listings SET price = price + 1 WHERE id = 'L2'").run();
   let writes = 0;
@@ -268,16 +300,27 @@ test('VENDOR-BOARD AUDIT LEAN-READS: a row of another shape is no board (B1); a 
   await Promise.all(Array.from({ length: 5 }, () => vendorBoard({ db: keeps, nowS: T0 + 20 }, 17)));
   assert.equal(writes, 1, 'one write for the five');
   assert.equal(row().built, row().ver);
-  // a region no write has touched: version 0, kept by its first read; a write landing between the read and the keep makes
-  // its row at version 1 - the keep, at 0, is not put over it
-  raw.prepare('DELETE FROM market_vendor_boards WHERE region = 17').run();
-  await vendorBoard({ db, nowS: T0 + 20 }, 17);
-  assert.deepEqual([row().ver, row().built], [0, 0], 'version 0, kept');
-  raw.prepare('DELETE FROM market_vendor_boards WHERE region = 17').run();
+  // 2 B4: a region with no version row is read every time and kept never; its first write makes the row past any board kept
+  // for the region, so a row lost and counted again never meets an older board; a row deleted between the read and the keep
+  // keeps nothing
+  const built = row().built;
+  raw.prepare('DELETE FROM market_vendor_ver WHERE region = 17').run();
+  asked.length = 0;
+  await vendorBoard({ db: counting, nowS: T0 + 20 }, 17);
+  await vendorBoard({ db: counting, nowS: T0 + 20 }, 17);
+  assert.equal(asked.filter((x) => x === 'BATCH').length, 2, 'no version row: read every time');
+  assert.equal(row().built, built, 'and nothing kept');
+  raw.prepare("UPDATE market_listings SET price = price + 1 WHERE id = 'L2'").run();
+  assert.equal(row().ver, built + 1, 'made past the kept board\'s version');
   const racing = Object.create(db);
+  racing.batch = async (list) => { const out = await db.batch(list); raw.prepare('DELETE FROM market_vendor_ver WHERE region = 17').run(); return out; };
+  await vendorBoard({ db: racing, nowS: T0 + 20 }, 17);
+  assert.equal(row().built, built, 'the version row gone between the read and the keep: nothing kept');
+  raw.prepare("UPDATE market_listings SET price = price + 1 WHERE id = 'L2'").run();
+  const ver = row().ver;
   racing.batch = async (list) => { const out = await db.batch(list); raw.prepare("UPDATE market_listings SET price = price + 1 WHERE id = 'L2'").run(); return out; };
   await vendorBoard({ db: racing, nowS: T0 + 20 }, 17);
-  assert.deepEqual([row().ver, row().built], [1, 0], 'the write\'s version stands unkept');
+  assert.deepEqual([row().ver, row().built], [ver + 1, built], 'a write landing between: its version stands unkept');
   // B7: the hour's reckoning and the board's pixel move no board; the price does
   await vendorBoard({ db, nowS: T0 + 20 }, 17);
   const v = row().ver;
@@ -311,4 +354,66 @@ test('VENDOR-BOARD the writes that move a board are the database\'s own - every 
   assert.doesNotThrow(() => raw.prepare("DELETE FROM home_decor WHERE id = 'bad'").run());
   const files = readdirSync(new URL('../../server-account/migrations', import.meta.url)).filter((f) => f > '0136');
   for (const f of files) assert.doesNotMatch(src(`server-account/migrations/${f}`), /DROP TABLE (market_listings|home_decor|homes|market_patron_sales)\b/, `${f} rebuilds a table the board's triggers stand on - make them again in it`);
+  // AUDIT LEAN-READS 2 B1: EVERY WRITE THE BOARD READS, AND WHICH REGIONS IT MOVES - each by name, those no route makes
+  // today too (a listing or a trader deleted outright, an heir's house): the random oracle meets them too seldom to hold
+  // them alone. And (B3) a write moves its region's version row, never the kept board's.
+  assert.ok(!raw.prepare('PRAGMA table_info(market_vendor_boards)').all().some((c) => c.name === 'ver'), 'the kept board carries no version');
+  const ver = (r) => raw.prepare('SELECT ver FROM market_vendor_ver WHERE region = ?').get(r)?.ver ?? 0;
+  const moves = (label, write, regions) => {
+    const before = [17, 23].map(ver);
+    write();
+    const after = [17, 23].map(ver);
+    assert.deepEqual([17, 23].filter((_, i) => after[i] !== before[i]), regions, label);
+  };
+  const list = (id) => raw.prepare(`INSERT INTO market_listings (id, seller, char_id, region, kind, units, own, bought, price, fee, at, expires_at, state, rid, n, currency, item, vendor_map, vendor_id)
+    VALUES (?, 'p-ana', 'p-ana-c1', 17, 'item', 1, 1, 0, 10, 1, 1, ?, 'open', ?, 'n', 'gold', ?, 6, 'tv')`).run(id, T0 + 99, `rid-${id}`, ITEM);
+  moves('a house bought', () => raw.prepare("INSERT INTO homes (map_id, building_key, player, char_id, owner_name, region, entry, price, bought_at) VALUES (6, 6, 'p-ana', 'p-ana-c1', 'Ana', 17, 'public', 1, 1)").run(), [17]);
+  moves('a trader set down', () => raw.prepare('INSERT INTO home_decor (map_id, building_key, id, model, place, placed_at, paid, yard) VALUES (6, 6, ?, 41000, ?, 1, 0, 0)').run('tv', place(VENDOR_STATION)), [17]);
+  moves('a chair set down', () => raw.prepare('INSERT INTO home_decor (map_id, building_key, id, model, place, placed_at, paid, yard) VALUES (6, 6, ?, 41000, ?, 1, 0, 0)').run('ch', place(null)), []);
+  moves('a listing put up', () => list('V1'), [17]);
+  list('V2');
+  moves('its price', () => raw.prepare("UPDATE market_listings SET price = 11 WHERE id = 'V1'").run(), [17]);
+  moves('its region', () => raw.prepare("UPDATE market_listings SET region = 23 WHERE id = 'V1'").run(), [17, 23]);
+  moves('an heir\'s house (the char_id alone)', () => raw.prepare("UPDATE homes SET char_id = 'p-ana-c2' WHERE map_id = 6 AND building_key = 6").run(), [17]);
+  moves('its door', () => raw.prepare("UPDATE homes SET entry = 'guild' WHERE map_id = 6 AND building_key = 6").run(), [17]);
+  moves('the house to another region', () => raw.prepare('UPDATE homes SET region = 23 WHERE map_id = 6 AND building_key = 6').run(), [17, 23]);
+  moves('a patron\'s sale', () => raw.prepare(`INSERT INTO market_patron_sales (listing, map, hour, minute, seed, seller, char_id, region, price, tax, fee, gets, at, day, building_key)
+    VALUES ('V2', 6, 1, 2, 3, 'p-ana', 'p-ana-c1', 23, 10, 0, 0, 10, ?, 1, 6)`).run(T0), [23]);
+  moves('a listing deleted outright', () => raw.prepare("DELETE FROM market_listings WHERE id = 'V1'").run(), [23]);
+  moves('the trader taken off its station', () => raw.prepare("UPDATE home_decor SET place = ? WHERE id = 'tv'").run(place(null)), [23]);
+  moves('a chair moved', () => raw.prepare("UPDATE home_decor SET place = ? WHERE id = 'ch'").run(place(null)), []);
+  raw.prepare("UPDATE home_decor SET place = ? WHERE id = 'tv'").run(place(VENDOR_STATION));
+  moves('the trader deleted outright', () => raw.prepare("DELETE FROM home_decor WHERE id = 'tv'").run(), [23]);
+  moves('the house released', () => raw.prepare('DELETE FROM homes WHERE map_id = 6 AND building_key = 6').run(), [23]);
+});
+
+test('VENDOR-BOARD AUDIT LEAN-READS 2 B2: a board is the board from the last second an answer would have differed - the last listing to run out by its read, and the last patron\'s sale to leave the day where it tells fewer than it may - to its first listing\'s end; a caller between is served it, a caller before reads again (mutants: the run-out unread, the sale unread, the sale read where the board is full)', async () => {
+  const day = PATRON_TOLD_S;
+  assert.deepEqual(vendorSpan(null, 0, T0), { since: 0, until: T0 + VENDOR_BOARD_KEPT_S }, 'nothing run out, no sale gone: every second before');
+  assert.deepEqual(vendorSpan({ next: T0 + 9, gone: T0 - 50, told: T0 - day - 30 }, VENDOR_BOARD_SHOWN - 1, T0), { since: T0 - 30, until: T0 + 9 });
+  assert.deepEqual(vendorSpan({ next: T0 + 9, gone: T0 - 50, told: T0 - day - 30 }, VENDOR_BOARD_SHOWN, T0), { since: T0 - 50, until: T0 + 9 }, 'a full board: an older sale never reaches it');
+  assert.deepEqual(vendorSpan({ next: null, gone: T0 - 50, told: T0 - day - 70 }, 0, T0), { since: T0 - 50, until: T0 + VENDOR_BOARD_KEPT_S });
+  const { db, raw } = world();
+  const w = put(raw, 0, lcg(13));
+  for (let k = 0; k < 6; k++) w.home(1000 + (k % 3), 300 + k);
+  raw.prepare('UPDATE homes SET region = 17, entry = \'public\', guild_id = NULL').run();
+  for (let i = 0; i < 6; i++) w.listing(`L${i}`, T0);
+  raw.prepare("UPDATE market_listings SET region = 17, expires_at = ? WHERE expires_at <= ?").run(T0 + 500, T0 + 5);
+  const l = raw.prepare("SELECT * FROM market_listings WHERE vendor_id IS NOT NULL AND region = 17 LIMIT 1").get();
+  const sale = (listing, at) => raw.prepare(`INSERT INTO market_patron_sales (listing, map, hour, minute, seed, seller, char_id, region, price, tax, fee, gets, at, day, building_key)
+    VALUES (?, ?, 1, 2, 3, ?, ?, 17, 10, 0, 0, 10, ?, 1, 300)`).run(listing, l.vendor_map, l.seller, l.char_id, at);
+  sale(l.id, T0 - day - 10);   // left the day ten seconds before the read
+  const board = await vendorBoard({ db, nowS: T0 }, 17);
+  assert.equal(board.patrons.length, 0);
+  assert.equal(rowOf(raw, 17).since, T0 - 10);
+  const asked = [];
+  const counting = Object.create(db);
+  counting.prepare = (sql) => { asked.push(sql); return db.prepare(sql); };
+  counting.batch = (list) => { asked.push('BATCH'); return db.batch(list); };
+  await vendorBoard({ db: counting, nowS: T0 - 5 }, 17);
+  assert.deepEqual(asked, [VENDOR_BOARD_READ], 'after the sale left the day: served');
+  asked.length = 0;
+  const early = await vendorBoard({ db: counting, nowS: T0 - 20 }, 17);
+  assert.ok(asked.includes('BATCH'), 'before it: read again');
+  assert.equal(early.patrons.length, 1, 'and told the sale still in its day');
 });

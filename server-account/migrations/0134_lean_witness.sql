@@ -25,8 +25,9 @@
 --
 --   witness_confirmed   each key's confirmation as the database keeps it: the answer, and the second its third agreeing
 --                       account gave it (the confirming row, ordered by second and account as witnessedFact orders
---                       them) - NULL both while the key's answers confirm nothing. The rows of the key that agree with it
---                       and were given in a later second are late; no other row is.
+--                       them) - NULL both, or no row at all, while the key's answers confirm nothing (the backfill
+--                       makes no row for such a key; every reader takes the two alike). The rows of the key that agree
+--                       with it and were given in a later second are late; no other row is.
 --
 -- THE DATABASE KEEPS IT, NOT THE CALLERS: an answer inserted and an answer deleted (a strike, an account gone with ON
 -- DELETE CASCADE, a sweep - by any route, the old Worker's among them) settle their key in the same statement, and each
@@ -45,7 +46,12 @@
 --     first late row at the latest (every late row agrees with it), and every other answer's rows are none of them
 --     late. A new confirmation moves the late rows (witness_confirmed_moved, witness_confirmed_turned): those of the
 --     answer before it go back if it turned, those of its own answer up to its second go back, and its own answer's of a
---     later second go late - each by its index range.
+--     later second go late - each by its index range;
+--   - EACH READ NAMES ITS INDEX (AUDIT LEAN-READS 2 A3): with ANALYZE's statistics (D1 keeps none today; its own guide
+--     says to run PRAGMA optimize) the planner takes the table's key index over the two partial ones - pixels make the
+--     average key three rows - and every settle walks its whole key again: a 10,000-row town's strike 0.2 s to 12 s.
+--     INDEXED BY holds the plan whatever the statistics (an UPDATE in a trigger takes none, so it names its rows by a
+--     rowid read that does).
 --
 -- A REBUILD OF world_witness (as 0028, 0032, 0048, 0099 and 0132 rebuilt it to admit a kind) DROPS THIS COLUMN, ITS
 -- INDEXES AND ITS TRIGGERS: carry `late` into the new table and make all of them again in the same migration.
@@ -93,13 +99,15 @@ CREATE INDEX IF NOT EXISTS idx_world_witness_account ON world_witness (account, 
 -- two touch no row in common, so their order is none.
 CREATE TRIGGER IF NOT EXISTS witness_confirmed_moved AFTER UPDATE OF report, at ON witness_confirmed
 BEGIN
-  UPDATE world_witness SET late = 0 WHERE kind = NEW.kind AND key = NEW.key AND late = 1 AND report = NEW.report AND at <= NEW.at;
-  UPDATE world_witness SET late = 1 WHERE kind = NEW.kind AND key = NEW.key AND kind IN ('npchall', 'seat') AND late = 0
-    AND report = NEW.report AND at > NEW.at;
+  UPDATE world_witness SET late = 0 WHERE rowid IN (SELECT rowid FROM world_witness INDEXED BY idx_world_witness_late
+    WHERE kind = NEW.kind AND key = NEW.key AND late = 1 AND report = NEW.report AND at <= NEW.at);
+  UPDATE world_witness SET late = 1 WHERE rowid IN (SELECT rowid FROM world_witness INDEXED BY idx_world_witness_lean_key
+    WHERE kind = NEW.kind AND key = NEW.key AND kind IN ('npchall', 'seat') AND late = 0 AND report = NEW.report AND at > NEW.at);
 END;
 CREATE TRIGGER IF NOT EXISTS witness_confirmed_turned AFTER UPDATE OF report ON witness_confirmed WHEN OLD.report IS NOT NEW.report
 BEGIN
-  UPDATE world_witness SET late = 0 WHERE kind = NEW.kind AND key = NEW.key AND late = 1 AND report IS NOT NEW.report;
+  UPDATE world_witness SET late = 0 WHERE rowid IN (SELECT rowid FROM world_witness INDEXED BY idx_world_witness_late
+    WHERE kind = NEW.kind AND key = NEW.key AND late = 1 AND report IS NOT NEW.report);
 END;
 
 -- AN ANSWER INSERTED: its key's row made where it has none; the key settled where it confirms nothing yet or the answer
@@ -107,14 +115,16 @@ END;
 -- second.
 CREATE TRIGGER IF NOT EXISTS witness_lean_in AFTER INSERT ON world_witness WHEN NEW.kind IN ('npchall', 'seat')
 BEGIN
-  INSERT OR IGNORE INTO witness_confirmed (kind, key) VALUES (NEW.kind, NEW.key);
+  INSERT INTO witness_confirmed (kind, key) SELECT NEW.kind, NEW.key
+    WHERE NOT EXISTS (SELECT 1 FROM witness_confirmed WHERE kind = NEW.kind AND key = NEW.key);
   UPDATE witness_confirmed SET (report, at) = (
     SELECT report, at FROM (
       SELECT report, account, at, ROW_NUMBER() OVER (PARTITION BY report ORDER BY at, account) AS n FROM (
-        SELECT report, account, at FROM world_witness WHERE kind = NEW.kind AND key = NEW.key AND kind IN ('npchall', 'seat') AND late = 0
+        SELECT report, account, at FROM world_witness INDEXED BY idx_world_witness_lean_key
+          WHERE kind = NEW.kind AND key = NEW.key AND kind IN ('npchall', 'seat') AND late = 0
         UNION ALL
-        SELECT report, account, at FROM world_witness WHERE kind = NEW.kind AND key = NEW.key AND late = 1
-          AND at = (SELECT MIN(at) FROM world_witness WHERE kind = NEW.kind AND key = NEW.key AND late = 1)))
+        SELECT report, account, at FROM world_witness INDEXED BY idx_world_witness_late WHERE kind = NEW.kind AND key = NEW.key AND late = 1
+          AND at = (SELECT MIN(at) FROM world_witness INDEXED BY idx_world_witness_late WHERE kind = NEW.kind AND key = NEW.key AND late = 1)))
     WHERE n = 3 ORDER BY at, account LIMIT 1)
     WHERE kind = NEW.kind AND key = NEW.key AND (report IS NULL OR NEW.at <= at);
   UPDATE world_witness SET late = 1 WHERE kind = NEW.kind AND key = NEW.key AND account = NEW.account AND late = 0
@@ -127,12 +137,23 @@ BEGIN
   UPDATE witness_confirmed SET (report, at) = (
     SELECT report, at FROM (
       SELECT report, account, at, ROW_NUMBER() OVER (PARTITION BY report ORDER BY at, account) AS n FROM (
-        SELECT report, account, at FROM world_witness WHERE kind = OLD.kind AND key = OLD.key AND kind IN ('npchall', 'seat') AND late = 0
+        SELECT report, account, at FROM world_witness INDEXED BY idx_world_witness_lean_key
+          WHERE kind = OLD.kind AND key = OLD.key AND kind IN ('npchall', 'seat') AND late = 0
         UNION ALL
-        SELECT report, account, at FROM world_witness WHERE kind = OLD.kind AND key = OLD.key AND late = 1
-          AND at = (SELECT MIN(at) FROM world_witness WHERE kind = OLD.kind AND key = OLD.key AND late = 1)))
+        SELECT report, account, at FROM world_witness INDEXED BY idx_world_witness_late WHERE kind = OLD.kind AND key = OLD.key AND late = 1
+          AND at = (SELECT MIN(at) FROM world_witness INDEXED BY idx_world_witness_late WHERE kind = OLD.kind AND key = OLD.key AND late = 1)))
     WHERE n = 3 ORDER BY at, account LIMIT 1)
     WHERE kind = OLD.kind AND key = OLD.key AND report = OLD.report AND OLD.at <= at;
   DELETE FROM witness_confirmed WHERE kind = OLD.kind AND key = OLD.key AND report IS NULL
     AND NOT EXISTS (SELECT 1 FROM world_witness WHERE kind = OLD.kind AND key = OLD.key);
+END;
+
+-- AN ANSWER IS NEVER REWRITTEN (AUDIT LEAN-READS 2 A4): no trigger above hears an UPDATE of a hall's or a seat's answer -
+-- its key, its account, what it says or its second - so the key's confirmation and its late rows would stand as they
+-- were. No route writes one (an answer is given once, INSERT OR IGNORE, and goes by a delete); this refuses the write
+-- that would, where it would otherwise pass in silence. The triggers' own writes set `late` alone.
+CREATE TRIGGER IF NOT EXISTS witness_lean_fixed BEFORE UPDATE OF kind, key, account, report, at ON world_witness
+  WHEN OLD.kind IN ('npchall', 'seat') OR NEW.kind IN ('npchall', 'seat')
+BEGIN
+  SELECT RAISE(ABORT, 'a hall''s or a seat''s answer is never rewritten: delete it and give it again (migration 0134)');
 END;

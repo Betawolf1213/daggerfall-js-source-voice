@@ -83,7 +83,7 @@ export function noteOverload(/** @type {number} */ nowMs) { busyShedUntil = Math
 /** BUSY-GATE: whether this request is a read the isolate sheds at `nowMs`. */
 export const shedding = (/** @type {string} */ path, /** @type {string} */ method, /** @type {number} */ nowMs) => busyRead(path, method) && nowMs < busyShedUntil;
 /** BUSY-GATE: a stood service is a fresh isolate - nothing shed. */
-export function _resetBusyShed() { busyShedUntil = 0; slowWaits.length = 0; }
+export function _resetBusyShed() { busyShedUntil = 0; slowWaits.length = 0; slowSum.ms = 0; slowSum.trips = 0; }
 
 /** SLOW-SHED (2026-10-19, the account database overloaded again, 18:05-18:25 UTC; bible/11-Multiplayer/Scale-Arc.md
  *  SLOW-SHED): A DATABASE TOO SLOW TO ANSWER IS SHED AS ONE THAT REFUSES. BUSY-GATE's shed opened only on D1's own word
@@ -106,20 +106,26 @@ export const SLOW_SHED_WAIT_MS = 1_000;
 export const SLOW_SHED_TRIP_CAP_MS = 5_000;
 export const SLOW_SHED_SPAN_MS = 30_000;
 export const SLOW_SHED_MIN = 16;
-/** SLOW-SHED: this isolate's recent requests - `{ at, ms, trips }` their D1 wait (each trip capped) over their trips. */
+/** SLOW-SHED: this isolate's recent requests - `{ at, ms, trips }` their D1 wait (each trip capped) over their trips - and
+ *  their sums, kept as they come and go (AUDIT LEAN-READS: an overload's window is the busiest; it is never added up again). */
 const slowWaits = /** @type {{ at: number, ms: number, trips: number }[]} */ ([]);
+const slowSum = { ms: 0, trips: 0 };
 /** SLOW-SHED: a request's D1 wait (`ms`) over its `trips`, ended at `nowMs` - and the shed opened where the span averages
  *  too slow. A request that asked the database nothing says nothing of it. */
 export function noteD1Wait(/** @type {number} */ ms, /** @type {number} */ trips, /** @type {number} */ nowMs) {
   if (!(trips > 0) || !Number.isFinite(ms)) return;
-  const waited = Math.min(ms, trips * SLOW_SHED_TRIP_CAP_MS);
+  const waited = Math.min(ms, trips * SLOW_SHED_TRIP_CAP_MS);   // metrics.js caps each trip; a caller that hands the whole is held to the same bound
   slowWaits.push({ at: nowMs, ms: waited, trips });
-  while (slowWaits.length && nowMs - slowWaits[0].at > SLOW_SHED_SPAN_MS) slowWaits.shift();
+  slowSum.ms += waited;
+  slowSum.trips += trips;
+  while (slowWaits.length && nowMs - slowWaits[0].at > SLOW_SHED_SPAN_MS) {
+    const gone = /** @type {{ ms: number, trips: number }} */ (slowWaits.shift());
+    slowSum.ms -= gone.ms;
+    slowSum.trips -= gone.trips;
+  }
   if (slowWaits.length < SLOW_SHED_MIN || waited / trips < SLOW_SHED_WAIT_MS) return;   // a quick request keeps nothing open
-  let all = 0, asked = 0;
-  for (const w of slowWaits) { all += w.ms; asked += w.trips; }
-  if (all / asked < SLOW_SHED_WAIT_MS) return;
-  if (nowMs >= busyShedUntil) console.warn(`[busy] slow: the shed opened - ${slowWaits.length} requests in ${SLOW_SHED_SPAN_MS / 1000} s waited ${Math.round(all / asked)} ms a trip`);
+  if (slowSum.ms / slowSum.trips < SLOW_SHED_WAIT_MS) return;
+  if (nowMs >= busyShedUntil) console.warn(`[busy] slow: the shed opened - ${slowWaits.length} requests in ${SLOW_SHED_SPAN_MS / 1000} s waited ${Math.round(slowSum.ms / slowSum.trips)} ms a trip`);
   noteOverload(nowMs);
 }
 

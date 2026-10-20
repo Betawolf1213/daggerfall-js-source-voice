@@ -54,8 +54,8 @@ import { isDeveloper } from './titles.js';
 import { witnessOf } from './townSeats.js';
 import { chaptersOpenFor } from './npcRoll.js';
 import { witnessedFact, factConfirmed, regionOk } from '../../src/net/nodeLaw.js';
-import { seatIgnoredAccounts, SEAT_WITNESSES_AUDIT } from '../../src/net/townSeatLaw.js';
-import { exactRows, mayBeIgnored, witnessRow, LEAN_ROWS } from './leanWitness.js';   // LEAN-WITNESS
+import { seatIgnoredAccounts, SEAT_WITNESSES_AUDIT, SEAT_WITNESS_IGNORED_S, SEAT_WITNESS_UNMATCHED_MAX } from '../../src/net/townSeatLaw.js';
+import { exactRows, mayBeIgnored, witnessRow, unmatchedSql, strikeWitness, LEAN_ROWS } from './leanWitness.js';   // LEAN-WITNESS
 import {
   HALL_WITNESS_KIND, HALL_WITNESS_HOUR, HALL_REPORT_V, hallReportOf, hallReportText, parseHallReport, hallWitnessKey,
 } from '../../src/net/npcChapterLaw.js';
@@ -77,6 +77,15 @@ export const forgetChapters = () => _kept.clear();
 // (the key's whole rows - a late row names its confirmation's region, which its confirmers name already; AUDIT LEAN-READS
 // A1: asked for its rows that are not late, the planner took the lean region index on its kind alone and walked every
 // town's). `binds` past ?1 and ?2, for a guard that asks them.
+/** LEAN-WITNESS (AUDIT LEAN-READS 2 A2): A TOWN'S CONFIRMER THE LAW MAY LEAVE OUT - one of the rows its confirmation rests
+ *  on (its answer's rows that are not late: every agreeing row of a later second is late) whose account answered
+ *  SEAT_WITNESS_UNMATCHED_MAX against confirmations since `?4` (leanWitness.js mayBeIgnored's count). Only such a
+ *  confirmer's leaving makes a later agreeing answer count: the law's confirmation of the town is otherwise the
+ *  database's, and an agreeing answer after it counts nothing. `?1` the town's key; its rows that are not late by the lean
+ *  index, each confirmer's answers by its own (idx_world_witness_account). */
+const CONFIRMER_MAY_BE_IGNORED = `EXISTS (SELECT 1 FROM (SELECT account, report FROM world_witness WHERE kind = '${HALL_WITNESS_KIND}' AND key = ?1 AND ${LEAN_ROWS}) w
+      JOIN witness_confirmed c ON c.kind = '${HALL_WITNESS_KIND}' AND c.key = ?1 AND c.report = w.report
+      WHERE (${unmatchedSql(`'${HALL_WITNESS_KIND}'`, 'w.account', '?4')}) >= ${SEAT_WITNESS_UNMATCHED_MAX})`;
 const bumpRegions = (/** @type {any} */ db, /** @type {string} */ keySql, /** @type {string} */ key, /** @type {number} */ nowS, guard = '1', ...binds) => db.prepare(
   `INSERT INTO npc_hall_regions (region, ver, done, at) SELECT DISTINCT +region, 1, 0, ?2 FROM world_witness
     WHERE kind = '${HALL_WITNESS_KIND}' AND ${keySql} AND ${guard}
@@ -149,14 +158,16 @@ export async function witnessHall({ db, nowS }, player, env, { hall } = {}) {
     && hallFacts(await judgedRows(db, h.region, nowS), nowS).ignored.has(player.id)) return { ok: true, counted: false, why: 'ignored' };
   // AUDIT CHAP3 S5: the strike asked again inside the write - a strike that landed after the check above takes this report
   // with it; S3: and the regions its town's reports name told a change came, in the same batch. LEAN-WITNESS: a report
-  // the database let go late (it agrees with its town's confirmation, a second after it) is no change to them
+  // the database let go late (it agrees with its town's confirmation, a second after it) is no change to them - unless
+  // (AUDIT LEAN-READS 2 A2) one of the town's confirmers may be ignored: the law leaves it out, and the late report may be
+  // the third the town's confirmation then rests on
   const key = hallWitnessKey(h.key);
   const [r, moved] = await db.batch([
     db.prepare(`INSERT OR IGNORE INTO world_witness (kind, key, account, report, region, at)
       SELECT '${HALL_WITNESS_KIND}', ?1, ?2, ?3, ?4, ?5 WHERE NOT EXISTS (SELECT 1 FROM npc_hall_strikes WHERE map_id = ?6)`)
       .bind(key, player.id, hallReportText(h), h.region, nowS, h.key),
-    bumpRegions(db, 'key = ?1', key, nowS, `changes() > 0 AND NOT EXISTS (SELECT 1 FROM world_witness w WHERE w.kind = '${HALL_WITNESS_KIND}'
-      AND w.key = ?1 AND w.account = ?3 AND w.late = 1)`, player.id),
+    bumpRegions(db, 'key = ?1', key, nowS, `changes() > 0 AND (NOT EXISTS (SELECT 1 FROM world_witness w WHERE w.kind = '${HALL_WITNESS_KIND}'
+      AND w.key = ?1 AND w.account = ?3 AND w.late = 1) OR ${CONFIRMER_MAY_BE_IGNORED})`, player.id, nowS - 2 * SEAT_WITNESS_IGNORED_S),
   ]);
   if (moved?.meta?.changes) _kept.delete(h.region);   // AUDIT CHAP2 E9: a report that changed nothing is no news
   if (!r?.meta?.changes && await db.prepare('SELECT 1 FROM npc_hall_strikes WHERE map_id = ?').bind(h.key).first()) return { error: 'hall-struck' };
@@ -257,13 +268,13 @@ export async function listHalls({ db, nowS }, dev, env, { region } = {}) {
 export async function strikeHall({ db, nowS }, dev, env, { key } = {}) {
   if (!isDeveloper(dev, env)) return { error: 'not-developer' };
   if (!Number.isSafeInteger(key) || key < 0 || key > 0xffffffff) return { error: 'bad-hall' };
-  const [, , gone] = await db.batch([
+  const [, , late, , rest] = await db.batch([
     db.prepare('INSERT OR IGNORE INTO npc_hall_strikes (map_id, by, at) VALUES (?, ?, ?)').bind(key, dev.handle ?? null, nowS),
     // AUDIT CHAP3 S3/S5: the regions its reports named told first, while the reports stand to name them
     bumpRegions(db, 'key LIKE ?1', `%:${key}`, nowS),
-    // LEAN-WITNESS: the town's confirmation goes with its rows - migration 0134's triggers, a confirmer at a time
-    db.prepare(`DELETE FROM world_witness WHERE kind = '${HALL_WITNESS_KIND}' AND key LIKE ?`).bind(`%:${key}`),
+    // LEAN-WITNESS: the town's rows and its confirmation go (0134's triggers take the key's row with its last answer)
+    ...strikeWitness(db, HALL_WITNESS_KIND, 'key LIKE ?1', `%:${key}`),
   ]);
   forgetChapters();
-  return { ok: true, key, reports: Number(gone?.meta?.changes ?? 0) };
+  return { ok: true, key, reports: Number(late?.meta?.changes ?? 0) + Number(rest?.meta?.changes ?? 0) };
 }
