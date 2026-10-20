@@ -16,6 +16,7 @@ import {
   readJungleTrees, jungleCover, JUNGLE_ROOT_BAND, JUNGLE_CROWN_COVER, jungleMesh,
 } from '../../src/world/jungle/jungleModels.js';
 import { COVER_RADIUS_FRAC, createCoverIndex, rayCylinder } from '../../src/ai/cover.js';
+import { trailRoom } from '../../src/world/jungle/jungleTrails.js';
 import {
   JUNGLE_FIELD_REACH, JUNGLE_EDGE, JUNGLE_WANDER_MAX, jungleField, jungleNine, jungleSignedAt,
   jungleDepthAt, jungleShare,
@@ -393,8 +394,10 @@ test('AUDIT BANTHA1 LAY-1/2/3/7/8/9: the groves and the stands on the world\'s l
       }
       // and the other way: a cell no crown reaches - the west pixel's grown trees', the east one's held sites' - its roll
       // under the gap's young trees (whole jungle, grass), stands its young tree: a neighbour pixel's cell that is no
-      // site holds no trunk to shade it (the north and south pixels' cells read too at the first and last rows: not here)
-      if (cy > 0 && cy < 128 / C7 - 1 && !near([...trunksW, ...held], JUNGLE.crown) && roll < JUNGLE.gapUnder * JUNGLE.ground[2]) {
+      // site holds no trunk to shade it (the north and south pixels' cells read too at the first and last rows: not here;
+      // nor a cell a young tree's foot from a trail's dirt - JUNGLE-TRAILS keeps it off)
+      const youngFoot = Math.max(...JUNGLE_MEASURES.map((m) => m.foot)) * JUNGLE.underScale[1];
+      if (cy > 0 && cy < 128 / C7 - 1 && !near([...trunksW, ...held], JUNGLE.crown) && roll < JUNGLE.gapUnder * JUNGLE.ground[2] && trailRoom(px, PY, mx, mz) >= youngFoot) {
         lit++;
         assert.ok(west.some((f) => f.x === mx && f.z === mz && young(f)), `pixel ${px}'s cell (${cx}, ${cy}) stands its young tree in the light`);
       }

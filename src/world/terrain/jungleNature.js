@@ -45,7 +45,8 @@ import {
 import { HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE, TERRAIN_SIZE, SCALED_BEACH_ELEVATION } from './terrainSampler.js';
 import { WORLD_MAP_TILE_DIM, sampleHeight } from './terrainTiles.js';
 import { jungleDepthAt, jungleShare, JUNGLE_EDGE, JUNGLE_WANDER_MAX } from '../jungle/jungleRegion.js';
-import { JUNGLE_ARCHIVE, JUNGLE_SPECIES } from '../jungle/jungleModels.js';
+import { JUNGLE_ARCHIVE, JUNGLE_SPECIES, JUNGLE_MEASURES } from '../jungle/jungleModels.js';
+import { trailClear, trailsReach } from '../jungle/jungleTrails.js';
 import { ecoNoise, ecoOrigin } from '../ecotone.js';
 
 /** The jungle's numbers, in one place. Tiles are DFU's (6.4 m); a species is JUNGLE_SPECIES's index (0 banyan, 1 kapok,
@@ -275,6 +276,11 @@ export function withJungle(own, heightmapData, tilemapData, opts) {
     }
   }
   const placeAt = (mx, mz, g2) => groundAt(heightmapData, mx, mz) - Math.atan(Math.sqrt(g2)) * (180 / Math.PI) / SLOPE_SINK_RATIO;
+  // JUNGLE-TRAILS: a tree keeps its FOOT off a trail's dirt as VERGE1 keeps it off a road - its roots, buttresses and
+  // curtains at its own scale (jungleModels.js JUNGLE_MEASURES) - where the trails run: the jungle whole (the painter's
+  // own gate, world/jungle/jungleTrails.js trailClear); the palms and the floor keep off its tiles (`paths`, above)
+  const trails = whole || trailsReach(jg.nine);
+  const onTrail = (ti, mx, mz, species, js) => trails && share[ti] >= 1 && !trailClear(px, py, mx, mz, JUNGLE_MEASURES[species].foot * js);
 
   // the pixel's own flats, but those on the jungle's tiles
   const out = own.filter((f) => !mine[Math.min(tDim - 1, Math.floor(f.z / scale + 1e-6)) * tDim + Math.min(tDim - 1, Math.floor(f.x / scale + 1e-6))]);
@@ -299,6 +305,7 @@ export function withJungle(own, heightmapData, tilemapData, opts) {
       const species = emergent ? fromPool(JUNGLE.emergents, tileDraw(wx, wz, 24)) : canopySpecies(origin, tx, tz, above, light, tileDraw(wx, wz, 24));
       const [s0, s1] = emergent ? JUNGLE.emergentScale : JUNGLE.canopyScale;
       const js = s0 + (s1 - s0) * tileDraw(wx, wz, 25);
+      if (onTrail(ti, mx, mz, species, js)) continue;
       const k = (cy * cells + cx) * 3;
       trunks[k] = mx; trunks[k + 1] = mz; trunks[k + 2] = js;
       out.push({ record: JUNGLE_SPECIES[species].record, x: mx, y: placeAt(mx, mz, g2Of[ti]), z: mz, wood: 1, archive: JUNGLE_ARCHIVE, jungle: species, js });
@@ -355,14 +362,16 @@ export function withJungle(own, heightmapData, tilemapData, opts) {
       const palm = JUNGLE.palm * j * ground * fields;
       const roll = tileDraw(wx, wz, 42);
       if (roll >= under + palm || crowded(mx, mz, cx, cy, JUNGLE.underClear)) continue;
-      taken[ti] = 1;
       if (roll < under) {
         const species = fromPool(JUNGLE.young, tileDraw(wx, wz, 43));
         const [s0, s1] = JUNGLE.underScale;
-        out.push({ record: JUNGLE_SPECIES[species].record, x: mx, y: placeAt(mx, mz, g2), z: mz, wood: 1, archive: JUNGLE_ARCHIVE, jungle: species, js: s0 + (s1 - s0) * tileDraw(wx, wz, 44) });
+        const js = s0 + (s1 - s0) * tileDraw(wx, wz, 44);
+        if (onTrail(ti, mx, mz, species, js)) continue;
+        out.push({ record: JUNGLE_SPECIES[species].record, x: mx, y: placeAt(mx, mz, g2), z: mz, wood: 1, archive: JUNGLE_ARCHIVE, jungle: species, js });
       } else {
         out.push({ record: JUNGLE_PALMS[Math.floor(tileDraw(wx, wz, 45) * JUNGLE_PALMS.length)], x: mx, y: placeAt(mx, mz, g2), z: mz, wood: 1, archive: JUNGLE_ARCHIVE });
       }
+      taken[ti] = 1;
     }
   }
 

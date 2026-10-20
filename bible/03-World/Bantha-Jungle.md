@@ -123,7 +123,8 @@ sapling thicket); the location's rect and every place's footprint, widened by DF
 forests off as on (LAY-4: World of Daggerfall's site footprint and its rock pieces were Real forests' alone, and jungle
 trees stood in the rocks).
 
-**What it never stands on.** A track or a river the road painter laid (its `paths`), a slope over DFU's 50 degrees -
+**What it never stands on.** A track or a river the road painter laid (its `paths`), or a trail of its own (The
+trails), a slope over DFU's 50 degrees -
 and no TREE, canopy or young, over 34 (a 20 m tree on a cliff reads wrong; the palms and the floor stand to 50 - LAY-2:
 a hillside between 34 and 50 was bare), any ground but dirt, grass or stone (their shares 0.7, 1 and 0.2), under the
 beach line. Beside a road (VERGE1's clear roadsides) a jungle tree keeps its **foot** off it - its roots, buttresses and
@@ -146,6 +147,49 @@ trees and 8,200 palms and plants - about 10,600 flats, against Real forests' mea
 AUDIT BANTHA1 LAY-10, PERF-6: 16 before that; the ordinary layout is about 3), never on the frame's thread. The list crosses to the main thread BY COLUMN
 (`world/terrain/natureWire.js`: a float64 column a field, the buffers transferred, the objects made again - 2 ms
 against the 10 ms structured clone it was, PERF-2).
+
+## The trails
+
+**JUNGLE-TRAILS (2026-10-19, the owner: "Implement procedural dirt pathways that cut through the forest").** Dirt
+trails wind through the jungle, meet, cross and loop - about one through every pixel (1.2 km of trail to the km²) - its
+own, never the road painter's tracks: a track runs straight from a pixel's middle to its edge and is the map's (the
+travel map, the ink map, the landforms and fast travel read the network), so the jungle's trails stay off it.
+
+**The law** (`world/jungle/jungleTrails.js`). A trail is where a field on the WORLD's lattice crosses its middle value:
+two families (`JUNGLE_TRAILS.families` - lattices of 176 and 240 tiles), each a value noise (`ecotone.js` `ecoHash`)
+seen through a warp of its own, so a trail bends as a path walked round trees bends, and the two cross at junctions.
+Each family's lattice is turned off the world's axes by a Pythagorean triple (36.9° and -22.6°: a cosine and a sine
+exact in every engine, where `Math.cos` is not - the room agrees on its trails), so no trail runs along a lattice line
+(14% of their headings lie within 10° of an axis, against 22% for a line at random and 35% unturned). A lattice point's
+value is held 0.1 off the middle either side, so no island of the field - no ring of trail round it - is smaller than
+about half a cell; each warp stretches a step at most 1 + 6 x its amplitude over its cell (`warpStretch`, under 2), so
+it never folds a trail back over itself. A point's distance from a trail is the field's distance from its middle over its gradient (the
+warp carried through by the chain rule). The field is a pure function of the world tile: a trail runs on unbroken across
+every pixel's edge, on the worker and the main thread, every client alike, with no graph of neighbours to agree on.
+
+**Painted** (`paintJungleTrails`, by the terrain kernel `world/terrain/terrainGen.js` after the road painter and before
+the marching squares): a corner within 0.75 tile of a trail's line - past a corner's diagonal half, so the dirt runs
+unbroken at every heading - on land, out of the location's rect, where the jungle is whole (`JUNGLE_EDGE.in` deep; at
+its edge the ground is the pixel's own layout's too, and DFU's scatter reads no mask), is dirt, and DFU's own
+dirt-to-grass tiles blend its edges. Every tile two of whose corners are the trail's - half dirt by its marching
+square's art and more - that no painter wrote goes into the pixel's `paths` (a tile with one is the trail's edge, a
+corner of dirt the floor grows over: marked by any corner, a trail cleared a band three tiles wide, 19 m, in the
+game's first photograph) - the mask the road painter keeps (GRASS-PATH1, `03-World/Roads.md`), which every layer that keeps off a track
+already reads: the jungle's palms and floor, Real forests, the meadow's grass and the jungle floor's carpet, the home
+yards. The heights are never moved - a trail is worn into the ground, not cut - so the room's ground is the ground it
+was.
+
+**Beside a trail.** A jungle tree - the canopy and the young - keeps its **foot** off a trail's dirt, as VERGE1 keeps it
+off a road (`jungleModels.js` `JUNGLE_MEASURES`, at its own scale; `trailClear`, `vergeClear`'s shape), where the trails
+run; the crowns lean over it.
+
+**Cost.** A pixel's blocks of 4 tiles square are read once (`trailBlocks`): for each family, a floor under how near its
+line comes to any point of the block - the field's distance from the middle at the block's middle over its steepest
+(the noise's steepest through the warp's stretch), less the block's half diagonal. The painter reads the corners of a
+block only where a family's floor is under the half width, and a tree asks its own distance only where its block's floor
+is under its foot: exactly the answer of reading every corner and every tree (`test/world/jungletrails.test.js`), about
+2.5 ms a whole jungle pixel on the terrain worker, against the kernel's 23.5 on the same machine - never on the frame's
+thread.
 
 ## The trees in the game
 
@@ -362,6 +406,9 @@ the jungle under clear air. Read once, as the world loads.
   port's grass carpets the ground with the same pictures on crossed cards and the owner's tuft - the flora at the rate the
   owner judged, the grass at the meadow's own (JUNGLE-GRASS: 3.19 plants a square metre) - and the meadow's grass keeps
   out of it.
+- **The trails** (JUNGLE-TRAILS): DFU's ground has no paths but the network's roads and tracks; here the jungle wears
+  its own trails into its tiles (`world/jungle/jungleTrails.js`), never the network's - the map, the landforms and fast
+  travel read only the roads they did.
 - DFU's fog is one `RenderSettings.fog` for the world; here a regional height haze multiplies it (and the sky takes it).
 - DFU draws every streamed terrain the camera sees; here the haze culls what it hides whole.
 - **Winter, as DFU's rainforest** (AUDIT BANTHA1 TREE-4, NAMED): the Rainforest climate is Swamp-based, so in winter its
