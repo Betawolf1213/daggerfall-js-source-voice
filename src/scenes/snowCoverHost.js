@@ -282,7 +282,11 @@ export function createSnowCoverHost({ renderer, climateAt, mapHeight, stateOf, b
      *  stands at now (`anchor` [x, z]: the frame a snow lying on the ground reads it in - GROUND-9), the lattice's spacing
      *  in tiles, the world height's offset to metres above the sea; null off the lane or before the window is read. */
     frame() {
-      if (!lane() || !centre || nowRead === null) return null;
+      // AUDIT SNOW-BUDGET F2: the window's KEPT lines are drawn while it catches up after a move - a step of a lattice
+      // cell (two map pixels) let every point but its new edge's keep its lines, and the frame drew no snow at all until
+      // the window stood at the clock's minute again (0.4-1.2 s of summer ground, every two pixels walked; the Snowfall
+      // mod's winter the calendar's meanwhile). A point not read yet is bare ground (lineOf), as it always was
+      if (!lane() || !centre || !lines.size) return null;
       const i0 = centre[0] - R, j0 = centre[1] - R;
       if (texGen !== gen || texI !== i0 || texJ !== j0) {
         for (let j = 0; j < SIDE; j++) {
@@ -403,7 +407,7 @@ export function createSnowCoverHost({ renderer, climateAt, mapHeight, stateOf, b
       if (!lane()) return fallback;
       const t = now();
       if (place && Number.isFinite(t) && nowRead !== t) { const { px, py } = place(); at(px, py, t, SNOW_COVER.budgetMs, false); }
-      if (nowRead === null) return fallback;
+      if (!centre || !lines.size) return fallback;   // AUDIT SNOW-BUDGET F2: the lines the window kept across a move answer while it catches up - not the calendar's
       for (const pt of window) {
         const l = lines.get(latticeKey(pt.i, pt.j))?.shown;
         if (l && l[0] - 0.25 * Math.max(1, l[1] - l[0]) < pt.ceil) return true;

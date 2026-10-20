@@ -2,8 +2,8 @@
   {
     "name": "VIRT-the-spacers-gap-not-taken-off",
     "file": "src/ui/virtualRows.js",
-    "old": "    top = spacer(top, above > 0 ? above * pitch - gap : 0, true);",
-    "new": "    top = spacer(top, above > 0 ? above * pitch : 0, true);",
+    "old": "    top = spacer(top, above > 0 ? span(0, above) - gap : 0, true);",
+    "new": "    top = spacer(top, above > 0 ? span(0, above) : 0, true);",
     "tests": [
       "test/systems/virt_pack.test.js"
     ]
@@ -11,8 +11,8 @@
   {
     "name": "VIRT-the-foot-gap-not-taken-off",
     "file": "src/ui/virtualRows.js",
-    "old": "    foot = spacer(foot, below > 0 ? below * pitch - gap : 0, false);",
-    "new": "    foot = spacer(foot, below > 0 ? below * pitch : 0, false);",
+    "old": "    foot = spacer(foot, below < lines ? span(below, lines) - gap : 0, false);",
+    "new": "    foot = spacer(foot, below < lines ? span(below, lines) : 0, false);",
     "tests": [
       "test/systems/virt_pack.test.js"
     ]
@@ -38,8 +38,8 @@
   {
     "name": "VIRT-the-window-rebuilt-inside-its-margin",
     "file": "src/ui/virtualRows.js",
-    "old": "    if (aligned && start <= line(v0 - 1) * cols && end >= Math.min(total, (line(v1 + 1) + 1) * cols)) { place(); return; }",
-    "new": "    if (false) { place(); return; }",
+    "old": "    if (aligned && start <= line(v0 - 1) * cols && end >= Math.min(total, (line(v1 + 1) + 1) * cols)) { place(); return false; }",
+    "new": "    if (false) { place(); return false; }",
     "tests": [
       "test/systems/virt_pack.test.js"
     ]
@@ -218,8 +218,8 @@
   {
     "name": "AUDIT-VIRT-the-partial-line-not-counted",
     "file": "src/ui/virtualRows.js",
-    "old": "    const below = lines - Math.ceil(end / cols);",
-    "new": "    const below = lines - Math.floor(end / cols);",
+    "old": "    const below = Math.ceil(end / cols);",
+    "new": "    const below = Math.floor(end / cols);",
     "tests": [
       "test/systems/virt_pack.test.js"
     ]

@@ -586,7 +586,7 @@ export function createPlayerMagic({
   // none); a teardown before it runs stops it (fxBroken), and a pass that will not build is left to the draw to report.
   // SHADER-STALL (render/glProgram.js startPrograms): its program started at that idle and the pass built once the
   // driver says it is done - the idle task waited the whole compile, 2.3-7.6 s of the real game's first seconds here
-  if (renderer?.gl && globalThis.requestIdleCallback) void warmPrograms([{ start: () => startPrograms(renderer.gl, SPELL_IMPACT_PROGRAMS), run: () => { if (!fxPass && !fxBroken) fxPass = new SpellImpactPass(renderer.gl); } }], { alive: () => !fxBroken });
+  if (renderer?.gl && globalThis.requestIdleCallback) void warmPrograms([{ start: () => startPrograms(renderer.gl, SPELL_IMPACT_PROGRAMS), run: () => { if (!fxPass && !fxBroken) fxPass = new SpellImpactPass(renderer.gl); }, need: () => !fxPass && !fxBroken }], { alive: () => !fxBroken });   // AUDIT SHADER-STALL: a spell's draw built it first - the warm stands down
   const impactSounds = createSpellImpactSounds(audio);
   // ART-COLOUR: EACH ELEMENT'S BURST WEARS ITS OWN ART'S COLOUR. Once per element, the first time a missile of it flies
   // or lands, its archive (375-379, missileArchive) is asked for (it is warm by then: the missile itself draws from it)

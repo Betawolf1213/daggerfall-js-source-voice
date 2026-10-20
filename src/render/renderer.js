@@ -17,7 +17,7 @@ import { COLUMN_GLSL } from './columnGlsl.js';   // DW-F: the water column's sha
 // at module scope, and a block a shader interpolates has to be in hand by
 // then. The imports hoist and the leaves have no imports of their own, so
 // this is already guaranteed - the lines stand where they read as the rule.
-import { buildProgram, startPrograms } from './glProgram.js';   // AUDIT 68 S17-gl-program-dup: the one compile and link; SHADER-STALL: and a start that never waits
+import { buildProgram, startPrograms, parallelCompile } from './glProgram.js';   // AUDIT 68 S17-gl-program-dup: the one compile and link; SHADER-STALL: and a start that never waits
 import { realWindowsGlsl, RW_MAIN_DERIVS, RW_MAIN_CUTOUT, RW_MAIN_GLASS, RW_MAIN_ROOM, GLASS_NONE, GLASS_EXTERIOR, GLASS_INTERIOR, winModeFor, roomLightFor, sphereNdcRect, cropProjection, viewTargetSize, viewSkyFrom, viewRays, VIEW_BG_VS, VIEW_BG_FS, VIEW_PANES_MAX, VIEW_PANE_UNIT, VIEW_PANE_VS, VIEW_PANE_FS } from './realWindows.js';   // RW1: the real windows - the rooms, the glass, the view out
 import { MESH_ALPHA_GLSL, samplerParams, samplerKey } from './meshAlpha.js';   // POI-2: a translucent mesh draw, and a texture's own wrap and filter
 import { frameTarget, setFrameTarget } from './renderTarget.js';   // RW1: the view out's pass hands the frame target back as it found it (EL4's restore)
@@ -3330,9 +3330,12 @@ export class Renderer {
   /** PERF-COMPILE1 (2026-10-10, stutter): the renderer's OTHER on-demand programs, warmed at idle the same way
    *  (warmPrograms) - kept apart from warmSteps, whose list its pins count: the foes' telegraph pass (built at the
    *  first wind-up a fight shows), the real windows' background (built at the first building with glass) and the weapon
-   *  glow's two (WEAPON-GLOW1, built at the first glowing weapon in a hand). */
+   *  glow's two (WEAPON-GLOW1, built at the first glowing weapon in a hand). AUDIT SHADER-STALL: first, where the driver
+   *  compiles beside the frames, the passes play meets STARTED (render/playPrograms.js - off the boot's graph) and the
+   *  snow's surface program with them, so each is done before it is first wanted; nothing where it cannot. */
   lazyWarmSteps() {
     return [
+      () => { if (parallelCompile(this.gl)) { void import('./playPrograms.js').then((m) => m.startPlayPrograms(this.gl)).catch(() => {}); this.startTerrainSnow(); } },
       () => { this._loadFoeTelegraph(); },
       () => { this._rwBg ??= this._rwBgProgram(); },
       () => this._ensureWeaponGlowMeshProgram(),   // AUDIT WEAPON-GLOW MW-6: the glow's two, before the first glowing weapon

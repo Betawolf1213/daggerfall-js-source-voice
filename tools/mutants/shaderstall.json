@@ -47,8 +47,8 @@
   {
     "name": "SS-compiledPass-built-while-compiling",
     "file": "src/render/glProgram.js",
-    "old": "    if (pass || tried || !gl || !(ready ??= startPrograms(gl, programs))()) return pass;",
-    "new": "    if (pass || tried || !gl) return pass;\n    ready ??= startPrograms(gl, programs);",
+    "old": "    if (!(ready ??= startPrograms(gl, programs))() && !need) return null;",
+    "new": "    ready ??= startPrograms(gl, programs);",
     "tests": [
       "test/render/shaderstall.test.js"
     ]
@@ -56,8 +56,8 @@
   {
     "name": "SS-compiledPass-built-twice",
     "file": "src/render/glProgram.js",
-    "old": "    if (pass || tried || !gl || !(ready ??= startPrograms(gl, programs))()) return pass;\n    tried = true;",
-    "new": "    if (tried || !gl || !(ready ??= startPrograms(gl, programs))()) return pass;",
+    "old": "    if (pass || tried || !gl) return pass;\n    if (!(ready ??= startPrograms(gl, programs))() && !need) return null;\n    tried = true;",
+    "new": "    if (!gl) return pass;\n    if (!(ready ??= startPrograms(gl, programs))() && !need) return null;",
     "tests": [
       "test/render/shaderstall.test.js"
     ]
@@ -110,8 +110,8 @@
   {
     "name": "SS-the-veil-warm-builds-it-whole",
     "file": "src/ui/gate/gateVeil.js",
-    "old": "    warm() { return begin(); },",
-    "new": "    warm() { return build(); },",
+    "old": "      if (!begin()) return false;\n      void warmPrograms(",
+    "new": "      if (!build()) return false;\n      void warmPrograms(",
     "tests": [
       "test/render/shaderstall.test.js"
     ]
@@ -119,7 +119,7 @@
   {
     "name": "SS-the-spells-warmed-bare",
     "file": "src/scenes/hostMagic.js",
-    "old": "void warmPrograms([{ start: () => startPrograms(renderer.gl, SPELL_IMPACT_PROGRAMS), run: () => { if (!fxPass && !fxBroken) fxPass = new SpellImpactPass(renderer.gl); } }],",
+    "old": "void warmPrograms([{ start: () => startPrograms(renderer.gl, SPELL_IMPACT_PROGRAMS), run: () => { if (!fxPass && !fxBroken) fxPass = new SpellImpactPass(renderer.gl); }, need: () => !fxPass && !fxBroken }],",
     "new": "void warmPrograms([() => { if (!fxPass && !fxBroken) fxPass = new SpellImpactPass(renderer.gl); }],",
     "tests": [
       "test/render/shaderstall.test.js"

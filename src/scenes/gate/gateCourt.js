@@ -563,10 +563,12 @@ export function createGateCourt({
    *  through its door. Where the driver compiles beside the frames (KHR_parallel_shader_compile), their compiles start
    *  together as I come in and each is built the frame its own is done, so the arrival waits on none (one a frame was
    *  still a frame's whole compile); where it cannot, one pass a frame, as GATE-MIX had it. */
-  const warmDoors = [() => fxPassOf(), () => crystalPassOf(), () => portalPass()];
+  const warmDoors = [fxPassOf, crystalPassOf, portalPass];
   let warmed = 0;
   function warmPasses() {
-    if (!gl || !feet() || warmed >= warmDoors.length) return;
+    if (!gl || !feet()) return;
+    while (warmed < warmDoors.length && warmDoors[warmed].settled) warmed++;   // AUDIT SHADER-STALL: a pass the draw built is no frame's warm (GATE-MIX's own skip)
+    if (warmed >= warmDoors.length) return;
     if (!parallelCompile(gl)) { warmDoors[warmed++](); return; }
     let all = true;
     for (const door of warmDoors) all = !!door() && all;
@@ -1291,10 +1293,10 @@ export function createGateCourt({
     drawPass(proj, view, eye, seconds, fog = null) {
       let drew = false;
       if (_crystalDraw.length) {   // WB9c: the crystals first - opaque, their depth written, so his ground's glow sits behind them
-        const crystalPass = crystalPassOf();   // GATE-MIX: asked as I came in (warmPasses) - here only if it was not
+        const crystalPass = crystalPassOf(true);   // GATE-MIX: asked as I came in (warmPasses) - here only if it was not; AUDIT SHADER-STALL: and SEEN now (`true`: built whatever the driver says - never skipped for a compile)
         if (crystalPass) { crystalPass.draw(_crystalDraw, proj, view, eye, seconds, fog); drew = drew || crystalPass.drawn > 0; }
       }
-      const pass = telegraphPass();
+      const pass = telegraphPass(!!(mark || shape || poolDraw.length));   // AUDIT SHADER-STALL: a fight's telegraph is seen the frame it is wanted - built then whatever the driver says
       if (pass) {
         for (const ps of poolDraw) { pass.draw(ps, proj, view, eye, seconds, fog, COURT_CENTRE, _walked, _floors); drew = true; }   // WBX5: the burning ground under all
         if (mark) { pass.draw(mark, proj, view, eye, seconds, fog); drew = true; }   // WBX4: where he stands and faces
@@ -1304,7 +1306,7 @@ export function createGateCourt({
         for (const cs of captive.shapes()) { pass.draw(cs, proj, view, eye, seconds, fog, COURT_CENTRE, _walked, _floors); drew = true; }   // WB14f: the Captive's chains
       }
       if (_fxLive.length || meteorNow) {   // WB9e: his blows landing - the sparks and the meteor's fall, over the telegraph
-        const fxPass = fxPassOf();   // GATE-MIX: asked as I came in (warmPasses) - here only if it was not
+        const fxPass = fxPassOf(true);   // GATE-MIX: asked as I came in (warmPasses) - here only if it was not; AUDIT SHADER-STALL: a blow landing is seen
         if (fxPass) { fxPass.draw(_fxLive, meteorNow, proj, view, eye, seconds, fog); drew = drew || fxPass.bursts > 0 || fxPass.meteors > 0; }
       }
       _fires.length = 0;
@@ -1313,7 +1315,7 @@ export function createGateCourt({
         _fires.push(_portalFire);
       }
       if (wayIn > 0) { _wayIn.fade = wayIn; _wayIn.spin = spin; _fires.push(_wayIn); }   // GATE-FBX: the way in, its fire alone
-      const fire = _fires.length ? portalPass() : null;
+      const fire = _fires.length ? portalPass(true) : null;   // AUDIT SHADER-STALL: the way in and the way home are seen the frame they stand
       if (fire) {
         fire.draw(_fires, proj, view, eye, seconds, fog);
         drew = drew || fire.drawn > 0;

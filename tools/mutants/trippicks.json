@@ -20,8 +20,8 @@
   {
     "name": "TP-choices-kept-for-the-wrong-town",
     "file": "src/systems/livingWorld/trips.js",
-    "old": "  const kept = byHome.get(key);\n  if (kept !== undefined) return kept;\n  const [rMin, rMax] = rowOf(TRIP_RANGE_PX, ROAD_RANGE_PX, job) ?? [3, 12];",
-    "new": "  const kept = byHome.values().next().value;\n  if (kept !== undefined) return kept;\n  const [rMin, rMax] = rowOf(TRIP_RANGE_PX, ROAD_RANGE_PX, job) ?? [3, 12];",
+    "old": "  const kept = byHome.get(key);\n  if (kept !== undefined) { byHome.delete(key); byHome.set(key, kept); return kept; }",
+    "new": "  const kept = byHome.values().next().value;\n  if (kept !== undefined) { byHome.delete(key); byHome.set(key, kept); return kept; }",
     "tests": [
       "test/systems/livingWorld/trippicks.test.js"
     ]

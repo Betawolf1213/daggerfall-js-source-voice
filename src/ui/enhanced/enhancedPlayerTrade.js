@@ -119,7 +119,10 @@ export function mountEnhancedPlayerTrade(hostEl, { session, deps }) {
   const dropLists = () => { for (const v of lists) v.dispose(); lists = []; };
   const syncLists = (opts) => { for (const v of lists) v.sync(opts); };
   /** The list's rows, whole when short and as a window over the scroll when long. */
-  const fill = (list, items, build) => keepList(virtualRows(list, items, build));
+  /** AUDIT TRADE-VIRT: each list's rows' heights by item, kept across repaints (ui/virtualRows.js `sizes`) - the pack's,
+   *  the offer's and theirs, each its own */
+  const rowSizes = new Map();
+  const fill = (list, items, build, key) => { let sizes = rowSizes.get(key); if (!sizes) rowSizes.set(key, (sizes = new WeakMap())); return keepList(virtualRows(list, items, build, { sizes })); };
 
   const row = (item, side, count = null) => {
     const line = itemLine(item, deps.entity);
@@ -165,7 +168,7 @@ export function mountEnhancedPlayerTrade(hostEl, { session, deps }) {
     const worn = (it) => it.equipSlot != null;
     const items = (deps.items() ?? []).filter((it) => !worn(it) && !staged.has(it) && tabAccepts(it, tab));
     if (!items.length) list.append(el('p', 'packempty', 'Nothing here fits this page.'));
-    else fill(list, items, (it) => row(it, 'pack'));   // TRADE-VIRT
+    else fill(list, items, (it) => row(it, 'pack'), 'pack');   // TRADE-VIRT
     return col;
   };
 
@@ -178,7 +181,7 @@ export function mountEnhancedPlayerTrade(hostEl, { session, deps }) {
     const list = el('div', 'remotelist');
     col.append(list);
     if (!entries().length) list.append(el('p', 'packempty', 'Double-click an item to offer it.'));
-    else fill(list, entries(), (e) => row(e.item, 'offer', e.count));   // TRADE-VIRT
+    else fill(list, entries(), (e) => row(e.item, 'offer', e.count), 'offer');   // TRADE-VIRT
     const gold = el('div', 'goldbox');
     const input = el('input'); input.type = 'number'; input.min = '0'; input.max = String(deps.gold()); input.value = String(session.mine.gold);
     input.disabled = session.phase !== 'open' || session.myConfirm;   // AUDIT DROPS B1: confirmed = frozen
@@ -200,7 +203,7 @@ export function mountEnhancedPlayerTrade(hostEl, { session, deps }) {
     const list = el('div', 'remotelist');
     col.append(list);
     if (!n) list.append(el('p', 'packempty', 'Nothing offered yet.'));
-    else fill(list, session.theirs.items, (it) => row(it, 'theirs'));   // TRADE-VIRT
+    else fill(list, session.theirs.items, (it) => row(it, 'theirs'), 'theirs');   // TRADE-VIRT
     col.append(el('div', 'goldbox', `Gold: ${session.theirs.gold}`));
     return col;
   };
@@ -299,7 +302,7 @@ export function mountEnhancedPlayerTrade(hostEl, { session, deps }) {
     }
   };
   globalThis.addEventListener('keydown', onKey, { capture: true });
-  const onResize = () => render();   // TRADE-VIRT: a long list's columns and pitch measured again
+  const onResize = () => syncLists({ remeasure: true });   // TRADE-VIRT: a long list's columns and rows measured again - AUDIT TRADE-VIRT: never a repaint, which put a typed stack count back to the whole stack
   globalThis.addEventListener?.('resize', onResize);
   render();
   return {

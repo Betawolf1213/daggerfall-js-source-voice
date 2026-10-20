@@ -7,7 +7,7 @@
 // town of a mixed map, every job and hundreds of draws, the dice left where the old law left them.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { roadOrder, roadChoices, roadBound, TRIP_RANGE_PX, ROAD_RANGE_PX } from '../../../src/systems/livingWorld/trips.js';
+import { roadOrder, roadChoices, roadBound, TRIP_RANGE_PX, ROAD_RANGE_PX, ROAD_CHOICES_KEPT } from '../../../src/systems/livingWorld/trips.js';
 import { pickWeighted } from '../../../src/systems/livingWorld/seed.js';
 
 /** mulberry32 */
@@ -86,4 +86,32 @@ test('TRIP-PICKS roadChoices are asked of the world once a town and a job and ke
   m.reset();
   assert.deepEqual(roadOrder(rng(homes[0].mapId), homes[0], 'merchant', other).map((t) => t.mapId), want[0]);
   assert.equal(m.asked(), 1, 'another world asks for itself');
+});
+
+test('AUDIT TRIP-PICKS the kept choices are bounded: past ROAD_CHOICES_KEPT towns the longest unasked quarter is let go - a town asked of late kept, a town let go made again the same (the choices are pure); the order a traveller tries its towns unchanged (mutants: never let go; let go newest first; the bound unread)', () => {
+  assert.equal(ROAD_CHOICES_KEPT, 2048);
+  // a world of many towns in a row, each asking the same one neighbour ring
+  const towns = Array.from({ length: ROAD_CHOICES_KEPT + 64 }, (_, i) => ({ mapId: i + 1, px: (i % 900) + 4, py: Math.floor(i / 900) * 20 + 4, blocks: 1 + (i % 5) }));
+  const near = towns.slice(0, 12);
+  let asked = 0;
+  const world = { townsNear: () => { asked++; return near; } };
+  const first = roadChoices(towns[0], 'merchant', world);
+  const fresh = towns[1];
+  roadChoices(fresh, 'merchant', world);
+  for (let i = 2; i < ROAD_CHOICES_KEPT; i++) roadChoices(towns[i], 'merchant', world);
+  roadChoices(fresh, 'merchant', world);   // asked of late: the newest
+  const before = asked;
+  for (let i = ROAD_CHOICES_KEPT; i < towns.length; i++) roadChoices(towns[i], 'merchant', world);   // past the bound
+  assert.equal(asked - before, towns.length - ROAD_CHOICES_KEPT, 'each new town asked once');
+  const again = asked;
+  roadChoices(fresh, 'merchant', world);
+  assert.equal(asked, again, 'a town asked of late is kept');
+  const remade = roadChoices(towns[0], 'merchant', world);
+  assert.equal(asked, again + 1, 'the longest unasked was let go - made again');
+  assert.notEqual(remade, first);
+  assert.deepEqual(remade, first, 'the same choices');
+  // the traveller's order: as the law had it, the nearer towns farthest first after the pick
+  const r = rng(7), r2 = rng(7);
+  const order = roadOrder(r, towns[5], 'merchant', world);
+  assert.deepEqual(order?.map((t) => t.mapId), roadOrderAsItWas(r2, towns[5], 'merchant', world)?.map((t) => t.mapId));
 });

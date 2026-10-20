@@ -1118,6 +1118,17 @@ jitter, ties of distance, three regions, courts and temples, ids out of the grid
 one, 12 draws each, the dice left where the old law left them; `roadChoices` asked of the world once a town and a job,
 another job and another world asking for themselves. Mutants: `tools/mutants/trippicks.json`, 7, all dead.
 
+**AUDIT TRIP-PICKS (2026-10-20, the owner: "ensure this is perfect and fidelity isnt lost").** A cold lane compared the
+whole `ownTrip` of every traveller of every town on the real map (9,373 towns, 224,560 trips over four cycles) and
+674,856 `roadOrder` calls against main's law: byte for byte the same, the dice left where they were. Its one finding was
+memory: the choices were kept for the session, never let go - 21.6 KB a town and job, 200 MB had every town been asked.
+Now a trip world keeps `ROAD_CHOICES_KEPT` (2,048) towns' worth, the longest unasked quarter let go past it (a town's
+choices are pure: asked again, made again the same), and an entry is leaner (a town's distance asked of the town, not a
+map beside it). Re-run over the whole map with the bound evicting throughout: 674,856 orders and 224,560 trips, none
+different. Its nits (one map id one place, as `templesNear` already reads; FIT-BITS and WD-COPY on inputs the game never
+passes) recorded. Pin: `trippicks.test.js` (+1, the bound and its order). Mutants: `audit_perfpass.json`'s ATP, dead;
+`trippicks.json`'s wrong-town record re-aimed, dead.
+
 ## BOOT-FREEZE — the boot's freezes, measured in the real game
 
 *The owner (2026-10-20): "Just do #854 and do your own performance pass in the same PR. You need to install the freeware
@@ -1328,6 +1339,37 @@ Pins: `test/ui/enhanced/tradevirt.test.js` (7), and the pack's `test/systems/vir
 VIRT-a-landing-repaints-the-pack and AUDIT-VIRT-a-frame-a-landing re-aimed at the module, dead. `fb1011_tradeloc`'s pin
 on the player trade's rows moved with them.
 
+**AUDIT TRADE-VIRT (2026-10-20, the owner: "I need you to audit this and ensure this is perfect and fidelity isnt lost").**
+A cold lane ran the windows of this commit and of its parent side by side in Chromium over the freeware ARENA2's pictures.
+What it found, and what was done:
+- **A list whose rows are not one height scrolled wrongly** (the worst: fidelity). `ui/virtualRows.js` took ONE pitch off
+  the first two lines drawn, and a trade's rows are not one height - a book's title wraps to a second line (68 px against
+  52), a phone's weapons run 52, 64 and 82. With a two-line title first, 23 of 60 wheel stops of a 300-row shelf showed
+  blank rows (the whole list at the worst), rows jumped up to 36 px as lines came and went, a click's repaint moved the
+  rows under a still pointer so a double click took the next piece ("Plain Robes" for the book clicked), and the
+  scrollbar was 336 px short. Now every row's height is measured as it is drawn and kept by its item (`sizes` - each
+  window keeps one a list, and a view, across its repaints, so a repaint's spacers are the ones it replaces); a line is
+  its tallest row and the gap; a line never drawn is taken at the mean of those that were; each aim reads the lines it
+  drew, holds still the row the eye is on (the scroll moves with the spacer above it), and asks the band again until it
+  is covered. A list of one height is laid as before. The pack's lists (VIRT) take the same law and keep their own heights.
+- **A landed picture's tile kept the browser's tooltip** over the hover card: the row's hover took the title off the
+  tile it was built with, and a landing swaps the tile in place. It takes it off the tile the row shows now.
+- **A resize repainted the shop**, taking the focus out of the How-many field (the next key lost), **and the trade
+  between players**, putting a typed stack count back to the whole stack. Both now measure their long lists again, as
+  the pack does, and repaint nothing - the old windows never listened.
+- Checked and faithful: Tab and Shift+Tab through 400 rows (better than before - the old window lost the focus to the
+  pictures' repaints), the pad's spatial steps, lists of 0, 119, 120 and 121, a buy from a 200-piece shelf, the grid view
+  of one height, selection, wear bars, figures, `held` as a Set, landings after a close, during a scroll and mid-pass,
+  the `acting` flag's try/finally, the gold field. The stacked layout (1,100 px wide or less) still jumps its lists to the
+  top at a click - in the old tree too (`.packlists` scrolls them and the repaint gives back each `.packcol`'s): recorded,
+  not this slice's.
+Pins: `test/ui/virtheights.test.js` (7: a list of three heights, its first the tallest, covered at every stop, down and up
+and in one or three columns; a sync never moves what is on the screen; rows reached from the top at the whole list's place
+and the whole list's height; a repaint over the kept heights; one height as before; a resize lets the heights go; a jump
+past tall first rows covered in one sync), `test/ui/enhanced/tradevirt.test.js` (+2: the landed tile's title, the resize).
+Mutants: `tools/mutants/audit_perfpass.json`'s ATV records, all dead; `virt.json`'s four and `tradevirt.json`'s two
+re-aimed at the new code, dead.
+
 ## SHADER-STALL — a pass built in play never waits on its compile
 
 *A player's capture, handed on by the owner (2026-10-20: "told there are shader conflicts"): "the load problem is a
@@ -1392,6 +1434,34 @@ Pins: `test/render/shaderstall.test.js` (11), the snow's in `test/systems/audit_
 warm records re-aimed at the doors, dead. Source pins moved with the code: `wbx_gate_fixes` (the court's portal),
 `eglook_lines` (the Spire's telegraph).
 
+**AUDIT SHADER-STALL (2026-10-20, the owner: "ensure this is perfect and fidelity isnt lost").** A cold lane read the
+doors against the code before them, over a fake context with and without the extension. What it found, and what was done:
+- **The Elite Breach's telegraphs and crystals could be missing for the whole compile** (the worst: a gameplay loss). Their
+  programs started in the hall's first drawn frame, and a door answers null until the driver is done - seconds on D3D11,
+  while a lord's first blow (`EG_LORD_WAKE_MS`, 2.5 s after he wakes) wound up and landed with no telegraph drawn. Where
+  before the screen had frozen and every drawn frame showed them. Now **a pass the game is played by is never skipped
+  for a compile**: `compiledPass`'s `get(true)` builds it the frame it is needed whatever the driver says (the wait every
+  build had before the slice), and the fights ask so - the Spire's telegraph when a shape is to be drawn and its crystals,
+  the court's telegraph in a fight, his blows' sparks, its crystals and the way in and home. And none of them should
+  have to wait: `render/playPrograms.js` STARTS them - with a gate's fire and the nodes' outline, and the snow's surface -
+  at the renderer's idle warm, where the driver compiles beside the frames, minutes before a player meets them; where it
+  cannot, nothing is started early (a compile queued on its thread holds the frames after it) and each is built the
+  first time it is asked for, as before the slice. So the later appearances the lane listed (a gate's fire, the court's
+  way in, the nodes' ring, the snow's surface) are started long before they are wanted.
+- **A warm whose pass a draw built first started a second compile** of the programs the build had taken (the spells'
+  impact pass, the sea's): a warm step may say whether it is still `need`ed, and stands down when its pass stands.
+- **A pass whose build threw kept its other programs** started for good: its door lets them go (`releasePrograms`).
+- **The veil's warm only started its program**, and the step's frame read its link, found its uniforms and made its
+  buffers - the work AUDIT WB D5's warm had taken off that frame. The warm builds it at an idle once the driver says its
+  program is done (where it cannot say, at the next idle, as WB D5 had it), and never once the veil is gone.
+- **The court's warm (the merge with GATE-MIX)** spent a frame on a pass the draw had already built: it skips a settled door.
+- Checked and faithful: the no-extension path builds every pass in the frame it did, by the same reads; the failure
+  words; a lost context; the program lists against their constructors; one start shared across doors and breaches;
+  both sides of the GATE-MIX merge.
+Pins: `test/render/auditshaderstall.test.js` (8), `shaderstall`'s spells' warm pin moved (its `need`), `wbx_gate_fixes`' on
+the portal's door. Mutants: `tools/mutants/audit_perfpass.json`'s ASS records, all dead; `shaderstall.json`'s four and
+`gatemix.json`'s one re-aimed, dead.
+
 ## SNOW-BUDGET — the snow the ground keeps holds to its frame budget
 
 *The same capture, handed on by the owner (2026-10-20): "something about our weather system affecting fps".*
@@ -1444,6 +1514,28 @@ slope's heights, because snow lay in that run. Settled (`frameProbe.mjs knight`,
 
 Pins: `test/systems/weather/snowbudget.test.js` (5). Mutants: `tools/mutants/snowbudget.json`, 4, all dead. Tooling:
 `tools/frameAb.mjs` reads the snow's and the falling weather's share of a frame.
+
+**AUDIT SNOW-BUDGET (2026-10-20, the owner: "ensure this is perfect and fidelity isnt lost").** A cold lane ran the
+lattice lock-step against one unbudgeted, and the old code beside the new, a step at a time through whole snow years.
+What it found, and what was done:
+- **The packs were not the ones one call makes** (F1). A step the deadline cut part-way judged its REST quiet on its own -
+  the snowy points in the part already stepped - and skipped it, keeping the `prev` of a point whose snow had melted out
+  the step before (2.7 mm against 0 on a ramp of Woodlands ground, at the 541st step of its year; 33 of 62 windows the
+  lane tried). Seen only above the cell's highest ground, but a pack that hung on the machine's speed. Now a step cut
+  part-way is stepped whole: its rest is never judged again (`_partial` carries the verdict), and a step finished on the
+  quiet path leaves none part-way. Lock-step, the three windows that diverged meet at every step, the counts with them.
+- **The snow blinked longer as the window moved** (F2). Every lattice cell walked (two map pixels) the window let the
+  frame draw no snow at all until it stood at the clock's minute again - an old blink, made longer by the budget (0.4 s
+  became 1.1 s at 60 Hz where no build was waiting), and the Snowfall mod's winter took the calendar's meanwhile (a turn
+  resets its tracks). Now the lines the window kept across the move are drawn, and answer the mod, while it catches up;
+  a window with nothing kept (the first, a jump) draws none, as ever.
+- The shared budget's frame detection (F3): a 144 Hz frame inside the 12 ms window integrates a point, and a slow frame
+  can open a second budget - never more than the old code spent. Recorded.
+- The test's reader stood in another lattice cell than the tick's (F4): moved to the tick's own pixel.
+- Checked and faithful: `drawnCover`'s early return (1,152,072 comparisons, old against new: none differ); unbudgeted
+  packs; a moving window and a clock set back; `settle` and `force`; steady play.
+Pins: `test/systems/weather/snowbudget.test.js` (+2: lock-step to the 560th step of the lane's own window, and the kept
+lines across a move). Mutants: `tools/mutants/audit_perfpass.json`'s ASB records, all dead.
 
 ## For the owner
 

@@ -162,8 +162,8 @@
   {
     "name": "GATE-MIX-warm-outside-court",
     "file": "src/scenes/gate/gateCourt.js",
-    "old": "    if (!gl || !feet() || warmed >= warmDoors.length) return;",
-    "new": "    if (!gl || warmed >= warmDoors.length) return;",
+    "old": "    if (!gl || !feet()) return;",
+    "new": "    if (!gl) return;",
     "tests": [
       "test/net/gate/gatemix_targets.test.js"
     ],

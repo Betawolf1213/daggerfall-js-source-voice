@@ -511,7 +511,10 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     return blowSeq;
   }
   // SHADER-STALL (render/glProgram.js compiledPass): the telegraphs and the crystals built the first frame a breach draws
-  // them AND their programs are done - never a frame frozen on a compile; their doors made again for each breach (leave)
+  // them AND their programs are done - never a frame frozen on a compile; their doors made again for each breach (leave).
+  // AUDIT SHADER-STALL: and the first frame a blow's telegraph or a crystal must be SEEN, built then whatever the driver
+  // says (`get(true)`) - a blow a player cannot see coming is the fight's own fault, never a compile's; started at the
+  // boot's idle where the driver compiles beside the frames (render/playPrograms.js), so that build waits on nothing
   const telegraphDoor = () => compiledPass(gl, telegraphPrograms(true), () => new GateTelegraphRenderer(gl, { spire: true }), (e) => console.warn('[eg] the telegraphs would not build', e?.message ?? e));
   const crystalDoor = () => compiledPass(gl, CRYSTAL_PROGRAMS, () => new CourtCrystalRenderer(gl), (e) => console.warn('[eg] the crystals would not build', e?.message ?? e));
   let pass = null, telegraphOf = telegraphDoor(), crystalPass = null, crystalsOf = crystalDoor();
@@ -1359,10 +1362,10 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       if (!centre) return false;
       let drew = false;
       if (_crystals.length) {
-        crystalPass = crystalsOf();
+        crystalPass = crystalsOf(true);
         if (crystalPass) { crystalPass.draw(_crystals, proj, view, eye, seconds, fog); drew = drew || crystalPass.drawn > 0; }
       }
-      pass = telegraphOf();
+      pass = telegraphOf(_shapes.length > 0);
       if (view) viewYaw = egViewYaw(view);
       if (proj && view) sigilsFrame(multiply(proj, view, _vp));
       egLookShapes(_shapes, egAccessNow(), stageNow);   // EG-G1/EG-G2: each shape in the shelf's palette, fill and style bit

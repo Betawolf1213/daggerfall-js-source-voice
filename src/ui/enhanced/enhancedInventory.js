@@ -791,6 +791,10 @@ function lineOf(item) {
  *  lets go of them before it builds and aims the new ones once they are in the document; a resize measures them again. */
 let _lists = [];
 const keepList = (v) => { _lists.push(v); return v; };
+/** AUDIT TRADE-VIRT: each long list's rows' heights by item, kept across the pane's repaints (ui/virtualRows.js `sizes`) -
+ *  one set a list; let go when the pane's fit changes (another layout's heights). */
+const rowSizes = new Map();
+const sizesOf = (key) => { let m = rowSizes.get(key); if (!m) rowSizes.set(key, (m = new WeakMap())); return m; };
 /** Let go of the lists drawn into `container`, or of every list. */
 function dropLists(container = null) {
   _lists = _lists.filter((v) => {
@@ -3045,7 +3049,7 @@ function fillRemoteList(list, filtering = STORE_FILTER_KINDS.has(remote.kind) &&
   // it is in the document. AUDIT VIRT: measured, and its spacers stood, BEFORE the scroll is given back - aimed at once,
   // the first rows were the list's whole height when the browser laid it out, and a search typed deep in a store threw
   // the scroll to their foot
-  const v = keepList(virtualRows(list, shown, (it) => itemRow(it, 'remote'), { onAim: rowsMoved }));
+  const v = keepList(virtualRows(list, shown, (it) => itemRow(it, 'remote'), { onAim: rowsMoved, sizes: sizesOf('remote') }));   // AUDIT TRADE-VIRT: its rows' heights kept across repaints
   v.sync({ draw: false });
   if (kept) list.scrollTop = kept;
   v.sync();
@@ -3167,7 +3171,7 @@ function listCol() {
   if (!rows.length) {
     col.append(el('p', 'packempty', 'Nothing in your pack fits this page.'));
   }
-  keepList(virtualRows(col, rows, (it) => itemRow(it), { onAim: rowsMoved }));   // VIRT: a long page draws the tiles on screen
+  keepList(virtualRows(col, rows, (it) => itemRow(it), { onAim: rowsMoved, sizes: sizesOf(`pack:${tab}`) }));   // VIRT: a long page draws the tiles on screen; AUDIT TRADE-VIRT: their heights kept across repaints
   return col;
 }
 
@@ -4610,7 +4614,7 @@ export function mountEnhancedInventory(hostEl, d = {}) {
   if (typeof document !== 'undefined') document.addEventListener('pointerlockchange', lockHandler);
   fitSig = packFitSig();
   // VIRT: a resize that leaves the boxes as they were still moves a long list's columns and band - measured again
-  resizeHandler = () => { const sig = packFitSig(); if (sig !== fitSig) { fitSig = sig; if (host) render(); } else syncLists({ remeasure: true }); };
+  resizeHandler = () => { const sig = packFitSig(); if (sig !== fitSig) { fitSig = sig; rowSizes.clear(); if (host) render(); } else syncLists({ remeasure: true }); };   // AUDIT TRADE-VIRT: a new fit's rows measured afresh
   globalThis.addEventListener?.('resize', resizeHandler);
   globalThis.__pack = () => JSON.stringify({
     tab, repaints, landings: _tiles.counts.landings, painted: _tiles.counts.painted, count: model.count, worn: model.worn.size,

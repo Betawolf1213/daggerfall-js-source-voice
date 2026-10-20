@@ -155,7 +155,7 @@ test('WBX2 the seams: the court is handed the portal\'s door, and (SS3) no way h
   assert.doesNotMatch(gc, /wayHome/, 'SS3: the court has no way home to take');
   assert.match(gc, /_portalFire\.origin = portal\.origin; _portalFire\.fade = portal\.fade; _portalFire\.spin = spin;\n\s*_fires\.push\(_portalFire\);/);
   // PIN MOVED (SHADER-STALL, render/glProgram.js compiledPass): the portal's pass built through the door once its programs are done
-  assert.match(gc, /const fire = _fires\.length \? portalPass\(\) : null;\n\s*if \(fire\) \{\n\s*fire\.draw\(_fires, proj, view, eye, seconds, fog\);/);
+  assert.match(gc, /const fire = _fires\.length \? portalPass\(true\) : null;[^\n]*\n\s*if \(fire\) \{\n\s*fire\.draw\(_fires, proj, view, eye, seconds, fog\);/);
   assert.match(gc, /const portalPass = compiledPass\(gl, GATE_PASS_PROGRAMS, \(\) => new GatePassRenderer\(gl, \(profile \?\?= gateArchProfile\(\)\)\),/);   // GATE-MIX: asked on arrival, its opening its own
 });
 

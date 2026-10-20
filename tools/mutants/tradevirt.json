@@ -20,7 +20,7 @@
   {
     "name": "TV-the-counters-pack-drawn-whole",
     "file": "src/ui/enhanced/enhancedTrade.js",
-    "old": "  else keepList(virtualRows(list, items, (it) => itemRow(it, 'local'), { onAim: rowsMoved }));",
+    "old": "  else keepList(virtualRows(list, items, (it) => itemRow(it, 'local'), { onAim: rowsMoved, sizes: sizesOf(`local:${tradeView}`) }));",
     "new": "  else for (const it of items) list.append(itemRow(it, 'local'));",
     "tests": [
       "test/ui/enhanced/tradevirt.test.js"
@@ -83,7 +83,7 @@
   {
     "name": "TV-the-trades-pack-drawn-whole",
     "file": "src/ui/enhanced/enhancedPlayerTrade.js",
-    "old": "    else fill(list, items, (it) => row(it, 'pack'));   // TRADE-VIRT",
+    "old": "    else fill(list, items, (it) => row(it, 'pack'), 'pack');   // TRADE-VIRT",
     "new": "    else for (const it of items) list.append(row(it, 'pack'));",
     "tests": [
       "test/ui/enhanced/tradevirt.test.js"

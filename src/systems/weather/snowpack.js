@@ -426,13 +426,20 @@ export class SnowpackLattice {
    *  call (`_partial` the step so left) - counted once, by the call that steps its last point. */
   _step(due, t0, t1, deadline, now, spin) {
     const of = (pt) => (spin ? pt.spin : pt);
-    let quiet = true;
-    for (const pt of due) {
-      if (!of(pt).empty) { quiet = false; break; }
-      if (!(stepAirFloor(pt.p, pt.x, pt.z, t0, t1) - LAPSE_C_PER_M * levelAltitude(pt.top) >= RAIN_ALL_C)) { quiet = false; break; }
+    // AUDIT SNOW-BUDGET F1: a step the deadline cut part-way was judged for its WHOLE group, and found not quiet - its
+    // rest is stepped, never judged again: the points left could all be bare and warm (the snow in the part already
+    // stepped), and skipping them kept the `prev` of a point whose snow had melted out the step before - a pack one
+    // unbudgeted call never makes (the white the same on every client whatever its machine's speed)
+    let quiet = this._partial !== `${spin ? 's' : 'm'}${t0}`;
+    if (quiet) {
+      for (const pt of due) {
+        if (!of(pt).empty) { quiet = false; break; }
+        if (!(stepAirFloor(pt.p, pt.x, pt.z, t0, t1) - LAPSE_C_PER_M * levelAltitude(pt.top) >= RAIN_ALL_C)) { quiet = false; break; }
+      }
     }
     if (quiet) {
       for (const pt of due) of(pt).step = t1;
+      this._partial = null;   // AUDIT SNOW-BUDGET F4: no step stands part-way after this one
       this.stepsSkipped++;
       return true;
     }

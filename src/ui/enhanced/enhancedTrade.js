@@ -829,7 +829,7 @@ function itemRow(item, from) {
   }
   // SHOP-HOVER: the pack's own hover card over every row of both lists - the piece's stats, its affixes, its set and
   // what it would change against what is worn - the shelf's and my own alike (systems' one infoCard)
-  row.onmouseenter = () => { hoverRow = row; tile.removeAttribute?.('title'); showItemHover(item, { entity: deps.entity, getQuest: deps.getQuest ?? null }, row, from === 'local' ? 'local' : 'shop'); };
+  row.onmouseenter = () => { hoverRow = row; row.querySelector?.('.tile')?.removeAttribute?.('title'); showItemHover(item, { entity: deps.entity, getQuest: deps.getQuest ?? null }, row, from === 'local' ? 'local' : 'shop'); };
   row.onmouseleave = () => { hoverRow = null; hideItemHover(); };
   if (selected?.item === item) row.classList.add('picked');
   // A single click reads the item (the tooltip strip below the lists);
@@ -875,7 +875,7 @@ function localCol() {
   const list = el('div', 'remotelist');
   col.append(list);
   if (!items.length) list.append(el('p', 'packempty', 'Nothing here fits this page.'));
-  else keepList(virtualRows(list, items, (it) => itemRow(it, 'local'), { onAim: rowsMoved }));   // TRADE-VIRT: a long pack draws the rows on screen
+  else keepList(virtualRows(list, items, (it) => itemRow(it, 'local'), { onAim: rowsMoved, sizes: sizesOf(`local:${tradeView}`) }));   // TRADE-VIRT: a long pack draws the rows on screen
   return col;
 }
 
@@ -898,7 +898,7 @@ function remoteCol() {
   const list = el('div', 'remotelist');
   col.append(list);
   if (!items.length) list.append(el('p', 'packempty', 'Nothing staged yet.'));
-  else keepList(virtualRows(list, items, (it) => itemRow(it, 'remote'), { onAim: rowsMoved }));   // TRADE-VIRT: and a long shelf
+  else keepList(virtualRows(list, items, (it) => itemRow(it, 'remote'), { onAim: rowsMoved, sizes: sizesOf(`remote:${tradeView}`) }));   // TRADE-VIRT: and a long shelf
   return col;
 }
 
@@ -912,7 +912,14 @@ const syncLists = (opts) => { for (const v of lists) v.sync(opts); };
 /** A hover card whose row the window took away goes with it (AUDIT VIRT's `rowsMoved`). */
 let hoverRow = null;
 const rowsMoved = () => { if (hoverRow && hoverRow.isConnected === false) { hoverRow = null; hideItemHover(); } };
-const onResize = () => { if (host) render(); };
+/** AUDIT TRADE-VIRT: each long list's rows' heights by item, kept across the window's repaints - one set a list and a
+ *  view (the grid's tiles are not the list's rows) - so a repaint's spacers are the ones it replaces (ui/virtualRows.js
+ *  `sizes`). */
+const rowSizes = new Map();
+const sizesOf = (key) => { let m = rowSizes.get(key); if (!m) rowSizes.set(key, (m = new WeakMap())); return m; };
+/** AUDIT TRADE-VIRT: a resize measures the long lists again, as the pack's does - it repainted the window, and a repaint
+ *  took the focus out of the How-many field and lost the key typed next (the old window never listened). */
+const onResize = () => { if (host) syncLists({ remeasure: true }); };
 
 /** MENU-ORDER: a row's own price - the shelf's at a counter that sells, the player's piece's where this counter buys,
  *  repairs or identifies it (quotePriceFor's law, the strip's own figure) - or null where a press would move nothing. */

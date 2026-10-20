@@ -112,6 +112,32 @@ test('TRADE-VIRT the trade between players: a cold picture landing goes into its
   });
 });
 
+// AUDIT TRADE-VIRT (2026-10-20, the owner: "ensure this is perfect and fidelity isnt lost"): before any long pack draws its pictures
+test('AUDIT TRADE-VIRT a hover on a row whose picture has landed takes the title off the tile it shows NOW - the landing swapped the tile in place, and the row\'s hover held the initials tile it was built with, so the browser\'s own tooltip stood over the hover card (mutants: the tile the row was built with)', async () => {
+  await coldPictures([[115, 6], [118, 6], [119, 6]], async (rig) => {   // pieces no test before this one has drawn: their pictures cold
+    const view = mountEnhancedTrade(rig.host, counterHooks(rig.e));
+    try {
+      await settle(); rig.flush();
+      const row = rig.host.querySelector('.packcol').querySelectorAll('.itemrow')[0];
+      assert.ok(!row.querySelector('.tile').classList.contains('has-icon'), 'cold: the initials');
+      await rig.land(0); rig.flush();
+      for (let k = 0; k < 20 && !row.querySelector('.tile').classList.contains('has-icon'); k++) { await settle(); rig.flush(); }
+      const landed = row.querySelector('.tile');
+      assert.ok(landed.classList.contains('has-icon'), 'its picture landed - the tile swapped in place');
+      const took = [];
+      const rm = landed.removeAttribute;
+      landed.removeAttribute = (k) => { took.push(k); return rm.call(landed, k); };
+      const hadWindow = 'window' in globalThis;
+      if (!hadWindow) globalThis.window = { innerWidth: 1280, innerHeight: 720, addEventListener() {}, removeEventListener() {} };   // the hover card's own placing
+      try {
+        row.onmouseenter();
+        assert.deepEqual(took, ['title'], 'the landed tile\'s title taken off');
+        row.onmouseleave();
+      } finally { if (!hadWindow) delete globalThis.window; }
+    } finally { view.unmount(); }
+  });
+});
+
 // ── A LONG PACK, A WINDOW OVER ITS COLUMN'S SCROLL ───────────────
 
 /** The trade sheet's layout: each `.packcol` scrolls (`overflow-y: auto`), its head and tabs `headH` tall above its list,
@@ -332,5 +358,24 @@ test('TRADE-VIRT the trade between players: a verb of mine paints the window onc
     assert.equal(count(() => lockBtn().onclick()), 1, 'an unlock, one paint');
     assert.equal(count(() => view.repaint()), 1, 'the host\'s own repaint (a peer\'s change) paints at once');
     view.unmount();
+  });
+});
+
+// ── AUDIT TRADE-VIRT (2026-10-20, the owner: "ensure this is perfect and fidelity isnt lost") ──────────────────────
+
+test('AUDIT TRADE-VIRT a resize measures the long lists again and repaints nothing - in the shop counter (a repaint took the focus out of the How-many field and lost the next key) and between players (a repaint put a typed stack count back to the whole stack) (mutants: the resize repaints)', async () => {
+  await coldPictures([[113, 3], [116, 3]], async (rig) => {
+    for (const mount of [() => mountEnhancedTrade(rig.host, counterHooks(rig.e)), () => mountP2p(rig.host, rig.e, sessionOf(rig.e))]) {
+      const view = mount();
+      try {
+        await settle(); rig.flush();
+        const shell = rig.host.querySelector('.trade-shell'), row = rig.host.querySelector('.itemrow');
+        assert.ok(shell && row);
+        rig.dom.win.fire('resize', {});
+        rig.flush();
+        assert.equal(rig.host.querySelector('.trade-shell'), shell, 'the same window');
+        assert.equal(rig.host.querySelector('.itemrow'), row, 'the same rows - nothing rebuilt under a field');
+      } finally { view.unmount(); }
+    }
   });
 });

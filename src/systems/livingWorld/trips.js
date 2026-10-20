@@ -621,20 +621,27 @@ export function ownTrip(res, home, k, world, { mpm }) {
  *  every traveller of the job and every cycle (the trip world's towns are the map's), so kept by the world, the town and
  *  the job: made again for each trip, it was a filter of the towns near, their weights, a walk of the weights' keys and a
  *  sort by distance, every traveller of every town the roads asked, in one frozen frame. Null: no town in reach.
+ *  AUDIT TRIP-PICKS (2026-10-20): KEPT AS THE HOST'S OTHER LIVING WORLD MEMORIES ARE, BOUNDED - ROAD_CHOICES_KEPT towns'
+ *  worth, the longest unasked let go first (a town's choices are pure: asked again, made again the same). Unbounded, a
+ *  session that roamed the Bay held every town's: 21.6 KB a town and job, 200 MB at the map's whole (the audit's
+ *  measure). Each is leaner too: a town's distance is asked of the town (roadOrder), not kept in a map beside it.
  *  @param {LwTown} home @param {string} job @param {TripWorld} world
- *  @returns {{ picks: { town: LwTown, w: number }[], total: number, farFirst: { town: LwTown, d: number }[], dist: Map<LwTown, number> } | null} */
+ *  @returns {{ picks: { town: LwTown, w: number }[], total: number, farFirst: { town: LwTown, d: number }[] } | null} */
 const _roadChoices = new WeakMap();
+/** AUDIT TRIP-PICKS: the towns' choices a trip world keeps - a stop asks about fifty towns (the median within its reach)
+ *  for each of the four jobs that choose a road, so some ten stops' worth; past it the longest unasked quarter goes. */
+export const ROAD_CHOICES_KEPT = 2048;
 export function roadChoices(home, job, world) {
   let byHome = _roadChoices.get(world);
   if (!byHome) _roadChoices.set(world, (byHome = new Map()));
   const key = `${home.mapId}:${job}`;
   const kept = byHome.get(key);
-  if (kept !== undefined) return kept;
+  if (kept !== undefined) { byHome.delete(key); byHome.set(key, kept); return kept; }   // the newest asked
   const [rMin, rMax] = rowOf(TRIP_RANGE_PX, ROAD_RANGE_PX, job) ?? [3, 12];
   const near = world.townsNear(home.px ?? 0, home.py ?? 0, rMax)
     .filter((t) => t.mapId !== home.mapId && Math.max(Math.abs((t.px ?? 0) - (home.px ?? 0)), Math.abs((t.py ?? 0) - (home.py ?? 0))) >= rMin)
     .filter((t) => roadBound(job, home, t));   // LW9: a patrol keeps its region, a noble goes to a court, a minstrel to a tavern's town
-  if (!near.length) { byHome.set(key, null); return null; }
+  if (!near.length) { keepChoices(byHome, key, null); return null; }
   const dist = new Map(near.map((t) => [t, Math.hypot((t.px ?? 0) - (home.px ?? 0), (t.py ?? 0) - (home.py ?? 0))]));
   /** @type {Record<string, number>} */
   const weights = {};
@@ -654,9 +661,16 @@ export function roadChoices(home, job, world) {
   let total = 0;
   for (const k in weights) if (weights[k] > 0) { total += weights[k]; picks.push({ town: /** @type {LwTown} */ (townOf.get(k)), w: weights[k] }); }
   const farFirst = near.map((t) => ({ town: t, d: /** @type {number} */ (dist.get(t)) })).sort((a, b) => b.d - a.d || a.town.mapId - b.town.mapId);
-  const choices = { picks, total, farFirst, dist };
-  byHome.set(key, choices);
+  const choices = { picks, total, farFirst };
+  keepChoices(byHome, key, choices);
   return choices;
+}
+/** AUDIT TRIP-PICKS: a town's choices kept, and past ROAD_CHOICES_KEPT the quarter longest unasked let go (a Map walks its
+ *  keys in the order they were last set - roadChoices sets a kept one again when it is asked). */
+function keepChoices(byHome, key, choices) {
+  byHome.set(key, choices);
+  if (byHome.size <= ROAD_CHOICES_KEPT) return;
+  for (const k of byHome.keys()) { byHome.delete(k); if (byHome.size <= ROAD_CHOICES_KEPT * 0.75) break; }
 }
 
 /** TRIP-PICKS: `pickWeighted` over a town's kept choices - the same draw (none when no weight is above zero, and then
@@ -682,7 +696,7 @@ export function roadOrder(rng, home, job, world) {
   if (!choices) return null;
   const first = pickChoice(rng, choices);
   if (!first) return null;
-  const d0 = /** @type {number} */ (choices.dist.get(first));
+  const d0 = Math.hypot((first.px ?? 0) - (home.px ?? 0), (first.py ?? 0) - (home.py ?? 0));   // the choices' own distance (roadChoices), asked of the town
   return [first, ...choices.farFirst.filter((c) => c.town !== first && c.d < d0).map((c) => c.town)];
 }
 

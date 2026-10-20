@@ -70,19 +70,40 @@ export function startPrograms(gl, pairs) {
   };
 }
 
+/** AUDIT SHADER-STALL (2026-10-20): the programs `pairs` names that were started and never taken, let go - their
+ *  stages and the program deleted. A pass whose build threw leaves the rest of its list started for no build (the first
+ *  program's fault thrown, its sibling linked and kept for good); its door lets them go.
+ *  @param {any} gl @param {ReadonlyArray<readonly [string, string]>} pairs */
+export function releasePrograms(gl, pairs) {
+  const started = STARTED.get(gl);
+  if (!started) return;
+  for (const [vs, fs] of pairs) {
+    const k = `${vs}\0${fs}`, s = started.get(k);
+    if (!s) continue;
+    started.delete(k);
+    gl.deleteShader(s.vs); gl.deleteShader(s.fs); gl.deleteProgram(s.prog);
+  }
+}
+
 /** A pass built the first time it is asked for AND its programs are done - started at that first ask (startPrograms):
  *  `get()` answers the pass, or null while the driver compiles them, and null for good once `make` threw (`fail` told
- *  why). The host's door for a pass it builds in play: never a frame frozen on the compile.
+ *  why, the programs it left started let go). The host's door for a pass it builds in play: never a frame frozen on a
+ *  compile it can wait for. AUDIT SHADER-STALL: `get(true)` - the pass is NEEDED this frame (a telegraph to draw, a
+ *  crystal to strike) - builds it now whatever the driver says, waiting on the compile as every build did before the
+ *  slice: a pass the game plays by is never skipped for a compile (it is started early, render/playPrograms.js, so the
+ *  wait is rare). `settled` - built, or tried and failed: nothing left to ask it for.
  *  @template T @param {any} gl @param {ReadonlyArray<readonly [string, string]>} programs @param {() => T} make
- *  @param {(e: any) => void} [fail] @returns {() => T|null} */
+ *  @param {(e: any) => void} [fail] @returns {((need?: boolean) => T|null) & { readonly settled: boolean }} */
 export function compiledPass(gl, programs, make, fail = () => {}) {
   let ready = /** @type {(() => boolean)|null} */ (null), pass = /** @type {T|null} */ (null), tried = false;
-  return () => {
-    if (pass || tried || !gl || !(ready ??= startPrograms(gl, programs))()) return pass;
+  const door = (need = false) => {
+    if (pass || tried || !gl) return pass;
+    if (!(ready ??= startPrograms(gl, programs))() && !need) return null;
     tried = true;
-    try { pass = make(); } catch (e) { fail(e); pass = null; }
+    try { pass = make(); } catch (e) { fail(e); pass = null; releasePrograms(gl, programs); }
     return pass;
   };
+  return /** @type {any} */ (Object.defineProperty(door, 'settled', { get: () => !!pass || tried }));
 }
 
 /** Compile `vsSrc` and `fsSrc` and link them into a program, in the order

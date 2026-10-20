@@ -369,8 +369,8 @@ export class ComeSailAwayRenderer {
    *  the driver says its programs are done (render/warmPrograms.js's named steps), never an idle task waiting on them. */
   warmSteps() {
     return [
-      { start: () => startPrograms(this.gl, CSA_PART_PROGRAMS), run: () => { this._ensurePart(); } },
-      { start: () => startPrograms(this.gl, CSA_WAVE_PROGRAMS), run: () => { this._ensureWave(); } },
+      { start: () => startPrograms(this.gl, CSA_PART_PROGRAMS), run: () => { this._ensurePart(); }, need: () => !this._part },   // AUDIT SHADER-STALL: built by a draw first, the warm stands down
+      { start: () => startPrograms(this.gl, CSA_WAVE_PROGRAMS), run: () => { this._ensureWave(); }, need: () => !this._wave },
     ];
   }
 

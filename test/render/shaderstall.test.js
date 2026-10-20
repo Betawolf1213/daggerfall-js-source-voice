@@ -246,7 +246,8 @@ test('SHADER-STALL the warm\'s named steps (warmPrograms): a step that names its
 
 test('SHADER-STALL the wiring: the world\'s sea warm and the spells\' impact pass by their named steps; the Elite Gates\' telegraphs and crystals through the door, made again for each breach', () => {
   assert.match(read('src/scenes/world.js'), /if \(csaRender\) void warmPrograms\(csaRender\.warmSteps\(\)\);/);
-  assert.match(read('src/scenes/hostMagic.js'), /void warmPrograms\(\[\{ start: \(\) => startPrograms\(renderer\.gl, SPELL_IMPACT_PROGRAMS\), run: \(\) => \{ if \(!fxPass && !fxBroken\) fxPass = new SpellImpactPass\(renderer\.gl\); \} \}\]/);
+  // PIN MOVED (AUDIT SHADER-STALL, 2026-10-20): and its `need` - a spell's draw built the pass first, the warm stands down
+  assert.match(read('src/scenes/hostMagic.js'), /void warmPrograms\(\[\{ start: \(\) => startPrograms\(renderer\.gl, SPELL_IMPACT_PROGRAMS\), run: \(\) => \{ if \(!fxPass && !fxBroken\) fxPass = new SpellImpactPass\(renderer\.gl\); \}, need: \(\) => !fxPass && !fxBroken \}\]/);
   const eg = read('src/scenes/eliteGates/egFight.js');
   assert.match(eg, /const telegraphDoor = \(\) => compiledPass\(gl, telegraphPrograms\(true\), \(\) => new GateTelegraphRenderer\(gl, \{ spire: true \}\)/);
   assert.match(eg, /const crystalDoor = \(\) => compiledPass\(gl, CRYSTAL_PROGRAMS, \(\) => new CourtCrystalRenderer\(gl\)/);
