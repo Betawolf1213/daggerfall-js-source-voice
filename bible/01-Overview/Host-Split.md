@@ -497,4 +497,4 @@ wiring took 39 of them back (`bootWorld` 36,183; 36,181 after the merge with mai
 names; 24 mutant records re-aimed by the tool, every one dead. AUDIT OW-REVISITED (2026-10-20, `01-Overview/audits/Audit-Overworld-Revisited.md`): its fixes grew the region's
 chase hearing past three lines, so it moved out too - `src/scenes/regionChaseHost.js` (`createRegionChaseHearing`), the
 host wiring it in one statement; with the forecast's new inputs and the bands' and raiders' preference for a fresh cell
-word, `bootWorld` 36,205 of its 36,233.
+word, `bootWorld` 36,205 of its 36,233 (36,209 with main merged in the same day).

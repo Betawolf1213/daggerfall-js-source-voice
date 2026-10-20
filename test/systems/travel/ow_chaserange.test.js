@@ -2,7 +2,7 @@
 // OW-CHASE-RANGE): A CHASE SEEN AS FAR AS ITS BAND IS DRAWN. The relay fans a cell's foes frame - TV7b's chase word on it
 // - RANGE_PIXELS (3) about its sender, and the Overworld draws the bands BAND_REACH_PX (6) about the viewer: a player three
 // to six pixels off saw a chased band at its own wander. The chaser's trav frame (TV3, the region's channel) now carries
-// its chase words BESIDE its mark (world225: `bd` the bands', `sr` the raiders' - AUDIT OW-REVISITED L4-1: as a key of the
+// its chase words BESIDE its mark (world230: `bd` the bands', `sr` the raiders' - AUDIT OW-REVISITED L4-1: as a key of the
 // mark, every older client dropped the traveller whole). Pinned on the wire (net/wire.js: the words checked whole, near
 // their chaser), the relay over a real Room (kept beside the mark, fanned and welcomed with it, the widest inside the
 // runtime's 2 KiB), the session (the words beside the mark to any relay - an older one drops them, refusing nothing), the

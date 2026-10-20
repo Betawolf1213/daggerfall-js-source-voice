@@ -97,6 +97,7 @@
 //   POST /v1/eg/find     { tier } -> { found, keys, asks }   (EG-E3: a dungeon elite's find - 'super' | 'elite' | 'regular', the service's die, 6 asks a tier a day, 2 keys a week)
 //   POST /v1/eg/starts   { subs } -> { starts: { [sub]: [w, ..., 0] | null }, keys, rehearsal, rk }   (EG-F: the start window's preflight - which starts each member may make)
 //   POST /v1/lamp/claim  {} -> { granted, why? }   (LAMP-KEEPER II: a lamp keeper spoken to - I Love Lamp, laid once on the row; `why` 'held' | 'guest')
+//   POST /v1/ql/claim    { line, step, phase, choice? } -> { opened } | { witnessed, title?, key?, keys? } | { why }   (QL12: a questline's step - `open` writes its opening, a guest's too; `end` reads its endgame receipt, claimed in the line's window and order; a line's title once, the Covens' Hoard's Weir Key once an account; `why` 'unpaid' | 'guest'; behind QUESTLINES_OPEN - 403 ql-closed, 400 ql-body)
 //   POST /v1/gate/claim  { receipt, region?, character? } -> { recorded, stones, closed, seat? }   (WB12d: the row's embers, AUDIT WB12d A4; SEAT1b: `seat` the kill's influence)
 // MARKS1, Marks - an account's alone, behind MARKS_OPEN (marks.js); `rid` the act's own id:
 //   POST /v1/marks/balance {}                               -> { balance, today, bank }
@@ -266,6 +267,7 @@ import { egBoardOf, withEgHonours } from './egHonours.js';   // EG-E2: the Elite
 import { egSink } from './egEconomy.js';   // EG-E1: the Broker's Panoply sink
 import { startsEg } from './egStarts.js';   // EG-F: the start window's preflight
 import { claimLamp } from './lamp.js';   // LAMP-KEEPER II: I Love Lamp, laid on the row
+import { claimQl, QL_STATUS } from './questlines.js';   // QL12: a questline's step claimed - what the service witnessed, paid
 import { voteHome } from './homeVotes.js';   // HOME-VOTE: a town's word on a player's house
 import { claimHome, releaseHome, setHomeEntry, homesInTown, homesOf, setHomeLook, homeLayoutsKept, arenaMoveHome, arenaMovesOf, arenaMoveSeen, holdDeed, inheritHome } from './homes.js';   // HOME1: the online homes' routes; HOME-LOOK: its outside; WD3: the towns' layouts; ARENA4b: the homes the arena displaced, moved; FIELD BUGS 2026-10-04d KNIGHT-HOUSE: a deed held
 import { roomsOf, offerRoom, withdrawRoom, rentRoom, collectRent } from './rent.js';   // HOME-RENT: a home's rooms, rented
@@ -312,7 +314,7 @@ import {
   listRealm, createRealm, customsRealm, joinRealm, checkpointRealm, getRealmBlob, leaveRealm, deleteRealm, undoRealm,
   realmMintFacts, grantCustomsPass, REALM_CHARACTERS_MAX, REALM_MAX_BYTES, objectBytesOf,
 } from './realm.js';   // REALM P1: the realm's characters; ARENA4b: the level on a realm character's tile, the token's `cl`
-import { grantSpoils } from './budget.js';   // INT5: a signed win's spoils fill the playing character's budget
+import { grantSpoils, portentPieces } from './budget.js';   // INT5: a signed win's spoils fill the playing character's budget (AUDIT WB14 WIRE-6: a portent's pieces with them)
 import { reviewAct } from './review.js';   // INT6: the review of the judge's verdicts
 import { doorReads } from './door.js';   // PRIMARY-FOLD: the door's reads in one trip
 import { passRoute, passKey, mintPass, readPass, passMintable } from './sessionPass.js';   // SESSION-SIGN: the hot routes believe a pass
@@ -1315,12 +1317,12 @@ const service = {
         // AUDIT WB A5: a refused receipt says WHICH rung refused it - the client keeps one the service can mend (its key
         // not the relay's pair, a clock) and lets go of one it cannot
         if (r.error) return json({ error: r.error, ...(r.why ? { why: r.why } : {}) }, r.error === 'no-gate-key' ? 503 : r.error === 'not-yours' ? 403 : 400, origin);
-        if (r.recorded === true) await grantSpoils(ctx.db, who.player.id);   // INT5: a signed win's spoils, the budget's fill
+        if (r.recorded === true) await grantSpoils(ctx.db, who.player.id, portentPieces(r.portent));   // INT5: a signed win's spoils, the budget's fill - AUDIT WB14 (WIRE-6): and a portent night's pieces
         // MARKS1: THE FIRST FAUCET - a receipt that made its row strikes the gate's Marks, in the row's own batch
         // (marks.js gateStrikeStatement: 50 under SILVER-WAYS' day's combat cap with the raids', the gate's own day its
         // line's id); `marks` null where Marks are not this account's
         const answer = { ...r };
-        delete answer.day; delete answer.struck; delete answer.deedStruck; delete answer.weirRow;   // the service's own: the line's day and whether the batch struck (AUDIT EG IV: and the key's row)
+        delete answer.day; delete answer.struck; delete answer.deedStruck; delete answer.weirRow; delete answer.portent;   // the service's own: the line's day and whether the batch struck (AUDIT EG IV: and the key's row; AUDIT WB14: the receipt's portents, the fill's)
         if (r.recorded && !r.rite && r.deedStruck !== undefined) answer.deed = await deedAnswer(db, who.player, deedEvent('gate', r.day), r.deedStruck);   // SILVER-WAYS: where a deed was this claim's to try
         // SEAT1b (Seats-Arc 4.2): a kill recorded now is influence for the account's war-guild where it pledged in the
         // region the claim named (`seat` the answer: counted, or why not - the kill stands either way). WB12d: the rite
@@ -1431,6 +1433,14 @@ const service = {
       if (path === '/v1/lamp/claim' && request.method === 'POST') {
         // LAMP-KEEPER II: A LAMP KEEPER SPOKEN TO - the session says who, lamp.js lays I Love Lamp on the row once
         return json(await claimLamp(ctx, who.player), 200, origin);
+      }
+
+      if (path === '/v1/ql/claim' && request.method === 'POST') {
+        // QL12: A QUESTLINE'S STEP CLAIMED - the session says who, questlines.js opens the step (`open`) or reads its witness
+        // (`end`: the endgame place's own receipt row, in the line's window and order) and pays the line's title and the key
+        const r = await claimQl({ ...ctx, env }, who.player, body, nowS);
+        if ('error' in r) return no(r.error, QL_STATUS[/** @type {keyof typeof QL_STATUS} */ (r.error)] ?? 400, origin);
+        return json(r, 200, origin);
       }
 
       if (path === '/v1/arena/claim' && request.method === 'POST') {

@@ -32,7 +32,7 @@ The scratch scripts are the session's (`scratchpad/audit/`); none is committed.
   (`travelSteer.js steerDrive`).
 - **The chase words beside the mark, not in it** (L4-1): a mark of eight keys was refused whole by every older client,
   so the traveller vanished from their book; the words (`bd`, `sr`) ride beside the mark, the mark stays TV3's seven.
-  RELAY_VERSION stays world225 (it was never deployed); its law hash moved with the shape.
+  RELAY_VERSION world225 was re-hashed in place (never deployed); merged with main the same day, it is world230.
 - **"Fair"** (L3-11): kept in English, the forecaster's word for "no rain, snow, storm or fog"; re-drafted where a
   translation read as "sunny" (German, Polish).
 
@@ -100,7 +100,7 @@ The location-frame transform, the gates (all 1,640 open by day, every passage th
 stop both ways at night and never by day, arrival at a town's edge, the cost per frame (L1); the lane is the road -
 laned offsets median 0, p99 under 33 units over 40 routes - and boulders and walls on the road walked round and back (L2);
 the forecast's word equals the sky's at a steady pace on 750 real routes, the meter's resets, the way's slicing (L3); a
-word end to end through the real Room, the attachment under 2 KiB at its widest, rate limits unmoved, the world225 pins
+word end to end through the real Room, the attachment under 2 KiB at its widest, rate limits unmoved, the relay's version pins
 (L4); no size left that depends on distance, the quest marks' place law and press (L5); every committed mutant dead, the
 gates, HOST-SPLIT's counts and the merge's world224 pins (L6).
 

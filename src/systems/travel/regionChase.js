@@ -7,7 +7,7 @@
 // while the Overworld draws the bands BAND_REACH_PX (6) about the viewer - so a player three to six pixels from a chaser
 // saw the band at its own wander, and kept seeing it after it was spent unless their cell's ledger heard (TV7b's recorded
 // limit, AUDIT OW3's, OW6's). The region already has a word that reaches past the cell: each traveller's mark (TV3, the
-// region's channel). The chaser's trav frame now carries its chase words BESIDE its mark (world225: `bd` the bands', `sr`
+// region's channel). The chaser's trav frame now carries its chase words BESIDE its mark (world230: `bd` the bands', `sr`
 // the raiders' - the foes frame's own two words; AUDIT OW-REVISITED L4-1: as a key of the mark every older client dropped
 // the traveller whole), said when a chase begins or ends or a band is spent, and again every TRAV_CHASE_REFRESH_MS while a
 // chase runs; a reader hears them through the bands' and the raiders' own hearing, the word standing TRAV_BAND_HOLD_MS -

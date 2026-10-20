@@ -636,8 +636,11 @@ export function itemLongName(item, opts) {
     : localizedText('longWeaponNameFormatString', '{0} {1}'), material, name);
 }
 /** A name that does not take the material as a prefix (ItemHelper.cs:302's early return, plus the ladder's
- *  own names). The metal, when the pack should say it, rides `itemNameParts().material` instead. */
+ *  own names). The metal, when the pack should say it, rides `itemNameParts().material` instead. AUDIT QUESTLINES
+ *  REWARD-5: and a questline's named piece (`qlNamed`, systems/questlines/qlRewards.js rollRewardChoice) - its name is its
+ *  own, as a record's is ("Steel Corvane's Spire-Blade" was the pack's). */
 function withholdsMaterialPrefix(item) {
+  if (item?.qlNamed === true) return true;
   return !itemIsIdentified(item) || !!item?.artifact || !!item?.legendary || !!item?.aetheric || !!item?.gilded;
 }
 
@@ -844,7 +847,7 @@ export function survivalInfoTokens(item) {
   else if (isCardBinder(item)) for (const text of BINDER_CARD_LINES) out.push({ text, center: true });   // CARDS8
   else if (isCardPack(item)) for (const text of CARD_PACK_LINES) out.push({ text, center: true });   // CARDS9: the sealed pack
   else if (isOatsItem(item)) out.push({ text: 'A day\u2019s food for a horse. Use it to feed the horse you ride.', center: true });   // STEED1
-  else if (isWagonKitItem(item)) out.push({ text: `Mends ${Math.round(KIT_MEND * 100)}% of a wagon, to ${Math.round(WAGON_KIT_CEILING * 100)}% at most, an hour's work.`, center: true });   // WAGONS4
+  else if (isWagonKitItem(item)) out.push({ text: `Repairs ${Math.round(KIT_MEND * 100)}% of a wagon, up to ${Math.round(WAGON_KIT_CEILING * 100)}%. Takes an hour.`, center: true });   // WAGONS4
   return out;
 }
 

@@ -1229,7 +1229,7 @@ so away from row 250 none comes within sight - recorded here for that branch; th
   way under the Classic helm - the mod divides its cargo by a Cargo modifier it lacks (kept, CSA-D) - and crosses under
   the Responsive one, the default, which gives her a hold (AUDIT NAV2 F16: she was refused under the helm she sails
   best under). No boat: the sea is refused as it always was, and
-  a route a boat would have made is said ("There is no way there by land - a boat would carry you across the water.").
+  a route a boat would have made is said ("There is no way there by land. You need a boat to cross the water.").
   SHIP-SAIL (2026-09-28, Mac: "Shouldn't it already function as such?"): unless the place is one the map's ship
   passage sails to from here - then the passage is OFFERED ("Sail there by ship?", its fare and days) and, on Yes,
   taken as the map takes it (`01-Overview/bugs/Field-Bugs-2026-09-28e.md`). The passage is Daggerfall's, so it is offered
@@ -1676,7 +1676,7 @@ CAMP-SIGHT, CAMP-TRAVEL, CAMP-NOTIMER, TTL1, WORLD1's "True persistance"); the d
   (no governor there before) the mod's own ask under the enemies' cap alone, handed back whole with nothing near. The
   panel says why it is held (TRAVEL_HELD_WHY: "while the land loads", "with enemies near", and "until the Overworld
   rises" for AUDIT OW4 J5's walking pace with the view down, which had said the land was loading), and a line is said
-  once as an enemy begins to hold the journey ("Enemies near - you slow your pace."). Since the merge with main: its
+  once as an enemy begins to hold the journey ("Enemies are near. You slow your pace."). Since the merge with main: its
   reasons are AUDIT OW5 G1's words with this one beside them (`TRAVEL_HELD_WHY`: 'load', 'ground', 'foes'), and TV-WASD's
   keys' travel under the view is held the same way - fast travel too - along the way the keys last moved (`_tvWalkYaw`);
   a First-Person crossing's restore (AUDIT OW5 G5) asks the governor's rate, never over its hold. THE MERGE with the sea
@@ -2486,8 +2486,9 @@ TRAV_BAND_HOLD_MS (25 s, a missed refresh and still drawn):
   ended);
 - never of one the reader's map hides (L4-3: WILD1's open zone - a stranger's mark is drawn to no one, and the band beside
   it was drawn where they rode).
-RELAY_VERSION **world225** (world224 on its branch, renumbered past LAYERED-GEAR's world224 at the merge; its law hash
-moved with the words' place, never deployed before). The widest frame (the widest mark, both words at their longest)
+RELAY_VERSION **world230** (world224 on its branch, renumbered past LAYERED-GEAR's world224 at one merge, then world225,
+its law hash moved in place with the words' place, never deployed, renumbered past GAUNTLET-SLAIN's world225 to WB14b's
+world229 at the next). The widest frame (the widest mark, both words at their longest)
 fits the runtime's 2 KiB attachment.
 - **What it is not.** A mark is said only by a traveller who shows themselves to the region ("Show me to travellers",
   on by default) and only in their region's channel: a chaser who hides, or one across a region's border, is heard as
@@ -2495,14 +2496,14 @@ fits the runtime's 2 KiB attachment.
   A band spent as its chaser goes indoors is cleared with the mark, unsaid to the region - the cell's ledger (OW6L)
   carries it.
 - **Deploy.** Nothing breaks in either order: an older relay ignores the words beside the mark, an older client reads
-  the mark and ignores them. The relay at world225 is what fans them.
+  the mark and ignores them. The relay at world230 is what fans them.
 The four hosts: `scenes/world.js` WIRED (the one host with the region's travellers); `scenes/exterior.js`,
 `scenes/worldModes.js` and `scenes/dungeonContext.js` hear no region (L6-6). Proof:
 `test/systems/travel/ow_chaserange.test.js` (7: the wire - the mark seven keys and no eighth, the law an older client
 reads it by, the words checked apart; the relay over a real Room; the session; the client's law; the region's words and their reach; a word end to end through
 the real doors; the host's hearing run - withdrawn, aged, hidden, a cell word preferred); the TV3 pins
 (`test/scenes/tv3_travellers.test.js`: seven keys again, the hearing's wiring); `test/net/relayversion.test.js` (the
-world225 law); every `RELAY_VERSION` pin at world225; `tools/mutants/ow_chaserange.json` (23) and
+world230 law); every `RELAY_VERSION` pin at world230; `tools/mutants/ow_chaserange.json` (23) and
 `tools/mutants/audit_owrevisited_chase.json` (22), all dead.
 
 ### OW-ROAD-TRUE - a planned road is walked on the road (5)

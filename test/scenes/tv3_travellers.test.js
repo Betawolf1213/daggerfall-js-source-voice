@@ -39,7 +39,7 @@ const MARK = Object.freeze({ px: 207, py: 213, fx: 12, fy: 250, h: 64, m: 1, tv:
 
 // ── THE WIRE ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-test('TV3 wire: a mark is seven keys and no eighth, each in its range - refused WHOLE otherwise; `tv` absent reads 0 (OW-CHASE-RANGE, world225: its chase words ride BESIDE the mark, never as an eighth key - AUDIT OW-REVISITED L4-1, test/systems/travel/ow_chaserange.test.js)', () => {
+test('TV3 wire: a mark is seven keys and no eighth, each in its range - refused WHOLE otherwise; `tv` absent reads 0 (OW-CHASE-RANGE, world230: its chase words ride BESIDE the mark, never as an eighth key - AUDIT OW-REVISITED L4-1, test/systems/travel/ow_chaserange.test.js)', () => {
   assert.deepEqual(TRAV_KEYS, ['px', 'py', 'fx', 'fy', 'h', 'm', 'tv']);   // PIN MOVED BACK (AUDIT OW-REVISITED L4-1): an eighth key dropped the traveller from every older client's book - the chase words ride beside the mark
   assert.deepEqual(validTravellerMark(MARK), MARK);
   assert.deepEqual(validTravellerMark({ ...MARK, tv: undefined }), { ...MARK, tv: 0 });
