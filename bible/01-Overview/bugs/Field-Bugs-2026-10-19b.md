@@ -151,7 +151,7 @@ path is two of them). Values do not move. The career becomes the character's own
 name and every other term stay. **The level does not move**: the classic sum is the class's skills', and the stored one is
 the sum the level stands on - a trained skill brought in moves both sums by its rise above it and pays no levels, an
 untrained one moves neither, and its ground is the class's skills' to make up before the next level comes closer
-(SWAP-CYCLE, `Field-Bugs-2026-10-20f.md`: both sums had moved by a drop too, and a class cycled through every skill
+(SWAP-CYCLE, `Field-Bugs-2026-10-20g.md`: both sums had moved by a drop too, and a class cycled through every skill
 reached level 223). The progress to the next level stands. Paid as SPEC-RESET is (coins, letters, online the Empire's account), at half its price; the
 price is a first setting, one constant. On the Growth tab's Specialisations page, under the paths: the two picks and the
 swap, asked first. Brother Frank's class (Blunt mastered, no other weapon in it) gives up a minor skill for Long Blade and

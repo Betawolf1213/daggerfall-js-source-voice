@@ -362,7 +362,7 @@ one weapon skill"*), through Mac; asked, Mac: *"Paid skill swap"*. Record: `01-O
   in the same group (the 2/2/1 slots stand); a mastered skill never leaves; the values stay; the career becomes the
   character's own copy, saved whole and marked `swapped`, so an heir keeps it (`legacy/family.js` careerFields, AUDIT
   SUGGESTIONS-1019 L5-4) and its household still wears the class. The level and the progress to the next stand, and a
-  skill's training leaves with it (SWAP-CYCLE, `01-Overview/bugs/Field-Bugs-2026-10-20f.md`): the stored current sum is
+  skill's training leaves with it (SWAP-CYCLE, `01-Overview/bugs/Field-Bugs-2026-10-20g.md`): the stored current sum is
   the sum the level stands on, which no swap and no raise lowers; a swap moves both sums only by what it takes the
   class's sum above it (a trained outsider brought in pays no level), and the ground a swap gives up is the class's
   skills' to make up before the next level comes any closer - so no cycle of swaps passes the class's own ceiling.

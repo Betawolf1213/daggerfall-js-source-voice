@@ -1,5 +1,5 @@
 // SWAP-CYCLE (2026-10-20, Mac: "REPEC BREAKING LEVEL LIMIT ... How far it goes: about level 224 / this is the problem
-// lol"; bible/01-Overview/bugs/Field-Bugs-2026-10-20f.md): SKILL-SWAP moved both stored level sums by whatever a swap
+// lol"; bible/01-Overview/bugs/Field-Bugs-2026-10-20g.md): SKILL-SWAP moved both stored level sums by whatever a swap
 // moved the class's sum, a drop as well as a rise - so a trained class skill given up for an untrained one kept its
 // training on the level, and its place earned the same levels again. One class cycled through every skill reached level
 // 223 where its own lists top out at 31. The stored current sum is now the sum the level stands on: no swap and no raise
