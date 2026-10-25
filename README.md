@@ -1,11 +1,11 @@
-# DFO Online
+# Tamriel Unbound
 
-**DFO Online** - an open-source reimplementation of a classic 1996 RPG,
+**Tamriel Unbound** - an open-source reimplementation of a classic 1996 RPG,
 played from your own copy of The Elder Scrolls II: Daggerfall. It began as a
 1:1 port of Daggerfall Unity (MIT, Interkarma and contributors) and is now its
 own game: Daggerfall Unity is the reference for its data layer and logic, not a
 target to match. Presentation rebuilt on hand-rolled WebGL2. MIT licensed, with
-Daggerfall Unity's notice alongside (LICENSE). DFO Online is an independent,
+Daggerfall Unity's notice alongside (LICENSE). Tamriel Unbound is an independent,
 unofficial project, not affiliated with or endorsed by Bethesda Softworks or
 ZeniMax Media. The Elder Scrolls and Daggerfall are trademarks of ZeniMax
 Media Inc.
@@ -29,7 +29,7 @@ with `ARENA2_PATH`.
 
 ## Support development
 
-DFO Online is free and open source. Active development currently
+Tamriel Unbound is free and open source. Active development currently
 costs about **$600 per month** to sustain across development tooling,
 multiplayer infrastructure, testing, builds, releases, and mod compatibility
 work.

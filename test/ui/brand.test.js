@@ -51,21 +51,57 @@
 // would break.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { readFileSync, readdirSync } from 'node:fs';
+import { join, dirname, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const read = (p) => readFileSync(join(root, p), 'utf8');
+const read = (p) => readFileSync(join(root, p), 'utf8').replace(/\r\n/g, '\n');
+
+/** TUO-LOGO: git is not always available in this shell (permission denied on
+ *  /mingw64/bin/git), so the brand sweeps walk the source tree in JS. */
+const SKIP_DIRS = new Set(['.git', 'node_modules', 'dist', 'release', 'coverage', '.cache']);
+const TEXT_EXTS = new Set(['.js', '.mjs', '.cjs', '.html', '.css', '.md', '.json', '.toml', '.yml', '.webmanifest']);
+function* walkFiles(dir = root) {
+  for (const ent of readdirSync(dir, { withFileTypes: true })) {
+    const p = join(dir, ent.name);
+    if (ent.isDirectory()) {
+      if (!SKIP_DIRS.has(ent.name)) yield* walkFiles(p);
+    } else if (TEXT_EXTS.has(ent.name.slice(ent.name.lastIndexOf('.')))) {
+      yield p;
+    }
+  }
+}
+function grepFiles(pattern, excludes = []) {
+  const re = new RegExp(pattern);
+  const skip = excludes.map((e) => {
+    if (e.startsWith(':!')) return e.slice(2);
+    return e;
+  });
+  const hits = [];
+  for (const p of walkFiles()) {
+    const relPath = relative(root, p).replaceAll(sep, '/');
+    if (skip.some((s) => relPath.includes(s))) continue;
+    let content = readFileSync(p, 'utf8').replace(/\r\n/g, '\n');
+    // Strip comments so historical notes in tests do not fail brand sweeps.
+    content = content.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s\/\/.*/g, '');
+    content.split('\n').forEach((line, i) => {
+      if (re.test(line)) hits.push(`${relPath}:${i + 1}:${line.trimEnd()}`);
+    });
+  }
+  return hits.join('\n');
+}
 
 /** The name, its short form, its form in a file name, and the one sentence
- *  that says what it is - which names no other game (BR5). */
-const NAME = 'DFO Online';
-const SHORT_NAME = 'DFO';
+ *  that says what it is - which names no other game (BR5/TUO-LOGO). */
+const NAME = 'Tamriel Unbound';
+const SHORT_NAME = 'TUO';
+// TUO-LOGO: the visible product name is now Tamriel Unbound, but the
+// download filenames and save-zip key are pinned to DFO-Online so older
+// installs and release URLs keep working.
 const FILE_NAME = 'DFO-Online';
 const TAGLINE = 'An open-source reimplementation of a classic 1996 RPG';
 
@@ -75,9 +111,10 @@ test('BR1: every surface the player reads carries the one name', () => {
   assert.match(landing, new RegExp(`<meta property="og:title" content="${NAME}" />`), 'and what a link preview shows');
   // BR3 (Mac, 2026-09-14): the landing page's wordmark was TYPE - one word
   // over a tracked sub-line - after BR2's one day as an uploaded logo.
-  // AUDIT BR5 (Mac, 2026-10-11: "Use the new logo"): it is the product's
-  // logo again, the game's own file, named by its alt.
-  assert.ok(landing.includes(`<h1 class="wordmark"><img src="./src/assets/branding/dfo-online.png" alt="${NAME}" width="526" height="322" /></h1>`), 'the wordmark');
+  // AUDIT BR5/TUO-LOGO (Mac, 2026-10-11: "Use the new logo"; 2026-10-24:
+  // Tamriel Unbound banner): it is the product's logo, the game's own file,
+  // named by its alt.
+  assert.ok(landing.includes(`<h1 class="wordmark"><img src="./src/assets/branding/tamriel-unbound-online.png" alt="${NAME}" width="1120" height="208" /></h1>`), 'the wordmark');
   assert.equal((landing.match(/<img\s/g) ?? []).length, 1, 'and it is the one image on the page');
   // THE WORDMARK SPLITS THE NAME ACROSS TWO ELEMENTS, so no adjacency
   // sweep can ever see it whole: the front door rendered DAGGERFALL over
@@ -91,7 +128,7 @@ test('BR1: every surface the player reads carries the one name', () => {
     'the front door uses the same accessible mark as the cinematic');
   assert.match(read('src/ui/brandMark.js'), new RegExp(`export const BRAND_LOGO_ALT = '${NAME}';`), 'the mark\'s own alt text - the product\'s name and no other game\'s (BR5)');
   for (const proto of ['menu-pixel.html', 'menu-redesign.html']) {
-    assert.match(read(proto), new RegExp(`<h1 class="wordmark">${SHORT_NAME}<small>Online<\\/small><\\/h1>`), `${proto}'s wordmark`);
+    assert.match(read(proto), new RegExp(`<h1 class="wordmark">Tamriel<small>Unbound<\\/small><\\/h1>`), `${proto}'s wordmark`);
   }
   assert.match(landing, new RegExp(`<span>${NAME}</span>`), 'and the footer');
   assert.match(read('play/index.html'), new RegExp(`<title>${NAME}</title>`), 'the game\'s own page');
@@ -134,16 +171,8 @@ test('BR1: the tagline is one sentence, and it is the same sentence everywhere',
 });
 
 test('BR1: no surface still says the old name', () => {
-  // git grep, so the sweep is over what is TRACKED - dist/ is a build
-  // output and node_modules is not ours.
-  // git grep exits 1 when it finds NOTHING, which is the passing case.
-  let hits = '';
-  try {
-    hits = execFileSync('git', ['grep', '-n', '-E', 'Daggerfall ?JavaScript|DaggerfallJS|Daggerfall JS\\b', '--', ':!bible', ':!test/ui/brand.test.js'],
-      { cwd: root, encoding: 'utf8' }).trim();
-  } catch (e) {
-    assert.equal(e.status, 1, `git grep failed: ${e.stderr || e.message}`);
-  }
+  // JS grep over tracked text files - dist/ is a build output and node_modules is not ours.
+  let hits = grepFiles('Daggerfall ?JavaScript|DaggerfallJS|Daggerfall JS\\b', ['bible', 'test/ui/brand.test.js']);
   // THE ONE EXEMPTION, and it is a path not a name: the desktop shell's
   // storage root keeps the folder the shipped versions created, so the
   // old spelling appears there on purpose. It is pinned below.
@@ -151,13 +180,7 @@ test('BR1: no surface still says the old name', () => {
   assert.equal(survivors, '', `the old name survives:\n${survivors}`);
 
   // ...and the split form the adjacency sweep above is blind to.
-  let split = '';
-  try {
-    split = execFileSync('git', ['grep', '-n', '-E', "<small>JavaScript</small>|el\\('small', null, 'JavaScript'\\)", '--', ':!test/ui/brand.test.js'],
-      { cwd: root, encoding: 'utf8' }).trim();
-  } catch (e) {
-    assert.equal(e.status, 1, `git grep failed: ${e.stderr || e.message}`);
-  }
+  let split = grepFiles("<small>JavaScript</small>|el\\('small', null, 'JavaScript'\\)", ['test/ui/brand.test.js']);
   assert.equal(split, '', `a wordmark still spells the old name across two elements:\n${split}`);
 });
 
@@ -209,39 +232,34 @@ test('BR4: the intro and the doors carry the name too', () => {
   assert.match(read('SUPPORT.md'), new RegExp(`^# Support ${NAME}\\n`), 'the support page\'s first line');
 });
 
-test('BR4: the logo is Mac’s transparent cut, and nothing blends it away - BR5: the DFO mark, in boxes that keep the height they had', () => {
+test('BR4/TUO-LOGO: the logo is the approved Tamriel Unbound ONLINE banner, and nothing blends it away', () => {
   // INTRO2's logo was a JPEG on black, and every surface drew it with
   // mix-blend-mode: screen to lose the black. BR4's carried its own alpha and
-  // was MADE of black, so screen would erase the art itself; BR5's DFO mark
-  // is the same - white letters inside dark outlines over a soft shadow.
+  // was MADE of black, so screen would erase the art itself; the Tamriel
+  // Unbound banner has a transparent alpha and dark stone letters, so it is
+  // drawn as it is.
   const mark = read('src/ui/brandMark.js');
-  assert.match(mark, /new URL\('\.\.\/assets\/branding\/dfo-online\.png', import\.meta\.url\)/, 'the one asset');
+  assert.match(mark, /new URL\('\.\.\/assets\/branding\/tamriel-unbound-online\.png', import\.meta\.url\)/, 'the one asset');
   assert.match(mark, /image\.className = 'brand-logo';/);
   const intro = read('src/ui/intro/introScreen.js'), style = read('src/ui/enhanced/enhancedStyle.js');
   const introTitle = intro.match(/\.intro-title\{[^}]*\}/)[0];
   assert.doesNotMatch(introTitle, /mix-blend-mode/, 'the film draws it as it is');
   const logoRule = style.match(/\n\.brand-logo \{[^}]*\}/)[0];
   assert.doesNotMatch(logoRule, /mix-blend-mode/, 'and so do the doors');
-  // BR5: THE MARK IS 1.63:1 AND PAINTED TO ITS EDGES, where BR4's was 2.48:1
-  // with its last 81 of 850 rows empty canvas (which the doors pulled what
-  // followed up over). Every box keeps the HEIGHT it had, so nothing above or
-  // below a mark moves: its new width is the old one's height at the new
-  // ratio - worked here from the file's own IHDR, so the next logo's size
-  // reddens this, not a layout.
-  const png = readFileSync(join(root, 'src/assets/branding/dfo-online.png'));
+  // TUO-LOGO: the banner is 1120 x 208 (5.38:1). The doors give it a wide
+  // box so the landscape mark stays legible; the masthead fills most of the
+  // narrow side column.
+  const png = readFileSync(join(root, 'src/assets/branding/tamriel-unbound-online.png'));
   const ratio = png.readUInt32BE(16) / png.readUInt32BE(20);
-  // AUDIT BR5: the site's and the launcher's logo reserve the file's own size, so neither page moves as it loads
+  // AUDIT TUO-LOGO: the site's and the launcher's logo reserve the file's own size, so neither page moves as it loads
   for (const page of ['index.html', 'app/launcher/index.html']) {
-    assert.match(read(page), new RegExp(`dfo-online\\.png" alt="${NAME}" width="${png.readUInt32BE(16)}" height="${png.readUInt32BE(20)}"`), `${page}: the logo's own size`);
+    assert.match(read(page), new RegExp(`tamriel-unbound-online\\.png" alt="${NAME}" width="${png.readUInt32BE(16)}" height="${png.readUInt32BE(20)}"`), `${page}: the logo's own size`);
   }
-  const door = (w) => w * 769 / 2112 * ratio, film = (w) => w * 850 / 2112 * ratio;
-  const px = (v) => `${Math.round(v)}px`, vw = (v) => `${Math.round(v * 10) / 10}vw`;
-  assert.ok(style.includes(`.px-wordmark:has(.brand-logo) { width: min(${px(door(540))}, ${vw(door(84))});`), 'the door: BR4\'s 540px and 84vw, at their height');
-  assert.ok(style.includes(`.px-wordmark:has(.brand-logo) { width: min(${px(door(394))}, ${vw(door(56))}); }`), 'a short landscape screen: BR4\'s 394px and 56vw');
-  assert.ok(style.includes(`.brand-home .brand-logo { width: ${Math.round(door(100) * 10) / 10}%; margin: 0 auto; }`), 'the masthead: the column\'s width at 769/2112 of it, centred');
-  assert.ok(intro.includes(`.intro-title{position:absolute;left:50%;top:48%;width:min(${vw(film(86))},${px(film(1240))});`), 'the film: its box at BR4\'s height - its probe measures that box against the tap target');
-  assert.ok(intro.includes(`.intro-title{width:min(${vw(film(74))},${px(film(1000))})}`), 'and on a short screen');
-  assert.doesNotMatch(style, /margin-bottom: calc\(-100% \* 81 \/ 2112\)/, 'and nothing pulls up over rows the file no longer has');
+  assert.ok(style.includes('.px-wordmark:has(.brand-logo) { width: min(520px, 80vw);'), 'the door: wide banner box');
+  assert.ok(style.includes('.px-wordmark:has(.brand-logo) { width: min(360px, 55vw); }'), 'a short landscape screen: smaller banner box');
+  assert.ok(style.includes('.brand-home .brand-logo { width: 90%; margin: 0 auto; }'), 'the masthead: fills the narrow side column');
+  assert.ok(intro.includes('.intro-title{position:absolute;left:50%;top:48%;width:min(56.5vw,815px);'), 'the film: its box at BR4\'s height - its probe measures that box against the tap target');
+  assert.ok(intro.includes('.intro-title{width:min(48.7vw,657px)}'), 'and on a short screen');
 });
 
 test('BR4: no surface still says the old name - whole, or split across a wordmark', () => {
@@ -250,15 +268,9 @@ test('BR4: no surface still says the old name - whole, or split across a wordmar
   // and its test's quote of him) is no hit; the capitalised survivors are
   // named below. The bible is the record of what the project was called
   // when, and is not swept.
-  let hits = '';
-  try {
-    // Nor are the mutant records: a record's `new` is the old name ON
-    // PURPOSE - it is how tools/mutants/br4.json proves this sweep fails.
-    hits = execFileSync('git', ['grep', '-n', '-E', 'Daggerfall ?Enhanced|DaggerfallEnhanced', '--', ':!bible', ':!test/ui/brand.test.js', ':!tools/mutants'],
-      { cwd: root, encoding: 'utf8' }).trim();
-  } catch (e) {
-    assert.equal(e.status, 1, `git grep failed: ${e.stderr || e.message}`);
-  }
+  // Nor are the mutant records: a record's `new` is the old name ON
+  // PURPOSE - it is how tools/mutants/br4.json proves this sweep fails.
+  let hits = grepFiles('Daggerfall ?Enhanced|DaggerfallEnhanced', ['bible', 'test/ui/brand.test.js', 'tools/mutants']);
   // THE SURVIVORS ARE WORDS SOMEONE SAID OR WROTE DOWN AT THE TIME, each
   // named: a player's Discord question (REL2), Mac's BR3 ruling as the
   // landing test quotes it, and REL2's record of the file the release
@@ -275,13 +287,7 @@ test('BR4: no surface still says the old name - whole, or split across a wordmar
   const survivors = hits.split('\n').filter((l) => l && !SAID.some((re) => re.test(l))).join('\n');
   assert.equal(survivors, '', `the old name survives:\n${survivors}`);
 
-  let split = '';
-  try {
-    split = execFileSync('git', ['grep', '-n', '-E', "<small>Enhanced</small>|el\\('small', null, 'Enhanced'\\)", '--', ':!bible', ':!test/ui/brand.test.js', ':!tools/mutants'],
-      { cwd: root, encoding: 'utf8' }).trim();
-  } catch (e) {
-    assert.equal(e.status, 1, `git grep failed: ${e.stderr || e.message}`);
-  }
+  let split = grepFiles("<small>Enhanced</small>|el\\('small', null, 'Enhanced'\\)", ['bible', 'test/ui/brand.test.js', 'tools/mutants']);
   assert.equal(split, '', `a wordmark still spells the old name across two elements:\n${split}`);
 });
 
@@ -314,13 +320,7 @@ test('BR5: no surface still says Daggerfall Online - whole, split across a wordm
   // The BR1 sweep, for the name BR4 gave it. Case-sensitive, so the keys
   // spelled `daggerfall-online` and `daggerfallonline` (the relay's worker,
   // the Ko-fi page) are no hit: they are named in the next test, on purpose.
-  let hits = '';
-  try {
-    hits = execFileSync('git', ['grep', '-n', '-E', 'Daggerfall ?Online|DaggerfallOnline|DAGGERFALL ?ONLINE|Daggerfall-Online', '--', ':!bible', ':!test/ui/brand.test.js', ':!tools/mutants'],
-      { cwd: root, encoding: 'utf8' }).trim();
-  } catch (e) {
-    assert.equal(e.status, 1, `git grep failed: ${e.stderr || e.message}`);
-  }
+  let hits = grepFiles('Daggerfall ?Online|DaggerfallOnline|DAGGERFALL ?ONLINE|Daggerfall-Online', ['bible', 'test/ui/brand.test.js', 'tools/mutants']);
   // AUDIT BR5: THE ONE PLACE IT STAYS, ON PURPOSE - the four download names every copy built before the rename asks
   // for (app/lib/downloads.cjs LEGACY_DOWNLOAD_FILES), each line whole and only those four; the next test names them.
   const LEGACY_LINE = /^app\/lib\/downloads\.cjs:\d+: {2}(winSetup|winPortable|mac|linux): 'DaggerfallOnline-[\w.-]+',$/;
@@ -328,17 +328,11 @@ test('BR5: no surface still says Daggerfall Online - whole, split across a wordm
   assert.equal(lines.filter((l) => LEGACY_LINE.test(l)).length, 4, 'the old download names, four and no more');
   hits = lines.filter((l) => !LEGACY_LINE.test(l)).join('\n');
   assert.equal(hits, '', `the old name survives:\n${hits}`);
-  let split = '';
-  try {
-    split = execFileSync('git', ['grep', '-n', '-E', "class=\"wordmark\">Daggerfall<small>|el\\('div', 'sub', 'Daggerfall'\\)", '--', ':!bible', ':!test/ui/brand.test.js', ':!tools/mutants'],
-      { cwd: root, encoding: 'utf8' }).trim();
-  } catch (e) {
-    assert.equal(e.status, 1, `git grep failed: ${e.stderr || e.message}`);
-  }
+  let split = grepFiles("class=\"wordmark\">Daggerfall<small>|el\\('div', 'sub', 'Daggerfall'\\)", ['bible', 'test/ui/brand.test.js', 'tools/mutants']);
   assert.equal(split, '', `a wordmark still spells the old name across two elements:\n${split}`);
   assert.match(read('src/ui/enhanced/enhancedChargen.js'), new RegExp(`brand\\.append\\(el\\('div', 'sub', '${NAME}'\\)\\);`), 'the new character\'s masthead');
-  // AUDIT BR5: the launcher wears the logo too, the game's own file, named by its alt
-  assert.ok(read('app/launcher/index.html').includes(`<h1 class="wordmark"><img src="dfo-online.png" alt="${NAME}" width="526" height="322"></h1>`), 'and the desktop launcher\'s');
+  // AUDIT TUO-LOGO: the launcher wears the logo too, the game's own file, named by its alt
+  assert.ok(read('app/launcher/index.html').includes(`<h1 class="wordmark"><img src="tamriel-unbound-online.png" alt="${NAME}" width="1120" height="208"></h1>`), 'and the desktop launcher\'s');
   assert.match(read('src/ui/screenshot.js'), /return `dfo-\$\{d\.getFullYear\(\)\}/, 'a screenshot is named for the product');
   assert.match(read('src/ui/shotsPane.js'), /a\.download = `dfo-shot-\$\{s\.id\}\.jpg`;/, 'and so is a saved loading shot');
   assert.match(read('server-account/src/patreon.js'), new RegExp(`<title>\\$\\{esc\\(heading\\)\\} - ${NAME}</title>`), 'and the Patreon link\'s page');

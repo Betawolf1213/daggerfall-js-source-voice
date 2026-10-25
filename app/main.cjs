@@ -347,14 +347,14 @@ const LAUNCHER_URL = 'dagger://launcher/index.html';
 // DA12: the controller loop is the game's own front door's (src/ui/menu/menuPad.js) - ONE module, packed beside the
 // launcher's page (package.json build.files) and read from the source tree when the shell runs unpacked.
 const MENU_PAD = app.isPackaged ? path.join(LAUNCHER_DIR, 'menuPad.js') : path.join(__dirname, '..', 'src', 'ui', 'menu', 'menuPad.js');
-// AUDIT BR5: the launcher's wordmark is the product's logo, and the logo is the GAME's own file
-// (src/assets/branding/dfo-online.png, BR5) - packed beside the launcher's page as the pad module is and read from
+// AUDIT BR5/TUO-LOGO: the launcher's wordmark is the product's logo, and the logo is the GAME's own file
+// (src/assets/branding/tamriel-unbound-online.png) - packed beside the launcher's page as the pad module is and read from
 // the source tree unpacked, so the launcher can never draw a logo the game does not.
-const LAUNCHER_LOGO = app.isPackaged ? path.join(LAUNCHER_DIR, 'dfo-online.png') : path.join(__dirname, '..', 'src', 'assets', 'branding', 'dfo-online.png');
+const LAUNCHER_LOGO = app.isPackaged ? path.join(LAUNCHER_DIR, 'tamriel-unbound-online.png') : path.join(__dirname, '..', 'src', 'assets', 'branding', 'tamriel-unbound-online.png');
 async function serveLauncherFile(parts) {
   const p = parts.length === 1 && parts[0] === 'menuPad.js'
     ? MENU_PAD
-    : parts.length === 1 && parts[0] === 'dfo-online.png'
+    : parts.length === 1 && parts[0] === 'tamriel-unbound-online.png'
       ? LAUNCHER_LOGO
       : path.normalize(path.join(LAUNCHER_DIR, parts.length ? parts.join('/') : 'index.html'));
   if (p !== MENU_PAD && p !== LAUNCHER_LOGO && !p.startsWith(LAUNCHER_DIR + path.sep)) return new Response('forbidden', { status: 403 });
@@ -774,7 +774,7 @@ async function checkForUpdatesViaUpdater() {
   tellBox({
     type: 'info',
     message: `You're up to date`,
-    detail: `DFO Online v${app.getVersion()} is the latest release.`,
+    detail: `Tamriel Unbound v${app.getVersion()} is the latest release.`,
   });
 }
 
@@ -844,7 +844,7 @@ async function checkForUpdates() {
     tellBox({
       type: 'info',
       message: `You're up to date`,
-      detail: `DFO Online v${app.getVersion()} is the latest release.`,
+      detail: `Tamriel Unbound v${app.getVersion()} is the latest release.`,
     });
     return;
   }
@@ -1024,7 +1024,7 @@ async function checkForUpdatesLoudly() {
   if (g === 'installer') return currentUpdateTransport() === 'updater' ? checkForUpdatesViaUpdater() : checkForUpdates();
   const stays = 'your saves, settings and ARENA2 path all stay where they are.';
   if (g === 'offline') tellBox({ type: 'warning', message: 'Could not check for updates', detail: `GitHub was unreachable. The releases page is ${RELEASES_PAGE}.` });
-  else if (g === 'current') tellBox({ type: 'info', message: `You're up to date`, detail: `DFO Online v${gameVersion()} is the latest release.` });
+  else if (g === 'current') tellBox({ type: 'info', message: `You're up to date`, detail: `Tamriel Unbound v${gameVersion()} is the latest release.` });
   else if (gameJob) tellBox({ type: 'info', message: `Version ${gameJob.version} is downloading`, detail: `You have v${gameVersion()}. Only the files that changed come down, and it plays the next time the game starts - ${stays}` });
   else if (updateReady?.game) tellBox({ type: 'info', message: `Version ${updateReady.version} is ready`, detail: `It plays the next time the game starts, or now from File > Restart to Update - ${stays}` });
   else tellBox({ type: 'info', message: `Updated to v${gameVersion()}`, detail: `Only the files that changed came down; Play runs it - ${stays}` });
@@ -1256,7 +1256,7 @@ async function createWindow({ onShown = null } = {}) {
     width: 1280,
     height: 800,
     backgroundColor: '#111111',
-    title: 'DFO Online',
+    title: 'Tamriel Unbound',
     show: !onShown,
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
@@ -1388,7 +1388,7 @@ function openLauncherWindow() {
     fullscreenable: false,
     show: false,
     backgroundColor: '#0a0c11',
-    title: 'DFO Online',
+    title: 'Tamriel Unbound',
     webPreferences: {
       preload: path.join(__dirname, 'launcherPreload.cjs'),
       contextIsolation: true,

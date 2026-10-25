@@ -98,7 +98,7 @@ async function landing(label, ctxOpts) {
     alt: e.alt, inWordmark: !!e.closest('h1.wordmark'), loaded: e.complete && e.naturalWidth > 0 && e.naturalWidth === Number(e.getAttribute('width')),
   })));
   check(`${label}: the page's one picture is the logo, as its wordmark, loaded`,
-    pics.length === 1 && pics[0].inWordmark && pics[0].loaded && pics[0].alt === 'DFO Online', JSON.stringify(pics));
+    pics.length === 1 && pics[0].inWordmark && pics[0].loaded && pics[0].alt === 'Tamriel Unbound', JSON.stringify(pics));
   const strip = await page.locator('.foot .stat').evaluateAll((els) => els.map((e) => e.textContent));
   check(`${label}: the foot carries two figures`, strip.length === 2 && strip.every((t) => /^[\d,]{4,}$/.test(t)), strip.join(' / '));
   // The door's three: Play into the browser, Install onto the desk, Discord for the people (DISC1).

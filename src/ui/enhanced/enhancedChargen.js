@@ -54,8 +54,9 @@ import { ATTRIBUTE_BLURB, attributeLabel as attrName } from '../levelUp/levelUpV
 import { labelFor } from '../../systems/specialAdvantages.js';           // AUDIT 39: DFU's own words for an advantage key
 import { NAME_MAX_CHARACTERS as NAME_MAX } from '../chargen.js';
 import { traceProvinces, MAP_W, MAP_H, PROVINCE_NAMES } from '../provinceMap.js';
-import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
+import { injectEnhancedStyle, injectEnhancedFonts, isRedesign } from './enhancedStyle.js';
 import { repaintKeepingScroll } from '../domRepaint.js';
+import { IntroTheme, MENU_THEME_GAIN } from '../../systems/introTheme.js';   // B-027: redesign background music for character design
 // PX13: the wizard stands on the same living sky as every other
 // enhanced face - drawn by the one module, clocked by this mount.
 import { drawPixelGround } from '../pixelGround.js';
@@ -88,6 +89,34 @@ const el = (t, cls, txt) => {
   if (txt != null) n.textContent = txt;
   return n;
 };
+
+// ── B-027: REDESIGN MUSIC HELPERS ────────────────────────────────
+function ensureMusic() {
+  if (!introTheme) {
+    introTheme = new IntroTheme({ level: MENU_THEME_GAIN });
+    introTheme.prepare().catch(() => {});
+  }
+}
+async function unlockMusic() {
+  ensureMusic();
+  const ok = await introTheme.unlock();
+  if (ok) introTheme.start();
+  return ok;
+}
+function setMusicMute(muted) {
+  musicMuted = muted;
+  if (introTheme) introTheme.setLevel(muted ? 0 : MENU_THEME_GAIN, 0.12);
+}
+function toggleMute() { setMusicMute(!musicMuted); }
+function muteButton() {
+  const b = el('button', 'px-mute');
+  b.setAttribute('aria-label', 'Mute music');
+  b.setAttribute('aria-pressed', String(musicMuted));
+  b.textContent = musicMuted ? '\ud83d\udd07' : '\ud83d\udd0a';
+  b.onclick = () => { toggleMute(); b.setAttribute('aria-pressed', String(musicMuted)); b.textContent = musicMuted ? '\ud83d\udd07' : '\ud83d\udd0a'; };
+  return b;
+}
+
 const svg = (t, attrs = {}) => {
   const n = document.createElementNS('http://www.w3.org/2000/svg', t);
   for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
@@ -103,6 +132,8 @@ let hover = null;      // the race key under the cursor, for the readout
 let onExit = () => {};
 let keyHandler = null;
 let lockHandler = null;
+let introTheme = null;  // B-027: redesign background music session
+let musicMuted = false; // B-027: small mute icon state
 
 // ── THE MAP ──────────────────────────────────────────────────────
 
@@ -953,7 +984,7 @@ function classIoCard() {
     const acts = el('div', 'acts');
     const copy = el('button', 'act primary', 'Copy to clipboard');
     copy.onclick = async () => {
-      try { await globalThis.navigator.clipboard.writeText(classDocText()); say('Copied. Paste it into Import on any DFO Online character.'); }
+      try { await globalThis.navigator.clipboard.writeText(classDocText()); say('Copied. Paste it into Import on any Tamriel Unbound character.'); }
       catch { say('The browser would not let this page write the clipboard - save it as a file instead.'); }
     };
     const save = el('button', 'act', 'Save as a file');
@@ -1589,10 +1620,17 @@ let nameOk = null;   // the name stage's own handle on the bar's button
 function paintInto() {
   if (groundTimer) { clearInterval(groundTimer); groundTimer = null; }
   host.innerHTML = '';
+  const redesign = isRedesign();
+  host.classList.toggle('redesign', redesign);
   // PX13: the sky behind the walk - same drawPixelGround, same 8fps
   // cadence, same reduced-motion opt-out as the menu's faces. Every
   // repaint replaces the canvas, so every repaint re-owns the clock.
-  {
+  // B-027: redesign uses a CSS fog ground instead.
+  if (redesign) {
+    const ground = el('div', 'px-ground');
+    ground.append(el('div', 'px-fog a'), el('div', 'px-fog b'), el('div', 'px-fog c'), el('div', 'px-vignette'));
+    host.append(ground);
+  } else {
     const ground = document.createElement('canvas');
     ground.className = 'px-ground';
     const vw = () => globalThis.innerWidth ?? 1280;
@@ -1611,7 +1649,7 @@ function paintInto() {
   const side = el('aside', 'side');
   const brand = el('div', 'brand');
   brand.append(el('h1', null, 'New Character'));
-  brand.append(el('div', 'sub', 'DFO Online'));
+  brand.append(el('div', 'sub', 'Tamriel Unbound'));
   side.append(brand);
 
   const here = stageOf(flow.state);
@@ -1699,6 +1737,14 @@ function paintInto() {
 
   shell.append(side, pane);
   host.append(shell);
+
+  // B-027: redesign background music with a small accessible mute icon
+  if (redesign) {
+    host.append(muteButton());
+    const once = () => { unlockMusic(); host.removeEventListener('click', once); host.removeEventListener('keydown', once); };
+    host.addEventListener('click', once, { once: true });
+    host.addEventListener('keydown', once, { once: true });
+  }
 }
 
 /**
@@ -1846,6 +1892,9 @@ export function mountEnhancedChargen(hostEl, {
   injectEnhancedStyle();
   injectEnhancedFonts();
   host = hostEl;
+  // B-027: start the redesign background music session when the flag is on
+  if (isRedesign()) ensureMusic();
+  else if (introTheme) { introTheme.dispose(); introTheme = null; musicMuted = false; }
   flow = muteConstellation(f);
   onExit = exit;
   loadFaces = faceLoader;
@@ -1876,6 +1925,8 @@ export function mountEnhancedChargen(hostEl, {
       // keeps eating keys for the whole session. The sky's clock has
       // the same owner for the same reason (PX13).
       if (groundTimer) { clearInterval(groundTimer); groundTimer = null; }
+      // B-027: tear down the redesign background music session
+      if (introTheme) { introTheme.dispose(); introTheme = null; musicMuted = false; }
       if (keyHandler) globalThis.removeEventListener('keydown', keyHandler, { capture: true });
       if (lockHandler) document.removeEventListener('pointerlockchange', lockHandler);
       keyHandler = null;

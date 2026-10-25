@@ -1,6 +1,6 @@
-# Support DFO Online
+# Support Tamriel Unbound
 
-DFO Online is free, open source, and developed independently.
+Tamriel Unbound is free, open source, and developed independently.
 
 Active development currently costs about **$600 per month** to sustain. That is the project's funding target.
 

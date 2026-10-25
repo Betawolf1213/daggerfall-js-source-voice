@@ -1,9 +1,9 @@
 {
   "name": "daggerfall-js-app",
-  "productName": "DFO Online",
+  "productName": "Tamriel Unbound",
   "private": true,
   "version": "0.1.0",
-  "description": "DFO Online - the downloadable desktop shell. Loads the same dist/ the website deploys; adds ARENA2-from-disk and file-backed saves.",
+  "description": "Tamriel Unbound - the downloadable desktop shell. Loads the same dist/ the website deploys; adds ARENA2-from-disk and file-backed saves.",
   "author": "Lattymoy",
   "homepage": "https://daggerfalljs.dev/",
   "repository": {
@@ -22,7 +22,7 @@
   },
   "build": {
     "appId": "dev.daggerfalljs.app",
-    "productName": "DFO Online",
+    "productName": "Tamriel Unbound",
     "icon": "../public/icons/icon-512.png",
     "afterPack": "./afterPack.cjs",
     "artifactName": "DFO-Online-${os}-${arch}.${ext}",
@@ -52,7 +52,7 @@
         "from": "../src/assets/branding",
         "to": "launcher",
         "filter": [
-          "dfo-online.png"
+          "tamriel-unbound-online.png"
         ]
       },
       "lib/**",
@@ -89,9 +89,9 @@
       ],
       "category": "public.app-category.games",
       "extendInfo": {
-        "NSDownloadsFolderUsageDescription": "DFO Online looks here for the Daggerfall game files you unpacked, only when it found none elsewhere. Nothing is copied or uploaded.",
-        "NSDesktopFolderUsageDescription": "DFO Online looks here for the Daggerfall game files you unpacked, only when it found none elsewhere. Nothing is copied or uploaded.",
-        "NSDocumentsFolderUsageDescription": "DFO Online looks here for the Daggerfall game files you unpacked, only when it found none elsewhere. Nothing is copied or uploaded."
+        "NSDownloadsFolderUsageDescription": "Tamriel Unbound looks here for the Daggerfall game files you unpacked, only when it found none elsewhere. Nothing is copied or uploaded.",
+        "NSDesktopFolderUsageDescription": "Tamriel Unbound looks here for the Daggerfall game files you unpacked, only when it found none elsewhere. Nothing is copied or uploaded.",
+        "NSDocumentsFolderUsageDescription": "Tamriel Unbound looks here for the Daggerfall game files you unpacked, only when it found none elsewhere. Nothing is copied or uploaded."
       }
     }
   },

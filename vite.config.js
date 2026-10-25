@@ -6,7 +6,7 @@ import { landingHtml, readBuildSha } from './scripts/landingHtml.mjs';
 // Dev-only: serve ARENA2 game data at /arena2/*. The data is freeware but
 // never committed or bundled (Port-Doctrine); builds contain no game files.
 function arena2DevServer() {
-  const root = process.env.ARENA2_PATH || '/home/claude/dfdata/arena2';
+  const root = process.env.ARENA2_PATH || 'D:/Daggerfall-Project/arena2';
   // ARENA2 FOLDERS IN THE WILD ARE MIXED CASE. The retail data was
   // written on a filesystem that did not care, and real installs prove
   // it: the DaggerfallSetup build carries INVE00I0.img beside

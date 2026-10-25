@@ -15,6 +15,22 @@ import { isMain } from '../tools/lib/isMain.mjs';
 export const tagSource = (sha, update) => `export const BUILD_TAG = '${sha}';\nexport const UPDATE = ${update ? `'${update}'` : 'null'};\n`;
 
 if (isMain(import.meta.url)) {
-  const sha = execSync('git rev-parse --short=12 HEAD').toString().trim();
+  let sha;
+  try {
+    sha = execSync('git rev-parse --short=12 HEAD').toString().trim();
+  } catch (e) {
+    try {
+      const { readFileSync } = await import('fs');
+      const head = readFileSync('.git/HEAD', 'utf8').trim();
+      if (head.startsWith('ref: ')) {
+        const ref = head.slice(5);
+        sha = readFileSync(`.git/${ref}`, 'utf8').trim().slice(0, 12);
+      } else {
+        sha = head.slice(0, 12);
+      }
+    } catch (_) {
+      sha = 'unknown';
+    }
+  }
   writeFileSync('src/buildTag.js', tagSource(sha, updateNumber()));
 }

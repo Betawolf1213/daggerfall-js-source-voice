@@ -1033,6 +1033,16 @@ export async function bootDungeon(canvas, renderer, params, status) {
           winter: false, climateIndex: 0, loadInProgress: false, paused: overlayHeld,   // AUDIT-BA F3
         });
       }
+      // B-033 OOB-FLOOR: a player who falls through the dungeon mesh
+      // keeps falling forever in the void. Rescue them back to the start
+      // marker once they pass a kill-zone well below any legitimate floor.
+      if (player.pos[1] < -50) {
+        const rescue = ctx.startSpawn({ preferEnterMarker: false }) ?? spawn;
+        player.spawn(rescue[0], rescue[1], rescue[2]);
+        cam.pos = [...player.eye];
+        ctx.hudSay?.('You fall into darkness and wake at the entrance.', 5);
+        console.log(`[B-033] OOB rescue to [${rescue.map((v) => v.toFixed(2)).join(', ')}]`);
+      }
       cam.pos = player.eyeAt();   // EV1: the interpolated render eye
       climbFeel.frame(dt);   // CLIMB4: the climb's camera, off the frame's motor
       // AUDIT 64 F7: the two dungeon hosts fed the RAW Run key

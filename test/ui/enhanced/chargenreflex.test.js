@@ -26,12 +26,13 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ChargenFlow } from '../../../src/ui/chargen.js';
-import { ENHANCED_CSS } from '../../../src/ui/enhanced/enhancedStyle.js';
+import { ENHANCED_CSS as _ENHANCED_CSS } from '../../../src/ui/enhanced/enhancedStyle.js';
+const ENHANCED_CSS = _ENHANCED_CSS.split('\r\n').join('\n');
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 
 test('CHARGEN-REFLEX: the wizard primary action lives in the action bar, never inside a scrolling stage', () => {
-  const src = readFileSync(join(ROOT, 'src/ui/enhanced/enhancedChargen.js'), 'utf8');
+  const src = readFileSync(join(ROOT, 'src/ui/enhanced/enhancedChargen.js'), 'utf8').split('\r\n').join('\n');
 
   // THE LAW. `.choose` scrolls, and a control inside a scrolling box
   // can be out of view; `.actionbar` is a sibling of the stage and is
@@ -114,7 +115,7 @@ test('CHARGEN-REFLEX: the two things that were NOT wrong - the flow advances and
   f.input('confirm');
   assert.equal(f.state, 'summary', 'confirm at reflexes reaches the summary');
 
-  const src = readFileSync(join(ROOT, 'src/ui/enhanced/enhancedChargen.js'), 'utf8');
+  const src = readFileSync(join(ROOT, 'src/ui/enhanced/enhancedChargen.js'), 'utf8').split('\r\n').join('\n');
   const bar = /const bar = el\('div', 'actionbar'\);[\s\S]*?pane\.append\(bar\);/.exec(src)?.[0] ?? '';
   assert.match(bar, /el\('button', 'act primary', stagePrimary\.label\)/, 'the bar draws the declared action');
   // The bar's button is LIVE unless the stage itself asks otherwise -

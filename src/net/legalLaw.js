@@ -36,16 +36,16 @@
 // ═══════════════════════════════════════════════════════════════════
 
 /** The Terms of Service a new account agrees to - its Last Updated date.
- *  BR5 (2026-10-11): the operator's name became DFO Online in both
- *  documents and nothing else did - the same project and the same terms
+ *  TUO-LOGO (2026-10-25): the operator's name became Tamriel Unbound in
+ *  both documents and nothing else did - the same project and the same terms
  *  under its new name, so the same version, the words re-hashed
  *  (test/ui/enhanced/terms1.test.js). A new version would refuse every account an
  *  older build tries to make (`terms-stale`), which a rename does not
  *  earn (AUDIT BR5). */
 export const TERMS_VERSION = '2026-09-28';
 
-/** The Privacy Policy a new account agrees to - its Last Updated date (BR5,
- *  as the Terms). */
+/** The Privacy Policy a new account agrees to - its Last Updated date
+ *  (TUO-LOGO, as the Terms). */
 export const PRIVACY_VERSION = '2026-09-28';
 
 /** What a version looks like. A dated answer that is not the current one

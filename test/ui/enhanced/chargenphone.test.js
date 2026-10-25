@@ -13,7 +13,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { crashText } from '../../../src/ui/crashText.js';
 
-const rd = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
+const rd = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8').split('\r\n').join('\n');
 const body = (src, head) => src.slice(src.indexOf(head), src.indexOf('\nfunction ', src.indexOf(head) + head.length));
 
 test('FIELD 2026-09-27: the stats and review stages are ONE scrolling column on a phone, so no list is handed the leftover of the part beside it (mutants: a stage built without `stacked`; the stacked rule dropped or left scrolling in two boxes)', () => {
@@ -71,4 +71,3 @@ test('FIELD 2026-09-27 (the pre-merge audit 0927b): the review\'s header stops p
   assert.ok(css.includes(q), 'a short screen, phone or wider, scrolls it away');
   assert.ok(css.indexOf(q) > css.indexOf('.reviewhead {'), 'after the rule it overrides');
 });
-

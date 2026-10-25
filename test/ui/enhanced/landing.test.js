@@ -55,19 +55,25 @@ test('U60: the root document is a page about the game, and the game is at /play/
   // BR2 (2026-09-13) had put ONE raster here - Mac's uploaded logo as the
   // wordmark, under a whitelist of one; BR3 (Mac, 2026-09-14: "revert the
   // logo to the original Daggerfall Enhanced text") took it out again.
-  // AUDIT BR5 (Mac, 2026-10-11: "Use the new logo") brings the whitelist of
-  // one back for the product's own logo, DFO Online's: the wordmark is that
-  // picture and nothing else is one. It is the GAME's own file, which the
-  // build carries for the front door already - one copy, so public/brand/
-  // stays untracked and the site cannot show a logo the game does not.
-  const LOGO = '<h1 class="wordmark"><img src="./src/assets/branding/dfo-online.png" alt="DFO Online" width="526" height="322" /></h1>';
+  // AUDIT BR5/TUO-LOGO (Mac, 2026-10-11: "Use the new logo"; 2026-10-25:
+  // Tamriel Unbound banner) brings the whitelist of one back for the
+  // product's own logo: the wordmark is that picture and nothing else is one.
+  // It is the GAME's own file, which the build carries for the front door
+  // already - one copy, so public/brand/ stays untracked and the site cannot
+  // show a logo the game does not.
+  const LOGO = '<h1 class="wordmark"><img src="./src/assets/branding/tamriel-unbound-online.png" alt="Tamriel Unbound" width="1120" height="208" /></h1>';
   assert.equal(landing.split(LOGO).length, 2, 'the wordmark is the product\'s logo, once');
   const drawn = landing.replace(LOGO, '').replace(/url\(data:font\/woff2;base64,[A-Za-z0-9+/=]+\)/g, '');
   assert.doesNotMatch(drawn, /<img\s|<canvas|<video|<picture|url\(/i, 'beyond the logo, the landing page draws nothing but CSS');
   assert.doesNotMatch(drawn, /\.(png|jpe?g|gif|webp|svg|bmp)\b/i, 'and references no other image file');
-  assert.equal(execFileSync('git', ['ls-files', 'public/brand'], { cwd: root, encoding: 'utf8' }).trim(), '', 'public/brand/ holds no second copy of the logo (BR3, AUDIT BR5)');
-  assert.equal(execFileSync('git', ['ls-files', 'public/site'], { cwd: root, encoding: 'utf8' }).trim(), '',
-    'public/site/ is empty - the retired pictures may not quietly return without re-earning their doctrine rows');
+  // TUO-LOGO: git is not reliably available in this shell, so the public/brand
+  // and public/site checks fall back to a filesystem walk.
+  function isEmptyDir(dir) {
+    if (!existsSync(dir)) return true;
+    return readdirSync(dir).length === 0;
+  }
+  assert.ok(isEmptyDir(join(root, 'public/brand')), 'public/brand/ holds no second copy of the logo (BR3, AUDIT BR5)');
+  assert.ok(isEmptyDir(join(root, 'public/site')), 'public/site/ is empty - the retired pictures may not quietly return without re-earning their doctrine rows');
   assert.ok(!existsSync(join(root, 'tools/siteShots.mjs')), 'the shots tool went with its pictures');
   assert.doesNotMatch(landing.replace(LOGO, ''), /\/src\//, 'the landing page reaches into no game code - only the logo\'s file, which is no code');
   assert.doesNotMatch(landing, /\.(BSA|IMG|CIF|COL|RSC|VID|DAT|PAK|SND|XMI|HMI)\b/, 'no ARENA2 file is named');
@@ -144,7 +150,7 @@ test('U60: the injected block IS the skin\'s token block, and the skin still wea
   // and the landing page cannot hold two different values of --brass.
   assert.ok(ENHANCED_CSS.includes(ENHANCED_TOKENS), 'ENHANCED_CSS must be composed from ENHANCED_TOKENS');
   assert.match(ENHANCED_TOKENS, /^:root \{[\s\S]*--brass: #c08a3e;[\s\S]*\}$/);
-  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /link\.href = ENHANCED_FONTS_URL;/,
+  assert.match(read('src/ui/enhanced/enhancedStyle.js'), /link\.href = isRedesign\(search\) \? REDESIGN_FONTS_URL : ENHANCED_FONTS_URL;/,
     'injectEnhancedFonts must use the exported URL, not a second literal');
 
   const out = transformLanding(landing, { sha: 'abc1234' });
@@ -384,10 +390,10 @@ test('U63: the page is the pixel face\'s own idioms, not the shell it replaced',
   assert.match(skin, /\.px-rule::before, \.px-rule::after \{ content: ''; flex: 1; height: 2px;/, '...which is the menu\'s rule');
   assert.match(css, /0 -4px 0 var\(--brass\), 0 4px 0 var\(--brass\)/, 'the gem, drawn as a box-shadow cross');
   assert.match(skin, /0 -4px 0 var\(--brass\), 0 4px 0 var\(--brass\)/, '...which is the menu\'s gem');
-  // AUDIT BR5: the wordmark is the product's logo again (BR3 had made it type), at the width the game's front door
+  // AUDIT BR5/TUO-LOGO: the wordmark is the product's banner logo again (BR3 had made it type), at the width the game's front door
   // gives it (src/ui/enhanced/enhancedStyle.js .px-wordmark:has(.brand-logo)), centred over the rule.
-  assert.match(css, /\.wordmark img \{ display: block; width: min\(321px, 64vw\); height: auto; margin: 0 auto; \}/, 'the logo, sized as the door\'s');
-  assert.ok(read('src/ui/enhanced/enhancedStyle.js').includes('.px-wordmark:has(.brand-logo) { width: min(321px, 50vw);'), '...whose 321px it shares');
+  assert.match(css, /\.wordmark img \{ display: block; width: min\(520px, 80vw\); height: auto; margin: 0 auto; \}/, 'the logo, sized as the door\'s');
+  assert.ok(read('src/ui/enhanced/enhancedStyle.js').includes('.px-wordmark:has(.brand-logo) { width: min(520px, 80vw);'), '...whose 520px it shares');
   assert.doesNotMatch(css, /\.wordmark small/, 'the type wordmark\'s sub-line went with it');
   assert.match(css, /rgb\(243,239,44\)/, 'the classic shadowed-label pair, for what is live');
   assert.match(css, /text-shadow: 2px 2px 0 rgb\(93,77,12\)/);
@@ -506,7 +512,7 @@ test('U64 + PATREON1 + SUPPORT1: the corner asks are Patreon then Ko-fi, each a 
   // on, from .github/FUNDING.yml - and README.md and SUPPORT.md. `custom` keeps Mac's /c/ Patreon URL (`patreon:
   // dfenhanced` would link a URL Mac never gave); `ko_fi` is GitHub's own key, the page's name.
   const byId = Object.fromEntries(SUPPORT_ASKS.map((a) => [a.id, a]));
-  const funding = read('.github/FUNDING.yml');
+  const funding = read('.github/FUNDING.yml').split('\r\n').join('\n');
   assert.equal(funding.trim(), `custom: ["${byId.patreon.url}"]\nko_fi: ${new URL(byId.kofi.url).pathname.slice(1)}`, 'the Sponsor button asks on both');
   for (const doc of ['README.md', 'SUPPORT.md']) {
     const text = read(doc);

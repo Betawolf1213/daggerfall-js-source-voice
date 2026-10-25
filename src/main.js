@@ -85,8 +85,8 @@ async function boot() {
   // FB0930-TITLE: a boot's steps name themselves in the title, and a null step is the boot done - the bare name, so
   // the window does not say "loading the saved game" for the rest of the session.
   const status = (msg) => {
-    if (msg == null) { document.title = 'DFO Online'; return; }
-    document.title = `DFO Online - ${msg}`;
+    if (msg == null) { document.title = 'Tamriel Unbound'; return; }
+    document.title = `Tamriel Unbound - ${msg}`;
   };
   // Data gate: readers load user-supplied ARENA2 at runtime
   // (Port-Doctrine) - dev serves it via middleware, production asks
@@ -178,6 +178,9 @@ async function boot() {
     // player who has not chosen yet. Cleared off both copies here;
     // every door below sets or deletes each one again (F12's law).
     for (const k of BOOT_DOOR_KEYS) params.delete(k);
+    // FD1-DEV: keep ?fly/?shot from riding through the front door into normal play.
+    params.delete('fly');
+    params.delete('shot');
     publishBootParams(params);
     const { runEnhancedMenu } = await import('./ui/enhanced/enhancedMenu.js');
     const { runCinematicFrontDoor } = await import('./ui/intro/introScreen.js');
