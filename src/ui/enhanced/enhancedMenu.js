@@ -147,7 +147,8 @@ import { dateFromClassicMinutes, dateString } from '../../systems/gameDate.js';
 // is needed and no host can drift.
 import { worldMinutes, skyMinutes, trustedWorldMinutes, worldSpanRealWords, ownMinutes } from '../../systems/worldTick.js';
 import { BUILD_TAG, UPDATE } from '../../buildTag.js';
-import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
+import { injectEnhancedStyle, injectEnhancedFonts, isRedesign } from './enhancedStyle.js';
+import { IntroTheme, MENU_THEME_GAIN } from '../../systems/introTheme.js';   // B-027: owner-selected redesign background music
 import { repaintKeepingScroll } from '../domRepaint.js';
 import { drawPixelGround } from '../pixelGround.js';
 // PX3: the pause window's Stats tab reads the shared player entity
@@ -391,6 +392,8 @@ let lockHandler = null;
 let resizeHandler = null;   // PX1: the home ground's redraw-on-resize
 let textKeyCapture = null;   // DISC28-A: a mod TextKey row waiting for its key (HT1) - the back stack stands down; cleared by the capture and by unmount
 let groundTimer = null;     // PX1b: the home sky's 8fps clock - cleared by every rebuild and by unmount
+let introTheme = null;      // B-027: redesign background music session
+let musicMuted = false;     // B-027: small mute icon state, independent of MusicVolume
 let questTimer = null;      // QT-LIVE1: the journal's once-a-second timer redraw - the same two owners
 let pauseTab = 'system';    // PX3: which tab the pause window shows - System lands on Resume/Save
 let questSel = null;        // PX4: the journal's selected row - 'a:<uid>' | 'f:<index>' | null = first active
@@ -4145,7 +4148,7 @@ function featureRow(f) {
 // ── ABOUT ────────────────────────────────────────────────────────
 function paneAbout(body) {
   const c = el('div', 'card');
-  c.append(el('h3', null, 'DFO Online'));   // the public name (BR1, BR4, BR5); project-dagger is the repo
+  c.append(el('h3', null, 'Tamriel Unbound'));   // the public name (TUO-LOGO, 2026-10-24); project-dagger is the repo
   c.append(el('p', 'meta', t('menu.about.tagline', 'An open-source reimplementation of a classic 1996 RPG.')));
   c.append(stats([
     [t('menu.about.update', 'Update'), UPDATE ?? t('menu.about.devBuild', 'a development build')],   // REL8: the player's update number (scripts/updateNumber.mjs)
@@ -4220,6 +4223,33 @@ function go(id) {
   section = id; pickedKey = null; sheetOpen = false; confirming = null; cloudArm = null; render();   // 0927b B5: an armed press never outlives its pane
 }
 
+// ── B-027: REDESIGN MUSIC HELPERS ────────────────────────────────
+function ensureMusic() {
+  if (!introTheme) {
+    introTheme = new IntroTheme({ level: MENU_THEME_GAIN });
+    introTheme.prepare().catch(() => {});
+  }
+}
+async function unlockMusic() {
+  ensureMusic();
+  const ok = await introTheme.unlock();
+  if (ok) introTheme.start();
+  return ok;
+}
+function setMusicMute(muted) {
+  musicMuted = muted;
+  if (introTheme) introTheme.setLevel(muted ? 0 : MENU_THEME_GAIN, 0.12);
+}
+function toggleMute() { setMusicMute(!musicMuted); }
+function muteButton() {
+  const b = el('button', 'px-mute');
+  b.setAttribute('aria-label', t('menu.music.mute', 'Mute music'));
+  b.setAttribute('aria-pressed', String(musicMuted));
+  b.textContent = musicMuted ? '🔇' : '🔊';
+  b.onclick = () => { toggleMute(); b.setAttribute('aria-pressed', String(musicMuted)); b.textContent = musicMuted ? '🔇' : '🔊'; };
+  return b;
+}
+
 // ── PX1: THE PIXEL HOME (Mac, 2026-08-27) ────────────────────────
 // The boot door's FACE. The prototype of record is menu-pixel.html;
 // what shipped is its structure over the REAL sections: every row
@@ -4234,27 +4264,35 @@ function renderHome() {
   // sky (there is a world behind), no wordmark (a masthead on every
   // Escape is a billboard), a scrim instead of the opaque night.
   const paused = mode === 'pause';
-  const home = el('div', `px-home${paused ? ' px-over' : ''}`);
+  const redesign = isRedesign();
+  const home = el('div', `px-home${paused ? ' px-over' : ''}${redesign ? ' redesign' : ''}`);
   if (!paused) {
-    const ground = document.createElement('canvas');
-    ground.className = 'px-ground';
-    const vw = () => globalThis.innerWidth ?? 1280;
-    const vh = () => globalThis.innerHeight ?? 720;
-    drawPixelGround(ground, vw(), vh(), 0);
-    // PX1b: THE SKY LIVES - fog orbits and stars twinkle at 8fps, the
-    // cadence pixel art animates at; a 60fps dither shimmer reads as
-    // noise. The module draws, this mount owns the clock: one interval,
-    // cleared by every rebuild (renderInto) and by unmount, skipped
-    // entirely under prefers-reduced-motion - the same opt-out the CSS
-    // drift honours.
-    const still = typeof globalThis.matchMedia === 'function' && globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!still) {
-      const t0 = Date.now();
-      groundTimer = setInterval(() => drawPixelGround(ground, vw(), vh(), (Date.now() - t0) / 1000), 125);
+    if (redesign) {
+      // B-027: owner-selected modern direction - CSS-driven fog ground
+      const ground = el('div', 'px-ground');
+      ground.append(el('div', 'px-fog a'), el('div', 'px-fog b'), el('div', 'px-fog c'), el('div', 'px-vignette'));
+      home.append(ground);
+    } else {
+      const ground = document.createElement('canvas');
+      ground.className = 'px-ground';
+      const vw = () => globalThis.innerWidth ?? 1280;
+      const vh = () => globalThis.innerHeight ?? 720;
+      drawPixelGround(ground, vw(), vh(), 0);
+      // PX1b: THE SKY LIVES - fog orbits and stars twinkle at 8fps, the
+      // cadence pixel art animates at; a 60fps dither shimmer reads as
+      // noise. The module draws, this mount owns the clock: one interval,
+      // cleared by every rebuild (renderInto) and by unmount, skipped
+      // entirely under prefers-reduced-motion - the same opt-out the CSS
+      // drift honours.
+      const still = typeof globalThis.matchMedia === 'function' && globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!still) {
+        const t0 = Date.now();
+        groundTimer = setInterval(() => drawPixelGround(ground, vw(), vh(), (Date.now() - t0) / 1000), 125);
+      }
+      home.append(ground);
     }
-    home.append(ground);
   }
-  home.append(el('div', 'px-vignette'));
+  if (!redesign) home.append(el('div', 'px-vignette'));
 
   // PX3: PAUSE IS A WINDOW, NOT A SECOND MAIN MENU (Mac's reference:
   // Skyrim's journal - a framed panel with tabs over the paused game).
@@ -4332,7 +4370,14 @@ function renderHome() {
 
   const stage = el('div', 'px-stage');
   const mark = el('h1', 'px-wordmark');
-  mark.append(brandMark());
+  if (redesign) {
+    // B-027: the redesign uses a text wordmark (Tamriel / Unbound) so the
+    // logo stays sharp, localisable, and never has its lines touch.
+    mark.textContent = t('menu.brand.word', 'Tamriel');
+    mark.append(el('small', null, t('menu.brand.sub', 'Unbound')));
+  } else {
+    mark.append(brandMark());
+  }
   stage.append(mark);
   const rule = el('div', 'px-rule');
   rule.append(el('span', 'px-gem'));
@@ -4384,6 +4429,15 @@ function renderHome() {
   }
 
   appendPxFoot(home);
+
+  // B-027: redesign background music with a small accessible mute icon
+  if (redesign && !paused) {
+    home.append(muteButton());
+    const once = () => { unlockMusic(); home.removeEventListener('click', once); home.removeEventListener('keydown', once); };
+    home.addEventListener('click', once, { once: true });
+    home.addEventListener('keydown', once, { once: true });
+  }
+
   app.append(home);
 }
 
@@ -5711,7 +5765,7 @@ function renderInto() {
   // (onKey); this is the one a finger can see.
   const homeMark = el('button', 'brand-home');
   homeMark.type = 'button';
-  homeMark.setAttribute('aria-label', t('menu.home.homeAria', 'DFO Online — main menu'));
+  homeMark.setAttribute('aria-label', t('menu.home.homeAria', 'Tamriel Unbound — main menu'));
   homeMark.append(brandMark());
   homeMark.onclick = () => go('home');
   h1.append(homeMark);
@@ -5944,6 +5998,9 @@ export function mountEnhancedMenu(host, {
   onAction = handler;
   mode = m === 'pause' ? 'pause' : 'boot';
   hooks = h ?? {};
+  // B-027: start the redesign background music session on the boot door
+  if (isRedesign() && mode === 'boot') ensureMusic();
+  else if (introTheme) { introTheme.dispose(); introTheme = null; musicMuted = false; }
   questRepairSaid = null;   // QREPAIR: a repair's line is that visit's
   // PROFILE2: and the profile window is a visit's too - the pause screen mounts this module again, and a window left
   // open on the door (or on the last pause) must not be standing over the next one before the player asks for it
@@ -6073,6 +6130,8 @@ export function mountEnhancedMenu(host, {
       releaseShotsPane();   // LOAD1: the gallery's pictures and its listener
       stopPost();   // SERVER-POST: and the mailbox's ticks
       releaseTutorialsPane();   // TUT1: the next visit opens on the first page
+      // B-027: tear down the redesign background music session
+      if (introTheme) { introTheme.dispose(); introTheme = null; musicMuted = false; }
       // FIX-F: and the rebind pane's own capture listener, which is on
       // the DOCUMENT and would outlive this screen exactly as the one
       // above would.

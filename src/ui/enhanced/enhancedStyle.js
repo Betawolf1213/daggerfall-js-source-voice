@@ -116,6 +116,12 @@ export const fontsUrl = (families) =>
  *  own claim. */
 export const ENHANCED_FONTS_URL = fontsUrl([FONT_DISPLAY, FONT_DATA, FONT_PIXEL_BRAND, FONT_PIXEL_DATA]);
 
+/* REDESIGN (B-027, 2026-10-24): the owner-selected modern direction -
+   floating type over a fog ground, ink/bone/brass, Barlow + Grenze
+   Gotisch + Cormorant. Default since owner approval; ?classic=1 opts out. */
+export const REDESIGN_FONTS_URL = fontsUrl([FONT_DISPLAY, FONT_DATA, FONT_BRAND]);
+export const isRedesign = () => true;   // REDESIGN-LOCK (2026-10-24): owner confirmed redesign is permanent; ?classic opt-out removed.
+
 /* ENH-NOTICE3 (2026-09-21): the popup column's numbers - HUD_TEXT_TOP_PX
    (96, under the compass block), HUD_TEXT_ROW_PX (20, the slide's row),
    HUD_TEXT_TOP_NARROW_PX (AUDIT FONT F9) and the two chat-peek offsets
@@ -2297,25 +2303,21 @@ ${badgeCss()}
 /* INTRO2: one supplied wordmark, at its natural aspect ratio. BR4: it
    carries its own alpha, so it draws with no blend mode - screen would
    erase its black outlines and the ONLINE lettering. */
-/* BR5: the DFO mark is 526 x 322 (1.63:1) and painted to its edges, where
-   BR4's was 2.48:1 with its last 81 of 850 rows empty. Each box keeps the
-   HEIGHT it had, so nothing above or below it moves: the door's old mark
-   stood 540 x 769/2112 tall, and the same height at the new ratio is
-   540 x 769/2112 x 526/322 = 321px wide (84vw -> 50vw; the short landscape
-   screen's 394px -> 234, 56vw -> 33.3vw). */
-.px-wordmark:has(.brand-logo) { width: min(321px, 50vw); line-height: 0; flex-shrink: 0; }
+/* TUO-LOGO (2026-10-24): the Tamriel Unbound ONLINE banner is 1120 x 208
+   (5.38:1), a wide landscape mark. The door gives it the horizontal room
+   a banner needs; the masthead keeps it readable inside the narrow side
+   column. */
+.px-wordmark:has(.brand-logo) { width: min(520px, 80vw); line-height: 0; flex-shrink: 0; }
 .brand-logo { display: block; width: 100%; height: auto; object-fit: contain;
   image-rendering: auto; }
-/* BR5: the masthead's mark spent 769/2112 of the column's width in height
-   (BR4's file less its empty rows); the DFO mark spends the same height at
-   769/2112 x 526/322 = 59.5% of the width, centred. No margin pulls
-   anything up any more - the file has no empty rows. */
-.brand-home .brand-logo { width: 59.5%; margin: 0 auto; }
+/* TUO-LOGO: the side column is 264px; a wide banner needs most of it to
+   stay legible, so it fills 90% rather than the old square mark's 59.5%. */
+.brand-home .brand-logo { width: 90%; margin: 0 auto; }
 .brand-home { display: block; width: 100%; border: 0; padding: 0; background: transparent; cursor: pointer; }
 .brand-home:focus-visible { outline: 2px solid var(--brass); outline-offset: 6px; }
 .shell .brand h1:has(.brand-logo) { line-height: 0; }
 @media (max-height: 560px) and (min-width: 600px) {
-  .px-wordmark:has(.brand-logo) { width: min(234px, 33.3vw); }   /* BR4: INTRO2's 430px, at the same height; BR5: BR4's 394px, at the same height */
+  .px-wordmark:has(.brand-logo) { width: min(360px, 55vw); }   /* TUO-LOGO: landscape mark on a short window */
 }
 .px-wordmark small { display: block; font-family: ${PIXEL_STACK};
   font-size: 16px; letter-spacing: 0.5em; text-indent: 0.5em;
@@ -2775,12 +2777,12 @@ ${SUPPORT_MARKS_CSS}
    clear of the corner marks over a game. With a mark in each top corner, the door's stage starts below them wherever
    the wordmark is wide enough to reach under either: the asks reach 122px in (18, their 98, the Plus frame's 6), the
    profile 234 (18, its 58px portrait, the 12px gap, its caption's 140px bound, the frame's 6), and
-   (vw - min(321px, 50vw)) / 2 is less than 234 at every width under 789 (BR5: BR4's min(540px, 84vw) took it to
-   1008) - and on a phone, where the marks stand 10px in and the caption is hidden, always. Measured rather than argued: tools/supportAsksProbe.mjs maps the logo's own
+   (vw - min(520px, 80vw)) / 2 is less than 234 at every width under 988 (TUO-LOGO: BR5's min(321px, 50vw) took it to
+   789; BR4's min(540px, 84vw) took it to 1008) - and on a phone, where the marks stand 10px in and the caption is hidden, always. Measured rather than argued: tools/supportAsksProbe.mjs maps the logo's own
    opaque pixels onto the screen across 192 sizes, a caption at its bound among them. The band costs height, and where
    the door no longer fits it scrolls (DOOR-FIT, above); its foot keeps the one-row foot's 68px, so the last row can be
    scrolled clear of About and Screenshots. */
-@media (min-width: 481px) and (max-width: 788px) {
+@media (min-width: 481px) and (max-width: 987px) {
   .px-home:not(.px-over) > .px-stage:not(.px-acctstage) { padding: 84px 24px 76px; }
 }
 @media (max-width: 480px) {
@@ -6494,16 +6496,139 @@ body:has(.travelpanel-junction.show) .qtrack { visibility: hidden; }
 }
 `;
 
+/* REDESIGN CSS (B-027): overrides the pixel skin with the owner-selected
+   modern direction when an ancestor carries .redesign. The DOM structure
+   is preserved; only the visual language changes. */
+export const REDESIGN_CSS = `
+.redesign .px-ground {
+  position: fixed; inset: 0; overflow: hidden;
+  background: radial-gradient(120% 90% at 50% 110%, #1a2029 0%, #12161c 45%, #0b0d10 100%);
+  z-index: -1;
+}
+.redesign .px-fog {
+  position: absolute; width: 160vmax; height: 160vmax; border-radius: 50%;
+  filter: blur(60px); opacity: 0.5; will-change: transform;
+}
+.redesign .px-fog.a { left: -60vmax; top: -30vmax;
+  background: radial-gradient(circle at 40% 55%, rgba(102,116,134,0.16), transparent 55%);
+  animation: rd-drift-a 90s linear infinite alternate; }
+.redesign .px-fog.b { right: -70vmax; bottom: -50vmax;
+  background: radial-gradient(circle at 55% 45%, rgba(78,127,114,0.10), transparent 55%);
+  animation: rd-drift-b 120s linear infinite alternate; }
+.redesign .px-fog.c { left: -20vmax; bottom: -80vmax;
+  background: radial-gradient(circle at 50% 40%, rgba(192,138,62,0.07), transparent 60%);
+  animation: rd-drift-c 150s linear infinite alternate; }
+@keyframes rd-drift-a { from { transform: translate(0,0); } to { transform: translate(14vmax, 6vmax); } }
+@keyframes rd-drift-b { from { transform: translate(0,0); } to { transform: translate(-12vmax,-8vmax); } }
+@keyframes rd-drift-c { from { transform: translate(0,0); } to { transform: translate(9vmax,-10vmax); } }
+.redesign .px-vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(90% 90% at 50% 45%, transparent 55%, rgba(0,0,0,0.55) 100%);
+}
+
+.redesign .px-stage { justify-content: center; padding: 24px; }
+.redesign .px-wordmark {
+  font-family: 'Grenze Gotisch', 'Cormorant', Georgia, serif; font-weight: 300;
+  font-size: clamp(40px, 7vw, 72px); letter-spacing: 0.04em;
+  color: var(--bone); text-align: center; line-height: 1;
+  text-shadow: 0 2px 24px rgba(0,0,0,0.8); margin: 0;
+}
+.redesign .px-wordmark small {
+  display: block; font-family: 'Barlow Semi Condensed', system-ui, sans-serif; font-weight: 300;
+  font-size: clamp(10px, 1.4vw, 13px); letter-spacing: 0.55em;
+  text-transform: uppercase; color: var(--dim); margin-top: clamp(12px, 0.35em, 20px);
+  text-indent: 0.55em; line-height: 1.4;
+}
+.redesign .px-rule {
+  width: min(420px, 70vw); margin: 26px 0 30px; opacity: 0.7;
+  display: flex; align-items: center; gap: 14px;
+}
+.redesign .px-rule::before, .redesign .px-rule::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(233,228,217,0.45));
+}
+.redesign .px-rule::after {
+  background: linear-gradient(90deg, rgba(233,228,217,0.45), transparent);
+}
+.redesign .px-gem {
+  width: 7px; height: 7px; transform: rotate(45deg);
+  border: 1px solid var(--brass); background: rgba(192,138,62,0.25);
+  box-shadow: none;
+}
+
+.redesign .px-menu { gap: 2px; }
+.redesign .px-menu button {
+  font-family: var(--data); font-weight: 300;
+  font-size: clamp(19px, 2.6vw, 24px); letter-spacing: 0.34em;
+  text-indent: 0.34em; text-transform: uppercase; text-align: center;
+  color: rgba(233,228,217,0.55); background: none; border: 0;
+  padding: 10px 28px; min-height: 48px;
+  display: flex; align-items: center; gap: 16px;
+  transition: color 140ms ease, transform 140ms ease, text-shadow 140ms ease;
+  transform-origin: center; text-shadow: none;
+}
+.redesign .px-menu button .px-c {
+  width: 5px; height: 5px; transform: rotate(45deg);
+  background: var(--brass); opacity: 0; transition: opacity 140ms ease;
+  font-size: 0; color: transparent; visibility: visible;
+  text-shadow: none;
+}
+.redesign .px-menu button:hover, .redesign .px-menu button:focus-visible {
+  color: var(--bone); transform: scale(1.06); outline: none;
+  text-shadow: 0 0 18px rgba(233,228,217,0.35);
+}
+.redesign .px-menu button:hover .px-c, .redesign .px-menu button:focus-visible .px-c { opacity: 1; }
+.redesign .px-menu button:disabled { color: rgba(139,133,120,0.35); cursor: default; }
+.redesign .px-menu button:disabled:hover { transform: none; text-shadow: none; }
+.redesign .px-menu button:disabled .px-c { opacity: 0; }
+
+.redesign .px-foot {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding: 14px 18px; font-size: 11px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(139,133,120,0.7);
+  background: none; pointer-events: auto;
+}
+.redesign .px-build { color: rgba(139,133,120,0.7); }
+.redesign .px-about {
+  color: var(--brass); background: none; border: 0;
+  min-height: 44px; padding: 0;
+  display: flex; align-items: flex-end;
+}
+.redesign .px-about:hover, .redesign .px-about:focus-visible {
+  color: var(--bone); border: 0; text-shadow: none;
+}
+.redesign .px-profile { top: 14px; right: 16px; }
+.redesign .px-support { top: 14px; left: 16px; background: rgba(10,12,17,0.55); }
+.redesign .px-langoffer { top: 74px; left: 16px; }
+.redesign .px-mute {
+  position: fixed; right: 16px; top: 50%; transform: translateY(-50%);
+  z-index: 10; color: var(--dim); background: rgba(14,16,19,0.6);
+  border: 1px solid var(--iron); border-radius: 50%;
+  width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 18px;
+}
+.redesign .px-mute:hover, .redesign .px-mute:focus-visible { color: var(--bone); border-color: var(--brass); outline: none; }
+.redesign .px-mute[aria-pressed="true"] { color: var(--brass); }
+
+@media (max-width: 480px) {
+  .redesign .px-menu button { letter-spacing: 0.26em; text-indent: 0.26em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .redesign .px-fog { animation: none; }
+}
+`;
+
 export const ENHANCED_STYLE_ID = 'dagger-enhanced-style';
 const STYLE_ID = ENHANCED_STYLE_ID;
 
 /** Put the stylesheet in the document, once. Safe to call from every
  *  mount site; the second call is a no-op. */
-export function injectEnhancedStyle(doc = document) {
+export function injectEnhancedStyle(doc = document, search = globalThis.location?.search ?? '') {
   if (doc.getElementById(STYLE_ID)) return;
   const el = doc.createElement('style');
   el.id = STYLE_ID;
-  el.textContent = ENHANCED_CSS;
+  el.textContent = ENHANCED_CSS + (isRedesign(search) ? REDESIGN_CSS : '');
   doc.head.append(el);
   // PLUS1: ENHANCED PLUS is this sheet with the refresh laid over it - a second sheet, after this one, so its rules
   // win by order - and the window motion with it. PLUS-ONLY (2026-09-26): plain Enhanced is retired, so every enhanced
@@ -6551,6 +6676,6 @@ export function injectEnhancedFonts(doc = document, search = globalThis.location
   const link = doc.createElement('link');
   link.id = 'dagger-enhanced-fonts';
   link.rel = 'stylesheet';
-  link.href = ENHANCED_FONTS_URL;
+  link.href = isRedesign(search) ? REDESIGN_FONTS_URL : ENHANCED_FONTS_URL;
   doc.head.append(link);
 }
