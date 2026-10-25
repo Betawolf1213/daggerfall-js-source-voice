@@ -114,7 +114,7 @@ test('BR1: every surface the player reads carries the one name', () => {
   // AUDIT BR5/TUO-LOGO (Mac, 2026-10-11: "Use the new logo"; 2026-10-24:
   // Tamriel Unbound banner): it is the product's logo, the game's own file,
   // named by its alt.
-  assert.ok(landing.includes(`<h1 class="wordmark"><img src="./src/assets/branding/tamriel-unbound-online.png" alt="${NAME}" width="1120" height="208" /></h1>`), 'the wordmark');
+  assert.ok(landing.includes(`<h1 class="wordmark"><img src="./src/assets/branding/tamriel-unbound-online.png" alt="${NAME}" width="1120" height="352" /></h1>`), 'the wordmark');
   assert.equal((landing.match(/<img\s/g) ?? []).length, 1, 'and it is the one image on the page');
   // THE WORDMARK SPLITS THE NAME ACROSS TWO ELEMENTS, so no adjacency
   // sweep can ever see it whole: the front door rendered DAGGERFALL over
@@ -332,7 +332,7 @@ test('BR5: no surface still says Daggerfall Online - whole, split across a wordm
   assert.equal(split, '', `a wordmark still spells the old name across two elements:\n${split}`);
   assert.match(read('src/ui/enhanced/enhancedChargen.js'), new RegExp(`brand\\.append\\(el\\('div', 'sub', '${NAME}'\\)\\);`), 'the new character\'s masthead');
   // AUDIT TUO-LOGO: the launcher wears the logo too, the game's own file, named by its alt
-  assert.ok(read('app/launcher/index.html').includes(`<h1 class="wordmark"><img src="tamriel-unbound-online.png" alt="${NAME}" width="1120" height="208"></h1>`), 'and the desktop launcher\'s');
+  assert.ok(read('app/launcher/index.html').includes(`<h1 class="wordmark"><img src="tamriel-unbound-online.png" alt="${NAME}" width="1120" height="352"></h1>`), 'and the desktop launcher\'s');
   assert.match(read('src/ui/screenshot.js'), /return `dfo-\$\{d\.getFullYear\(\)\}/, 'a screenshot is named for the product');
   assert.match(read('src/ui/shotsPane.js'), /a\.download = `dfo-shot-\$\{s\.id\}\.jpg`;/, 'and so is a saved loading shot');
   assert.match(read('server-account/src/patreon.js'), new RegExp(`<title>\\$\\{esc\\(heading\\)\\} - ${NAME}</title>`), 'and the Patreon link\'s page');
