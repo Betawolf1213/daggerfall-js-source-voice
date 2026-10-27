@@ -3053,7 +3053,25 @@ export async function bootExterior(canvas, renderer, params, status) {
     window.__rig = rig;
   };
   if (params.has('rig') || tpMode) await buildRig();
-  player.spawn(loc.width * RMB_SIDE * 0.46, GROUND_OFFSET * 0.025 + 2, loc.height * RMB_SIDE * 0.5);
+  // Universal spawn (the showcase door): the default is the location centre
+  // (0.46 x width, ground+2, 0.5 x height) - which works for ANY location,
+  // classic or vendored. ?sx/?sy/?sz override the spawn point in
+  // location-local metres, so a transplanted asset can drop the player right
+  // at (or just near) it. Each axis falls back to the centre default when
+  // omitted, so `?sx=` alone still stands you at the centre's depth.
+  {
+    const _sx = params.get('sx'), _sy = params.get('sy'), _sz = params.get('sz');
+    if (_sx != null || _sy != null || _sz != null) {
+      player.spawn(
+        _sx != null ? Number(_sx) : loc.width * RMB_SIDE * 0.46,
+        _sy != null ? Number(_sy) : GROUND_OFFSET * 0.025 + 2,
+        _sz != null ? Number(_sz) : loc.height * RMB_SIDE * 0.5,
+      );
+      console.log(`spawn: showcase override (${_sx ?? 'cx'}, ${_sy ?? 'gnd'}, ${_sz ?? 'cz'})`);
+    } else {
+      player.spawn(loc.width * RMB_SIDE * 0.46, GROUND_OFFSET * 0.025 + 2, loc.height * RMB_SIDE * 0.5);
+    }
+  }
   // Edge-detect latch shared with the mode machine: a held key must not
   // re-trigger across a mode switch.
   // MWCROUCH: the two press latches this bag carried - the crouch
@@ -3084,6 +3102,11 @@ export async function bootExterior(canvas, renderer, params, status) {
     yaw: Math.PI,
     pitch: -0.08,
   };
+  // Showcase initial facing: ?yaw / ?pitch (radians) override the default
+  // scout framing, so a generated link can stand the player AT the asset
+  // looking the way the asset wants to be seen.
+  if (params.get('yaw') != null) cam.yaw = Number(params.get('yaw'));
+  if (params.get('pitch') != null) cam.pitch = Number(params.get('pitch'));
   const lookFilter = new LookFilter();   // AUDIT 28 W7: one filter per camera
   const moveAxes = new MoveAxes();   // AUDIT 28 W8: MovementAcceleration
   const cameraRecoiler = new CameraRecoiler();   // AUDIT 28 W9: CameraRecoilStrength
