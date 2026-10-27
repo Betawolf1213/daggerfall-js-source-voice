@@ -387,6 +387,21 @@ export function setBundleTextures(entries) {
   if (!sameEntries(was, _bundle)) tierChanged();
   return _bundle.size;
 }
+/** Additive form for a registration that lands AFTER the first
+ *  (Raven-Wright's vendored places, one per place): the tier as it
+ *  stands is kept, a name already carried is never shadowed. */
+export function addBundleTextures(entries) {
+  const was = _bundle;
+  for (const e of entries ?? []) {
+    if (!Number.isFinite(e?.archive) || !Number.isFinite(e?.record) || typeof e.image !== 'function') continue;
+    const map = e.map ?? 'Albedo';
+    const key = textureKey(e.archive, e.record, e.frame ?? 0, map, e.dye ?? null);
+    if (_bundle.has(key)) continue;
+    _bundle.set(key, { archive: Number(e.archive), record: Number(e.record), frame: Number(e.frame ?? 0), map, dye: e.dye ?? null, fileName: e.fileName ?? key, src: e.src ?? null, image: e.image, lazy: e.lazy === true, rect: e.rect ?? null });
+  }
+  if (!sameEntries(was, _bundle)) tierChanged();
+  return _bundle.size;
+}
 export const bundleTextureCount = () => _bundle.size;
 /** A bundle texture's paperdoll `<rect>` ({ x, y, width, height } in the doll's own pixels), or null. */
 export function textureReplacementRect(archive, record, frame = 0, map = 'Albedo', dye = null) {
