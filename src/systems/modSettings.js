@@ -1542,6 +1542,21 @@ export const MOD_SETTINGS = Object.freeze({
       'Legacy.Family In World': Object.freeze({ default: true, description: 'Your living family stands in the world when you are not playing them: at the family home (or in your seat\u2019s town, if the line holds no house), about their day. Speak with one to play as them.' }),
     }),
   }),
+  // RAVEN-WRIGHT: a whole transplanted Skyrim place standing in the classic
+  // world - its models (a packed place BSA the port decodes with its own
+  // Arch3dFile), its pictures (M-TEX archives past the classic 511) and its
+  // location + block grid (WorldData on the door). Off stands the classic
+  // ground where the town is.
+  'whiterun-world': Object.freeze({
+    title: 'Whiterun (Transplanted)',
+    author: 'Raven-Wright',
+    keys: Object.freeze({
+      Enabled: Object.freeze({
+        default: true,
+        description: 'Whiterun - the whole town, its 10,690 pieces of real Skyrim geometry - standing in the Dragontail Mountains as a classic-world location. Off returns the classic ground where the town stands.',
+      }),
+    }),
+  }),
 });
 
 let memory = null;

@@ -3,7 +3,7 @@
  "bsa": "Models/whiterun-arch3d.bin",
  "modelOffset": 100000,
  "recordCount": 9333,
- "textureBase": 512,
+ "textureBase": 1000,
  "textures": 1864,
  "grid": 4,
  "region": 1,
