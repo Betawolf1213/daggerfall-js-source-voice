@@ -82,6 +82,68 @@ export function installOrbitCam({ params, pose, canvas = null, defaultTarget = [
       apply();
     }, { passive: false });
     canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+    // HUD: self-explanatory control hints + live state + reset (for manual testing)
+    const hud = document.createElement('div');
+    hud.style.cssText =
+      'position:fixed;left:10px;bottom:10px;z-index:9999;padding:10px 12px;' +
+      'background:rgba(10,12,24,0.82);color:#cfe6ff;border:1px solid #34507a;' +
+      'border-radius:8px;font:12px/1.5 ui-monospace,Consolas,monospace;pointer-events:auto;' +
+      'max-width:320px;box-shadow:0 4px 18px rgba(0,0,0,0.5);';
+    const readout = document.createElement('div');
+    readout.style.cssText = 'margin-top:6px;color:#8fd0ff;font-size:11px;white-space:pre;';
+    const tip = document.createElement('div');
+    tip.style.cssText = 'color:#ffd27a;font-size:11px;margin-bottom:2px;';
+    tip.textContent = '🎥 ORBIT CAMERA';
+    const btns = document.createElement('div');
+    btns.style.cssText = 'margin-top:6px;display:flex;gap:6px;';
+    const mkBtn = (label, fn) => {
+      const b = document.createElement('button');
+      b.textContent = label;
+      b.style.cssText =
+        'font:11px ui-monospace,monospace;padding:3px 8px;border-radius:5px;cursor:pointer;' +
+        'background:#1c2c4a;color:#cfe6ff;border:1px solid #34507a;';
+      b.addEventListener('click', fn);
+      return b;
+    };
+    btns.appendChild(mkBtn('reset view', () => {
+      state.cx = defaultTarget[0]; state.cy = defaultTarget[1]; state.cz = defaultTarget[2];
+      state.dist = 40; state.yaw = Math.PI; state.pitch = -0.3; apply();
+    }));
+    btns.appendChild(mkBtn('top-down', () => {
+      state.pitch = -1.5; state.dist = Math.max(state.dist, 60); apply();
+    }));
+    btns.appendChild(mkBtn('eye-level', () => {
+      state.pitch = -0.06; state.cy = Math.min(state.cy, 6); apply();
+    }));
+    hud.appendChild(tip);
+    hud.appendChild(document.createTextNode(
+      'Left-drag: orbit · Wheel: zoom · Right/Mid-drag: pan target\n' +
+      'Keys:  ↑/↓ elev  ←/→ rotate  +/− zoom'));
+    hud.appendChild(readout);
+    hud.appendChild(btns);
+    document.body.appendChild(hud);
+    // keyboard nudges for fine control
+    const onKey = (e) => {
+      const k = e.key;
+      if (k === 'ArrowUp') state.pitch = clamp(state.pitch + 0.05, -1.55, 1.55);
+      else if (k === 'ArrowDown') state.pitch = clamp(state.pitch - 0.05, -1.55, 1.55);
+      else if (k === 'ArrowLeft') state.yaw += 0.07;
+      else if (k === 'ArrowRight') state.yaw -= 0.07;
+      else if (k === '+' || k === '=') state.dist = clamp(state.dist * 0.9, 2, 2000);
+      else if (k === '-' || k === '_') state.dist = clamp(state.dist * 1.1, 2, 2000);
+      else return;
+      e.preventDefault();
+      apply();
+    };
+    window.addEventListener('keydown', onKey);
+    // live readout (throttled by rAF tick below)
+    const tick = () => {
+      readout.textContent =
+        `target ${state.cx.toFixed(1)}, ${state.cy.toFixed(1)}, ${state.cz.toFixed(1)}\n` +
+        `dist ${state.dist.toFixed(1)}m  yaw ${state.yaw.toFixed(2)}  pitch ${state.pitch.toFixed(2)}`;
+      requestAnimationFrame(tick);
+    };
+    tick();
     // probe surface (the port's window.__* doctrine)
     window.__orbit = {
       get state() { return { ...state }; },
