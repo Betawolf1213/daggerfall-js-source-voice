@@ -85,6 +85,7 @@ import { playerTorchLight } from '../systems/playerTorch.js';   // T1
 import { thunderlockMuzzleLight } from '../systems/thunderlock.js';   // FIELD-GUN13: the muzzle flash is a light the player carries, the torch's own shape
 import { applyClimate, getTerrainGroundArchive, getNatureArchive, climateSeasonFromMinutes, INTERIOR_SEASON } from '../world/climateSwaps.js';   // A1: the season is the calendar's, and an interior's is Summer whatever the date
 import { RMB_SIDE, layoutLocation, hasCustomLocationPosition } from '../world/locationLayout.js';
+import { installOrbitCam } from '../world/orbitCam.js';   // SHOWCASE: the orbit/inspector camera
 import { lookAt, multiply, perspective, mirrorProjectionX, transformPoint, trs, UP_Y } from '../world/mat4.js';   // HANDEDNESS: the one mirror (mat4's law)
 import { frustumPlanes, aabbOutside, localAabb, transformedAabb, flatBatchAabb, cullDisabled } from '../render/frustum.js';   // EV3: the frustum
 import { withMoonAmbient } from '../render/enhancedSky.js';   // EV5: secunda rides the ambient
@@ -1183,7 +1184,10 @@ export async function bootExterior(canvas, renderer, params, status) {
   }
 
   // Camera.
-  const shotMode = params.has('shot');
+  // ?orbit is a shot-mode camera: the showcase orbit/inspector (world/orbitCam.js)
+  // drives the host's posed-camera door, so it rides the same free-camera
+  // render path as ?shot (no walk machine, no ground-follow).
+  const shotMode = params.has('shot') || params.has('orbit');
   let _shotPosed = false;   // DS1: set by window.__pose - the scout's fixed framing gives way to the posed camera
   // P1: grounded first-person is the default; ?fly restores the fly cam.
   const walkMode = params.has('play') || (!params.has('fly') && !shotMode);
@@ -4665,6 +4669,11 @@ export async function bootExterior(canvas, renderer, params, status) {
       // (a bare cam.pos write is overwritten next frame; T1 probe fix)
       if (walkMode) player.spawn(x, y, z); else { cam.pos = [x, y, z]; _shotPosed = true; }   // DS1: a posed fly camera leaves the scout's fixed framing (tools/shotPoses.mjs)
     };
+    // SHOWCASE: the orbit/inspector camera owns the posed camera when ?orbit
+    // is present - complete control to move around any object (orbit / zoom /
+    // pan). It targets the location centre by default (on land), so a
+    // generated showcase link stands the camera AROUND the place, not in it.
+    if (params.has('orbit')) installOrbitCam({ params, pose: window.__pose, canvas, defaultTarget: center });
     modes.installShotProbes();
     // ARENA-FIX 12 probe surface (world.js __arena's shape, this host's): the bout standing, its fighters' feet
     window.__arena = () => {

@@ -9,5 +9,11 @@
  "region": 1,
  "lat": 28072,
  "lon": 90000,
- "file": "locationnew-whiterun-1.json"
+ "file": "locationnew-whiterun-1.json",
+ "centre": [
+  286.6,
+  6,
+  239.5
+ ],
+ "regionName": "Dragontail Mountains"
 }
