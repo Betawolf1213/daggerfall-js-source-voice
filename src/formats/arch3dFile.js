@@ -103,6 +103,12 @@ function recordAt(bsa, pos) {
   return -1;
 }
 
+// The classic ARCH3D.BSA's fingerprint - the file the patch table was
+// measured against. Any other file (a custom place archive) gets no patch:
+// an offset that lands in a foreign record would corrupt it.
+const CLASSIC_ARCH3D_SIZE = 27143532;
+const CLASSIC_ARCH3D_COUNT = 10251;
+
 /** ARCH3D_PATCH re-keyed by record: Map<record, [recordOffset, bytes][]>.
  *  An entry crossing a record edge is split at it; a byte no record holds
  *  is dropped (no entry touches the header or the directory). */
@@ -159,7 +165,9 @@ export class Arch3dFile {
     this._bsa = new BsaFile(bytes);
     if (this._bsa.directoryType !== DIRECTORY_TYPES.NumberRecord) return false;
     this._records = new Array(this._bsa.count).fill(null);
-    this._patch = indexPatch(this._bsa);
+    this._patch = (bytes.length === CLASSIC_ARCH3D_SIZE && this._bsa.count === CLASSIC_ARCH3D_COUNT)
+      ? indexPatch(this._bsa)
+      : new Map();
     return true;
   }
 
