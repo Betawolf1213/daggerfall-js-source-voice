@@ -11,7 +11,7 @@
 import { registerWorldDataAsset, registerWorldDataPack, installWorldDataReplacement, boundWorldDataBlocks, quietLocationOverrides, latchWorldDataDoor, worldDataDoorOpen } from '../formats/worldDataReplacement.js';
 import { rebuildWorldDataPatch, canonicalSha256 } from '../formats/worldDataPatch.js';
 import { openWorldDataPack, packFileSha256, readPackText } from '../formats/worldDataPack.js';
-import { modSetting, latchModLoaded, modLatchedOn } from '../systems/modSettings.js';
+import { modSetting, modSettingIfDeclared, latchModLoaded, modLatchedOn } from '../systems/modSettings.js';
 import { configureLayoutPins, vendorsPinnedIn } from '../systems/layoutPins.js';   // WD3: the layout a save's towns were made in
 import { installTownStandIns } from '../world/townStandIns.js';   // WD3: the peer mods' pieces the town packs place, the port's own
 import { installArena } from '../world/arenaCity.js';   // ARENA1: the Arena of Daggerfall - the port's own block, the city's edit and the colosseum
@@ -41,6 +41,15 @@ const baseName = (path) => path.split('/').pop();
  */
 export const WORLD_DATA_PRIORITY = Object.freeze({ 'beautiful-villages': 10, 'beautiful-cities': 20 });
 
+/** RAVEN-WRIGHT: a vendored place's world data stands by default. A declared
+ *  vendor reads its Enabled switch; an UNdeclared one (a fresh Raven-Wright
+ *  World Builder place) stands on - MO1: every mod's `Enabled` defaults true.
+ *  Never throws, so one fresh vendor can never knock out the classic world. */
+const worldDataOn = (vendor) => {
+  const v = modSettingIfDeclared(vendor, 'Enabled');
+  return v === undefined ? true : v === true;
+};
+
 let _loaded = null;
 const _packs = new Map();   // vendor -> opened pack (loaded for the game, or for a save's pins)
 /** Every vendored mod's world-data file onto the door, gated on that mod's
@@ -57,7 +66,7 @@ export async function loadModWorldData() {
     await Promise.all(Object.entries(globFiles()).map(async ([path, load]) => {
       const vendor = vendorOf(path);
       const json = await load();
-      if (registerWorldDataAsset(baseName(path), json, () => modSetting(vendor, 'Enabled') === true)) n++;
+      if (registerWorldDataAsset(baseName(path), json, () => worldDataOn(vendor))) n++;
     }));
     const itPatches = [], itOwn = [];   // IT1: Immersive Travel's gate patches and what they rebuilt - its layer's
     await Promise.all(Object.entries(globPatches()).map(async ([path, load]) => {
@@ -66,7 +75,7 @@ export async function loadModWorldData() {
       const onServed = vendor === 'immersive-travel' ? (json) => { itPatches.push(patch); itOwn.push(json); } : null;
       // AUDIT IT1 G3: Immersive Travel's gates ask the mod LOADED FOR THE GAME (its Init's latch), not the switch as it
       // stands - a switch flipped mid-game moved carriages under cached, pinned and unread towns three different ways
-      const isOn = vendor === IMMERSIVE_TRAVEL_VENDOR ? immersiveTravelLoaded : () => modSetting(vendor, 'Enabled') === true;
+      const isOn = vendor === IMMERSIVE_TRAVEL_VENDOR ? immersiveTravelLoaded : () => worldDataOn(vendor);
       if (await registerWorldDataPatch(patch, isOn, { onServed })) n++;
     }));
     // IT1: the carriages laid onto whichever gate the door serves - Beautiful Cities' too (world/immersiveTravelGates.js).

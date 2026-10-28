@@ -21,7 +21,7 @@ import { registerCustomModel, _resetCustomModels } from '../world/customModels.j
 import { Arch3dFile } from '../formats/arch3dFile.js';
 import { dfMeshToModel } from '../world/meshReader.js';
 import { addVendorTextures, decodePng } from '../systems/textureReplacement.js';
-import { modSetting } from '../systems/modSettings.js';
+import { modSetting, modSettingIfDeclared } from '../systems/modSettings.js';
 
 const IN_BROWSER = typeof window !== 'undefined';
 const MANIFESTS = IN_BROWSER ? import.meta.glob('../../vendor/*/place/PLACE.json', { eager: true, import: 'default' }) : {};
@@ -62,7 +62,14 @@ export async function installVendoredPlaces({ readBin = null, makeImage = null, 
   let places = 0, models = 0, textures = 0;
   for (const [path, manifest] of Object.entries(MANIFESTS)) {
     const vendor = vendorOf(path);
-    const isOn = () => modSetting(vendor, 'Enabled') === true;
+    // A vendored place stands by default. Declared vendors read their
+    // switch; an UNdeclared one (a fresh Raven-Wright World Builder place)
+    // stands on - MO1: every mod's `Enabled` defaults true. Never throws,
+    // so one odd vendor can never knock out the others.
+    const isOn = () => {
+      const v = modSettingIfDeclared(vendor, 'Enabled');
+      return v === undefined ? true : v === true;
+    };
     const bin = Object.entries(BINS).find(([p]) => p.includes('/vendor/' + vendor + '/Models/'))?.[1];
     if (!bin) {
       if (log?.error) log.error(`[place] ${vendor}: its manifest names no Models/*.bin - stands nowhere`);
