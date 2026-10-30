@@ -52,6 +52,13 @@ in vec2 vUV;
 in vec3 vWorldPos;
 uniform sampler2D uTex;
 uniform sampler2D uEmissionTex;
+// FOLIAGE-CUTOUT (vendored places): the mesh shader's per-texture cutout.
+// 0 = opaque (every classic mesh texture); > 0 and a texel below that alpha
+// discards. Armed ONLY for vendor textures that carry real transparent
+// texels (see dataPipeline's { alpha: true } upload and _drawMeshBundle's
+// _alphaArt probe) - classic mesh materials never set it, so a classic
+// record's index-0 pixels keep rendering opaque exactly as before.
+uniform float uAlphaCut;
 uniform vec3 uLightDir;
 uniform vec3 uAmbient;
 uniform vec3 uAmbientSky;     // BA1: Unity's AmbientMode.Trilight - sky for a normal facing up, ground facing down,
@@ -111,6 +118,7 @@ void main() {
   else if (vWorldPos.y > uClipY) discard;
   dissolveCut();   // SHIP-FADE: a ship sailing into the world or out of it, her share of her fragments (orderedDither.js)
   vec4 tex = texture(uTex, vUV);
+  if (uAlphaCut > 0.0 && tex.a < uAlphaCut) discard;   // FOLIAGE-CUTOUT: a vendor place's cutout texels (index 0 -> alpha 0) - 0 = opaque, every classic mesh
   // INCIDENT 2026-09-04: no alpha clip here - DaggerfallDefault.shader is
   // RenderType Opaque with no clip(); the mortar runs of a wall texture
   // are palette index 0 and were being discarded as cutouts.
@@ -1428,6 +1436,7 @@ export class Renderer {
     this.textures = new Map(); // "archive_record" -> WebGLTexture
     this.lptAtlases = new Set();   // LPT1: the low-poly trees' atlases (createAtlasTexture) - their owner frees them; retro's mip switch reaches them
     this._alphaArt = new WeakSet();   // OVH2: textures uploaded { alpha: true } - authored with real alpha, drawn blended
+    this._vendorAlphaCut = new WeakSet();   // FOLIAGE-CUTOUT: textures whose MESH draw discards below alpha 0.5 - the vendor-place cutout records (index 0), armed by dataPipeline's { alpha: true } upload ONLY for vendor textures that actually contain index-0 texels; every classic mesh texture stays out, so classic index-0 pixels keep rendering opaque
     // AUDIT 68 X3-release-texture-variant-keys: every key uploadTexture
     // minted under one "archive_record", so release frees what was made
     // instead of guessing suffixes ('#smooth#travelto' was never tried).
@@ -2029,6 +2038,7 @@ export class Renderer {
     this.uIndirectColor = gl.getUniformLocation(this.program, 'uIndirectColor');
     this._solidFog = this._fogLocs(this.program);
     this.uDissolveCut = gl.getUniformLocation(this.program, 'uDissolveCut');   // SHIP-FADE: the installed mesh program's dissolve
+    this.uMeshAlphaCut = gl.getUniformLocation(this.program, 'uAlphaCut');   // FOLIAGE-CUTOUT: the mesh shader's per-texture cutout (0 = opaque, every classic mesh)
     // Character program (C4b): rig vertex-color path, same scene
     // lighting/fog model as the mesh program.
     this.charProgram = set.char;
@@ -4239,6 +4249,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     this.textures.set(key, tex);
     if (opts.placeholder) (this._placeholders ??= new Set()).add(key);
     if (opts.alpha && tex) (this._alphaArt ??= new WeakSet()).add(tex);   // OVH2: the texture's own treatment, read at every screen draw of it (AUDIT RETRO1 J7: a lost context's null is no key)
+    if (opts.vendorCutout && tex) (this._vendorAlphaCut ??= new WeakSet()).add(tex);   // FOLIAGE-CUTOUT: this texture's MESH draw discards below alpha 0.5 (the vendor-place cutout records); armed by dataPipeline only for vendor textures that actually contain index 0
     const base = `${archive}_${record}`;
     let keys = this._texKeysByBase.get(base);
     if (!keys) this._texKeysByBase.set(base, keys = new Set());
@@ -6836,6 +6847,17 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       }
       this._bindEmission(sm._evEmis);   // PERF-TEX: skipped when it is already the one on the unit, which it usually is
       this._bindTex0(tex);   // PERF-TEX3: a bundle whose sub-meshes repeat an archive re-bound the same texture every time
+      // FOLIAGE-CUTOUT: the per-texture cutout flag (0 = opaque, every
+      // classic mesh material). Set by uploadTexture's { alpha: true } -
+      // the vendor-place mesh textures that carry real transparent texels
+      // (packed index 0). The uniform is only re-uploaded when it changes;
+      // classic textures never set it, so their index-0 pixels keep the
+      // INCIDENT 2026-09-04 opaque law exactly.
+      const alphaCut = this._vendorAlphaCut?.has(tex) ? 0.5 : 0;
+      if (this._meshAlphaCutUp !== alphaCut) {
+        gl.uniform1f(this.uMeshAlphaCut, alphaCut);
+        this._meshAlphaCutUp = alphaCut;
+      }
       if (wire) {
         const range = wireMesh.ranges[smi];
         gl.drawElements(gl.LINES, range.count, gl.UNSIGNED_INT, range.start * 4);

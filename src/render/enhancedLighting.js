@@ -532,6 +532,7 @@ in vec3 vNormal;
 in vec2 vUV;
 in vec3 vWorldPos;
 uniform sampler2D uTex;
+uniform float uAlphaCut;   // FOLIAGE-CUTOUT: the vendor-place cutout (0 = opaque, every classic mesh) - the classic FS twin's, renderer.js
 uniform sampler2D uEmissionTex;
 uniform vec3 uLightDir;
 uniform vec3 uAmbient;
@@ -575,6 +576,7 @@ void main() {
   else if (vWorldPos.y > uClipY) discard;
   dissolveCut();   // SHIP-FADE: a ship sailing into the world or out of it, her share of her fragments (orderedDither.js)
   vec4 tex = texture(uTex, vUV);
+  if (uAlphaCut > 0.0 && tex.a < uAlphaCut) discard;   // FOLIAGE-CUTOUT: armed only for vendor textures with real index-0 texels
   vec3 n = normalize(vNormal);
   // PERF-SUN2 (2026-09-19, Mac: "over 1000 calls and looking up in the sky
   // restores frame rate"): THE SUN'S SHADOW IS NOT READ WHERE THE SUN

@@ -156,7 +156,7 @@ export function createDataPipeline({ renderer, arch, palette, fetch = fetchBytes
     return { width: t.getWidth(record), height: t.getHeight(record) };
   };
   const _standInMisses = new Set();   // WD3: the stand-in records said once each
-  const uploadRecord = (archive, record, { opaque = false, mips, removeMask = false, dye = null, dyeTarget = null } = {}) => {   // DYE-ICON: `dyeTarget` - the swatch the classic arm dyes (itemDye.js itemDyeTarget)   // DW3: `dye` - GetItemImage asks the replacement by the item's dye (ItemHelper.cs:458); the icon uploads under a per-dye variant and answers which   // REVIEW 2026-09-05: `mips: false` for item icons (ImageReader.cs:59 builds UI art with no chain); HM1: `removeMask` = ItemHelper's GetItemImage(removeMask: true), the item icons' door - 0xFF becomes the cutout before the upload
+  const uploadRecord = (archive, record, { opaque = false, mips, removeMask = false, dye = null, dyeTarget = null, vendorCutout = false } = {}) => {   // DYE-ICON: `dyeTarget` - the swatch the classic arm dyes (itemDye.js itemDyeTarget)   // DW3: `dye` - GetItemImage asks the replacement by the item's dye (ItemHelper.cs:458); the icon uploads under a per-dye variant and answers which   // REVIEW 2026-09-05: `mips: false` for item icons (ImageReader.cs:59 builds UI art with no chain); HM1: `removeMask` = ItemHelper's GetItemImage(removeMask: true), the item icons' door - 0xFF becomes the cutout before the upload   // FOLIAGE-CUTOUT: `vendorCutout` - a VENDOR texture whose record actually contains index-0 (transparent) texels; its MESH material discards those texels (renderer's _vendorAlphaCut). NEVER set for classic archives (classic index-0 texels render opaque on meshes - INCIDENT 2026-09-04)
     const t = textureFiles.get(archive); freshen(archive);   // AUDIT VE R1
     const bitmap = t.getDFBitmap(record, 0);
     // Spectral archives (ghost/wraith/Lysandus) take the verbatim
@@ -221,10 +221,25 @@ export function createDataPipeline({ renderer, arch, palette, fetch = fetchBytes
     }
     const masked = swap ? null : removeMask ? changeMask(bitmap) : bitmap;   // HM1: a clone - the cached record keeps its mask for the doll
     const color32 = swap ?? t.getColor32(dyed ? changeDyeBitmap(masked, dye, dyeTarget) : masked, opaque ? -1 : 0);   // DYE-ICON: the mask first, then the dye (:467-474)
+    // FOLIAGE-CUTOUT: only a VENDOR texture whose PACKED RECORD actually
+    // carries index-0 texels may discard on the mesh path. A vendor
+    // stand-in's getDFBitmap answers `data: null` with its RGBA beside it,
+    // so the "index 0" test reads the RGBA alpha (the vendor PNG export's
+    // alpha-0 pixels ARE the packed index 0). Classic archives are never
+    // armed, so classic index-0 texels keep the INCIDENT 2026-09-04 opaque
+    // law. (Swap/replacement textures keep the pack's alpha: the vendor
+    // PNG export drops nothing.)
+    let vendorCutoutArmed = false;
+    if (vendorCutout && t.vendor) {
+      if (bitmap?.data) vendorCutoutArmed = bitmap.data.some((b) => b === 0);
+      else if (bitmap?.rgba) { for (let i = 3; i < bitmap.rgba.length; i += 4) if (bitmap.rgba[i] === 0) { vendorCutoutArmed = true; break; } }
+    }
     // AUDIT RETRO1 A4: a replacement is flagged - TextureReader's retro arm (no mip chain) never reaches TryImportTexture's.
     // AUDIT GN2-PF5: a stand-in the port paints as a hull's classic art (markClassicArt) is no replacement
     const replacement = !!swap && !classicArt.has(Number(archive));
-    renderer.uploadTexture(archive, record, color32, variant !== undefined ? { opaque, mips, variant, replacement } : { opaque, mips, replacement });
+    renderer.uploadTexture(archive, record, color32, variant !== undefined
+      ? { opaque, mips, variant, replacement, vendorCutout: vendorCutoutArmed }
+      : { opaque, mips, replacement, vendorCutout: vendorCutoutArmed });
     // Exterior windows also get their emission mask (R2, MaterialReader
     // semantics: glass texels glow with the active window style).
     // DS1: a stand-in (a mod-only archive) has no classic bitmap to cut a
@@ -334,7 +349,7 @@ export function createDataPipeline({ renderer, arch, palette, fetch = fetchBytes
    *  into `pictures`, which the model holds (holds.meshBuilt) for as long as it stands. */
   const meshPicture = (pictures, sm, upload) => {
     const heard = uploadsOf(upload).keys;
-    learnRemake(heard, [sm.textureArchive, sm.textureRecord, { opaque: true }]);
+    learnRemake(heard, [sm.textureArchive, sm.textureRecord, { opaque: true, vendorCutout: true }]);   // FOLIAGE-CUTOUT: a remade picture re-arms the vendor cutout (the upload decides; classic stays opaque)
     pictures.push(...heard);
   };
   /** AUDIT 39: the COMPLETED cache is not enough on its own. A build
@@ -399,7 +414,11 @@ export function createDataPipeline({ renderer, arch, palette, fetch = fetchBytes
     for (const sm of dfMesh.subMeshes) await getTexture(sm.textureArchive);
     const model = dfMeshToModel(dfMesh, getTextureSize);
     const pictures = [];   // PLACE-LRU: what this model's build put up, the model's to hold
-    for (const sm of model.subMeshes) meshPicture(pictures, sm, () => uploadRecord(sm.textureArchive, sm.textureRecord, { opaque: true }));   // a mesh material: alphaIndex -1
+    // FOLIAGE-CUTOUT: the mesh material arm passes vendorCutout:true - the
+    // upload decides (vendor archive + record actually contains index 0)
+    // and arms the mesh shader's discard ONLY then; classic mesh textures
+    // stay opaque (INCIDENT 2026-09-04).
+    for (const sm of model.subMeshes) meshPicture(pictures, sm, () => uploadRecord(sm.textureArchive, sm.textureRecord, { opaque: true, vendorCutout: true }));   // a mesh material: alphaIndex -1
     const gpu = renderer.createMesh(model);
     // WORLD-HOVER: the record carries its OWN id. The map was keyed by it
     // and the value did not know it, so anything handed a cpu record - the
@@ -457,7 +476,7 @@ export function createDataPipeline({ renderer, arch, palette, fetch = fetchBytes
     // PLACE-LRU: the uploads, the mesh and its holds in ONE synchronous run, as buildGpuMesh's - a sweep between two
     // of them could free a picture the model was about to hold
     const pictures = [];
-    for (const sm of model.subMeshes) meshPicture(pictures, sm, () => uploadRecord(sm.textureArchive, sm.textureRecord, { opaque: true }));
+    for (const sm of model.subMeshes) meshPicture(pictures, sm, () => uploadRecord(sm.textureArchive, sm.textureRecord, { opaque: true, vendorCutout: true }));   // FOLIAGE-CUTOUT: classic textures stay opaque (the upload arms the discard only for a vendor record with real index 0)
     const gpu = renderer.createMesh(model);
     gpuMeshes.set(key, gpu);
     holds.meshBuilt(key, pictures);   // PLACE-LRU
