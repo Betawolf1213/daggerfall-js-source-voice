@@ -80,6 +80,9 @@ export function modelScaleVector(obj) {
  *  its own records (Beautiful Villages' six - FARMAA04, 05, 07 and FARMBA05, 08, 09 - and 34 of Beautiful Cities' blocks). */
 export const WINDMILL_MODEL_ID = 41600;
 
+/** The placed record each laid-out model came from ({kind, sub, modelId, pos}) - the rw-poi sidecars' match key; a side table so the models themselves are unchanged. */
+export const placedSource = new WeakMap();
+
 export function layoutRmbBlock(dfBlock, { enhanced = false, windmills = true } = {}) {
   const rmb = dfBlock.rmbBlock;
   const models = [];
@@ -113,7 +116,7 @@ export function layoutRmbBlock(dfBlock, { enhanced = false, windmills = true } =
         ...modelScaleVector(obj)
       );
       if (millsHere && obj.modelIdNum === WINDMILL_MODEL_ID) { ownMills.push({ matrix: multiply(subRecordMatrix, modelMatrix) }); continue; }
-      models.push({
+      const placedSub = {
         modelId: obj.modelId,
         modelIdNum: obj.modelIdNum,
         matrix: multiply(subRecordMatrix, modelMatrix),
@@ -121,7 +124,9 @@ export function layoutRmbBlock(dfBlock, { enhanced = false, windmills = true } =
         // HOME-YARD (not a DFU field): where the building itself stands in its block - the subrecord's own origin, the
         // same for each of its models, and the frame a player's yard is laid out from (scenes/homeYards.js)
         recordAt: [subRecordMatrix[12], subRecordMatrix[13], subRecordMatrix[14]],
-      });
+      };
+      placedSource.set(placedSub, { kind: 'subModel', sub: recordIndex, modelId: obj.modelIdNum, pos: [obj.xPos, obj.yPos, obj.zPos] });
+      models.push(placedSub);
     }
   }
 
@@ -137,7 +142,9 @@ export function layoutRmbBlock(dfBlock, { enhanced = false, windmills = true } =
       ...modelScaleVector(obj)
     );
     if (millsHere && obj.modelIdNum === WINDMILL_MODEL_ID) { ownMills.push({ matrix: miscMatrix }); continue; }
-    models.push({ modelId: obj.modelId, modelIdNum: obj.modelIdNum, matrix: miscMatrix });
+    const placedMisc = { modelId: obj.modelId, modelIdNum: obj.modelIdNum, matrix: miscMatrix };
+    placedSource.set(placedMisc, { kind: 'misc3d', sub: null, modelId: obj.modelIdNum, pos: [obj.xPos, obj.yPos, obj.zPos] });
+    models.push(placedMisc);
   }
 
   // WM2f: the mill's own subrecord places TWO models - a classic

@@ -36,7 +36,8 @@ import { convertTilemap, isOutdoorWaterTile } from '../world/terrainSurface.js';
 import { waterUniforms, tilemapRectHasWater, waterSwitchOn, buildWaterIndices } from '../render/waterSurface.js';   // WATER1: the enhanced water surface over the town's ground; WATER-AUDIT: asked over the real extent
 import { waterBedOf, flatGrid } from '../world/waterBed.js';   // WATER-NEXT 2: the town's grid and the bed under its water
 import { createRipples, createRippleStir, RIPPLE_SPAN, RIPPLE_CELLS } from '../world/waterRipples.js';   // AUDIT WATER-NEXT m12: the rings round a wading player, the streaming world's own stir
-import { GROUND_OFFSET, GROUND_TILE_DIM } from '../world/rmbLayout.js';
+import { GROUND_OFFSET, GROUND_TILE_DIM, placedSource } from '../world/rmbLayout.js';
+import { createHostPoi, createPoiSpawners, poiDoorEntry, recordKey, installPoiSave, poiHours, setPoiHours } from './poiSidecar.js';   // RW-POI: the sidecars' entrances and spawners
 import { GROUND_RECORD_LIMIT } from '../world/terrainTiles.js';   // AUDIT WATER-NEXT m8: MeshReader.cs:487's marker, one home
 import { climbRigInput } from '../player/climbPose.js';   // CLIMB6: the body's limbs on the climb
 import { PlayerMotor, startRestGroundedCheck, motionBagOf } from '../player/motor.js';   // the rest gate's grounded input, one home; WW2: the one motion bag
@@ -634,6 +635,20 @@ export async function bootExterior(canvas, renderer, params, status) {
   collider.cover = createCoverIndex();   // TACT1: the location's solid flats are cover, with the switch on
   let colliderTris = 0;
   const buildingDoors = []; // {door, dfBlock, recordIndex, climateBase, season (A1: INTERIOR_SEASON), dfLocation, group}
+  const poi = createHostPoi(maps);   // RW-POI: vendor sidecars, none online
+  installPoiSave();
+  const _poiDown = [0, -1, 0];
+  const poiSpawners = createPoiSpawners({
+    poi,
+    player: () => (walkMode ? [...player.pos] : [...cam.pos]),
+    hours: poiHours,
+    groundY: (x, y, z) => { const h = collider.surfaceHit([x, y + 2, z], _poiDown, 60); return Number.isFinite(h?.dist) ? y + 2 - h.dist : y; },
+    // the orcs and the rest come through the pool the street's encounters and the Hold's camp use
+    spawn: (type, at, o) => { const hit = collider.surfaceHit([at[0], at[1] + 0.7, at[2]], _poiDown, 3); exteriorFoes.spawnFoe(type, [at[0], at[1] + 0.5, at[2]], { yaw: o.yaw, level: o.level, placed: true, groundAlign: { hitDist: Number.isFinite(hit?.dist) ? hit.dist : null } }).catch(() => {}); },
+  });
+  if (poi.active) window.__poi_sidecar = () => ({ spawners: poiSpawners.count(), doors: buildingDoors.filter((e) => e.poi).length, foes: exteriorFoes.foes.filter((f) => !f.dead && f.placed).map((f) => f.mobileType), hours: poiHours() });
+  if (poi.active && params.has('shot')) window.__poi_clock = setPoiHours;
+  if (params.has('shot')) window.__poi_records = () => loc.blocks.map((b) => ({ x: b.x, y: b.y, block: b.blockName, misc: (b.dfBlock.rmbBlock?.misc3dObjectRecords ?? []).map((o) => [o.modelIdNum, o.xPos, o.yPos, o.zPos]) }));   // RW-POI: the laid-out blocks' placed records, for authoring a sidecar by hand
   let undercroft = null;   // ARENA1: the undercroft's record, one for the location
   // ARENA-FIX 12 (2026-10-02): WIRED - THE FOUR HOSTS. This standalone city host runs the bout driver as the world host
   // does (scenes/arenaBouts.js): the city's exhibitions on the hour, the Herald's choice, the floor's instance and the
@@ -669,6 +684,8 @@ export async function bootExterior(canvas, renderer, params, status) {
     // would collide across the many cells that hold the same block name
     // and leave every repeat with no buildings at all.
     const firstModelOfRecord = new Set();   // recordIndex - this BLOCK INSTANCE's latch
+    const poiBlock = poi.hasBlock(b.blockName) ? poi.forBlock(b.blockName, b.dfBlock) : null;   // RW-POI: this block's resolved entrances
+    if (poi.hasBlock(b.blockName)) poiSpawners.addBlock(b.blockName, [originMatrix[12], originMatrix[13], originMatrix[14]], `${dfLocation.regionIndex}:${dfLocation.locationIndex}:${b.x},${b.y}`);
     for (const placed of b.layout.models) {
       // WM2f: the mill's companion building is part of an enhanced-skin
       // departure; the 1:1 lane must not see it.
@@ -717,6 +734,9 @@ export async function bootExterior(canvas, renderer, params, status) {
         bulletinBoards.push({ min: [b3[0], b3[1], b3[2]], max: [b3[3], b3[4], b3[5]] });
       }
       colliderTris += cpu.indices.length / 3;
+      // RW-POI: a sidecar-tagged model is a dungeon entrance like an archive-56 door; a mesh with its own keeps its own
+      const poiHit = poiBlock?.size && !cpu.doors?.some((d) => d.type === DOOR_TYPE.DUNGEON_ENTRANCE) ? poiBlock.get(recordKey(placedSource.get(placed) ?? { kind: '', sub: null, modelId: 0, pos: [] })) : null;
+      if (poiHit) buildingDoors.push(poiDoorEntry(poiHit, archAabb(placed.modelIdNum, cpu.positions), matrix, b.dfBlock.index, placed.recordIndex, { dfBlock: b.dfBlock, climateBase, season: INTERIOR_SEASON }));
       // Building models expose their static doors for E-transitions
       // (P7: the world's registry shape; matrices are already
       // world-space, so entries feed the machine unshifted).
@@ -5636,6 +5656,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     renderer.setWindowEmission(windowEmissionRGB(
       params.has('window') ? params.get('window') : windowStyleForTime(minute)));
     tickHold();   // WOD4: DungeonExterior.Update finds the block; PrivateersHold.Start runs
+    if (modeNow() === 'exterior') poiSpawners.tick();   // RW-POI: sidecar spawners
     tickCityGates(minute);   // AUDIT 64 F14: DaggerfallCityGate.Update, every frame as DFU's is
     // DaggerfallSky.cs:363-367 - a non-Normal WeatherStyle (every rain,
     // thunder and snow) disables the clear night sky, so the DAY sky at

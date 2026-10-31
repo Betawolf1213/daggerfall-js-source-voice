@@ -866,6 +866,8 @@ import { createHomeYards, yardLampRows } from './homeYards.js';   // HOME-YARD: 
 import { modelFootRects, footRectsAt } from './homeYards.js';   // FB1009 HOME-FOOT: a building's ground, its models' faces seen from above
 import { loadIcon } from '../ui/textureCanvas.js';   // HOME-YARD: the decorator's pictures
 import { decorScanDeps } from '../systems/decorScan.js';   // HOME-YARD: the catalogue's scan (DECOR-DUNGEON: one constructor for both hosts)
+import { createHostPoi, poiDoorEntry, recordKey, spawnerSites, tickSpawners, installPoiSave, poiHours, setPoiHours } from './poiSidecar.js';   // RW-POI: the sidecars' entrances and spawners
+import { placedSource } from '../world/rmbLayout.js';
 import { DOOR_TYPE } from '../world/meshReader.js';   // ARENA1: the undercroft's stair is a dungeon entrance (DECOR-DUNGEON: GLOBAL_SCALE went with the yards' scan deps, systems/decorScan.js)
 import { homeLookSig } from '../net/homeLaw.js';
 import { setWeather, setHeardWeather, heardWeather, currentWeather, currentWeatherRaw, tickWeather, weatherRespawn, applyClimateWeather, importClimateWeathers, weatherJumpStamp, setSharedWeather, rollClimateWeathersForDay, sampleWeatherField, weatherCrossingStamp, currentFieldCells, currentWeatherIntensity, currentCloudBase, currentWindApproach, currentMapSystems, sampleWeatherIndoors, weatherArrivalStamp, mapGround } from '../systems/weatherSim.js';
@@ -1183,6 +1185,8 @@ export async function bootWorld(canvas, renderer, params, status) {
   arch.load(archBytes);
   const maps = new MapsFile();
   maps.load(mapsBytes, climateBytes, politicBytes);
+  const poi = createHostPoi(maps);   // RW-POI: vendor sidecars, none online
+  installPoiSave();
   // AUDIT NAV1 (B2): a Warm Ashes raid parsed at sea reads the crown of these waters' region (waRaidQuest) - declared up
   // here with maps, before townTalk's load can reach _questRegionIndex (FIELD 2026-09-27's order, below)
   let _questRegionPin = null;
@@ -3474,6 +3478,27 @@ export async function bootWorld(canvas, renderer, params, status) {
     }
   };
   const hitDistance = (hit) => (hit && Number.isFinite(hit.dist) ? hit.dist : null);
+  /** RW-POI: the sidecar spawners of the built pixels, fired through the same foe pool the encounters and camps use. */
+  const poiSitesByPixel = new Map();   // RW-POI: pixel key -> its spawner sites (beside `built`, keyed the same)
+  const tickPoiSpawners = () => {
+    if (!poi.active || _wodInside) return;
+    const standing = walkMode && playerSpawned;
+    const feet = standing ? player.pos : cam.pos;   // the scout camera stands in for the body off walk mode, as the Wod spawners read it
+    for (const p of built.values()) {
+      const poiSites = poiSitesByPixel.get(`${p.px},${p.py}`);
+      if (!poiSites?.length) continue;
+      const t = state.pixelTranslation(p.px, p.py, _wodT);
+      const sites = poiSites.map((s) => ({ key: s.key, spawner: s.spawner, pos: [s.local[0] + t[0], s.local[1] + t[1], s.local[2] + t[2]] }));
+      tickSpawners(sites, {
+        player: feet, hours: poiHours(),
+        spawn: (type, at, o) => {
+          const hit = collider.surfaceHit([at[0], feet[1] + 2, at[2]], _DOWN, 60);
+          const y = Number.isFinite(hit?.dist) ? feet[1] + 2 - hit.dist : at[1];
+          exteriorFoes.spawnFoe(type, [at[0], y + 0.5, at[2]], { yaw: o.yaw, level: o.level, placed: true, groundAlign: { hitDist: 0.7 } }).catch(() => {});
+        },
+      });
+    }
+  };
   /** SEASON1 part two (Seats-Arc 9.3): how far from its marker an Orc Raid's second foe stands, metres. */
   const ORC_RAID_PACE = 1.5;
   function standWodAction(p, w, act, x, y, z) {
@@ -5038,6 +5063,8 @@ export async function bootWorld(canvas, renderer, params, status) {
     const pixelBuildingKeys = new Set();   // HOME-LOOK: every building of the pixel, by its key
     /** @type {Map<number, {at: number[], box: number[], rects: number[][]}>} HOME-YARD: each building's own place and the box round its models, pixel-local; FB1009 HOME-FOOT: and the ground its models' faces cover */
     const pixelHomeFrames = new Map();
+    const pixelPoiSites = [];   // RW-POI: this pixel's sidecar spawners, pixel-local
+    poiSitesByPixel.set(key, pixelPoiSites);
     const pixelDungeonDoors = [];   // CASTLE-GATE: the dungeon-entrance doors the town's blocks stand, each with its model's box and its outward normal
     if (dfLocation) {
       // AUDIT 39 (#18): the skin reaches the layout, because the mill's
@@ -5078,6 +5105,8 @@ export async function bootWorld(canvas, renderer, params, status) {
         // that hold the same block name and leave every repeat with no
         // buildings at all.
         const pixelFirstModel = new Set();   // recordIndex - this BLOCK INSTANCE's latch
+        const poiBlock = poi.hasBlock(b.blockName) ? poi.forBlock(b.blockName, b.dfBlock) : null;   // RW-POI: this block's resolved entrances
+        if (poi.hasBlock(b.blockName)) pixelPoiSites.push(...spawnerSites(poi.spawnersOf(b.blockName), b.blockName, [originMatrix[12], originMatrix[13], originMatrix[14]], `${dfLocation.regionIndex}:${dfLocation.locationIndex}:${b.x},${b.y}`));
         // WM2d: THE MILLS THIS BLOCK STANDS. Classic Daggerfall places
         // none, so rmbLayout adds them; the tower joins the static model
         // list and only the SAIL needs a matrix per frame. Enhanced skin
@@ -5203,6 +5232,9 @@ export async function bootWorld(canvas, renderer, params, status) {
               translation: ((o) => () => state.pixelTranslation(px, py, o))([0, 0, 0]),   // BLOOD1 AUDIT 3: the same
             });
           }
+          // RW-POI: a sidecar-tagged model is a dungeon entrance like an archive-56 door; a mesh with its own keeps its own
+          const poiHit = poiBlock?.size && !cpu.doors?.some((d) => d.type === DOOR_TYPE.DUNGEON_ENTRANCE) ? poiBlock.get(recordKey(placedSource.get(placed) ?? { kind: '', sub: null, modelId: 0, pos: [] })) : null;
+          if (poiHit) { doorGeneration += 1; buildingDoors.push(poiDoorEntry(poiHit, archAabb(placed.modelIdNum, cpu.positions), local, b.dfBlock.index, placed.recordIndex, { pixelKey: key, dfBlock: b.dfBlock, blockX: b.x, blockY: b.y, climateBase: townClimateBase, season: INTERIOR_SEASON })); }
           // Building models expose their static doors for E-transitions.
           if (cpu.doors && cpu.doors.length) {
             // StaticDoor.blockIndex must be TRUTHFUL (RMBLayout.cs:848
@@ -17298,6 +17330,8 @@ export async function bootWorld(canvas, renderer, params, status) {
     window.__move = (dx, dy, dz) => {
       cam.pos[0] += dx; cam.pos[1] += dy; cam.pos[2] += dz;
     };
+    if (poi.active) window.__poi_clock = setPoiHours;   // RW-POI probe: respawn timing
+    if (poi.active) window.__poi_sidecar = () => ({ doors: buildingDoors.filter((e) => e.poi).length, spawners: [...built.values()].reduce((n, p) => n + (poiSitesByPixel.get(`${p.px},${p.py}`)?.length ?? 0), 0), foes: exteriorFoes.foes.filter((f) => !f.dead && f.placed).map((f) => f.mobileType), hours: poiHours(), sites: [...built.values()].flatMap((p) => { const t = state.pixelTranslation(p.px, p.py, [0, 0, 0]); return (poiSitesByPixel.get(`${p.px},${p.py}`) ?? []).map((s) => s.local.map((v, i) => v + t[i])); }) });   // RW-POI probe
     window.__pose = (x, y, z, yaw, pitch) => {
       // walk mode: the camera FOLLOWS the motor - move the player
       // (a bare cam.pos write is overwritten next frame; T1 probe fix)
@@ -17790,6 +17824,7 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  never lands at the stair and the undercroft's never at the castle's doors. */
   const _undercrofts = new WeakMap();
   function arenaDoorTarget(e) {
+    if (e.poi) return { dfLocation: e.dfLocation, group: e.group };   // RW-POI: a tagged model enters its own dungeon and leaves by its own door
     const city = locationIndex.get(e.pixelKey);
     if (!isUndercroftDoor(e, DOOR_TYPE.DUNGEON_ENTRANCE) || !isArenaCity(city)) return { dfLocation: city, group: e.pixelKey };
     let u = _undercrofts.get(city);
@@ -31669,6 +31704,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     renderer.setWindowEmission(windowEmissionRGB(
       params.has('window') ? params.get('window') : windowStyleForTime(minute)));
     tickWodSpawners();   // WOD3: LocationEnemySpawner.Update, every exterior frame
+    tickPoiSpawners();   // RW-POI: sidecar spawners
     tickCityGates(minute);   // AUDIT 64 F14: DaggerfallCityGate.Update, every frame as DFU's is - and on the first frame after a pixel builds, which is what closes a gate streamed in at 20:00
     iilSyncLane(renderer, false);   // IIL2: outdoors the mod's shadow lane comes off - the streets are the classic set's, day or night
     const currentEntry = built.get(`${state.current.x},${state.current.y}`);

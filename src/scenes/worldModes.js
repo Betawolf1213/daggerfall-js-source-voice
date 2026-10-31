@@ -6745,7 +6745,7 @@ export function createWorldModes(host) {
         // ELITE: 'Elite Dungeon' over its mouth; TIER1: online every mouth says its tier and the size the room builds it
         // at (systems/dungeonTier.js), offline the mod's own "To <name>"
         const label = tierShown(host.dungeonOnline?.() ?? false) ? dungeonTierLabel(entry.dfLocation) : null;
-        return staticDoorName('dungeonEntrance', { locationName: currentLocationName(), tier: label?.tier ?? null, size: label?.size ?? null });
+        return staticDoorName('dungeonEntrance', { locationName: entry.poi?.dungeon?.name ?? currentLocationName(), tier: label?.tier ?? null, size: label?.size ?? null });   // RW-POI: a tagged model names its own dungeon
       }
       // .cs:684-762, GetStaticDoorText's building arm. The mod
       // DISCOVERS the building to read its name, and Mac's call was to

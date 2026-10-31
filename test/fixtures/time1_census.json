@@ -2,6 +2,12 @@
  "_": "TIME1 (bible/06-Systems/Online-Time-Arc.md section 8): every line in src/ that reads a shared clock, the clock it means and why. test/time1_census.test.js holds src/ to it both ways.",
  "rows": [
   {
+   "file": "src/scenes/poiSidecar.js",
+   "has": "export const poiHours = () => worldMinutes() / 60;",
+   "clock": "event",
+   "why": "a rw-poi spawner's respawn cooldown, in game hours"
+  },
+  {
    "file": "src/net/gateLaw.js",
    "has": "export const gameDayAt = (nowMs) => Math.floor(sharedClassicMinutes(nowMs) / GATE_DAY_MINUTES);",
    "clock": "event",
