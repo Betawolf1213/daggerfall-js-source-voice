@@ -49,6 +49,8 @@ import { racialRestBlock } from '../systems/vampirism.js';   // V2b: the vampire
 import { ArrowFlight, playerArrowHitFoe } from '../combat/arrowFlight.js';   // C13: visible exterior arrows; AUDIT 39 (#64): and the shaft that LANDS
 import { inflictPoison } from '../systems/poisons.js';   // AUDIT 39 (#64): a poisoned shaft doses its mark
 import { PLAYED_STEP_MAX_SECONDS } from '../systems/quest/clock.js';   // WORLD7: the quest clocks' played step online
+import { isGodMode } from '../systems/godMode.js';   // POI/GOD: the one invulnerability gate
+import { installPoiMode, poiOn, poiFlyFrame, poiYieldToOrbit, poiHoldFeet } from '../systems/poiMode.js';   // POI: the opt-in POI mode (fly camera, god mode)
 import { isOnlinePage } from '../systems/onlineLane.js';   // QUEST-POPUP-PAUSE: a quest box holds the foes offline only
 import { addItem, spendAmmoFor, carriedWeight, isEnchanted } from '../systems/inventory.js';   // E4: PlayerEntity.CarriedWeight carries the gold counter's own term; ROAD-G G2: BowDamage's recoverable shaft
 import { calculateAttackDamage } from '../combat/formulas.js';   // ROAD-G G2: enemy-arrow impacts
@@ -1251,7 +1253,7 @@ export async function bootExterior(canvas, renderer, params, status) {
   }
   // C14: the swing's own fatigue drain rides the same collapse law.
   const drainExteriorFatigue = (n) => {
-    if (n <= 0) return;
+    if (n <= 0 || isGodMode()) return;   // POI/GOD: no fatigue is lost
     playerEntity.fatigue = Math.max(0, (playerEntity.fatigue ?? 0) - n);
     surfacePlayer();
     if (playerEntity.fatigue <= 0 && playerEntity.health > 0) onExhaustedExterior();
@@ -1387,6 +1389,7 @@ export async function bootExterior(canvas, renderer, params, status) {
    *  `modes?.` because the mode machine is built further down and the
    *  event handlers that ask this are bound before it exists. */
   const gamePaused = () => townTalk.overlayActive || (modes?.overlayHeld ?? false);
+  installPoiMode({ params, blocked: () => gamePaused() });   // POI: ?poi / Shift+F8 - the keys, the middle drag and the HUD tag
 
   // ═══ MAC-K3: THE MOUNT ═════════════════════════════════════════
   //
@@ -2700,7 +2703,7 @@ export async function bootExterior(canvas, renderer, params, status) {
   const playerSpellSinks = {
     hurt: (n) => { if (n > 0) hurtPlayer(playerEntity, n); },
     heal: (n) => { if (n > 0) { playerEntity.health = Math.min(playerEntity.maxHealth, playerEntity.health + n); surfacePlayer(); } },
-    drainMagicka: (n) => { if (n > 0) { playerEntity.magicka = Math.max(0, (playerEntity.magicka ?? 0) - n); surfacePlayer(); } },
+    drainMagicka: (n) => { if (n > 0 && !isGodMode()) { playerEntity.magicka = Math.max(0, (playerEntity.magicka ?? 0) - n); surfacePlayer(); } },
     restoreMagicka: (n) => { if (n > 0) { playerEntity.magicka = Math.min(playerEntity.maxMagicka ?? Infinity, (playerEntity.magicka ?? 0) + n); surfacePlayer(); } },
     drainFatigue: (n) => drainExteriorFatigue(n),
     restoreFatigue: (n) => { if (n > 0) { playerEntity.fatigue = Math.min(maxFatigue(playerEntity), (playerEntity.fatigue ?? 0) + n); surfacePlayer(); } },
@@ -4663,6 +4666,7 @@ export async function bootExterior(canvas, renderer, params, status) {
   if (shotMode) {
     window.__frame = window.__frame ?? 0;   // AUDIT 17e F37: the counter is now incremented, so seed it
     window.__renderer = renderer;   // EV2: the probe surface every host carries now (the dungeon's U38 precedent) - draw counts land against renderer.stats
+    window.__cam = () => cam.pos.slice();   // POI: the camera's position, for the fly probes (world.js's twin)
     window.__pose = (x, y, z, yaw, pitch) => {
       cam.yaw = yaw; cam.pitch = pitch;
       // walk mode: the camera FOLLOWS the motor - move the player
@@ -4673,7 +4677,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     // is present - complete control to move around any object (orbit / zoom /
     // pan). It targets the location centre by default (on land), so a
     // generated showcase link stands the camera AROUND the place, not in it.
-    if (params.has('orbit')) installOrbitCam({ params, pose: window.__pose, canvas, defaultTarget: center });
+    if (params.has('orbit')) { poiYieldToOrbit(true); installOrbitCam({ params, pose: window.__pose, canvas, defaultTarget: center, fly: (dt, yaw, pitch) => (poiOn() ? poiFlyFrame(dt, yaw, pitch) : null) }); }   // POI: the orbit camera keeps its own wheel and middle-drag; the keys fly its target
     modes.installShotProbes();
     // ARENA-FIX 12 probe surface (world.js __arena's shape, this host's): the bout standing, its fighters' feet
     window.__arena = () => {
@@ -5177,6 +5181,7 @@ export async function bootExterior(canvas, renderer, params, status) {
       // as a RELEASE to the motor's press-edge latches, so a key held
       // through the paralysis fired a synthetic press on the frame it lifted.
       playerBlowFrame({ motor: player, entity: playerEntity, shake: (k) => betterAmbience.weaponKick(k), hurt: (n) => { hurtPlayer(playerEntity, n); flashPlayerDamage(n); surfacePlayer(); } });   // TELL6e: a landing's push, rattle, knockdown and bleed
+      const _poiTo = poiOn() && !_overlayHeld ? poiFlyFrame(dt, cam.yaw, cam.pitch).map((v, a) => player.pos[a] + v) : null;   // POI: the body is the free camera - noclip, no fall, no motor
       if (_overlayHeld) player.holdFrame();   // DISC8-G: a held motor reports no landing and no jump
       if (!_overlayHeld) player.update(dt, paralyzed ? { forward: 0, strafe: 0, run: held(keys, 'Run'), autoRun: held(keys, 'AutoRun'), back: mv.backwards, sneak: held(keys, 'Sneak') || walkModeOn(), jump: false, up: false, down: false, crouch: crouchPress } : {
         forward: axes.forward,   // AUDIT 28 W8: InputManager's axes - accelerated under MovementAcceleration, the held difference without
@@ -5199,6 +5204,7 @@ export async function bootExterior(canvas, renderer, params, status) {
         down: crouchHeld || held(keys, 'FloatDown'),
         crouch: crouchPress,
       }, cam.yaw, cam.pitch);
+      if (_poiTo) poiHoldFeet(player, _poiTo);   // POI: the flown position stands
       // C9: ReadyWeapon (Z) - the sheathe toggle, host parity.
       if (pressed(latch.edge, keys, 'ReadyWeapon')) weaponRig.readyWeapon();   // MAC-O1: the KEY takes WeaponManager.Update's arm (:229-269), not HUDLarge's raw ToggleSheath
       // a12: SwitchHand (H) - ActionComplete's RELEASE edge
@@ -5468,6 +5474,7 @@ export async function bootExterior(canvas, renderer, params, status) {
       // default and the ?world host already consumes it there; third
       // person rides the ?tp URL param, as it always has in ?world.
     } else {
+      if (poiOn()) { const d = poiFlyFrame(dt, cam.yaw, cam.pitch); for (let a = 0; a < 3; a++) cam.pos[a] += d[a]; _shotPosed = true; }   // POI: the free camera - WASD/Space/Ctrl/Shift, middle-drag, wheel
       const speed = (keys.has('ShiftLeft') ? 120 : 30) * dt;   // fly-cam (dev): raw keys, not an action
       if (keys.has('KeyW')) for (let a = 0; a < 3; a++) cam.pos[a] += fwd[a] * speed;   // fly-cam (dev)
       if (keys.has('KeyS')) for (let a = 0; a < 3; a++) cam.pos[a] -= fwd[a] * speed;   // fly-cam (dev)

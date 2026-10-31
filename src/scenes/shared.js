@@ -70,6 +70,7 @@ import { FALL_DAMAGE_THRESHOLD, FALL_HP_PER_METRE, CAPSULE_HEIGHT } from '../pla
 import { FOOTSTEP_VOLUME } from '../systems/footsteps.js';   // AUDIT 58: PlayerFootsteps.FootstepVolumeScale (:30), which its one-shots carry too
 import { flashPlayerDamage } from '../ui/damageFlash.js';   // AUDIT 24 (wave 39): ShowPlayerDamage
 import { SOUND } from '../systems/soundClips.js';
+import { isGodMode } from '../systems/godMode.js';   // POI/GOD: the one invulnerability gate
 import { surfacePlayer, hurtPlayer, duelSpare, staffFly, levitateWarded, freeFlight } from '../characters/playerEntity.js';   // DUEL1: the duel's floor, for its damage over time   // AUDIT-SEATS G5: a siege's ward on Levitate   // AUDIT-SEATS G4: a spectator's flight
 import { readSpellsStd, spellsByIndexMap } from '../formats/spellsStd.js';   // G4: the two magic registries, one home
 import { readMagicDef } from '../formats/magicDef.js';
@@ -1282,12 +1283,14 @@ export function applyFallLanding(entity, distance, { hurt = null, sound = null, 
     // AUDIT 21 (hosts lane, F6): the no-`hurt` arm went through the ONE
     // damage door now, so a fatal fall outdoors or in a building raises the
     // death screen instead of leaving you walking around at 0 HP.
+    if (isGodMode()) { /* POI/GOD: a fall bills nothing, and no flash */ } else {
     if (hurt) hurt(dmg);
     else hurtPlayer(entity, dmg);
     // AUDIT 24 (wave 39): PlayerHealth.ApplyPlayerFallDamage calls
     // RemoveHealth (:57), which is ShowPlayerDamage.Flash's only
     // trigger. A fall flashes the screen; a poison does not.
     flashPlayerDamage(dmg);   // BA1: RemoveHealth carries the amount
+    }
     // AUDIT 58: at FootstepVolumeScale, not full. ApplyPlayerFallDamage
     // is `PlayOneShot((int)FallDamageSound, 0, FootstepVolumeScale)`
     // (PlayerFootsteps.cs:307-311) and HardFallAlert the same for
@@ -1572,9 +1575,10 @@ export function createPlayerTicker(entity, { say = () => {}, onLevelUp = null, o
     // they used to do it silently.
     hurt: (n, a = null) => hurtPlayer(entity, n, a?.bundleDuel ? { spare: duelSpare } : undefined),   // DUEL1: a duel opponent's damage over time stops at 1 health (characters/playerEntity.js spare)
     heal: (n) => { if (n > 0) entity.health = Math.min(entity.maxHealth ?? Infinity, (entity.health ?? 0) + n); },
-    drainMagicka: (n) => { if (n > 0) entity.magicka = Math.max(0, (entity.magicka ?? 0) - n); },
+    drainMagicka: (n) => { if (n > 0 && !isGodMode()) entity.magicka = Math.max(0, (entity.magicka ?? 0) - n); },
     restoreMagicka: (n) => { if (n > 0) entity.magicka = Math.min(entity.maxMagicka ?? Infinity, (entity.magicka ?? 0) + n); },
     drainFatigue: (n, a = null) => {
+      if (isGodMode()) return;   // POI/GOD: no fatigue is lost
       if (a?.bundleDuel) n = Math.min(n, Math.max(0, (entity.fatigue ?? 0) - 1));   // AUDIT DUEL1 B3: a duel opponent's fatigue damage over time leaves 1 - the collapse at 0 can kill
       if (n <= 0) return;
       entity.fatigue = Math.max(0, (entity.fatigue ?? 0) - n);

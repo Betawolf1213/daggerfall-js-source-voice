@@ -18,6 +18,7 @@
 // - and nothing reads these once chargen resolves. armor 0 until
 // player equipment. LiveSpeed lives in PlayerMotor stats.
 import { SKILL_COUNT, SKILLS_RECENTLY_RAISED_WORDS } from '../systems/skills.js';
+import { isGodMode } from '../systems/godMode.js';   // POI/GOD: the one invulnerability gate, asked at the damage door
 import { SOCIAL_GROUP_COUNT } from '../formats/factionFile.js';   // AUDIT 65 SL-4: PlayerEntity.cs:128's socialGroupCount = 11
 
 export const playerEntity = {
@@ -210,7 +211,7 @@ const _staff = { god: false, fly: false };   // STAFF1: the staff's switches (se
 export function registerPlayerDamageVeto(fn) { _damageVeto = typeof fn === 'function' ? fn : null; }
 /** For a caller that needs to know a blow would be withheld before it
  *  spends anything on delivering one. */
-export const playerDamageWithheld = () => { if (_staff.god) return true; try { return !!_damageVeto?.(); } catch { return false; } };   // STAFF1: /god withholds every blow at the veto's own door
+export const playerDamageWithheld = () => { if (_staff.god || isGodMode()) return true; try { return !!_damageVeto?.(); } catch { return false; } };   // STAFF1: /god withholds every blow at the veto's own door
 
 /** STAFF1 (net/staffCommands.js): THE STAFF'S OWN TWO SWITCHES - /god (no blow delivered: the veto's door above, so a
  *  caller asking before it spends a blow is told too) and /fly (levitation without the spell: every host's motor-flag

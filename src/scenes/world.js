@@ -153,7 +153,7 @@ import { createSpellbookWindow } from '../ui/spellbookDoor.js';   // PX23: the b
 import { calculateCastCost } from '../systems/spellcost.js';   // M2   // T3b
 import { rangedDamageSpells } from '../systems/spellcast.js';   // U42: the flight probe's picker
 import { worldMinutes, skyMinutes, setWorldMinutes, setSharedClock, sharedClockOn, sharedWallMs, alignEntityClocks, CLASSIC_MINUTES_PER_SECOND, setWorldPriceTilt, empireJoin, ownMinutes, advanceOwnMinutes, worldNightfallText, hearSharedClock, ownWalkWaiting, trustedWorldMinutes, raisedMinutes, playerWeaponHitEntity } from '../systems/worldTick.js';   // ECON1 / AUDIT ALL E1: the world's tilt off the file's base powers   // AUDIT 23 (C2): the ONE clock
-import { setSyntheticTimeIncrease } from '../systems/effectBroker.js';   // AUDIT 63 F13: DaggerfallTravelPopUp_OnPostFastTravel (EntityEffectBroker.cs:846-847)
+import { setSyntheticTimeIncrease, resetSyntheticTimeIncrease } from '../systems/effectBroker.js';   // AUDIT 63 F13: DaggerfallTravelPopUp_OnPostFastTravel (EntityEffectBroker.cs:846-847)
 import { tallySwingSkills, SWING_FATIGUE_COST, playerPainVoice, playPlayerVoice, makeEnemiesHostile, isBowWeapon, enemyHeavyPainVoice, playerClimbStrain, aimedBlowInfo, playerBlowFrame, setWindupAtMeListener } from './hostCombat.js';   // ROAD-B: GameManager.MakeEnemiesHostile
 import { flashPlayerDamage } from '../ui/damageFlash.js';
 import { knockedDown } from '../systems/blowEffects.js';   // TELL6e: knocked down, no swing
@@ -505,6 +505,8 @@ import { preloadPaperDollArt } from '../ui/paperDoll.js';   // U8f: the avatar b
 import { seedStartingEquipment } from '../systems/equip.js';   // U8h: the worn-weapon binding
 import { createChargenFlow, createChargenWindow, finishChargen, loadSpellIndex, applyHeadlessChargen } from '../systems/chargenSession.js';   // S3c/U9
 import { testEntryById, applyTestCharacter, seedTestMount, seedTestLoot, testRoomOnlineRefused, TEST_ROOM_OFFLINE_TEXT, TEST_SEA, TEST_SEA_TEXT, enableTestSea } from '../systems/testRoom.js';   // TR3: the Test Room's one home; TSR4: the ride; AUDIT SET D4: its character's online refusal
+import { isGodMode, setSaveGodMode } from '../systems/godMode.js';   // POI/GOD: the one invulnerability gate
+import { installPoiMode, poiOn, poiFlyFrame, poiOwnsKey, poiFreeTrip, poiYieldToOrbit, poiHoldFeet } from '../systems/poiMode.js';   // POI: the opt-in POI mode (fly camera, free instant safe travel, god mode)
 import { publishBootParams, refuseOnlinePowerFlags, BOOT_DOOR_KEYS } from '../systems/onlineLane.js';   // AUDIT SET D4: a refused Test Room boot drops `online` from the URL the lane reads; REALM P0.1: the URL's powers stay offline
 import { preloadChargenArt } from '../ui/chargenArt.js';   // U10
 import { preloadMessageBoxArt } from '../ui/messageBox.js';   // U11
@@ -6590,7 +6592,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     } finally { _inExhaustion = false; }
   }
   const drainExteriorFatigue = (n) => {
-    if (n <= 0) return;
+    if (n <= 0 || isGodMode()) return;   // POI/GOD: no fatigue is lost
     playerEntity.fatigue = Math.max(0, (playerEntity.fatigue ?? 0) - n);
     surfacePlayer();
     if (playerEntity.fatigue <= 0 && playerEntity.health > 0) onExhaustedExterior();
@@ -6910,6 +6912,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   let _staffGlyphs = [];
   const gamePaused = () => staffTeleportHeld || townTalk.overlayActive || (modes?.overlayHeld ?? false);
   _dwOverlayUp = () => gamePaused();   // DW-E2: the Deep Waters runtime's IsPlayingGame, now that the slot exists - AUDIT DW-F: every stack over the frame (a building's or a dungeon's window too), as IsPlayingGame asks of every window
+  installPoiMode({ params, blocked: () => gamePaused() });   // POI: ?poi / Shift+F8 - the keys, the middle drag and the HUD tag
   preloadCharSheetArt({ renderer, fetchBytes, palette });   // U8a: INFO00I0 warms at boot
   warmLevelUpWindow();   // LV1's audit: the level-up window opens because the GAME decided, so its chunk warms at boot rather than inside a pause nobody asked for
   preloadBookArt({ renderer, fetchBytes, palette });   // B1: BOOK00I0 warms at boot
@@ -11282,7 +11285,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   const playerSpellSinks = {
     hurt: (n) => { if (n > 0) hurtPlayer(playerEntity, n, _duelScope ? { spare: duelSpare } : undefined); },   // DUEL1: a duel opponent's spell, landing now (duelBlowIn), stops at 1 health
     heal: (n) => { if (n > 0) { playerEntity.health = Math.min(playerEntity.maxHealth, playerEntity.health + n); surfacePlayer(); } },
-    drainMagicka: (n) => { if (n > 0) { playerEntity.magicka = Math.max(0, (playerEntity.magicka ?? 0) - n); surfacePlayer(); } },
+    drainMagicka: (n) => { if (n > 0 && !isGodMode()) { playerEntity.magicka = Math.max(0, (playerEntity.magicka ?? 0) - n); surfacePlayer(); } },
     restoreMagicka: (n) => { if (n > 0) { playerEntity.magicka = Math.min(playerEntity.maxMagicka ?? Infinity, (playerEntity.magicka ?? 0) + n); surfacePlayer(); } },
     // AUDIT DUEL1 B3: a duel opponent's fatigue damage (landing now, or a round of theirs) leaves 1 - at 0 the exhaustion
     // collapse (onExhaustedExterior) can kill a swimmer or a player a foe can see, through no duel's floor
@@ -14121,6 +14124,7 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  the core has built the pixel - and `besideText`, the arrival's line when it did. True once the journey arrived;
    *  nothing (falsy) when it never left. */
   async function fastTravelTo(pick, opts, computed) {
+    if (poiOn()) { computed = poiFreeTrip(computed); opts = { ...opts, speedCautious: false }; }   // POI: no fare, no days, no cautious rest - the arrival is this minute
     if (worldMoveBusy()) return;   // AUDIT 68 S22: before the gold goes
     if (_traveling) return;
     const wildTrip = wildTravelGate(pick.pixel, computed?.piecesCost ?? 0);   // WILD3: never into or out of the open zone; inside it, the fee and the wait
@@ -14285,6 +14289,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       // calendar's own arms), exactly as offline. [SUPERSEDES WORLD5's "no jump, no catch-up window" for the
       // character: only the world's half stands still.] The arrival clamp below stays the world's sky's.
       setSyntheticTimeIncrease(true); playerTicker.advance(computed.minutes);
+      if (poiOn()) resetSyntheticTimeIncrease();   // POI: computed.minutes is 0 (poiFreeTrip) - nothing advanced, so the shield flag is not left up
       // W1 review: DFU fast travel never fires the respawner's direct
       // re-roll - TeleportToCoordinates raises OnInitWorld, whose
       // weather half applies the destination climate's ARRAY slot
@@ -14852,6 +14857,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       modes?.abortTransition?.();
       await modes?.transitionSettled?.();
       if (csaRuntime) csaCall(() => csaRuntime.OnStartLoad());   // CSA-D: ComeSailAway.OnStartLoad - the riders dropped, the helm left; CSA-J (the audit): AHEAD of the save's player (SaveLoadManager.cs:1378, the restore at :1497) - its StopSailing hands a lent ship back, and after restorePlayer it took the loaded character's own
+      setSaveGodMode(false);   // GOD: a native save carries no classic cheat flag
       const extras = restorePlayer(playerEntity, snap, spellsByIndex);
       if (!extras) { townTalk.say('Save version mismatch.'); return; }
       autoBuildArms(playerEntity);   // MWA1: the loaded character's arms (a boot into ?load has no chargenDone until here)
@@ -15174,6 +15180,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       townTalk.say('Could not import the classic save.');
       return false;
     }
+    setSaveGodMode(bundle.godMode);   // GOD: DFU's GodMode cheat flag, read off the classic save
     const extras = restorePlayer(playerEntity, bundle.snap, spellsByIndex);
     if (!extras) return false;
     autoBuildArms(playerEntity);   // MWA1: the classic save's character too
@@ -15330,11 +15337,11 @@ export async function bootWorld(canvas, renderer, params, status) {
         if (at && at.x === pick.pixel.x && at.y === pick.pixel.y && wildHallAt(wildActiveNow(), at.x, at.y)) { townTalk.say('You are already there.'); setMidScreenText('You are already there.', 3); hudFade.clearFade(); return; }
       }
       if (partyTravel?.propose(pick, opts, computed)) { hudFade.clearFade(); return; }   // PARTY-TRAVEL: "...the option for party members to ready up and travel together" - the leader's Begin with the party gathered asks them first (a walked trip is never a round: the session says no to it)
-      if (opts?.playerControlled && beginAcceleratedTravel(pick, opts, { estimateMinutes: computed?.minutes ?? null })) return;   // AUDIT-TO1 L5: the popup's estimate rides along for the panel's ETA
+      if (!poiOn() && opts?.playerControlled && beginAcceleratedTravel(pick, opts, { estimateMinutes: computed?.minutes ?? null })) return;   // POI: every trip is the instant free one   // AUDIT-TO1 L5: the popup's estimate rides along for the panel's ETA
       // AUDIT OW3 J2: a walked trip the OVERWORLD refused (no way by land, the peaks, the water, foes near) is refused -
       // said, and done. It fell through to the fast travel below: a paid teleport straight past the mountain rule.
       // TO-ROADS: a first-person route's refusal the same - never the straight walk, never the teleport
-      if (opts?.playerControlled && tvRoutesJourneys()) return;
+      if (!poiOn() && opts?.playerControlled && tvRoutesJourneys()) return;
       if (isOnlinePage() && !opts?.travelShip) { townTalk.say(ONLINE_LAND_TRAVEL_REFUSAL); hudFade.clearFade(); } else fastTravelTo(pick, opts, computed);   // AUDIT TRAVEL-ONLINE T7: online a trip over land is never the teleport - the floor under the room's switches (systems/onlineLane.js)
     } });
     if (!_travelMap) { townTalk.say('(the travel map art is unavailable)'); return false; }
@@ -16004,7 +16011,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       // TO1: the mod itself rides travelFareDeps (above); the reads its additions to this window need follow.
       // AUDIT-TO1 I4: ...and the door ACTS on the refusal it can still get
       // (the popup was minted before the online state could change).
-      onTravelToCoords: (pick, opts) => { if (TEST_GODMODE && staffPowers().god && pick?.pixel) { teleportTo(pick); return; } if (!beginAcceleratedTravel(pick, opts, { coords: true }) && !tvRoutesJourneys()) townTalk.say('You cannot travel there now.'); },   // AUDIT OW3 J2: the Overworld said its own refusal (TO-ROADS: a first-person route's too)
+      onTravelToCoords: (pick, opts) => { if (poiOn() && pick?.pixel) { fastTravelTo(pick, {}, null); return; } if (TEST_GODMODE && staffPowers().god && pick?.pixel) { teleportTo(pick); return; } if (!beginAcceleratedTravel(pick, opts, { coords: true }) && !tvRoutesJourneys()) townTalk.say('You cannot travel there now.'); },   // AUDIT OW3 J2: the Overworld said its own refusal (TO-ROADS: a first-person route's too)
       onResumeTravel: () => { travelViewResume(); },   // AUDIT OW4 J4: the Overworld's journey planned again from where the traveller stands
       onForgetTravel: () => { travelOptions?.clearTravelDestination(); },   // RESUME-OUT: the held map's Forget it - the journey ended, asked no more
       // AUDIT-TO1 H1: the map's H boxes the help in the WINDOW'S OWN box
@@ -30725,6 +30732,8 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         _dwLastForward = paralyzed ? 0 : axes.forward;   // DW-D: the shore exit's InputManager.Vertical, for the next frame's driver
         _csaAxes = { h: axes.strafe, v: axes.forward };   // CSA-D: InputManager.Horizontal / Vertical for the helm's inputTarget - CSA-J (the audit): InputManager has no paralysis gate, only the motors do
         playerBlowFrame({ motor: player, entity: playerEntity, shake: (k) => betterAmbience.weaponKick(k), hurt: (n) => { hurtPlayer(playerEntity, n); flashPlayerDamage(n); surfacePlayer(); } });   // TELL6e: a landing's push, rattle, knockdown and bleed
+        const _poiFly = poiOn() && !_overlayHeld && !_seasonHeld;   // POI: the body is the free camera - noclip, no fall, no motor
+        const _poiTo = _poiFly ? poiFlyFrame(dt, cam.yaw, cam.pitch).map((v, a) => player.pos[a] + v) : null;
         if (_overlayHeld || _seasonHeld) player.holdFrame();   // DISC8-G: a held motor reports no landing and no jump
         if (!_overlayHeld && !_seasonHeld) player.update(dt, paralyzed ? { forward: 0, strafe: 0, run: held(keys, 'Run'), autoRun: held(keys, 'AutoRun'), back: mv.backwards, sneak: held(keys, 'Sneak') || walkModeOn(), jump: false, up: false, down: false, crouch: crouchPress } : {
           forward: axes.forward,   // TO1: the autopilot's force while a journey runs, else the player's own   // AUDIT 28 W8: InputManager's axes - accelerated under MovementAcceleration, the held difference without
@@ -30747,6 +30756,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
           down: crouchHeld || held(keys, 'FloatDown'),
           crouch: crouchPress,
         }, cam.yaw, cam.pitch);
+        if (_poiTo) poiHoldFeet(player, _poiTo);   // POI: the flown position stands
         // TRAVEL-NAV1: the travel the motor was really asked for this frame - after the ground gate, and
         // nothing on a held or paralysed frame - which the steering's grinding check weighs next frame.
         travelNavFrame.asked = _travelDrive && !_overlayHeld && !_seasonHeld && !paralyzed
@@ -31204,6 +31214,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         }
       }
     } else {
+      if (poiOn()) { const d = poiFlyFrame(dt, cam.yaw, cam.pitch); for (let a = 0; a < 3; a++) cam.pos[a] += d[a]; }   // POI: the free camera - WASD/Space/Ctrl/Shift, middle-drag, wheel
       const speed = (keys.has('ShiftLeft') ? 400 : 40) * dt;   // fly-cam (dev): raw keys, not an action
       if (keys.has('KeyW')) for (let a = 0; a < 3; a++) cam.pos[a] += fwd[a] * speed;   // fly-cam (dev)
       if (keys.has('KeyS')) for (let a = 0; a < 3; a++) cam.pos[a] -= fwd[a] * speed;   // fly-cam (dev)

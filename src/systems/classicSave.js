@@ -29,8 +29,8 @@
 //   - a BROKEN worn item imports into the bag, not the doll - DFU's
 //     EquipTable.EquipItem(alwaysEquip) has no broken gate, the
 //     port's one equip law does;
-//   - GodMode is read but dropped - the port has no consumer (no
-//     cheat toggles). UsingLeftHandWeapon was dropped beside it while
+//   - GodMode is read but dropped from the snapshot - its consumer is
+//     systems/godMode.js (the bundle's `godMode`, fed to setSaveGodMode); UsingLeftHandWeapon was dropped beside it while
 //     the port had no left-hand rig; a12 shipped one and AUDIT 63 F31
 //     wired the import (the pose's usingRightHand below,
 //     StartGameBehaviour.cs:605-606);
@@ -915,6 +915,7 @@ export function classicSaveToSnapshot(saveGames, {
     classicTransformedRace: doc.classicTransformedRace,
     vampireClan: doc.vampireClan,
     saveName: saveGames.saveName,
+    godMode: !!saveVars.godMode,   // GOD: DFU's GodMode cheat flag - systems/godMode.js is its consumer
   };
 }
 

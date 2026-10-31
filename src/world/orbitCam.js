@@ -31,7 +31,7 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
  *  camera; `canvas` (browser) gets the live orbit/zoom/pan handlers;
  *  `defaultTarget` is the [x,y,z] used when no cx/cy/cz is given.
  *  Returns the live orbit state. Node-safe (no canvas = no handlers). */
-export function installOrbitCam({ params, pose, canvas = null, defaultTarget = [0, 0, 0] }) {
+export function installOrbitCam({ params, pose, canvas = null, defaultTarget = [0, 0, 0], fly = null }) {
   const num = (k, d) => {
     const v = params.get ? params.get(k) : null;
     return v != null && v !== '' && Number.isFinite(Number(v)) ? Number(v) : d;
@@ -156,7 +156,13 @@ export function installOrbitCam({ params, pose, canvas = null, defaultTarget = [
   // Keep the pose current every frame so a host reset or a slow first
   // frame never leaves the camera on the old framing.
   if (typeof requestAnimationFrame !== 'undefined') {
-    (function loop() { apply(); requestAnimationFrame(loop); })();
+    let last = performance.now();   // POI: the fly hook's frame clock
+    (function loop() {
+      const t = performance.now(); const dt = Math.min(0.1, (t - last) / 1000); last = t;
+      const d = fly ? fly(dt, state.yaw, state.pitch) : null;   // POI: keys fly the orbit target (null/absent = unchanged)
+      if (d) { state.cx += d[0]; state.cy += d[1]; state.cz += d[2]; }
+      apply(); requestAnimationFrame(loop);
+    })();
   }
   return state;
 }

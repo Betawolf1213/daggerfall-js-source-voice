@@ -96,6 +96,7 @@ import { firstHotkey } from '../systems/dialogShortcuts.js';   // A8: the Dagger
 import { TRAVEL_OPTIONS_TEXT as TO_TEXT, format as toFormat } from '../systems/travelOptionsText.js';
 import { hasPortFor as hasPort } from '../systems/travelPorts.js';   // SEAT2b part two: HasPort, or a members' Harbour at a seat (travelPorts.js hasPortFor)
 import { calculateTradePrice, essentialPrice } from '../systems/shopStock.js';   // TravelTimeCalculatorTO's FormulaHelper.CalculateTradePrice
+import { poiOn } from '../systems/poiMode.js';   // POI: a trip costs nothing and takes no days
 import { isOnlinePage } from '../systems/onlineLane.js';   // ESSENTIALS-HALF: online, a fare costs half
 import { liveStat } from '../systems/statMods.js';
 import { skillValue, SKILLS } from '../systems/skills.js';   // TO-FARE: GetLiveSkillValue(Mercantile)
@@ -215,6 +216,7 @@ export function enforceShipRestriction(settings, opts, ctx) {
  *  `liveStat(e, 'mercantile')`, a stat no entity has, so every scaled
  *  fare haggled at Mercantile 0 and a trained haggler paid a novice's. */
 export function scaleTripCost(c, settings, entity, { online = isOnlinePage() } = {}) {
+  if (poiOn()) return { piecesCost: 0, totalCost: 0 };   // POI: free
   const scaled = modScaledTripCost(c, settings, entity);
   if (!online) return scaled;
   // ESSENTIALS-HALF (2026-09-30, Discord: "cut the cost of most essential items by half"): online the fare costs half
@@ -471,7 +473,7 @@ export class TravelPopUpWindow {
       return;
     }
     this.walkedTrip = false;
-    this.countdownValueTravelTimeDays = travelDays(this.travelTimeTotalMins);   // LIVED1: the days are the traveller's own, online too
+    this.countdownValueTravelTimeDays = poiOn() ? 0 : travelDays(this.travelTimeTotalMins);   // LIVED1: the days are the traveller's own, online too; POI: instant
   }
 
   /** TO1 - TravelTimeCalculatorTO.cs:24-40, CalculateTripCost. The mod

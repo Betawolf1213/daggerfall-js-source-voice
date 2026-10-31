@@ -73,6 +73,7 @@ import { registerPreventRestCondition, unregisterPreventRestCondition } from '..
 import { runSurvivalMinutes } from '../systems/survival/needs.js';   // AUDIT SURV B: the dungeon's rest pays its night asleep
 import { addCorpseFood } from '../systems/survival/loot.js';   // CORPSE-FOOD: a joiner's copy of a body rolls its own food
 import { dateFromClassicMinutes } from '../systems/gameDate.js';   // SURV7: the env's month
+import { isGodMode } from '../systems/godMode.js';   // POI/GOD: the one invulnerability gate
 import { playerEntity, surfacePlayer, hurtPlayer as hurtEntity, damageShieldPool, setDeathPresenter, setAvoidDeathHook, staffFly } from '../characters/playerEntity.js';   // AUDIT 58: DecreaseHealth's shield hook is the BASE class's, so every entity's door owes it
 import { addItem, spendAmmoFor, isEnchanted } from '../systems/inventory.js';
 import { useQuickslot, swapQuickslot, offHandQuickslot, spellQuickslotPress, offHandOffersSwap, tickQuickslotHold } from '../systems/quickslots.js';   // QS2/QS4: the diamond's performers   // QS6: the spell slot, the off hand's swap question, and the hold machine
@@ -508,6 +509,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     },
     castSpell: (index, origin) => { _pendingCasts.push({ index, origin }); },   // consumed once spells load
     drainMagicka: (n) => {
+      if (isGodMode()) return;   // POI/GOD
       playerEntity.magicka = Math.max(0, (playerEntity.magicka ?? 0) - n);
       surfacePlayer();
     },
@@ -3034,7 +3036,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // Heal-SpellPoints is potion-only with no classic key, so no spell
   // reaches a magicka-restore sink until potions/absorption ship.)
   function drainMagicka(n) {
-    if (n <= 0) return;
+    if (n <= 0 || isGodMode()) return;   // POI/GOD
     playerEntity.magicka = Math.max(0, (playerEntity.magicka ?? 0) - n);
     surfacePlayer();
   }
@@ -3058,7 +3060,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   const fatigueLossMultiplier = () => fatigueLossMultiplierFor(playerEntity);
   let _restFromBed = false;   // CSA-J (the audit): the rest press is a bed's - BedActivation's gate has no GiveOffer rung (RoleplayRealism.cs:487-525)
   function drainFatigue(n) {
-    if (n <= 0) return;
+    if (n <= 0 || isGodMode()) return;   // POI/GOD
     playerEntity.fatigue = Math.max(0, (playerEntity.fatigue ?? 0) - n);
     surfacePlayer();
     if (playerEntity.fatigue <= 0 && playerEntity.health > 0 && !exhaustedShowing()) onExhausted();

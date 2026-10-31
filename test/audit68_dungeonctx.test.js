@@ -180,6 +180,7 @@ function exhaustionHarness() {
     EXHAUSTED_IN_WATER: 'water', rscLines: () => ['You collapse from exhaustion.'], ActionTextBox,
     classicMinutesRef: { value: 1000 }, maxFatigue: () => 100, tallySkill: () => {}, SKILLS: { Medical: 0 },
     hurtEntity: () => {}, fatigueLossMultiplierFor: () => 1, makeWindowStack, pauseWhileOpen,
+    isGodMode: () => false,   // POI/GOD: the invulnerability gate, off - normal play
     activeOverlay: null, _ctxDead: false, opts: {},   // opts: CSA-J's OnPlayerDeath door, none here
   };
   state.advanceOwnMinutes = (n) => { state.classicMinutesRef.value += n; };   // TIME3: the collapse's hour is a counted raise of the same clock
