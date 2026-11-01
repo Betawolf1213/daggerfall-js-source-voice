@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import {
   parseMaterialsFile, buildMaterialsIndex, matchOverride, buildMaterialRemap, materialTakes, materialsRemap,
   resolveBlockOverrides, createMaterialsRuntime, isDoorTexture, MATERIALS_FORMAT, MATERIALS_VERSION, paintEntry,
+  portUvAffine, uvIsIdentity,
 } from '../src/scenes/materialsSidecar.js';
 import { blockRecords, recordKey } from '../src/scenes/poiSidecar.js';
 import { applyClimate, SEASON } from '../src/world/climateSwaps.js';
@@ -206,9 +207,7 @@ test('resolveBlockOverrides: one override per record (the first wins), dangling 
   assert.equal(rt.hasBlock('tempash0.rmb'), true);           // block names are case-free
   const one = rt.forBlock('TEMPASH0.RMB', records);
   assert.equal(one.size, 2);                                  // m9 on the 2810 record, uv on the 2832 one
-  assert.ok(warns.some((w) => /no uv path/.test(w)), 'a non-identity uv warns once');
-  rt.forBlock('TEMPASH0.RMB', records);
-  assert.equal(warns.filter((w) => /no uv path/.test(w)).length, 1, 'the uv warning is one-time');
+  assert.ok(!warns.some((w) => /uv/.test(w)), 'a uv transform is drawn now (RW-MAT-UV), never warned');
   const empty = createMaterialsRuntime({ blocks: new Map() });
   assert.equal(empty.active, false);
   assert.equal(empty.forBlock('TEMPASH0.RMB', records).size, 0);
@@ -229,4 +228,46 @@ test('paintEntry (the hosts\' one-line hook) paints only the matched record and 
   assert.equal(await paintEntry(none, matBlock, undefined, subs, null, (x) => x, deps), null);
   assert.equal(await paintEntry(none, null, src, subs, null, (x) => x, deps), null);
   assert.deepEqual(none, {});
+});
+
+// raven-wright gui/src/lib/uvLayout.js applyUvTransform (the editor preview's THREE texture transform), in GLB uv space
+const editorUv = (u, v, uv) => {
+  const su = uv.scale[0], sv = uv.scale[1], ou = uv.offset[0], ov = uv.offset[1];
+  const r = ((((uv.rot || 0) % 360) + 360) % 360) * (Math.PI / 180), c = Math.cos(r), sn = Math.sin(r);
+  const dx = u * su - 0.5, dy = v * sv - 0.5;
+  return [c * dx + sn * dy + 0.5 + ou, -sn * dx + c * dy + 0.5 + ov];
+};
+// the renderer's VS: vUV = aUV + vec2(dot(uUvA.xy, aUV), dot(uUvA.zw, aUV)) + uUvB
+const portUv = (u, v, x) => [u + x.a[0] * u + x.a[1] * v + x.b[0], v + x.a[2] * u + x.a[3] * v + x.b[1]];
+
+test('portUvAffine draws exactly what the editor previews (port v = -GLB v), every quarter turn, scale and offset', () => {
+  const cases = [
+    { scale: [1, 1], offset: [0, 0], rot: 0 }, { scale: [2, 3], offset: [0, 0], rot: 0 }, { scale: [1, 1], offset: [0.25, -0.5], rot: 0 },
+    { scale: [1, 1], offset: [0, 0], rot: 90 }, { scale: [2, 0.5], offset: [0.1, 0.3], rot: 180 }, { scale: [4, 4], offset: [-0.2, 0.7], rot: 270 },
+  ];
+  const pts = [[0, 0], [1, 0], [0, 1], [0.3, 0.8], [2.5, -1.25]];
+  for (const uv of cases) {
+    const x = portUvAffine(uv);
+    for (const [u, vg] of pts) {
+      const [eu, ev] = editorUv(u, vg, uv);
+      const [pu, pv] = portUv(u, -vg, x);
+      assert.ok(Math.abs(pu - eu) < 1e-5 && Math.abs(pv - -ev) < 1e-5, `${JSON.stringify(uv)} at ${u},${vg}: port ${pu},${pv} vs editor ${eu},${-ev}`);
+    }
+  }
+  const id = portUvAffine({ scale: [1, 1], offset: [0, 0], rot: 0 });
+  assert.deepEqual([...id.a, ...id.b].map((v) => Math.abs(v) < 1e-7 ? 0 : v), [0, 0, 0, 0, 0, 0], 'the identity is the zero delta (an unset uniform)');
+  assert.equal(uvIsIdentity(null), true);
+  assert.equal(uvIsIdentity({ scale: [1, 1], offset: [0, 0], rot: 0 }), true);
+  assert.equal(uvIsIdentity({ scale: [1, 1], offset: [0, 0], rot: 90 }), false);
+});
+
+test('materialsRemap attaches .uv only for painted keys of a non-identity transform (doors and the rest stay untouched)', async () => {
+  const deps = { getTexture: async () => ({ recordCount: 8 }), uploadRecord: () => {} };
+  const sms = [{ textureArchive: 158, textureRecord: 1 }, { textureArchive: 74, textureRecord: 0 }];
+  const flat = await materialsRemap(sms, new Map(), ov({ to: { archive: 60, record: 0 } }), (a) => a, deps);
+  assert.equal(flat.uv, undefined, 'identity: no uv table, the renderer stays on its identity fast path');
+  const tiled = await materialsRemap(sms, new Map(), ov({ to: { archive: 60, record: 0 }, uv: { scale: [2, 2], offset: [0, 0], rot: 90 } }), (a) => a, deps);
+  assert.equal(tiled.get('158_1'), '60_0');
+  assert.deepEqual([...tiled.uv.keys()], ['158_1'], 'only the painted sub-mesh carries the transform; the door has none');
+  assert.ok(tiled.uv.get('158_1').a instanceof Float32Array);
 });

@@ -1,12 +1,12 @@
 // rw-materials sidecars (raven-wright's contract, docs/rw-materials-sidecar.md v1): vendor/<v>/materials/blocks/
 // <BLOCK>.mat.json paint one placed model of a block with another texture - Roblox-style "click a model, pick a
 // material". RMB data cannot say this, so the editor writes a sidecar and the port applies it as a draw-time remap
-// exactly like HOME-LOOK (world/homeLook.js): pixels from the overridden record (put through the host's own climate
-// swap, rule 2), UVs the original's, a NEW Map per table so the renderer's EV2 identity cache refreshes. Parsing,
+// exactly like HOME-LOOK (world/homeLook.js): pixels from the overridden record (literal; the host's climate swap only
+// with climate:true, rule 2), a NEW Map per table so the renderer's EV2 identity cache refreshes. Parsing,
 // matching and the remap building are pure; only the glob needs the browser (node tests feed objects directly).
 // Door law: a sub-mesh whose texture IS a door - subMeshDoorType over the climate-reduced archive (74, 56, 95, 331
-// with record > 0) - is NEVER repainted in any mode, or doors stop working. UV transforms other than the identity
-// are ignored with a one-time warning: the renderer has no UV re-upload path (contract, Port implementation).
+// with record > 0) - is NEVER repainted in any mode, or doors stop working. A UV transform rides the table as
+// remap.uv (texture key -> delta affine, portUvAffine); the renderer uploads it per sub-mesh (uUvA/uUvB).
 import { DOOR_TYPE, subMeshDoorType } from '../world/meshReader.js';
 import { modSettingIfDeclared } from '../systems/modSettings.js';
 import { blockRecords, matchEntrance, recordKey } from './poiSidecar.js';
@@ -111,11 +111,31 @@ export function buildMaterialRemap(override, subMeshes) {
   return out;
 }
 
+/** True when a parsed uv is the identity (scale 1, offset 0, rot 0) - nothing to upload. */
+export function uvIsIdentity(uv) {
+  return !uv || (uv.scale[0] === 1 && uv.scale[1] === 1 && uv.offset[0] === 0 && uv.offset[1] === 0 && !uv.rot);
+}
+
 /**
- * The model's OWN draw table: the override's record put through the host's climate law exactly as the original would
- * be (contract rule 2 - a temperate wall turns desert where the town is desert), uploaded like homeLookRemap and
- * texRemap.js do, pruned when the target archive lacks the record, and every other sub-mesh carries the pixel's own
- * swap from `base` (doors included - they keep working). Always a NEW Map (EV2 caches by remap identity).
+ * The editor's UV transform (THREE repeat/offset/center(0.5,0.5)/rotation, raven-wright uvLayout.applyUvTransform) in
+ * the PORT's uv space as a delta from identity: uv' = uv + A*uv + B, A = [a00,a01,a10,a11] row-major, B = [bu,bv].
+ * The port's mesh v is the GLB's negated (meshReader uv = (u/w, -(v/h)); both wrap REPEAT), so the v row/column
+ * and the v translation flip sign. Delta form so an unset uniform (0) is the identity in every program built on VS.
+ */
+export function portUvAffine(uv) {
+  const su = uv.scale[0], sv = uv.scale[1], ou = uv.offset[0], ov = uv.offset[1];
+  const r = ((((uv.rot || 0) % 360) + 360) % 360) * (Math.PI / 180);
+  const c = Math.round(Math.cos(r) * 1e9) / 1e9, s = Math.round(Math.sin(r) * 1e9) / 1e9;   // quarter turns land exactly
+  const g = [c * su, s * sv, -s * su, c * sv];                       // GLB-space linear part
+  const tu = 0.5 - 0.5 * c - 0.5 * s + ou, tv = 0.5 + 0.5 * s - 0.5 * c + ov;
+  return { a: new Float32Array([g[0] - 1, -g[1], -g[2], g[3] - 1]), b: new Float32Array([tu, -tv]) };
+}
+
+/**
+ * The model's OWN draw table: the override's record (literal, or through the host's climate law with climate:true -
+ * contract rule 2), uploaded like homeLookRemap and texRemap.js do, pruned when the target archive lacks the record,
+ * and every other sub-mesh carries the pixel's own swap from `base` (doors included - they keep working). Always a
+ * NEW Map (EV2 caches by remap identity); a non-identity uv adds `.uv` (painted key -> portUvAffine).
  * @param {Array<{textureArchive:number,textureRecord:number}>|undefined} subMeshes
  * @param {Map<string,string>|null} base - the pixel's climate table for this host
  * @param {any} override - a parsed override (to {archive, record})
@@ -134,6 +154,7 @@ export async function materialsRemap(subMeshes, base, override, climateArchive, 
       if (tex && override.to.record < tex.recordCount) {
         uploadRecord(a, override.to.record, { opaque: true });   // a mesh material, as the climate swap uploads it (texRemap.js)
         out.set(key, `${a}_${override.to.record}`);
+        if (!uvIsIdentity(override.uv)) (out.uv ??= new Map()).set(key, portUvAffine(override.uv));   // drawn per sub-mesh by the renderer
         continue;
       }
       // the archive lacks the record: pruned, the sub-mesh keeps the town's texture (the texRemap.js prune, same reason)
@@ -144,10 +165,6 @@ export async function materialsRemap(subMeshes, base, override, climateArchive, 
   return out;
 }
 
-/**
- * A block's overrides resolved against its parsed records: Map of recordKey -> override (one per record, the first in
- * file order wins). Unresolved ones are dangling: warned through `warn`, never thrown.
- */
 /** Paint one placed model when its block's sidecar has an override for its record: sets entry._rwMat + a NEW entry.texRemap; returns the hit or null. */
 export async function paintEntry(entry, matBlock, source, subMeshes, base, climateArchive, pipeline) {
   const hit = matBlock?.size && source ? matBlock.get(recordKey(source)) : null;
@@ -157,6 +174,10 @@ export async function paintEntry(entry, matBlock, source, subMeshes, base, clima
   return hit;
 }
 
+/**
+ * A block's overrides resolved against its parsed records: Map of recordKey -> override (one per record, the first in
+ * file order wins). Unresolved ones are dangling: warned through `warn`, never thrown.
+ */
 export function resolveBlockOverrides(blockName, overrides, dfBlock, warn = console.warn) {
   const records = blockRecords(dfBlock);
   const out = new Map();
@@ -172,8 +193,7 @@ export function resolveBlockOverrides(blockName, overrides, dfBlock, warn = cons
 
 /**
  * The module's runtime, built once per host: `forBlock(blockName, dfBlock)` answers a Map recordKey -> override.
- * Online is harmless (contract rule 4) - the runtime stays active there. UV transforms are ignored with a one-time
- * warning here: the renderer has no UV re-upload path.
+ * Online is harmless (contract rule 4) - the runtime stays active there.
  */
 export function createMaterialsRuntime(index, { warn = console.warn } = {}) {
   const warned = new Set();
@@ -185,14 +205,7 @@ export function createMaterialsRuntime(index, { warn = console.warn } = {}) {
     forBlock(blockName, dfBlock) {
       const slot = index.blocks.get(String(blockName).toUpperCase());
       if (!slot?.length) return new Map();
-      const resolved = resolveBlockOverrides(blockName, slot, dfBlock, once);
-      for (const o of resolved.values()) {
-        const uv = o.uv;
-        if (uv && !(uv.scale[0] === 1 && uv.scale[1] === 1 && uv.offset[0] === 0 && uv.offset[1] === 0 && uv.rot === 0)) {
-          once(`[materials] ${o.file ?? blockName}: override ${o.id} asks a uv transform - the renderer has no uv path, the texture swap applies without it`);
-        }
-      }
-      return resolved;
+      return resolveBlockOverrides(blockName, slot, dfBlock, once);
     },
   };
 }

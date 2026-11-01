@@ -20,6 +20,8 @@ import { COLUMN_GLSL } from './columnGlsl.js';   // DW-F: the water column's sha
 import { buildProgram } from './glProgram.js';   // AUDIT 68 S17-gl-program-dup: the one compile and link
 import { CLIP_SENTINEL } from '../world/terrainSurface.js';   // FAR-CLIP1: the byte the terrain's clip variant discards - the TileMap format's module, already in this file's closure (waterCorners.js)
 
+const UV_IDENTITY = Object.freeze({ a: new Float32Array(4), b: new Float32Array(2) });   // RW-MAT-UV: the delta-affine of no transform
+
 const VS = `#version 300 es
 layout(location=0) in vec3 aPos;
 layout(location=1) in vec3 aNormal;
@@ -27,12 +29,14 @@ layout(location=2) in vec2 aUV;
 uniform mat4 uProj;
 uniform mat4 uView;
 uniform mat4 uModel;
+uniform vec4 uUvA;   // RW-MAT-UV: a painted sub-mesh's uv delta-affine (materialsSidecar portUvAffine); 0 = identity
+uniform vec2 uUvB;
 out vec3 vNormal;
 out vec2 vUV;
 out vec3 vWorldPos;
 void main() {
   vNormal = mat3(uModel) * aNormal;
-  vUV = aUV;
+  vUV = aUV + vec2(dot(uUvA.xy, aUV), dot(uUvA.zw, aUV)) + uUvB;
   vec4 world = uModel * vec4(aPos, 1.0);
   vWorldPos = world.xyz;
   gl_Position = uProj * uView * world;
@@ -2015,6 +2019,9 @@ export class Renderer {
     this.uProj = gl.getUniformLocation(this.program, 'uProj');
     this.uView = gl.getUniformLocation(this.program, 'uView');
     this.uModel = gl.getUniformLocation(this.program, 'uModel');
+    this.uUvA = gl.getUniformLocation(this.program, 'uUvA');   // RW-MAT-UV
+    this.uUvB = gl.getUniformLocation(this.program, 'uUvB');
+    this._uvXfUp = null;   // the new program's uv uniforms are its own (0 = identity)
     this.uLightDir = gl.getUniformLocation(this.program, 'uLightDir');
     this.uAmbient = gl.getUniformLocation(this.program, 'uAmbient');
     this.uAmbientSky = gl.getUniformLocation(this.program, 'uAmbientSky');       // BA1
@@ -6847,6 +6854,8 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       }
       this._bindEmission(sm._evEmis);   // PERF-TEX: skipped when it is already the one on the unit, which it usually is
       this._bindTex0(tex);   // PERF-TEX3: a bundle whose sub-meshes repeat an archive re-bound the same texture every time
+      const uvXf = texRemap?.uv ? (texRemap.uv.get(sm._evKey) ?? UV_IDENTITY) : UV_IDENTITY;   // RW-MAT-UV: only painted tables carry .uv
+      if (this._uvXfUp !== uvXf) { this._uvXfUp = uvXf; gl.uniform4fv(this.uUvA, uvXf.a); gl.uniform2fv(this.uUvB, uvXf.b); }
       // FOLIAGE-CUTOUT: the per-texture cutout flag (0 = opaque, every
       // classic mesh material). Set by uploadTexture's { alpha: true } -
       // the vendor-place mesh textures that carry real transparent texels
