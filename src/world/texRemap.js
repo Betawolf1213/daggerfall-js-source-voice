@@ -41,7 +41,7 @@ export async function remapSubMeshes(subMeshes, texRemap, remapArchive, { getTex
     if (texRemap.has(key)) continue;
     const t = await getTexture(swapped);
     if (sm.textureRecord >= t.recordCount) continue;
-    uploadRecord(swapped, sm.textureRecord, { opaque: true });   // a mesh material: alphaIndex -1 (MaterialReader.cs:352)
+    uploadRecord(swapped, sm.textureRecord, { opaque: true, vendorCutout: true });   // a mesh material: alphaIndex -1 (MaterialReader.cs:352)   // FOLIAGE-CUTOUT: the swap may move a vendored-place sub-mesh onto a cutout record; re-arm (the upload decides; classic swaps stay opaque)
     texRemap.set(key, `${swapped}_${sm.textureRecord}`);
   }
 }
