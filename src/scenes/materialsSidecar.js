@@ -59,6 +59,7 @@ export function parseMaterialsFile(json, file = '') {
     out.overrides.push({
       id: String(o.id ?? `m${i}`), kind, sub: kind === 'subModel' ? o.sub : null, modelId: o.modelId, pos: o.pos.slice(),
       mode, from, to: { archive: o.to.archive, record: o.to.record }, material: typeof o.material === 'string' ? o.material : null, uv,
+      climate: o.climate === true,   // opt-in: run `to` through the town's climate law; default = the authored texture, literally
     });
   });
   const seen = new Set();
@@ -127,7 +128,7 @@ export async function materialsRemap(subMeshes, base, override, climateArchive, 
     const key = `${sm.textureArchive}_${sm.textureRecord}`;
     if (out.has(key)) continue;
     if (override && materialTakes(override, sm)) {
-      const a = climateArchive(override.to.archive, override.to.record);
+      const a = override.climate ? climateArchive(override.to.archive, override.to.record) : override.to.archive;   // literal unless the override opts into the climate law
       let tex = null;
       try { tex = await getTexture(a); } catch { tex = null; }
       if (tex && override.to.record < tex.recordCount) {

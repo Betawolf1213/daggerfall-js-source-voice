@@ -143,7 +143,7 @@ test('every table is a NEW Map (the renderer EV2 cache keys by remap identity)',
   assert.equal(m1.get('17_0'), '17_0');
 });
 
-test('materialsRemap composes the climate swap over the OVERRIDE archive (rule 2), uploads it opaque, prunes a record the archive lacks, and carries the pixel table over', async () => {
+test('materialsRemap with climate:true composes the climate swap over the OVERRIDE archive, uploads it opaque, prunes a record the archive lacks, and carries the pixel table over', async () => {
   // 9 (a temperate building wall family) goes to 109 in a desert - applyClimate's own law, as the town's pass uses it
   assert.equal(applyClimate(9, 1, 100, SEASON.Summer), 109);
   const climateDesert = (a, r) => applyClimate(a, r, 100, SEASON.Summer);
@@ -155,23 +155,35 @@ test('materialsRemap composes the climate swap over the OVERRIDE archive (rule 2
     { textureArchive: 99, textureRecord: 0 },      // not taken: keeps the pixel's swapped texture
     { textureArchive: 74, textureRecord: 0 },      // a door: takes nothing
   ];
-  const map = await materialsRemap(sms, base, ov({ mode: 'replace', from: { archive: 17, record: 0 }, to: { archive: 9, record: 1 } }), climateDesert, deps);
+  const map = await materialsRemap(sms, base, ov({ mode: 'replace', from: { archive: 17, record: 0 }, to: { archive: 9, record: 1 }, climate: true }), climateDesert, deps);
   assert.equal(map.get('17_0'), '109_1', 'the override archive went through the climate law');
   assert.equal(map.get('99_0'), '199_0');
   assert.ok(!map.has('74_0'), 'a door takes nothing');
   assert.deepEqual(uploads, [[109, 1, { opaque: true }]], 'uploaded as a mesh material exactly like texRemap.js');
   assert.notEqual(map, base);
   // mode 'all' paints every non-door submesh with the same climate-swapped target
-  const allMap = await materialsRemap(sms, base, ov({ to: { archive: 9, record: 1 } }), climateDesert, deps);
+  const allMap = await materialsRemap(sms, base, ov({ to: { archive: 9, record: 1 }, climate: true }), climateDesert, deps);
   assert.equal(allMap.get('17_0'), '109_1');
   assert.equal(allMap.get('99_0'), '109_1');
   // the prune: 109's recordCount is 4, so record 9 does not exist there - the submesh falls back to the town's texture
-  const pruned = await materialsRemap(sms, base, ov({ mode: 'replace', from: { archive: 17, record: 0 }, to: { archive: 9, record: 9 } }), climateDesert, deps);
+  const pruned = await materialsRemap(sms, base, ov({ mode: 'replace', from: { archive: 17, record: 0 }, to: { archive: 9, record: 9 }, climate: true }), climateDesert, deps);
   assert.equal(pruned.get('17_0'), '117_0', 'a record the swapped archive lacks is left to the town (the texRemap.js prune)');
   assert.equal(pruned.get('99_0'), '199_0');
   // and a getTexture that throws is a fallback to the town, not a crash
-  const thrown = await materialsRemap(sms, base, ov({ mode: 'replace', from: { archive: 17, record: 0 }, to: { archive: 9, record: 1 } }), climateDesert, { ...deps, getTexture: async () => { throw new Error('no archive'); } });
+  const thrown = await materialsRemap(sms, base, ov({ mode: 'replace', from: { archive: 17, record: 0 }, to: { archive: 9, record: 1 }, climate: true }), climateDesert, { ...deps, getTexture: async () => { throw new Error('no archive'); } });
   assert.equal(thrown.get('17_0'), '117_0', 'the failed upload leaves the submesh on the town texture');
+});
+
+test('by default the painted texture is LITERAL: marble stays marble in any climate (the editor preview shows the same texture)', async () => {
+  const uploads = [];
+  const deps = { getTexture: async () => ({ recordCount: 8 }), uploadRecord: (a, r, o) => uploads.push([a, r, o]) };
+  const climateTemperate = (a, r) => applyClimate(a, r, 300, SEASON.Summer);
+  const map = await materialsRemap([{ textureArchive: 158, textureRecord: 1 }, { textureArchive: 74, textureRecord: 0 }], new Map([['74_0', '374_0']]), ov({ to: { archive: 60, record: 0 } }), climateTemperate, deps);
+  assert.equal(map.get('158_1'), '60_0');
+  assert.equal(map.get('74_0'), '374_0', 'the door keeps the town table');
+  assert.deepEqual(uploads, [[60, 0, { opaque: true }]]);
+  assert.equal(parseMaterialsFile(matJson({ overrides: [ov()] }), 'f').overrides[0].climate, false);
+  assert.equal(parseMaterialsFile(matJson({ overrides: [ov({ climate: true })] }), 'f').overrides[0].climate, true);
 });
 
 test('resolveBlockOverrides: one override per record (the first wins), dangling ones warned not thrown; the runtime resolves per block', () => {
