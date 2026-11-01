@@ -867,6 +867,7 @@ import { modelFootRects, footRectsAt } from './homeYards.js';   // FB1009 HOME-F
 import { loadIcon } from '../ui/textureCanvas.js';   // HOME-YARD: the decorator's pictures
 import { decorScanDeps } from '../systems/decorScan.js';   // HOME-YARD: the catalogue's scan (DECOR-DUNGEON: one constructor for both hosts)
 import { createHostPoi, poiDoorEntry, recordKey, spawnerSites, tickSpawners, installPoiSave, poiHours, setPoiHours } from './poiSidecar.js';   // RW-POI: the sidecars' entrances and spawners
+import { createHostMaterials, paintEntry } from './materialsSidecar.js';   // RW-MATERIALS: per-model texture overrides
 import { placedSource } from '../world/rmbLayout.js';
 import { DOOR_TYPE } from '../world/meshReader.js';   // ARENA1: the undercroft's stair is a dungeon entrance (DECOR-DUNGEON: GLOBAL_SCALE went with the yards' scan deps, systems/decorScan.js)
 import { homeLookSig } from '../net/homeLaw.js';
@@ -1186,6 +1187,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   const maps = new MapsFile();
   maps.load(mapsBytes, climateBytes, politicBytes);
   const poi = createHostPoi(maps);   // RW-POI: vendor sidecars, none online
+  const materials = createHostMaterials();   // RW-MATERIALS: vendor sidecars - a block's per-model texture overrides
   installPoiSave();
   // AUDIT NAV1 (B2): a Warm Ashes raid parsed at sea reads the crown of these waters' region (waRaidQuest) - declared up
   // here with maps, before townTalk's load can reach _questRegionIndex (FIELD 2026-09-27's order, below)
@@ -5106,6 +5108,7 @@ export async function bootWorld(canvas, renderer, params, status) {
         // buildings at all.
         const pixelFirstModel = new Set();   // recordIndex - this BLOCK INSTANCE's latch
         const poiBlock = poi.hasBlock(b.blockName) ? poi.forBlock(b.blockName, b.dfBlock) : null;   // RW-POI: this block's resolved entrances
+        const matBlock = materials.hasBlock(b.blockName) ? materials.forBlock(b.blockName, b.dfBlock) : null;   // RW-MATERIALS: this block's resolved overrides
         if (poi.hasBlock(b.blockName)) pixelPoiSites.push(...spawnerSites(poi.spawnersOf(b.blockName), b.blockName, [originMatrix[12], originMatrix[13], originMatrix[14]], `${dfLocation.regionIndex}:${dfLocation.locationIndex}:${b.x},${b.y}`));
         // WM2d: THE MILLS THIS BLOCK STANDS. Classic Daggerfall places
         // none, so rmbLayout adds them; the tower joins the static model
@@ -5146,6 +5149,7 @@ export async function bootWorld(canvas, renderer, params, status) {
           const box = transformedAabb(archAabb(placed.modelIdNum, cpu.positions), local);
           unionBox(box);
           const entry = { gpu, local, _box: box, _order: placed.modelIdNum };   // EV6: sort key
+          await paintEntry(entry, matBlock, placedSource.get(placed), gpu.subMeshes, texRemap, townClimateArchive, pipeline);   // RW-MATERIALS: sidecar paint (doors kept; leaves the merge)
           if (climateFree) entry.texRemap = NO_CLIMATE_REMAP;   // ARENA1: drawn by its own table (an empty one - never the pixel's)
           // HOME-LOOK / HOME-YARD
           const homeKey = Number.isSafeInteger(placed.recordIndex) ? makeBuildingKey(b.x, b.y, placed.recordIndex) : null;
@@ -5168,7 +5172,7 @@ export async function bootWorld(canvas, renderer, params, status) {
             pixelHomeKeys.add(homeKey);
           }
           models.push(entry);
-          if (!entry._home && !isCityGate(placed.modelIdNum) && cpu.normals && cpu.uvs) { staticBuilder.add(cpu, local, climateFree ? ownTexKey : resolveTexKey); entry._batched = true; }   // PERF4: the remap for this model's textures is in the map by now (awaited above); HOME-LOOK: a home stays out
+          if (!entry._home && !isCityGate(placed.modelIdNum) && !entry._rwMat && cpu.normals && cpu.uvs) { staticBuilder.add(cpu, local, climateFree ? ownTexKey : resolveTexKey); entry._batched = true; }   // PERF4: the remap for this model's textures is in the map by now (awaited above); HOME-LOOK: a home stays out; RW-MATERIALS: a painted model stays out
           await breather.breathe();   // PERF7: a warm build gives the frame back every few milliseconds
           // AUDIT 64 F14: a city gate takes a collider bucket of its own
           // (the pixel's shared bucket has no per-mesh removal), keyed
@@ -17331,6 +17335,14 @@ export async function bootWorld(canvas, renderer, params, status) {
       cam.pos[0] += dx; cam.pos[1] += dy; cam.pos[2] += dz;
     };
     if (poi.active) window.__poi_clock = setPoiHours;   // RW-POI probe: respawn timing
+    if (materials.active) window.__rwMat = () => {   // RW-MATERIALS probe: the painted models, their tables, and the texture each sub-mesh LAST drew with
+      const byTex = new Map(); for (const [k, v] of renderer.textures) if (!byTex.has(v)) byTex.set(v, k);
+      return [...built.values()].flatMap((p) => p.models.filter((m) => m._rwMat).map((m) => {
+        const t = state.pixelTranslation(p.px, p.py, [0, 0, 0]);
+        const drawn = (m.gpu?.subMeshes ?? []).map((sm) => sm._evRemap !== m.texRemap || !sm._evTex ? 'stale' : byTex.get(sm._evTex) ?? 'bound');
+        return { id: m._rwMat.id, modelId: m._rwMat.modelId, to: `${m._rwMat.to.archive}_${m._rwMat.to.record}`, at: [m.local[12] + t[0], m.local[13] + t[1], m.local[14] + t[2]].map((v) => +v.toFixed(2)), remap: [...(m.texRemap ?? new Map())], subMeshes: (m.gpu?.subMeshes ?? []).map((sm) => `${sm.textureArchive}_${sm.textureRecord}`), drawn };
+      }));
+    };
     if (poi.active) window.__poi_sidecar = () => ({ doors: buildingDoors.filter((e) => e.poi).length, spawners: [...built.values()].reduce((n, p) => n + (poiSitesByPixel.get(`${p.px},${p.py}`)?.length ?? 0), 0), foes: exteriorFoes.foes.filter((f) => !f.dead && f.placed).map((f) => f.mobileType), hours: poiHours(), sites: [...built.values()].flatMap((p) => { const t = state.pixelTranslation(p.px, p.py, [0, 0, 0]); return (poiSitesByPixel.get(`${p.px},${p.py}`) ?? []).map((s) => s.local.map((v, i) => v + t[i])); }) });   // RW-POI probe
     window.__pose = (x, y, z, yaw, pitch) => {
       // walk mode: the camera FOLLOWS the motor - move the player

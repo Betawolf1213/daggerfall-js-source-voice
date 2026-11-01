@@ -38,6 +38,7 @@ import { waterBedOf, flatGrid } from '../world/waterBed.js';   // WATER-NEXT 2: 
 import { createRipples, createRippleStir, RIPPLE_SPAN, RIPPLE_CELLS } from '../world/waterRipples.js';   // AUDIT WATER-NEXT m12: the rings round a wading player, the streaming world's own stir
 import { GROUND_OFFSET, GROUND_TILE_DIM, placedSource } from '../world/rmbLayout.js';
 import { createHostPoi, createPoiSpawners, poiDoorEntry, recordKey, installPoiSave, poiHours, setPoiHours } from './poiSidecar.js';   // RW-POI: the sidecars' entrances and spawners
+import { createHostMaterials, paintEntry } from './materialsSidecar.js';   // RW-MATERIALS: per-model texture overrides
 import { GROUND_RECORD_LIMIT } from '../world/terrainTiles.js';   // AUDIT WATER-NEXT m8: MeshReader.cs:487's marker, one home
 import { climbRigInput } from '../player/climbPose.js';   // CLIMB6: the body's limbs on the climb
 import { PlayerMotor, startRestGroundedCheck, motionBagOf } from '../player/motor.js';   // the rest gate's grounded input, one home; WW2: the one motion bag
@@ -636,6 +637,7 @@ export async function bootExterior(canvas, renderer, params, status) {
   let colliderTris = 0;
   const buildingDoors = []; // {door, dfBlock, recordIndex, climateBase, season (A1: INTERIOR_SEASON), dfLocation, group}
   const poi = createHostPoi(maps);   // RW-POI: vendor sidecars, none online
+  const materials = createHostMaterials();   // RW-MATERIALS: vendor sidecars - a block's per-model texture overrides
   installPoiSave();
   const _poiDown = [0, -1, 0];
   const poiSpawners = createPoiSpawners({
@@ -647,6 +649,10 @@ export async function bootExterior(canvas, renderer, params, status) {
     spawn: (type, at, o) => { const hit = collider.surfaceHit([at[0], at[1] + 0.7, at[2]], _poiDown, 3); exteriorFoes.spawnFoe(type, [at[0], at[1] + 0.5, at[2]], { yaw: o.yaw, level: o.level, placed: true, groundAlign: { hitDist: Number.isFinite(hit?.dist) ? hit.dist : null } }).catch(() => {}); },
   });
   if (poi.active) window.__poi_sidecar = () => ({ spawners: poiSpawners.count(), doors: buildingDoors.filter((e) => e.poi).length, foes: exteriorFoes.foes.filter((f) => !f.dead && f.placed).map((f) => f.mobileType), hours: poiHours() });
+  if (materials.active && params.has('shot')) window.__rwMat = () => {   // RW-MATERIALS probe: the painted models and the texture each sub-mesh LAST drew with
+    const byTex = new Map(); for (const [k, v] of renderer.textures) if (!byTex.has(v)) byTex.set(v, k);
+    return drawList.filter((d) => d._rwMat).map((d) => ({ id: d._rwMat.id, modelId: d._rwMat.modelId, to: `${d._rwMat.to.archive}_${d._rwMat.to.record}`, at: [d.matrix[12], d.matrix[13], d.matrix[14]].map((v) => +v.toFixed(2)), remap: [...(d.texRemap ?? new Map())], subMeshes: (d.mesh?.subMeshes ?? []).map((sm) => `${sm.textureArchive}_${sm.textureRecord}`), drawn: (d.mesh?.subMeshes ?? []).map((sm) => sm._evRemap !== d.texRemap || !sm._evTex ? 'stale' : byTex.get(sm._evTex) ?? 'bound') }));
+  };
   if (poi.active && params.has('shot')) window.__poi_clock = setPoiHours;
   if (params.has('shot')) window.__poi_records = () => loc.blocks.map((b) => ({ x: b.x, y: b.y, block: b.blockName, misc: (b.dfBlock.rmbBlock?.misc3dObjectRecords ?? []).map((o) => [o.modelIdNum, o.xPos, o.yPos, o.zPos]) }));   // RW-POI: the laid-out blocks' placed records, for authoring a sidecar by hand
   let undercroft = null;   // ARENA1: the undercroft's record, one for the location
@@ -685,6 +691,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     // and leave every repeat with no buildings at all.
     const firstModelOfRecord = new Set();   // recordIndex - this BLOCK INSTANCE's latch
     const poiBlock = poi.hasBlock(b.blockName) ? poi.forBlock(b.blockName, b.dfBlock) : null;   // RW-POI: this block's resolved entrances
+    const matBlock = materials.hasBlock(b.blockName) ? materials.forBlock(b.blockName, b.dfBlock) : null;   // RW-MATERIALS: this block's resolved overrides
     if (poi.hasBlock(b.blockName)) poiSpawners.addBlock(b.blockName, [originMatrix[12], originMatrix[13], originMatrix[14]], `${dfLocation.regionIndex}:${dfLocation.locationIndex}:${b.x},${b.y}`);
     for (const placed of b.layout.models) {
       // WM2f: the mill's companion building is part of an enhanced-skin
@@ -696,6 +703,7 @@ export async function bootExterior(canvas, renderer, params, status) {
       if (WATER_SOURCE_MODELS.includes(placed.modelIdNum)) springs.push({ pos: [matrix[12], matrix[13], matrix[14]], dry: false });   // SURV3: a trough
       const cpu = cpuModels.get(placed.modelIdNum);
       const entry = { mesh, matrix, order: placed.modelIdNum, box: transformedAabb(archAabb(placed.modelIdNum, cpu.positions), matrix) };   // EV3; EV6: sort key
+      await paintEntry(entry, matBlock, placedSource.get(placed), mesh.subMeshes, texRemap, climateArchive, pipeline);   // RW-MATERIALS: sidecar paint, override through the location's climate law, doors kept
       if (isClimateFreeModel(placed.modelIdNum)) entry.texRemap = NO_CLIMATE_REMAP;   // ARENA1: never the location's swap table
       drawList.push(entry);
       // AUDIT 64 F11: the StaticBuilding for this subrecord, if this is
