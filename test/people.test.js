@@ -174,7 +174,7 @@ test('P1 hosts: the gate is evaluated at the DOOR and the quest hook is its ELSE
   // RE-BASELINED at ROAD-C c2/S9: the opts literal grew the automap's
   // two entries, so the pin is on peopleVisible being INSIDE the call
   // rather than on it being the literal's last word.
-  assert.match(wm, /const ctx = await buildInteriorContext\([\s\S]{0,900}peopleVisible,/,
+  assert.match(wm, /const ctx = await buildInteriorContext\([\s\S]{0,1000}peopleVisible,/,
     'the answer never reaches buildInteriorContext');
   // the latch is the entry-time computation, not a live clock read
   // (IS1 hoisted the declaration - the RESTORE branch takes the saved

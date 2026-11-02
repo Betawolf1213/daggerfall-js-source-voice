@@ -119,8 +119,8 @@ test('audit24 wave20: SetupIndividualStaticNPC is wired at AddPeople, not merely
   // below reads the composed hook reaching the context.
   assert.match(wm, /const setupStaticNpcFull = \(pn, host\) =>\s*\n\s*rolePersonBehaviour\(interiorRoleAt, pn, host\) \?\? setupStaticNpc\(pn, host\);/,
     'the Q3 role stand-in wraps the DFU named-individual half');
-  assert.match(wm, /\{\s*voxelfolk, piece, paint, setupStaticNpc: setupStaticNpcFull/,
-    'and hands the COMPOSED hook to buildInteriorContext');
+  assert.match(wm, /setupStaticNpc, houseOwned, peopleVisible, baseEditable, setupStaticNpcFull,/,
+    'and hands base + COMPOSED hooks to buildInteriorContext');
 
   const ic = rd('src/scenes/interiorContext.js');
   const call = ic.indexOf('opts.setupStaticNpc?.(pn, pn.host)');

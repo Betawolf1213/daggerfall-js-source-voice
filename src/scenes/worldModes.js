@@ -2642,8 +2642,7 @@ export function createWorldModes(host) {
    *  arm's SetActive(false)); an individual at home ALWAYS gets a
    *  behaviour, which is what makes the follow-up-quest bootstrap
    *  click land. A machine-less host answers nothing and every person
-   *  stays as it was. The Q3 role hook (roles.json) is tried before it,
-   *  so an authored person stand-in wins over the named-individual one. */
+   *  stays as it was. The Q3 role hook is tried first (setupStaticNpcFull). */
   const setupStaticNpc = (pn, host) =>
     questBridge?.machine.setupIndividualStaticNPC(host, pn.factionID) ?? true;
   const setupStaticNpcFull = (pn, host) =>
@@ -7824,7 +7823,7 @@ export function createWorldModes(host) {
         // building reached through ?interior=NAME:REC omitted it.
         hit.dfBlock, hit.dfBlock.index, hit.recordIndex, hit.climateBase, hit.season,
         hit.door.matrix, {
-          voxelfolk, piece, paint, setupStaticNpc: setupStaticNpcFull, houseOwned, peopleVisible, baseEditable,
+          voxelfolk, piece, paint, setupStaticNpc, houseOwned, peopleVisible, baseEditable, setupStaticNpcFull,
           // TAVERN-TABLE (world/cardTableProp.js; the owner: "Lets instead place a specific table in each inn"): every
           // tavern stands the card table's own prop - its one card table
           placeCardTable: isTavern(building?.buildingType ?? BUILDING_TYPES.None),

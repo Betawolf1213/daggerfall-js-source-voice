@@ -131,7 +131,7 @@ test('hosts wire the roles: pack glob, machine, spawner hook, giver arm, person 
   assert.match(src('questBridge.js'), /setQuestRolesMachine\(machine\)/);
   const wm = src('worldModes.js');
   assert.match(wm, /const setupStaticNpcFull = \(pn, host\) =>\s*\n\s*rolePersonBehaviour\(interiorRoleAt, pn, host\) \?\? setupStaticNpc\(pn, host\);/);
-  assert.match(wm,/\{\s*voxelfolk, piece, paint, setupStaticNpc: setupStaticNpcFull/);
+  assert.match(wm, /setupStaticNpc, houseOwned, peopleVisible, baseEditable, setupStaticNpcFull,/);
   assert.match(wm, /roleStep\.kind !== 'close' && openQuestOfferFor\(\{ step: roleStep \}/);
   assert.match(wm, /const step = offer\.step \?\? questBridge\.offerSocialQuest/);
   for (const f of ['world.js', 'exterior.js']) assert.match(src(f), /placed: true, questBehaviour: o\.questBehaviour/);

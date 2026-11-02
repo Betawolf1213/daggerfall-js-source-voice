@@ -77,7 +77,7 @@ test('HC1: GetRandomSpawnPoint (:1298-1311) - null is DFU\'s false, the pick is 
     'parented like every other coordinate the context returns');
   assert.ok(ic.includes('(spawnPoints.length === 0 ? null : spawnPoints[Math.floor(roll() * spawnPoints.length)])'),
     'the empty-list false arm and the int-exclusive uniform pick, one expression');
-  assert.match(ic, /spawnPoints,\n\s+\/\*\*/, 'the SpawnPoints property rides the return too');
+  assert.match(ic, /spawnPoints,\n\s+\/\*\* GetRandomSpawnPoint/, 'the SpawnPoints property rides the return too');
 });
 
 // ---------------------------------------------------------------

@@ -583,7 +583,7 @@ export async function buildInteriorContext(deps, dfBlock, blockIndex, recordInde
     // inside a shuttered shop, and would let an away-arm SetActive
     // put back someone the building rules had removed.
     if (!visible) continue;
-    const result = opts.setupStaticNpc?.(pn, pn.host);
+    const result = opts.setupStaticNpcFull?.(pn, pn.host) ?? opts.setupStaticNpc?.(pn, pn.host);
     if (result && result !== true) pn.questBehaviour = result;
   }
 
