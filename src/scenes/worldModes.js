@@ -404,6 +404,7 @@ import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemyBasics.js';  
 import { openDoorsStep, foeFrameDt } from '../characters/enemyMotor.js';   // AUDIT 63 F42: EnemyMotor.OpenDoors (EnemyMotor.cs:1424-1442), which lives in the motor and runs wherever an enemy does
 import { billboardSize } from '../world/rmbFlats.js';
 import { positionHash, staticNpcData } from './questBridge.js';   // B7: the guild popup's TALK builds display data without re-registering the click
+import { roleGiverQuest, rolePersonBehaviour } from './questRoles.js';   // RW-QUEST-ROLES: authored givers + Person stand-ins
 import { staticBuildingsHasHit } from '../world/staticBuildings.js';   // AUDIT 64 F11: DaggerfallStaticBuildings.HasHit
 import { staticNpcName, getNameBankOfRegion, isChildNPCData } from '../characters/staticNpc.js';   // wave 24: StaticNPC.DisplayName
 import { portraitIndexFromStaticNPCBillboard } from '../systems/npcSession.js';   // ROAD-D D10: GetPortraitIndexFromStaticNPCBillboard
@@ -2053,6 +2054,7 @@ export function createWorldModes(host) {
   }
   // E2: the entered building's identity + the shop browse overlay.
   let interiorBuilding = null;
+  let interiorRoleAt = null;   // RW-QUEST-ROLES: the entered building as roles.json names it - { block, sub }
   // HOME1: the online home the entered building IS, read once at its door and held for the visit - the storage's
   // scene (currentInteriorScene), the bed, the room and the cupboards all ask this answer, never a later one (a
   // town's answer landing mid-visit must not move my things to another scene). Null offline and for any building no
@@ -2640,9 +2642,12 @@ export function createWorldModes(host) {
    *  arm's SetActive(false)); an individual at home ALWAYS gets a
    *  behaviour, which is what makes the follow-up-quest bootstrap
    *  click land. A machine-less host answers nothing and every person
-   *  stays as it was. */
+   *  stays as it was. The Q3 role hook (roles.json) is tried before it,
+   *  so an authored person stand-in wins over the named-individual one. */
   const setupStaticNpc = (pn, host) =>
     questBridge?.machine.setupIndividualStaticNPC(host, pn.factionID) ?? true;
+  const setupStaticNpcFull = (pn, host) =>
+    rolePersonBehaviour(interiorRoleAt, pn, host) ?? setupStaticNpc(pn, host);
   /** Every QuestResourceBehaviour standing in this scene:
    *  Resources.FindObjectsOfTypeAll<QuestResourceBehaviour>()
    *  (GameObjectHelper.cs:926) sees the ones on static NPCs too, and
@@ -3826,6 +3831,10 @@ export function createWorldModes(host) {
     // routing - no talk, no service popup, nothing (C#'s own TODO
     // about releasing listeners rides with it).
     if (questBridge?.machine.factionListeners.has(pn.factionID)) return;
+    // RW-QUEST-ROLES: an authored giver (roles.json) offers its quest through the offer window, before any shop or talk.
+    const roleQuest = !forceTalk && interiorRoleAt && questBridge ? roleGiverQuest(interiorRoleAt, pn) : null;
+    const roleStep = roleQuest ? questBridge.offerRoleQuest(roleQuest, pn.factionID) : null;
+    if (roleStep && roleStep.kind !== 'close' && openQuestOfferFor({ step: roleStep }, npcData, mountSpellWindow)) return;
     const dict = townTalk?.factionDict ?? null;
     const npcFaction = dict?.get(pn.factionID) ?? null;
     const buildingFactionId = interiorBuilding?.factionId ?? 0;
@@ -5182,7 +5191,7 @@ export function createWorldModes(host) {
    *  IsLastNPCClickedAnActiveQuestor (:45-63). */
   function openQuestOfferFor(offer, npcData, mount) {
     if (!questBridge) return false;
-    const step = questBridge.offerSocialQuest(offer.npc ?? npcData, offer.socialGroup, offer.menu);
+    const step = offer.step ?? questBridge.offerSocialQuest(offer.npc ?? npcData, offer.socialGroup, offer.menu);
     const boxes = questBridge.offerBoxes(step, (id) => townTalk?.lines?.(id) ?? []);
     if (!boxes.length || !guildServiceArtLoaded() || !_shopFont) return true;
     // the U24 identity guard: a window that dispatches to another
@@ -7805,7 +7814,7 @@ export function createWorldModes(host) {
       // (verbatim ownerPosition + buildingMatrix) - context coordinates
       // come back world-frame, landings run in one frame, and the walk
       // through the door is coordinate-seamless.
-      const buildingHold = placeHoldOf('interior', `${hit.dfBlock?.name ?? ''}:${hit.recordIndex}`); const ctx = await buildInteriorContext(   // FIELD BUGS 2026-10-04d PLACE-LRU: the building is a place
+      interiorRoleAt = { block: hit.dfBlock?.name ?? '', sub: hit.recordIndex }; const buildingHold = placeHoldOf('interior', `${hit.dfBlock?.name ?? ''}:${hit.recordIndex}`); const ctx = await buildInteriorContext(   // FIELD BUGS 2026-10-04d PLACE-LRU: the building is a place
         { renderer, getGpuMesh: buildingHold.getGpuMesh, cpuModels, getTexture, uploadRecord: buildingHold.uploadRecord, uploadRecordFrame: buildingHold.uploadRecordFrame, palette, getMachineryParts, placeHold: buildingHold },
         // DaggerfallInterior.IsBadInteriorModel (:530-548) keys the
         // 31000-overlap repair on EntryDoor.blockIndex, which
@@ -7815,7 +7824,7 @@ export function createWorldModes(host) {
         // building reached through ?interior=NAME:REC omitted it.
         hit.dfBlock, hit.dfBlock.index, hit.recordIndex, hit.climateBase, hit.season,
         hit.door.matrix, {
-          voxelfolk, piece, paint, setupStaticNpc, houseOwned, peopleVisible, baseEditable,
+          voxelfolk, piece, paint, setupStaticNpc: setupStaticNpcFull, houseOwned, peopleVisible, baseEditable,
           // TAVERN-TABLE (world/cardTableProp.js; the owner: "Lets instead place a specific table in each inn"): every
           // tavern stands the card table's own prop - its one card table
           placeCardTable: isTavern(building?.buildingType ?? BUILDING_TYPES.None),
@@ -8349,7 +8358,7 @@ export function createWorldModes(host) {
     interiorBloodMarks.clear();   // BLOOD1a (HARD1): ...and neither do the marks. Named HERE rather than left to ride the line above: the ring is its own binding, so its end is its own line, which is what makes the ownership auditable at every teardown path.
     interiorCamps.destroyAll(); interiorHearths.length = 0;   // HEARTH1: this room's fires are this room's - one building's hearth is not the next one's
     interiorCtx = null;
-    interiorBuilding = null;   // E2: the identity + overlay leave with the interior
+    interiorBuilding = null; interiorRoleAt = null;   // E2: the identity + overlay leave with the interior
     standFromCardTable();   // CARDS2: and nobody stays seated in a room they left - CARDS4: the table cashed out
     interiorCabin = null;
     interiorHome = null;   // HOME1: and the visit's home with it
@@ -9146,6 +9155,7 @@ export function createWorldModes(host) {
       standArenaWall(ctx, dfLocation).catch(() => {});   // ARENA5: the Hall of Champions' plaque wall, about its Keeper
       player.collider = ctx.collider;
       player.spawn(spawn[0], spawn[1], spawn[2]);
+      dungeonCtx.voidRescue = interiorVoidRescue(dungeonCtx.collider, spawn);
       cam.pos = player.eyeAt();   // EV1: the interpolated render eye
       // ...and the orientation half of the same two members: away from
       // the door you came through, or north for a start with no door.
@@ -9966,6 +9976,7 @@ export function createWorldModes(host) {
 
     if (mode === 'dungeon') {
       if (pendingDungeonExit) { pendingDungeonExit = false; if (aliveUnder()) { exitDungeonNow(); return true; } }   // F-A5: outside any overlay dispatch; AUDIT WB B2: a death taken since is the death's to resolve (the court's casts out before its gate) - never a dead player walked out
+      if (standFromVoid(dungeonCtx.voidRescue, player)) { cam.pos = [...player.eye]; townTalk?.say?.(INTERIOR_VOID_TEXT); }   // FIELD BUGS 2026-10-04d VOID-ENTRY: dungeon failsafe, same as interior
       if (pendingDungeonWagonOpen) { pendingDungeonWagonOpen = false; dungeonCtx.openInventoryWithWagon(); }   // DISC21-B: the box is off the slot now
       if (!overlayHeld) dungeonCtx.actions.update(dt);   // dungeon.js:"if (!overlayHeld) ctx.actions.update"'s `if (!held)` - a paused game advances no movers
       if (!overlayHeld) dungeonCtx.automapTick?.(dt, cam.pos, fwd);   // A1: the 5 Hz reveal probes ride the same gate
@@ -12630,7 +12641,7 @@ export function createWorldModes(host) {
         interiorWindows.reconcile(interiorOverlay);
         interiorWindows.clear((w) => w.dispose?.());
         standFromCardTable({ cashOut: !load });   // CARDS2b (AUDIT CARDS B1): the forced road out - a load, a quest teleport, Recall, a respawn, a sail - empties the seat as the door does; CARDS4: and cashes the table out
-        interiorCtx = null; interiorBuilding = null; interiorCabin = null; interiorHome = null; interiorSeatHall = null; interiorOverlay = null; exteriorDoor = null; _seatHallVisit = false;   // HOME1: the visit's home with the identity
+        interiorCtx = null; interiorBuilding = null; interiorRoleAt = null; interiorCabin = null; interiorHome = null; interiorSeatHall = null; interiorOverlay = null; exteriorDoor = null; _seatHallVisit = false;   // HOME1: the visit's home with the identity
         _insideTavern = false;   // ROAD-B B4: PlayerEnterExit.cs:874, the same latch on the teleport/load arm
         _insidePartyRestExempt = false;   // TAVERN-REST1/GUILD-REST1: cleared on the same teleport/load arm as the tavern latch above
       }

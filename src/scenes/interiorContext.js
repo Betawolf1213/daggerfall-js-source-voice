@@ -583,8 +583,8 @@ export async function buildInteriorContext(deps, dfBlock, blockIndex, recordInde
     // inside a shuttered shop, and would let an away-arm SetActive
     // put back someone the building rules had removed.
     if (!visible) continue;
-    const setup = opts.setupStaticNpc?.(pn, pn.host);
-    if (setup && setup !== true) pn.questBehaviour = setup;
+    const result = opts.setupStaticNpc?.(pn, pn.host);
+    if (result && result !== true) pn.questBehaviour = result;
   }
 
   // C4c (?voxelfolk): people stand as the bare Rewrite humanoid - one

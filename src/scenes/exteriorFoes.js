@@ -101,6 +101,7 @@ import { setBatchDissolve } from '../systems/dissolve.js';   // DISSOLVE: burnt 
 import { createPortalSet } from './portalFx.js';   // COMPANION-PORTAL
 import { QUARRY_BLOW } from '../systems/livingWorld/quarry.js';   // WATCH-PROTECTS: a townsperson's one blow
 import { elitesAllowed, promoteEliteFoe, rollOverworldElite, grantEliteLoot, eliteGlow, setBatchEliteGlow, eliteSize, isEliteCorpse, markEliteCorpseBatch, ELITE_FOE_SIZE } from '../systems/eliteFoes.js';   // ELITE FOES: 5% of the wilds' foes   // HITFLASH1
+import { setQuestRolesFoePool } from './questRoles.js';   // RW-QUEST-ROLES: a role spawner counts the quest foes this pool holds
 
 // The port's allocation-owner guards (classic self-limits through the
 // 144-minute cadence; these keep a long session bounded).
@@ -275,6 +276,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
   // on his owner's client, where he is after the player he hunts: here he is silent, and his tells a person's
   oneVoice = () => false }) {
   const foes = [];        // { mobile, ai, attack, entity, batch, tex, archive, mobileType, dead, _encounter: true }
+  setQuestRolesFoePool(() => foes);
   const corpseBatches = [];
   // AUDIT 39 / THE FOUR HOSTS RULE: an IN-FLIGHT spawn's feet. spawnFoe
   // crosses two real awaits (the career file, a cold texture archive)

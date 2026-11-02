@@ -231,12 +231,18 @@ export function restorePoiSaveData(rec) {
  * One frame of spawner checks. `sites` carry a stable `key`, the `spawner` and its world `pos`; a site within trigger_m
  * of the player and ready fires once through `spawn(mobileType, pos, {level, yaw})`. Answers what fired.
  */
-export function tickSpawners(sites, { player, hours, spawn, rng = Math.random, cooldowns = _cooldowns }) {
+let _roleHook = null;
+/** RW-QUEST-ROLES: a site a quest's foe role holds is the quest's (questRoles.questSpawnerHook) - it spawns nothing else. */
+export function setSpawnerRoleHook(fn) { _roleHook = fn; }
+
+export function tickSpawners(sites, { player, hours, spawn, rng = Math.random, cooldowns = _cooldowns, roleHook = _roleHook }) {
   const fired = [];
   for (const site of sites) {
     const s = site.spawner;
     const d = Math.hypot(site.pos[0] - player[0], site.pos[1] - player[1], site.pos[2] - player[2]);
-    if (d > s.trigger_m || !spawnerReady(cooldowns.get(site.key), hours, s.respawn_h)) continue;
+    if (d > s.trigger_m) continue;
+    if (roleHook && roleHook(site, spawn)) continue;
+    if (!spawnerReady(cooldowns.get(site.key), hours, s.respawn_h)) continue;
     cooldowns.set(site.key, hours);
     const rolls = rollSpawn(s, rng);
     for (const r of rolls) spawn(r.mobileType, [site.pos[0] + r.dx, site.pos[1], site.pos[2] + r.dz], { level: r.level, yaw: r.yaw });

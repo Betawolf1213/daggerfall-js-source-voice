@@ -12,6 +12,8 @@
 // tables load from one place.
 
 import { loadQuestTables } from '../systems/quest/tables.js';
+import { installQuestRoles, parseRolesFile, questSpawnerHook } from './questRoles.js';   // RW-QUEST-ROLES
+import { setSpawnerRoleHook } from './poiSidecar.js';
 import { applyForageFix } from '../systems/foragingLaw.js';   // FORAGE-FIX: Foraging's quest and list patches, applied as they are read
 
 const tableFiles = import.meta.glob('../../vendor/dfu-quests/Tables/*.txt', { query: '?raw', import: 'default' });
@@ -28,6 +30,11 @@ const modQuestFiles = {
   // FORAGE1: Foraging's list and its 22 quests, verbatim - FORAGE-FIX's patches applied as they are read (below)
   ...import.meta.glob('../../vendor/foraging/Quests/*.txt', { query: '?raw', import: 'default' }),
 };
+
+// RW-QUESTS (raven-wright Q3): authored quest packs, any vendor's rwquests/ - <QUEST>.txt sources, QuestList-*.txt lists,
+// <QUEST>.places.txt rows merged into Quests-Places (the permanent places its world links name), <QUEST>.roles.json roles.
+const rwQuestFiles = import.meta.glob('../../vendor/*/rwquests/*.txt', { query: '?raw', import: 'default' });
+const rwRoleFiles = import.meta.glob('../../vendor/*/rwquests/*.roles.json', { query: '?raw', import: 'default' });
 
 const stripBom = (s) => s.replace(/^﻿/, '');
 const baseName = (path) => path.split('/').pop().replace(/\.txt$/, '');
@@ -60,6 +67,20 @@ export async function loadQuestPack() {
       if (name.startsWith('QuestList-')) tables.set(name, patched);
       else quests.set(name, patched.split(/\r?\n/));
     }));
+    const extraPlaces = [];
+    await Promise.all(Object.entries(rwQuestFiles).map(async ([path, load]) => {
+      const name = baseName(path), text = stripBom(await load());
+      if (name.endsWith('.places')) extraPlaces.push(...text.split(/\r?\n/).filter((l) => l.trim() && !l.trim().startsWith('--')));
+      else if (name.startsWith('QuestList-')) tables.set(name, text);
+      else quests.set(name, text.split(/\r?\n/));
+    }));
+    if (extraPlaces.length && tables.has('Quests-Places')) tables.set('Quests-Places', `${tables.get('Quests-Places').replace(/\s*$/, '')}\r\n${extraPlaces.join('\r\n')}\r\n`);
+    const roles = await Promise.all(Object.entries(rwRoleFiles).map(async ([path, load]) => {
+      try { return parseRolesFile(JSON.parse(stripBom(await load())), path.split('/vendor/').pop()); }
+      catch (e) { return { quest: null, roles: [], warnings: [`${path}: ${e.message}`] }; }
+    }));
+    installQuestRoles(roles);
+    setSpawnerRoleHook(questSpawnerHook);
     loadQuestTables(Object.fromEntries(tables));
     return {
       /** QuestList-<name>.txt (the QuestListsManager's dep). */

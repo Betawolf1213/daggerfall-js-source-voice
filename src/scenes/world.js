@@ -3496,7 +3496,7 @@ export async function bootWorld(canvas, renderer, params, status) {
         spawn: (type, at, o) => {
           const hit = collider.surfaceHit([at[0], feet[1] + 2, at[2]], _DOWN, 60);
           const y = Number.isFinite(hit?.dist) ? feet[1] + 2 - hit.dist : at[1];
-          exteriorFoes.spawnFoe(type, [at[0], y + 0.5, at[2]], { yaw: o.yaw, level: o.level, placed: true, groundAlign: { hitDist: 0.7 } }).catch(() => {});
+          exteriorFoes.spawnFoe(type, [at[0], y + 0.5, at[2]], { yaw: o.yaw, level: o.level, placed: true, questBehaviour: o.questBehaviour, groundAlign: { hitDist: 0.7 } }).catch(() => {});
         },
       });
     }

@@ -646,7 +646,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     hours: poiHours,
     groundY: (x, y, z) => { const h = collider.surfaceHit([x, y + 2, z], _poiDown, 60); return Number.isFinite(h?.dist) ? y + 2 - h.dist : y; },
     // the orcs and the rest come through the pool the street's encounters and the Hold's camp use
-    spawn: (type, at, o) => { const hit = collider.surfaceHit([at[0], at[1] + 0.7, at[2]], _poiDown, 3); exteriorFoes.spawnFoe(type, [at[0], at[1] + 0.5, at[2]], { yaw: o.yaw, level: o.level, placed: true, groundAlign: { hitDist: Number.isFinite(hit?.dist) ? hit.dist : null } }).catch(() => {}); },
+    spawn: (type, at, o) => { const hit = collider.surfaceHit([at[0], at[1] + 0.7, at[2]], _poiDown, 3); exteriorFoes.spawnFoe(type, [at[0], at[1] + 0.5, at[2]], { yaw: o.yaw, level: o.level, placed: true, questBehaviour: o.questBehaviour, groundAlign: { hitDist: Number.isFinite(hit?.dist) ? hit.dist : null } }).catch(() => {}); },
   });
   if (poi.active) window.__poi_sidecar = () => ({ spawners: poiSpawners.count(), doors: buildingDoors.filter((e) => e.poi).length, foes: exteriorFoes.foes.filter((f) => !f.dead && f.placed).map((f) => f.mobileType), hours: poiHours() });
   if (materials.active && params.has('shot')) window.__rwMat = () => {   // RW-MATERIALS probe: the painted models and the texture each sub-mesh LAST drew with

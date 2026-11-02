@@ -113,12 +113,14 @@ test('audit24 wave20: SetupIndividualStaticNPC is wired at AddPeople, not merely
   const wm = rd('src/scenes/worldModes.js');
   assert.match(wm, /const setupStaticNpc = \(pn, host\) =>\s*\n\s*questBridge\?\.machine\.setupIndividualStaticNPC\(host, pn\.factionID\) \?\? true;/,
     'worldModes mints the hook');
-  // P1 added `peopleVisible` beside it, so the pin is on the HOOK
-  // being handed over rather than on the exact shape of the literal -
-  // what this gate is for is that setupStaticNpc reaches the context,
-  // not that nothing else ever travels with it.
-  assert.match(wm, /\{\s*voxelfolk, piece, paint, setupStaticNpc[,}]/,
-    'and hands it to buildInteriorContext');
+  // RW-QUEST-ROLES (Q3): the Q3 role stand-in is folded IN FRONT of the
+  // DFU half under the SAME name, so an authored person still wins and
+  // DFU's own named-individual behaviour still lands behind it. The pin
+  // below reads the composed hook reaching the context.
+  assert.match(wm, /const setupStaticNpcFull = \(pn, host\) =>\s*\n\s*rolePersonBehaviour\(interiorRoleAt, pn, host\) \?\? setupStaticNpc\(pn, host\);/,
+    'the Q3 role stand-in wraps the DFU named-individual half');
+  assert.match(wm, /\{\s*voxelfolk, piece, paint, setupStaticNpc: setupStaticNpcFull/,
+    'and hands the COMPOSED hook to buildInteriorContext');
 
   const ic = rd('src/scenes/interiorContext.js');
   const call = ic.indexOf('opts.setupStaticNpc?.(pn, pn.host)');

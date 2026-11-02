@@ -92,6 +92,7 @@ import { questTracker, followOn } from '../ui/questTracker.js';   // GUIDE4: the
 // Genders enum the way C# does. Re-exported so the bridge's callers
 // are unchanged.
 import { positionHash, staticNpcData, layoutNpcData } from '../characters/staticNpc.js';
+import { setQuestRolesMachine } from './questRoles.js';   // RW-QUEST-ROLES: roles.json givers/persons/foes read the live machine
 
 export { positionHash, staticNpcData, layoutNpcData };
 
@@ -359,6 +360,7 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
   // macro walk that is not handed a context of its own (questMacros.js
   // setMacroWorld) - one registration, every window, every host.
   setMacroWorld(() => machine.macroContext());
+  setQuestRolesMachine(machine);
 
   questLists = new QuestListsManager({
     readListTable: (name) => ctx.data.readListTable(name),
@@ -621,6 +623,10 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
     /** G7: the daedric quest a successful summoning offers. */
     offerDaedricQuest(questName, summonerFactionId) {
       return offerFlow.offerNamedQuest(questName, summonerFactionId);
+    },
+    /** RW-QUEST-ROLES: an authored giver NPC (roles.json) offers its named quest, homed on that NPC's faction. */
+    offerRoleQuest(questName, factionId) {
+      return offerFlow.offerNamedQuest(questName, factionId);
     },
     /** CW1: the coven popup's Quest button - the Witches pool as
      *  nonmember, homed on the witch NPC's own faction. */
