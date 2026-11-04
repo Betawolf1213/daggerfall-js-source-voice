@@ -27,7 +27,7 @@
 import { ActionTemplate } from './actions.js';
 import { ITEM_GROUPS } from '../../characters/equipRules.js';
 import { isSummoned } from '../inventory.js';
-import { maxFatigue } from '../statMods.js';
+import { maxFatigue, FATIGUE_MULTIPLIER } from '../statMods.js';
 import { raiseTimeSeconds, reduceFatigueBy } from '../foragingLaw.js';
 
 /** ItemGroups' number -> the port's group name. */
@@ -230,5 +230,230 @@ export class PlayerHandsover extends ActionTemplate {
   }
 }
 
-/** The four, for a quest machine to register (the host does, before any save's quests are restored). */
-export const questActionsExtensionTemplates = () => [new RaiseTime(null), new ReducePlayerFatigue(null), new PlayerPossesses(null), new PlayerHandsover(null)];
+// ═══════════════════════════════════════════════════════════════════
+// QAE2 (2026-11-02): THE VITALS FAMILY - the eight actions and triggers a
+// quest reaches for most (Quest Actions Extension 2.0.0, Jagget,
+// github.com/Jagget/QuestActionsExtension, Actions/*.cs). As with the four
+// above: nothing of the mod is carried, each class restates one action's
+// behaviour cited to its file, and the editor's catalog
+// (raven-wright vendor/qae/QuestActionsExtension.dfmodule.json) names the
+// same verbs so an authored quest lints here and runs here.
+//
+//   reduce player health ...       ReducePlayerHealth.cs    percent is of the MAXIMUM, amount absolute, floor 1
+//                                                           (0 with `can kill`); an interval repeats on the WALL
+//                                                           clock, `times` absent meaning 1000000 (forever)
+//   reduce player magicka by/on    ReducePlayerMagicka.cs
+//   increase player health/fatigue/magicka by/on   IncreasePlayerX.cs   capped at the maximum
+//   player health|magicka is less than N pt|N%     WhenXLevel.cs        ALWAYS-ON triggers, `<=`, the percent arm
+//   player fatigue is less than N pt|N%            WhenFatigueLevel.cs  taking precedence; fatigue points are
+//                                                           multiplied by FatigueMultiplier (64), so an author
+//                                                           writes the character sheet's 30, not 1920
+// ═══════════════════════════════════════════════════════════════════
+
+/** Wall-clock seconds, as Time.realtimeSinceStartup is for the interval forms; swappable for tests. */
+let nowRealSeconds = () => (typeof performance !== 'undefined' ? performance.now() : Date.now()) / 1000;
+/** Test seam: hand the interval forms a clock. */
+export function setQaeRealClock(fn) { nowRealSeconds = typeof fn === 'function' ? fn : nowRealSeconds; }
+
+/** The vital's maximum, by name. */
+const maxVital = (e, vital) => {
+  if (vital === 'health') return e?.maxHealth ?? 0;
+  if (vital === 'magicka') return e?.maxMagicka ?? 0;
+  return maxFatigue(e);
+};
+
+/** ReducePlayerX's arithmetic: percent of the maximum or an absolute amount, floored (0 only when it may kill). */
+function reducedVital(e, vital, percent, amount, canKill) {
+  const current = e?.[vital] ?? 0;
+  let next = 0;
+  if (percent > 0) next = Math.trunc(current - (maxVital(e, vital) * percent) / 100);
+  if (amount > 0) next = current - amount;
+  if (next < 1) next = canKill ? 0 : 1;
+  return Math.min(maxVital(e, vital), next);
+}
+
+/** IncreasePlayerX's arithmetic: percent of the maximum or an absolute amount, never past the maximum. */
+function increasedVital(e, vital, percent, amount) {
+  const current = e?.[vital] ?? 0;
+  const max = maxVital(e, vital);
+  let next = current;
+  if (percent > 0) next = Math.trunc(current + (max * percent) / 100);
+  if (amount > 0) next = current + amount;
+  return Math.max(0, Math.min(max, next));
+}
+
+const REDUCE_HEALTH = Object.freeze([
+  /reduce player health by (?<percent>\d+) every (?<interval>\d+) seconds (?<numberOfTimes>\d+) times(?<cankill> can kill)/,
+  /reduce player health by (?<percent>\d+) every (?<interval>\d+) seconds (?<numberOfTimes>\d+) times/,
+  /reduce player health by (?<percent>\d+) every (?<interval>\d+) seconds(?<cankill> can kill)/,
+  /reduce player health by (?<percent>\d+) every (?<interval>\d+) seconds/,
+  /reduce player health by (?<percent>\d+)/,
+  /reduce player health on (?<amount>\d+)/,
+]);
+
+/** ReducePlayerHealth.cs: the one-shot forms and the ticking ones ("times" absent = 1000000, its forever). */
+export class ReducePlayerHealth extends ActionTemplate {
+  static typeName = 'ReducePlayerHealth';
+  get saveShape() { return [['percent'], ['amount'], ['interval'], ['numberOfTimes'], ['canKill'], ['nextTick']]; }
+  constructor(parentQuest) {
+    super(parentQuest);
+    this.percent = 0; this.amount = 0; this.interval = 0; this.numberOfTimes = 1; this.canKill = false; this.nextTick = 0;
+  }
+  get pattern() { return REDUCE_HEALTH[4]; }
+  test(source) { return matchAlternatives(REDUCE_HEALTH, source)?.m ?? null; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const a = new ReducePlayerHealth(parentQuest);
+    const g = m.groups ?? {};
+    a.percent = g.percent != null ? Number(g.percent) : 0;
+    a.amount = g.amount != null ? Number(g.amount) : 0;
+    a.interval = g.interval != null ? Number(g.interval) : 0;
+    a.numberOfTimes = g.numberOfTimes != null ? Number(g.numberOfTimes) : (g.interval != null ? 1000000 : 1);
+    a.canKill = g.cankill != null;
+    return a;
+  }
+  update(_caller) {
+    if (nowRealSeconds() < this.nextTick) return;
+    if (this.numberOfTimes > 0) {
+      this.numberOfTimes -= 1;
+      const e = this.parentQuest?.hooks?.playerEntity?.();
+      if (e) e.health = reducedVital(e, 'health', this.percent, this.amount, this.canKill);
+    } else {
+      this.setComplete();
+    }
+    this.nextTick = nowRealSeconds() + this.interval;
+  }
+}
+
+/** One by/on pair - the shape every other vitals action takes. */
+const byOn = (verb, vital) => Object.freeze([
+  new RegExp(`${verb} player ${vital} by (?<percent>\\d+)`),
+  new RegExp(`${verb} player ${vital} on (?<amount>\\d+)`),
+]);
+
+/** ReducePlayerMagicka.cs / IncreasePlayerX.cs: percent of the maximum or an absolute amount, clamped. */
+class VitalChange extends ActionTemplate {
+  constructor(parentQuest, alternatives, vital, grow) {
+    super(parentQuest);
+    this.alternatives = alternatives; this.vital = vital; this.grow = grow;
+    this.percent = 0; this.amount = 0;
+  }
+  get saveShape() { return [['percent'], ['amount']]; }
+  get pattern() { return this.alternatives[0]; }
+  test(source) { return matchAlternatives(this.alternatives, source)?.m ?? null; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const a = new this.constructor(parentQuest);
+    a.percent = m.groups?.percent != null ? Number(m.groups.percent) : 0;
+    a.amount = m.groups?.amount != null ? Number(m.groups.amount) : 0;
+    return a;
+  }
+  update(_caller) {
+    const e = this.parentQuest?.hooks?.playerEntity?.();
+    if (e) {
+      const next = this.grow
+        ? increasedVital(e, this.vital, this.percent, this.amount)
+        : reducedVital(e, this.vital, this.percent, this.amount, false);
+      e[this.vital] = next;
+    }
+    this.setComplete();
+  }
+}
+
+/** ReducePlayerMagicka.cs. */
+export class ReducePlayerMagicka extends VitalChange {
+  static typeName = 'ReducePlayerMagicka';
+  constructor(parentQuest) { super(parentQuest, byOn('reduce', 'magicka'), 'magicka', false); }
+}
+/** IncreasePlayerHealth.cs. */
+export class IncreasePlayerHealth extends VitalChange {
+  static typeName = 'IncreasePlayerHealth';
+  constructor(parentQuest) { super(parentQuest, byOn('increase', 'health'), 'health', true); }
+}
+/** IncreasePlayerFatigue.cs. */
+export class IncreasePlayerFatigue extends VitalChange {
+  static typeName = 'IncreasePlayerFatigue';
+  constructor(parentQuest) { super(parentQuest, byOn('increase', 'fatigue'), 'fatigue', true); }
+}
+/** IncreasePlayerMagicka.cs. */
+export class IncreasePlayerMagicka extends VitalChange {
+  static typeName = 'IncreasePlayerMagicka';
+  constructor(parentQuest) { super(parentQuest, byOn('increase', 'magicka'), 'magicka', true); }
+}
+
+/** WhenXLevel.cs: an ALWAYS-ON trigger, true while the vital is at or under the bar (percent arm first). */
+class VitalBelow extends ActionTemplate {
+  constructor(parentQuest, alternatives, vital, pointScale = 1) {
+    super(parentQuest);
+    this.isTriggerCondition = true;
+    this.isAlwaysOnTriggerCondition = true;
+    this.alternatives = alternatives; this.vital = vital; this.pointScale = pointScale;
+    this.minPoints = 0; this.minPercent = 0;
+  }
+  get saveShape() { return [['minPoints'], ['minPercent']]; }
+  get pattern() { return this.alternatives[0]; }
+  test(source) { return matchAlternatives(this.alternatives, source)?.m ?? null; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const a = new this.constructor(parentQuest);
+    a.minPoints = m.groups?.minPoints != null ? Number(m.groups.minPoints) : 0;
+    a.minPercent = m.groups?.minPercent != null ? Number(m.groups.minPercent) : 0;
+    return a;
+  }
+  checkTrigger(_caller) {
+    const e = this.parentQuest?.hooks?.playerEntity?.();
+    if (!e) return false;
+    const current = e[this.vital] ?? 0;
+    if (this.minPercent > 0) {
+      const max = maxVital(e, this.vital);
+      return max > 0 && (current * 100) / max <= this.minPercent;
+    }
+    if (this.minPoints > 0) return current <= this.minPoints * this.pointScale;
+    return false;
+  }
+}
+
+/** WhenHealthLevel.cs - also Health Quest Actions' `pchealth`/`pchealthp` forms. */
+export class WhenHealthLevel extends VitalBelow {
+  static typeName = 'WhenHealthLevel';
+  constructor(parentQuest) {
+    super(parentQuest, Object.freeze([
+      /pchealth lower than (?<minPoints>\d+)/,
+      /player health is less than (?<minPoints>\d+) pt/,
+      /pchealthp lower than (?<minPercent>\d+)/,
+      /player health is less than (?<minPercent>\d+)%/,
+    ]), 'health');
+  }
+}
+/** WhenMagickaLevel.cs. */
+export class WhenMagickaLevel extends VitalBelow {
+  static typeName = 'WhenMagickaLevel';
+  constructor(parentQuest) {
+    super(parentQuest, Object.freeze([
+      /player magicka is less than (?<minPoints>\d+) pt/,
+      /player magicka is less than (?<minPercent>\d+)%/,
+    ]), 'magicka');
+  }
+}
+/** WhenFatigueLevel.cs: points are character-sheet points, the entity's are x64 (FatigueMultiplier). */
+export class WhenFatigueLevel extends VitalBelow {
+  static typeName = 'WhenFatigueLevel';
+  constructor(parentQuest) {
+    super(parentQuest, Object.freeze([
+      /player fatigue is less than (?<minPoints>\d+) pt/,
+      /player fatigue is less than (?<minPercent>\d+)%/,
+    ]), 'fatigue', FATIGUE_MULTIPLIER);
+  }
+}
+
+/** Every QAE action the port answers, for a quest machine to register (the host does, before any save's quests
+ *  are restored). The editor's catalog marks the rest as authored-but-unanswered here (vendor/qae/port-support.json). */
+export const questActionsExtensionTemplates = () => [
+  new RaiseTime(null), new ReducePlayerFatigue(null), new PlayerPossesses(null), new PlayerHandsover(null),
+  new ReducePlayerHealth(null), new ReducePlayerMagicka(null),
+  new IncreasePlayerHealth(null), new IncreasePlayerFatigue(null), new IncreasePlayerMagicka(null),
+  new WhenHealthLevel(null), new WhenMagickaLevel(null), new WhenFatigueLevel(null),
+];
