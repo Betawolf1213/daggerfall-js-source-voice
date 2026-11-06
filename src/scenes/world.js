@@ -306,6 +306,8 @@ import { unseenText } from '../net/boardLaw.js';   // NOTICE1: the count over a 
 import { alignSurvival } from '../systems/survival/needs.js';   // SURV7: the needs' markers at an arrival
 import { liveLycanthropy } from '../systems/lycanthropy.js';   // SURV7: the env's lycanthrope and beast-form flags
 import { playerStateFlag, innerSymbolName } from '../systems/quest/qaeStateFlags.js';   // QAE3: CurrentStateIs mapping + symbol bridge
+import { inBlockPixel } from '../systems/quest/inBlock.js';   // QAE3: CurrentInBlockPixel
+import { globalKillTracker, setKillPlaceProvider } from '../systems/quest/killTracker.js';   // QAE3: KilledEnemiesOfClass
 import { elementalResistanceChance, ELEMENTS, BODY_CAPSULE_RADIUS, EFFECT_FLAGS, savingThrow } from '../systems/spellcast.js';   // SURV7: the env's fire and frost resistances; WB4: the saving throw a boss's fire meets   // DW-E3: a foe's controller, as a fish's probe meets it
 import { createTownWatch, runTownWatchFrame } from '../systems/townWatch.js';   // DISC19-F: the watch defends the town
 import { rollCampEncountersOnChunkLoad, amGroupRollOwner, campAnchorSpot, CAMP_SIGHT_RADIUS } from '../systems/campEncounters.js';   // CAMP1: the group-encounter roll - camps and packs; CAMP-NOTIMER: the chunk-load twin is this host's ONLY trigger now, so the timer's entry point is gone from here
@@ -17834,6 +17836,11 @@ export async function bootWorld(canvas, renderer, params, status) {
     }
     return _ohGpsLoc.loc;
   };
+  // QAE3: tag each recorded kill with the current location key for per-place counts
+  setKillPlaceProvider(() => {
+    const loc = _questLoc();
+    return loc ? makeLocationKey(loc.regionIndex, loc.locationIndex ?? 0) : null;
+  });
   /** ARENA1: a door's location and its exit group. The arena's 43600 stair is the undercroft's door - its own record
    *  (world/arenaCity.js undercroftLocation, one per city record) and its own group, so the way home out of the castle
    *  never lands at the stair and the undercroft's never at the castle's doors. */
@@ -19192,8 +19199,9 @@ export async function bootWorld(canvas, renderer, params, status) {
       }
       return keys;
     },
-    // NOT yet wired (no live source in this host): inBlockPosition,
-    // killCount (per-place). Those verbs stay inert until their source lands.
+    inBlockPosition: () => inBlockPixel(player.pos),
+    killCount: (foeClass, place) => globalKillTracker().killCount(foeClass, place),
+    // All sixteen QAE3 verbs are now wired to a live source.
     // ROAD-B B4: the offer flow's own seam. The FLAG that stood here
     // ("this host never stands inside a castle interior") named the
     // wrong question - IsPlayerInsideCastle is not a building-side

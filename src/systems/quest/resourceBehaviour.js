@@ -45,6 +45,7 @@
 // after load.
 
 import { isShelved } from './quest.js';   // QUEST-SHELF: a quest set aside
+import { globalKillTracker } from './killTracker.js';   // QAE3: KilledEnemiesOfClass class tally
 
 export class QuestResourceBehaviour {
   constructor(machine, host = null) {
@@ -186,6 +187,7 @@ export class QuestResourceBehaviour {
 
       if (this.enemy.currentHealth <= 0 && !this.isFoeDead) {
         foe.incrementKills();
+        globalKillTracker().recordKill(foe.foeName);   // QAE3: class-level tally
         this.isFoeDead = true;
       }
     }
