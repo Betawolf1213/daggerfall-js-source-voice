@@ -18980,6 +18980,11 @@ export async function bootWorld(canvas, renderer, params, status) {
       const rows = tokensToRows(tokens);
       if (rows.length) showQuestBox({ rows });
     },
+    // Q4: showVoiceLine — the voice player will play if a line exists
+    showVoiceLine: (_q, msgId) => {
+      // VoicePlayer is wired by the host; if absent, silently skip
+      this.deps?.voicePlayer?.play?.(_q.questName, msgId);
+    },
     showPrompt: (q, message, respond) => showQuestBox({
       rows: tokensToRows(message.getTextTokens(-1, q.rolls)),
       buttons: 'YesNo',

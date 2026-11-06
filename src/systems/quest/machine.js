@@ -450,6 +450,7 @@ export class QuestMachine {
   _buildHooks() {
     return {
       showPopup: (q, tokens) => this.deps.showPopup?.(q, tokens),
+      showVoiceLine: (q, msgId) => this.deps.showVoiceLine?.(q, msgId),
       showPrompt: (q, message, respond) => this.deps.showPrompt?.(q, message, respond),
       // QG1: PromptMulti's 2-4 button box - BUTTONS.RCI record
       // numbers out, the clicked record number back

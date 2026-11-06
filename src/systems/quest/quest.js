@@ -148,6 +148,8 @@ export class Quest {
     this.ticksToEnd = 0;
     this.activeLogMessages = new Map();      // stepID -> { stepID, messageID, time }
     this.oneTimeDisplayedMessages = new Set();
+    // Q4: track which voiced lines have already played to avoid overlap
+    this.oneTimeVoiceLinesPlayed = new Set();
     // Q4-i macro context (Quest.cs/QuestMCP)
     this.lastResourceReferenced = null;   // pronouns/%vcn read it
     this.lastPlaceReferenced = null;      // %di reads it (the NRE quirk lives there)
@@ -476,6 +478,8 @@ export class Quest {
     if (oncePerQuest && this.oneTimeDisplayedMessages.has(id)) return null;
     for (const chunk of chunkMessageTokens(tokens)) this.pendingPopups.push(chunk);
     if (oncePerQuest) this.oneTimeDisplayedMessages.add(id);
+    // Q4: notify any voice system that a message is about to display
+    this.hooks?.showVoiceLine?.(this, id);
     if (immediate) {
       this.questBreak = true;
       this._showPendingTaskMessages();
@@ -523,6 +527,7 @@ export class Quest {
       questors: [...this.questors.entries()].map(([name, q]) => ({ name, symbol: symbolToSaveData(q.symbol), displayName: q.name })),
       tasks: [...this.tasks.values()].map((t) => t.getSaveData()),
       oneTimeDisplayedMessages: [...this.oneTimeDisplayedMessages],
+      oneTimeVoiceLinesPlayed: [...this.oneTimeVoiceLinesPlayed],
       shareId: this.shareId ?? null,   // DISC22-F: the shared copy's identity - the port's own member, absent in DFU's saves
       shelvedAt: this.shelvedAt ?? null,   // QUEST-SHELF: the port's own, absent in DFU's saves (an older envelope: not set aside)
       shelvedSites: this.shelvedSites ? [...this.shelvedSites] : null,
@@ -585,6 +590,8 @@ export class Quest {
     }
     this.oneTimeDisplayedMessages.clear();
     for (const id of data.oneTimeDisplayedMessages ?? []) this.oneTimeDisplayedMessages.add(id);
+    this.oneTimeVoiceLinesPlayed.clear();
+    for (const k of data.oneTimeVoiceLinesPlayed ?? []) this.oneTimeVoiceLinesPlayed.add(k);
   }
 
 }
