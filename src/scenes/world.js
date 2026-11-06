@@ -205,6 +205,7 @@ import { cureLycanthropy, racialSuppressPopulationSpawns, racialSuppressTalk, ly
 import { setRacialQuestHost } from '../systems/racialQuests.js';   // V2d: the quest-start seam (the machine is this host's)
 import { setCrimeGuildQuestHost, setCrimeGuildClock, tallyCrimeGuildRequirements } from '../systems/crimeGuilds.js';   // CG2; LW7: a traveller struck down is the Brotherhood's five
 import { randomCemeteryLocationIndex } from '../systems/infection.js';   // V2e: GetRandomCemetery's pick half
+import { startInfection, INFECTION } from '../systems/infection.js';   // QAE3: InfectPlayerWith entry point
 import { MEMBERSHIP_STATUS } from '../systems/quest/questLists.js';   // V2d: the vampire clan pool asks as a Member
 import { prepareQuestShare, prepareShareData, shareSignature, receiveSharedQuest, SHARE_REFUSAL_TEXT, shareRefusalText, sayShareRefusal } from '../systems/questShare.js';   // QUEST1: the chronicle's own Share button, and the party frame it answers
 import { careerSunAverse } from '../systems/passiveSpecials.js';   // AUDIT 64 F20: Career.DamageFromSunlight, the arrival clamp's second arm - HOOD-CAREER: under a bare head
@@ -19163,9 +19164,36 @@ export async function bootWorld(canvas, renderer, params, status) {
         werewolf: lyc?.race === 'werewolf',
       });
     },
+    infectPlayer: (kind) => {
+      const key = kind === 'vampire' ? INFECTION.Vampirism : kind === 'werewolf' ? INFECTION.Werewolf : INFECTION.Wereboar;
+      startInfection(playerEntity, key, { day: Math.floor(ownMinutes() / 1440), regionIndex: _questRegionIndex() });
+      surfacePlayer();
+    },
+    questItemInstance: (symbol) => {
+      const want = innerSymbolName(symbol);
+      return (playerEntity.items ?? []).find((it) => it?.questItem && it.questSymbol?.name === want) ?? null;
+    },
+    activeEffectKeys: (target) => {
+      let effects;
+      if (target === 'player') {
+        effects = playerEntity.activeEffects ?? [];
+      } else {
+        const want = innerSymbolName(target);
+        const f = [...exteriorFoes.foes, ...cityGuards.guards, ...(modes?.liveQuestFoes?.() ?? [])]
+          .find((x) => !x.dead && x.questBehaviour?.targetSymbol?.name === want);
+        effects = (f?.entity ?? f)?.activeEffects ?? [];
+      }
+      const keys = new Set();
+      for (const e of effects) {
+        if (e?.bundleName) keys.add(e.bundleName);
+        if (e?.kind) keys.add(e.kind);
+        if (e?.key) keys.add(e.key);
+        if (e?.effectKey) keys.add(e.effectKey);
+      }
+      return keys;
+    },
     // NOT yet wired (no live source in this host): inBlockPosition,
-    // killCount (per-place), activeEffectKeys, infectPlayer, questItemInstance.
-    // Those verbs stay inert until their source lands.
+    // killCount (per-place). Those verbs stay inert until their source lands.
     // ROAD-B B4: the offer flow's own seam. The FLAG that stood here
     // ("this host never stands inside a castle interior") named the
     // wrong question - IsPlayerInsideCastle is not a building-side
