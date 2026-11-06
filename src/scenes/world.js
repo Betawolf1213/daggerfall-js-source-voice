@@ -304,6 +304,7 @@ import { commissionFilledBy } from '../net/writLaw.js';   // AUDIT 31 L8: a piec
 import { unseenText } from '../net/boardLaw.js';   // NOTICE1: the count over a board
 import { alignSurvival } from '../systems/survival/needs.js';   // SURV7: the needs' markers at an arrival
 import { liveLycanthropy } from '../systems/lycanthropy.js';   // SURV7: the env's lycanthrope and beast-form flags
+import { playerStateFlag, innerSymbolName } from '../systems/quest/qaeStateFlags.js';   // QAE3: CurrentStateIs mapping + symbol bridge
 import { elementalResistanceChance, ELEMENTS, BODY_CAPSULE_RADIUS, EFFECT_FLAGS, savingThrow } from '../systems/spellcast.js';   // SURV7: the env's fire and frost resistances; WB4: the saving throw a boss's fire meets   // DW-E3: a foe's controller, as a fish's probe meets it
 import { createTownWatch, runTownWatchFrame } from '../systems/townWatch.js';   // DISC19-F: the watch defends the town
 import { rollCampEncountersOnChunkLoad, amGroupRollOwner, campAnchorSpot, CAMP_SIGHT_RADIUS } from '../systems/campEncounters.js';   // CAMP1: the group-encounter roll - camps and packs; CAMP-NOTIMER: the chunk-load twin is this host's ONLY trigger now, so the timer's entry point is gone from here
@@ -19111,6 +19112,60 @@ export async function bootWorld(canvas, renderer, params, status) {
       return { guildGroup: g.guildGroup, rank: m?.rank ?? 0, power: _questStore()?.dict.get(g.factionId)?.power ?? 0, isNonMember: !m };
     },
     regionPriceAdjustment: () => regionPriceAdjustment(playerEntity, _questLoc()?.regionIndex ?? 0),
+    // ── QAE3 hook wiring: the live facts the sixteen QAE3 verbs read.
+    // Each maps to a real source here; a verb whose source is not yet
+    // available is left OFF this list, so it stays inert (its optional
+    // hook reads undefined) rather than answering wrong. See
+    // vendor/qae/port-support.json's hookSurface for the contract.
+    playerPosition: () => [player.pos[0], player.pos[1], player.pos[2]],
+    resourcePosition: (symbol) => {
+      const want = innerSymbolName(symbol);
+      const f = [...exteriorFoes.foes, ...cityGuards.guards, ...(modes?.liveQuestFoes?.() ?? [])]
+        .find((x) => !x.dead && x.questBehaviour?.targetSymbol?.name === want);
+      const p = f?.entity?.pos ?? f?.pos ?? null;
+      return p ? [p[0], p[1], p[2]] : null;
+    },
+    equippedItems: () => (playerEntity.items ?? []).filter((it) => it && isEquipped(it)),
+    worldMapPixel: () => { const p = playerTravelPixel(); return { x: p.x, y: p.y }; },
+    currentRegionIndex: () => _questRegionIndex(),
+    guildRank: (groupName) => {
+      const g = joinedGuildOfGroup(activeMemberships(playerEntity), GUILD_GROUPS[groupName]);
+      if (!g) return null;
+      return { rank: g.rank ?? 0, power: _questStore()?.dict.get(g.factionId)?.power ?? 0, isNonMember: false };
+    },
+    foeInstance: (symbol) => {
+      const want = innerSymbolName(symbol);
+      const f = [...exteriorFoes.foes, ...cityGuards.guards, ...(modes?.liveQuestFoes?.() ?? [])]
+        .find((x) => !x.dead && x.questBehaviour?.targetSymbol?.name === want);
+      if (!f) return null;
+      const e = f.entity ?? f;
+      return { health: e.health ?? 0, maxHealth: e.maxHealth ?? 0, alive: !f.dead && (e.health ?? 1) > 0 };
+    },
+    factionRepute: (who) => {
+      const s = _questStore();
+      if (!s) return null;
+      const fid = Number(who);
+      return Number.isFinite(fid) ? getReputation(s, fid) : (getReputation(s, s.dict?.get?.(who)?.id) ?? null);
+    },
+    legalRepute: () => legalRepOf(playerEntity, _questRegionIndex()),
+    playerState: (flag) => {
+      const lyc = liveLycanthropy(playerEntity);
+      return playerStateFlag(flag, {
+        godMode: isGodMode(),
+        resting: !!playerEntity.isResting,
+        loitering: !!playerEntity.isLoitering,
+        readyToLevelUp: !!playerEntity.readyToLevelUp,
+        arrested: !!playerEntity.arrested,
+        inPrison: !!playerEntity.inPrison,
+        beastForm: !!lyc?.isTransformed,
+        vampire: !!playerEntity.vampire,
+        wereboar: lyc?.race === 'wereboar',
+        werewolf: lyc?.race === 'werewolf',
+      });
+    },
+    // NOT yet wired (no live source in this host): inBlockPosition,
+    // killCount (per-place), activeEffectKeys, infectPlayer, questItemInstance.
+    // Those verbs stay inert until their source lands.
     // ROAD-B B4: the offer flow's own seam. The FLAG that stood here
     // ("this host never stands inside a castle interior") named the
     // wrong question - IsPlayerInsideCastle is not a building-side
