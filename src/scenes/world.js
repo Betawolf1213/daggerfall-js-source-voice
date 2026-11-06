@@ -810,6 +810,7 @@ import { BUILD_TAG } from '../buildTag.js';   // SRV-N: which build this tab is 
 import { morrowindDataCount, morrowindDataGeneration, getBytes } from './dataSource.js';   // MWBODY1: the bodies' gate - Morrowind data attached - and its generation
 // Q4-v: THE QUEST BRIDGE - the machine goes live in this host.
 import { createQuestBridge, tokensToRows } from './questBridge.js';
+import { tryDebugStart } from '../systems/quest/debugStart.js';   // Q6: URL-param quest start + jump
 import { loadQuestPack } from './questData.js';
 import { ensureFactionRep, getReputation, changeReputation } from '../systems/factionRep.js';
 import { changeLegalRep, legalRepOf, CRIMES, setCrimeCommitted, lowerRepForCrime, setCrimeRepFactor } from '../systems/court.js';   // the region's LegalRep: the status box, the quest actions, the crimes (REP1 retired :498-511's levy)
@@ -19294,6 +19295,19 @@ export async function bootWorld(canvas, renderer, params, status) {
   // classic minute every other dated law in this host reads.
   setCrimeGuildClock(() => Math.floor(playerTicker.ownMinutes));
   if (_questStartPending) questInitAtGameStart();
+  // Q6: debug quest start — ?quest=<name>&jump=site|giver|none
+  {
+    const ds = tryDebugStart(questBridge, { search: location.search });
+    if (ds.started && ds.site && _teleportToPixel) {
+      const mapId = ds.site.mapId ?? ds.site.mapTableData?.mapId ?? null;
+      if (mapId != null) {
+        const px = (Number(mapId) >>> 0) & 0xfffff;
+        const x = px % 1000;
+        const y = Math.floor(px / 1000);
+        _teleportToPixel(x, y).catch((e) => console.warn('[debugStart] jump failed:', e?.message ?? e));
+      }
+    }
+  }
   // ONLINE1 (2026-09-12, Mac: "the basic bones of multiplayer"): THE
   // OTHERS. `?online` (the front door's Online button, main.js) joins the
   // relay with this player's look and pose and draws the peers of the
