@@ -449,6 +449,454 @@ export class WhenFatigueLevel extends VitalBelow {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════════
+// QAE3 (2026-11-05): THE REMAINING SIXTEEN - position, equipment, guild,
+// enemy, player-state, reputation, infection and quest-item verbs. Same
+// rule as FORAGE1/QAE2: nothing of Jagget's mod is carried; each class
+// restates one action's behaviour cited to its file. Every one reads the
+// live facts it needs from quest.hooks and goes INERT (a trigger false,
+// an action a no-op) when the host has not wired that hook, exactly as
+// the vitals family reads hooks.playerEntity?.() and skips when absent.
+//
+// The hook surface these consume (all optional):
+//   hooks.playerPosition() -> [x,y,z] scene units
+//   hooks.resourcePosition(symbol) -> [x,y,z] | null   (foe or item)
+//   hooks.equippedItems() -> item[]                     (pack equip table)
+//   hooks.worldMapPixel() -> {x,y}
+//   hooks.inBlockPosition() -> {x,y}  (0..128)
+//   hooks.guildRank(groupName) -> {rank,power,isNonMember} | null
+//   hooks.foeInstance(symbol) -> {health,maxHealth,alive} | null
+//   hooks.killCount(foeClass, placeSym?) -> n
+//   hooks.activeEffectKeys(target) -> Set<string>  ('player'|foe symbol)
+//   hooks.playerState(flag) -> bool
+//   hooks.legalRepute() -> n
+//   hooks.factionRepute(npcNameOrId) -> n
+//   hooks.currentRegionIndex() -> n
+//   hooks.infectPlayer(kind) -> void
+//   hooks.questItemInstance(symbol) -> item | null
+// ═══════════════════════════════════════════════════════════════════
+
+const hooksOf = (a) => a.parentQuest?.hooks;
+
+/** Horizontal (XZ) distance between two [x,y,z] points. */
+function horizontalDistance(a, b) {
+  if (!a || !b) return Infinity;
+  return Math.hypot((a[0] ?? 0) - (b[0] ?? 0), (a[2] ?? 0) - (b[2] ?? 0));
+}
+
+/** WithinUnits.cs: `player within N units of foe/item _sym_`. */
+const WITHIN = /player within (?<distance>\d+) units of (?:foe|item) (?<sym>_\w+_)/;
+export class WithinUnits extends ActionTemplate {
+  static typeName = 'WithinUnits';
+  get saveShape() { return [['distance'], ['sym']]; }
+  constructor(parentQuest) {
+    super(parentQuest);
+    this.isTriggerCondition = true;
+    this.distance = 0; this.sym = '';
+  }
+  get pattern() { return WITHIN; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const a = new WithinUnits(parentQuest);
+    a.distance = Number(m.groups.distance);
+    a.sym = m.groups.sym;
+    return a;
+  }
+  checkTrigger(_caller) {
+    const hooks = hooksOf(this);
+    const pp = hooks?.playerPosition?.();
+    const rp = hooks?.resourcePosition?.(this.sym);
+    return horizontalDistance(pp, rp) <= this.distance;
+  }
+}
+
+/** EquippedWithItem.cs: an always-on check the player has a class/subclass equipped. */
+const EQUIPPED = /player equipped with item class (?<itemClass>\d+) subclass (?<itemSubClass>\d+)/;
+export class EquippedWithItem extends ActionTemplate {
+  static typeName = 'EquippedWithItem';
+  get saveShape() { return [['itemClass'], ['itemSubClass']]; }
+  constructor(parentQuest) {
+    super(parentQuest);
+    this.isTriggerCondition = true;
+    this.isAlwaysOnTriggerCondition = true;
+    this.itemClass = 0; this.itemSubClass = 0;
+  }
+  get pattern() { return EQUIPPED; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    return m ? itemFields(new EquippedWithItem(parentQuest), m) : null;
+  }
+  checkTrigger(_caller) {
+    const items = hooksOf(this)?.equippedItems?.() ?? [];
+    const group = GROUP_NAME_OF[this.itemClass];
+    return items.some((it) => it && it.group === group && it.templateIndex === this.itemSubClass);
+  }
+}
+
+/** CurrentMapPixel.cs: `player currentmappixel x X y Y [delta D]`. */
+const MAP_PIXEL = /player currentmappixel x (?<x>\d+) y (?<y>\d+)(?: delta (?<delta>\d+))?/;
+export class CurrentMapPixel extends ActionTemplate {
+  static typeName = 'CurrentMapPixel';
+  get saveShape() { return [['x'], ['y'], ['delta']]; }
+  constructor(parentQuest) {
+    super(parentQuest);
+    this.isTriggerCondition = true;
+    this.isAlwaysOnTriggerCondition = true;
+    this.x = 0; this.y = 0; this.delta = 0;
+  }
+  get pattern() { return MAP_PIXEL; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const a = new CurrentMapPixel(parentQuest);
+    a.x = Number(m.groups.x); a.y = Number(m.groups.y);
+    a.delta = m.groups.delta != null ? Number(m.groups.delta) : 0;
+    return a;
+  }
+  checkTrigger(_caller) {
+    const px = hooksOf(this)?.worldMapPixel?.();
+    if (!px) return false;
+    const d = Math.max(Math.abs(px.x - this.x), Math.abs(px.y - this.y));
+    return d <= this.delta;
+  }
+}
+
+/** CurrentInBlockPixel.cs: `player inblock position x X y Y [delta D]` (0..128). */
+const INBLOCK = /player inblock position x (?<x>\d+) y (?<y>\d+)(?: delta (?<delta>\d+))?/;
+export class CurrentInBlockPixel extends ActionTemplate {
+  static typeName = 'CurrentInBlockPixel';
+  get saveShape() { return [['x'], ['y'], ['delta']]; }
+  constructor(parentQuest) {
+    super(parentQuest);
+    this.isTriggerCondition = true;
+    this.x = 0; this.y = 0; this.delta = 0;
+  }
+  get pattern() { return INBLOCK; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const a = new CurrentInBlockPixel(parentQuest);
+    a.x = Number(m.groups.x); a.y = Number(m.groups.y);
+    a.delta = m.groups.delta != null ? Number(m.groups.delta) : 0;
+    return a;
+  }
+  checkTrigger(_caller) {
+    const px = hooksOf(this)?.inBlockPosition?.();
+    if (!px) return false;
+    const d = Math.max(Math.abs(px.x - this.x), Math.abs(px.y - this.y));
+    return d <= this.delta;
+  }
+}
+
+/** GuildRankAtLeast.cs: `player guild rank in GROUP at least N`. */
+const GUILD_RANK = /player guild rank in (?<group>\w+) at least (?<minRank>\d+)/;
+export class GuildRankAtLeast extends ActionTemplate {
+  static typeName = 'GuildRankAtLeast';
+  get saveShape() { return [['group'], ['minRank']]; }
+  constructor(parentQuest) {
+    super(parentQuest);
+    this.isTriggerCondition = true;
+    this.isAlwaysOnTriggerCondition = true;
+    this.group = ''; this.minRank = 0;
+  }
+  get pattern() { return GUILD_RANK; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const a = new GuildRankAtLeast(parentQuest);
+    a.group = m.groups.group; a.minRank = Number(m.groups.minRank);
+    return a;
+  }
+  checkTrigger(_caller) {
+    const g = hooksOf(this)?.guildRank?.(this.group);
+    return !!g && !g.isNonMember && g.rank >= this.minRank;
+  }
+}
+
+/** EnemyHealthLowerHigher.cs: `enemy _foe_ health is lower than H% [and higher than L%]`. */
+const ENEMY_HEALTH = /enemy (?<sym>_\w+_) health is lower than (?<high>\d+)%(?: and higher than (?<low>\d+)%)?/;
+export class EnemyHealthLowerHigher extends ActionTemplate {
+  static typeName = 'EnemyHealthLowerHigher';
+  get saveShape() { return [['sym'], ['high'], ['low']]; }
+  constructor(parentQuest) {
+    super(parentQuest);
+    this.isTriggerCondition = true;
+    this.sym = ''; this.high = 0; this.low = 0;
+  }
+  get pattern() { return ENEMY_HEALTH; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const a = new EnemyHealthLowerHigher(parentQuest);
+    a.sym = m.groups.sym; a.high = Number(m.groups.high);
+    a.low = m.groups.low != null ? Number(m.groups.low) : 0;
+    return a;
+  }
+  checkTrigger(_caller) {
+    const foe = hooksOf(this)?.foeInstance?.(this.sym);
+    if (!foe || !foe.alive) return false;
+    const pct = foe.maxHealth > 0 ? (foe.health * 100) / foe.maxHealth : 0;
+    return pct < this.high && pct >= this.low;
+  }
+}
+
+/** KilledEnemiesOfClass.cs: `player slain N enemies of class _foe_ [at place]`. */
+const KILLED = /player slain (?<amount>\d+) enemies of class (?<foe>\w+)(?: at (?<place>\w+))?/;
+export class KilledEnemiesOfClass extends ActionTemplate {
+  static typeName = 'KilledEnemiesOfClass';
+  get saveShape() { return [['amount'], ['foe'], ['place']]; }
+  constructor(parentQuest) {
+    super(parentQuest);
+    this.isTriggerCondition = true;
+    this.isAlwaysOnTriggerCondition = true;
+    this.amount = 0; this.foe = ''; this.place = '';
+  }
+  get pattern() { return KILLED; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const a = new KilledEnemiesOfClass(parentQuest);
+    a.amount = Number(m.groups.amount); a.foe = m.groups.foe;
+    a.place = m.groups.place ?? '';
+    return a;
+  }
+  checkTrigger(_caller) {
+    const n = hooksOf(this)?.killCount?.(this.foe, this.place || undefined) ?? 0;
+    return n >= this.amount;
+  }
+}
+
+/** MagicEfectKeyIsOn.cs: `magic-effect key K is on foe _sym_|player`. */
+const EFFECT_ON = /magic-effect key (?<key>\w+) is on (?:foe (?<sym>_\w+_)|(?<player>player))/;
+export class MagicEfectKeyIsOn extends ActionTemplate {
+  static typeName = 'MagicEfectKeyIsOn';
+  get saveShape() { return [['key'], ['sym'], ['onPlayer']]; }
+  constructor(parentQuest) {
+    super(parentQuest);
+    this.isTriggerCondition = true;
+    this.isAlwaysOnTriggerCondition = true;
+    this.key = ''; this.sym = ''; this.onPlayer = false;
+  }
+  get pattern() { return EFFECT_ON; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const a = new MagicEfectKeyIsOn(parentQuest);
+    a.key = m.groups.key; a.sym = m.groups.sym ?? ''; a.onPlayer = m.groups.player != null;
+    return a;
+  }
+  checkTrigger(_caller) {
+    const target = this.onPlayer ? 'player' : this.sym;
+    const keys = hooksOf(this)?.activeEffectKeys?.(target);
+    return !!keys && keys.has(this.key);
+  }
+}
+
+/** CurrentStateIs.cs: `player current-state is FLAG` (twelve named flags). */
+const STATE_IS = /player current-state is (?<flag>[a-z ]+?)\s*$/;
+const STATE_FLAG_MAP = Object.freeze({
+  'god mode': 'godMode', 'no clip mode': 'noClip', 'no target mode': 'noTarget',
+  'resting': 'resting', 'loitering': 'loitering', 'ready to level up': 'readyToLevelUp',
+  'arrested': 'arrested', 'in prison': 'inPrison', 'in beast form': 'beastForm',
+  'vampire': 'vampire', 'wereboar': 'wereboar', 'werewolf': 'werewolf',
+});
+export class CurrentStateIs extends ActionTemplate {
+  static typeName = 'CurrentStateIs';
+  get saveShape() { return [['flag']]; }
+  constructor(parentQuest) {
+    super(parentQuest);
+    this.isTriggerCondition = true;
+    this.isAlwaysOnTriggerCondition = true;
+    this.flag = '';
+  }
+  get pattern() { return STATE_IS; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const key = STATE_FLAG_MAP[m.groups.flag.trim()];
+    if (!key) return null;
+    const a = new CurrentStateIs(parentQuest);
+    a.flag = key;
+    return a;
+  }
+  checkTrigger(_caller) {
+    return hooksOf(this)?.playerState?.(this.flag) === true;
+  }
+}
+
+/** A lower/higher comparison against a numeric value. */
+function compareRepute(value, dir, amount) {
+  return dir === 'lower' ? value < amount : value > amount;
+}
+
+/** PlayerLegalReputeIs.cs: `player legal-repute is lower|higher than N`. */
+const LEGAL_REPUTE = /player legal-repute is (?<dir>lower|higher) than (?<amount>-?\d+)/;
+export class PlayerLegalReputeIs extends ActionTemplate {
+  static typeName = 'PlayerLegalReputeIs';
+  get saveShape() { return [['dir'], ['amount']]; }
+  constructor(parentQuest) {
+    super(parentQuest);
+    this.isTriggerCondition = true;
+    this.isAlwaysOnTriggerCondition = true;
+    this.dir = 'lower'; this.amount = 0;
+  }
+  get pattern() { return LEGAL_REPUTE; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const a = new PlayerLegalReputeIs(parentQuest);
+    a.dir = m.groups.dir; a.amount = Number(m.groups.amount);
+    return a;
+  }
+  checkTrigger(_caller) {
+    const v = hooksOf(this)?.legalRepute?.();
+    return v != null && compareRepute(v, this.dir, this.amount);
+  }
+}
+
+/** PlayerFactionReputeIs.cs: `player faction-repute with NPC|with-faction-id ID is lower|higher than N`. */
+const FACTION_REPUTE = /player faction-repute with(?:-faction-id)? (?<who>[\w-]+) is (?<dir>lower|higher) than (?<amount>-?\d+)/;
+export class PlayerFactionReputeIs extends ActionTemplate {
+  static typeName = 'PlayerFactionReputeIs';
+  get saveShape() { return [['who'], ['dir'], ['amount']]; }
+  constructor(parentQuest) {
+    super(parentQuest);
+    this.isTriggerCondition = true;
+    this.isAlwaysOnTriggerCondition = true;
+    this.who = ''; this.dir = 'lower'; this.amount = 0;
+  }
+  get pattern() { return FACTION_REPUTE; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const a = new PlayerFactionReputeIs(parentQuest);
+    a.who = m.groups.who; a.dir = m.groups.dir; a.amount = Number(m.groups.amount);
+    return a;
+  }
+  checkTrigger(_caller) {
+    const v = hooksOf(this)?.factionRepute?.(this.who);
+    return v != null && compareRepute(v, this.dir, this.amount);
+  }
+}
+
+/** PlayerCurrentRegionIs.cs: `player current-region-index is N`. */
+const REGION_IS = /player current-region-index is (?<index>\d+)/;
+export class PlayerCurrentRegionIs extends ActionTemplate {
+  static typeName = 'PlayerCurrentRegionIs';
+  get saveShape() { return [['index']]; }
+  constructor(parentQuest) {
+    super(parentQuest);
+    this.isTriggerCondition = true;
+    this.isAlwaysOnTriggerCondition = true;
+    this.index = 0;
+  }
+  get pattern() { return REGION_IS; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const a = new PlayerCurrentRegionIs(parentQuest);
+    a.index = Number(m.groups.index);
+    return a;
+  }
+  checkTrigger(_caller) {
+    return hooksOf(this)?.currentRegionIndex?.() === this.index;
+  }
+}
+
+/** InfectPlayerWith.cs: `infect player as vampire|werewolf|wereboar`. */
+const INFECT = /infect player as (?<kind>vampire|werewolf|wereboar)/;
+export class InfectPlayerWith extends ActionTemplate {
+  static typeName = 'InfectPlayerWith';
+  get saveShape() { return [['kind']]; }
+  constructor(parentQuest) { super(parentQuest); this.kind = ''; }
+  get pattern() { return INFECT; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const a = new InfectPlayerWith(parentQuest);
+    a.kind = m.groups.kind;
+    return a;
+  }
+  update(_caller) {
+    hooksOf(this)?.infectPlayer?.(this.kind);
+    this.setComplete();
+  }
+}
+
+/** UpdateQuestItemMaterial.cs: `update-quest-item _sym_ set-material M`. */
+const SET_MATERIAL = /update-quest-item (?<sym>_\w+_) set-material (?<material>\w+)/;
+export class UpdateQuestItemMaterial extends ActionTemplate {
+  static typeName = 'UpdateQuestItemMaterial';
+  get saveShape() { return [['sym'], ['material']]; }
+  constructor(parentQuest) { super(parentQuest); this.sym = ''; this.material = ''; }
+  get pattern() { return SET_MATERIAL; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const a = new UpdateQuestItemMaterial(parentQuest);
+    a.sym = m.groups.sym; a.material = m.groups.material;
+    return a;
+  }
+  update(_caller) {
+    const it = hooksOf(this)?.questItemInstance?.(this.sym);
+    if (it) it.material = this.material;
+    this.setComplete();
+  }
+}
+
+/** UpdateQuestItemAddEnchantment.cs: `update-quest-item _sym_ add-enchantment type T [spell S]` (max ten). */
+const ADD_ENCH = /update-quest-item (?<sym>_\w+_) add-enchantment type (?<enchType>\w+)(?: spell (?<spellId>\d+))?/;
+export class UpdateQuestItemAddEnchantment extends ActionTemplate {
+  static typeName = 'UpdateQuestItemAddEnchantment';
+  get saveShape() { return [['sym'], ['enchType'], ['spellId']]; }
+  constructor(parentQuest) { super(parentQuest); this.sym = ''; this.enchType = ''; this.spellId = 0; }
+  get pattern() { return ADD_ENCH; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const a = new UpdateQuestItemAddEnchantment(parentQuest);
+    a.sym = m.groups.sym; a.enchType = m.groups.enchType;
+    a.spellId = m.groups.spellId != null ? Number(m.groups.spellId) : 0;
+    return a;
+  }
+  update(_caller) {
+    const it = hooksOf(this)?.questItemInstance?.(this.sym);
+    if (it) {
+      it.enchantments = it.enchantments ?? [];
+      if (it.enchantments.length < 10) {
+        it.enchantments.push({ type: this.enchType, spellId: this.spellId });
+      }
+    }
+    this.setComplete();
+  }
+}
+
+/** UpdateQuestItemApplyMagicTemplate.cs: `update-quest-item _sym_ apply-magic-template T` (overwrites). */
+const APPLY_TEMPLATE = /update-quest-item (?<sym>_\w+_) apply-magic-template (?<templateId>\w+)/;
+export class UpdateQuestItemApplyMagicTemplate extends ActionTemplate {
+  static typeName = 'UpdateQuestItemApplyMagicTemplate';
+  get saveShape() { return [['sym'], ['templateId']]; }
+  constructor(parentQuest) { super(parentQuest); this.sym = ''; this.templateId = ''; }
+  get pattern() { return APPLY_TEMPLATE; }
+  createNew(source, parentQuest) {
+    const m = this.test(source);
+    if (!m) return null;
+    const a = new UpdateQuestItemApplyMagicTemplate(parentQuest);
+    a.sym = m.groups.sym; a.templateId = m.groups.templateId;
+    return a;
+  }
+  update(_caller) {
+    const hooks = hooksOf(this);
+    const it = hooks?.questItemInstance?.(this.sym);
+    if (it) {
+      it.magicTemplate = this.templateId;
+      it.enchantments = [];   // ApplyMagicTemplate overwrites earlier enchantments
+    }
+    this.setComplete();
+  }
+}
+
 /** Every QAE action the port answers, for a quest machine to register (the host does, before any save's quests
  *  are restored). The editor's catalog marks the rest as authored-but-unanswered here (vendor/qae/port-support.json). */
 export const questActionsExtensionTemplates = () => [
@@ -456,4 +904,10 @@ export const questActionsExtensionTemplates = () => [
   new ReducePlayerHealth(null), new ReducePlayerMagicka(null),
   new IncreasePlayerHealth(null), new IncreasePlayerFatigue(null), new IncreasePlayerMagicka(null),
   new WhenHealthLevel(null), new WhenMagickaLevel(null), new WhenFatigueLevel(null),
+  // QAE3: the remaining sixteen
+  new WithinUnits(null), new EquippedWithItem(null), new CurrentMapPixel(null), new CurrentInBlockPixel(null),
+  new GuildRankAtLeast(null), new EnemyHealthLowerHigher(null), new KilledEnemiesOfClass(null),
+  new MagicEfectKeyIsOn(null), new CurrentStateIs(null), new PlayerLegalReputeIs(null),
+  new PlayerFactionReputeIs(null), new PlayerCurrentRegionIs(null), new InfectPlayerWith(null),
+  new UpdateQuestItemMaterial(null), new UpdateQuestItemAddEnchantment(null), new UpdateQuestItemApplyMagicTemplate(null),
 ];
